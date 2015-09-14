@@ -1,5 +1,6 @@
 package com.xx.system.resource.vo;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import com.xx.system.resource.entity.Resource;
@@ -12,15 +13,11 @@ import com.xx.system.resource.entity.Resource;
  * @since V1.20
  * @depricated
  */
-public class ResourceVo {
+public class ResourceVo implements Serializable {
     
-    /**
-     * @Fields serialVersionUID : serialVersionUID
-     */
-    @SuppressWarnings("unused")
-    private static final long serialVersionUID = 1L;
-    
-    /**
+	private static final long serialVersionUID = -3721638078531712788L;
+
+	/**
      * @Fields resourceId : 资源ID
      */
     private int resourceId;
