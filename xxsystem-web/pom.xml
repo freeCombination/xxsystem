@@ -27,7 +27,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.xx.xxsystem</groupId>
-			<artifactId>sshframe-workturns</artifactId>
+			<artifactId>xxsystem-workturns</artifactId>
 			<version>${project.version}</version>
 		</dependency> -->
 		 <!--<dependency>
@@ -63,8 +63,8 @@
 			        <deployables>
 			            <deployable>          
 			                <groupId>com.dqgb.sshfame</groupId>  
-			                <artifactId>sshframe-web</artifactId>  
-			                <type>war</type>  
+			                <artifactId>xxsystem-web</artifactId>  
+			                <type>war</type>
 			                <properties>  
 			                    <context>/${project.build.finalName}</context>
 			                </properties>  

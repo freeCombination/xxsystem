@@ -1,8 +1,0 @@
-com.dqgb.sshframe.bpm.action
-com.dqgb.sshframe.bpm.dao
-com.dqgb.sshframe.bpm.dao.impl
-com.dqgb.sshframe.bpm.entity
-com.dqgb.sshframe.bpm.handler
-com.dqgb.sshframe.bpm.service
-com.dqgb.sshframe.bpm.service.impl
-com.dqgb.sshframe.bpm.vo
