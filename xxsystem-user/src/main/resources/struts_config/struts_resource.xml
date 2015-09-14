@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="resource" extends="st" namespace="/resource">
+		<!-- 跳转到资源管理页面action -->
+		<action name="toResourceIndex" class="com.xx.system.resource.action.ResourceAction" method="toResourcesManager">
+			<result>/WEB-INF/pages/resource/resourceIndex.jsp</result>
+		</action>
+		<action name="getResourceList" class="com.xx.system.resource.action.ResourceAction" method="getResourceList">
+		</action>
+		<action name="getResById" class="com.xx.system.resource.action.ResourceAction" method="getResById">
+		</action>
+		<action name="getRById" class="com.xx.system.resource.action.ResourceAction" method="getRById">
+		</action>
+		<action name="getAllResourceType" class="com.xx.system.resource.action.ResourceAction" method="getAllResourceType">
+		</action>
+		<action name="addResource" class="com.xx.system.resource.action.ResourceAction" method="addResource">
+		</action>
+		<action name="synchronizeResourceInfo" class="com.xx.system.resource.action.ResourceAction" method="synchronizeResourceInfo">
+		</action>
+		<action name="editResource" class="com.xx.system.resource.action.ResourceAction" method="editResource">
+		</action>
+		<action name="deleteResource" class="com.xx.system.resource.action.ResourceAction" method="deleteResource">
+		</action>
+		<action name="getResourceByParentId" class="com.xx.system.resource.action.ResourceAction" method="getResourceByParentId">
+		</action>
+		<action name="getResourceById" class="com.xx.system.resource.action.ResourceAction" method="getResourceById">
+		</action>
+		<action name="validateResourceProperties" class="com.xx.system.resource.action.ResourceAction" method="validateResourceProperties">
+		</action>
+		<action name="getSynchResTree" class="com.xx.system.resource.action.ResourceAction" method="getSynchResTree">
+		</action>
+		<action name="checkResIsExist" class="com.xx.system.resource.action.ResourceAction" method="checkResIsExist">
+		</action>
+		<action name="getResourceTreeList" class="com.xx.system.resource.action.ResourceAction" method="getResourceTreeList">
+			<result type="json">
+				<param name="root">treeNodeList</param>
+			</result>
+		</action>
+	</package>
+</struts>

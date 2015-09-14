@@ -1,0 +1,53 @@
+1、目录结构
+	├─src
+	│  ├─main
+	│  │  ├─java
+	│  │  ├─resources
+	│  │  │  ├─hibernate_config
+	│  │  │  ├─spring_config
+	│  │  │  └─struts_config
+	│  │  ├─resources_prd
+	│  │  │  ├─application.properties
+	│  │  │  ├─log4j.properties
+	│  │  └─webapp
+	│  │      ├─css
+	│  │      ├─img
+	│  │      ├─js
+	│  │      │  ├─common
+	│  │      │  └─component
+	│  │      ├─META-INF
+	│  │      └─WEB-INF
+	│  │          ├─classes
+	│  │          ├─lib
+	│  │          └─pages
+	│  └─test
+	│      ├─java
+	│      └─resources
+	│          ├─hibernate_config
+	│          └─spring_config
+	├─target
+	└─pom.xml
+　　项目采用标准的maven项目结构，src/main/java目录存放项目的java源码，src/main/resources存放项目配置文件，src/main/resources_prd存放的生产环境配置文件。src/main/webapp为web目录，最终发布到服务器的就是这个目录。webapp下有css、img、js等目录，分别存放样式表、图片资源、js文件。
+　　src/test/java为测试代码目录，src/test/resources目录存放测试时需要的配置文件。
+　　target是项目构建是的输出目录，pom.xml文件为maven项目的项目配置文件。
+
+2、组件
+　　该架构以struts、spring、hibernate为基础，包含ssh项目所需的所有jar包、基础配置、log4j及配置、泛型dao、几个通用js组件、附件组、分页组件等基础公共组件。
+　　其中struts使用2.2.1.1版，spring使用3.0.5版、hibernate使用3.5.5版，jquery使用最新版1.6，kindeditor使用4.5。
+　　struts2已经配置为约定方式，所有页面存放在WEB-INF/pages下。hibernate配置为使用注解方式配置entity。spring由于泛型dao使用注解不便于配置，因此保留xml配置，同时开启了注解配置。
+　　泛型DAO提供了配置范例，以后新增一个dao只需要新增dao接口，然后到配置文件中添加配置就可以使用了。
+　　所有配置都已验证可正常运行。
+
+3、配置文件
+　　架构已有struts2、spring、hibernate、log4j配置文件和一个application.properties文件。其中application.properties文件中配置了数据库连接串、hibernate参数等全局配置，如有需要，各项目可以自行添加，添加在这个文件中的属性可以在spring配置文件中直接使用。
+
+4、规范
+　　1）命名规范。所有java类、方法、变量、配置文件采用驼峰命名法，action层和持久层推荐使用注解配置，service和dao采用spring的xml配置，事务采用spring的xml配置。
+　　2）依赖管理。如果需要新增jar包，请通过maven添加依赖，建议由项目负责人统一添加，保证系统规范稳定。
+　　3）包命名规则。包命格式统一使用如下格式：com.dqgb.{prjname}.action.{modulename}。如：com.dqgb.jcpt.action.user、com.dqgb.jcpt.dao.user。
+　　其中，action类的包路径中modulename会被解析为命名空间，并且也是该action对应的jsp文件存放的目录名。如com.dqgb.action.user.UserAction访问路径为/user/user.action，对应的jsp文件则存放在/WEB-INF/pages/user下。
+　　由于struts2已配置为约定方式，所以action和jsp文件命名也需要遵循一定规则。action统一以Action结尾，如：UserAction。而action对应的jsp页面则以action名去掉后缀的部分加上方法返回的字符串值作为文件名。如：UserAction.list()方法返回值为：list，则该方法对应的jsp文件名为：user-list.jsp。
+　　4）异常处理。异常必须处理，可根据不同异常做不同处理。通常处理方式为上抛、记日志、发邮件给管理员等。不能使用如下方式处理异常：e.printStackTrace()、System.out.println("xxx")、return ""。捕获异常时，要尽量使用详细的异常类型，而不能直接捕获Exception。
+　　5）jsp页面开发规范。jsp页面尽量避免使用java代码。尽量使用jsp的EL表达式，少用标签。jsp应以展现为主，避免将业务逻辑带入页面。
+　　6）注释规范，类和方法都要写注释，说明功能、参数和返回值。负责业务逻辑要求写注释解释代码功能和原理。
+

@@ -1,0 +1,195 @@
+.add-button {
+	background: url(../images/icons/add.gif) left top no-repeat !important;
+}
+.save-button {
+	background: url(../images/icons/save.gif) left top no-repeat !important;
+}
+.start-button { 
+   background: url(../images/icons/start.gif) left no-repeat!important;  
+}
+.stop-button { 
+   background: url(../images/icons/stop.gif) left no-repeat!important;  
+}
+.upload-button{
+	background: url(../images/icons/upload) left top no-repeat !important;
+}
+.refresh-button{
+	background: url(../images/icons/synch.gif) left top no-repeat !important;
+}
+.url-button{
+	background: url(../images/icons/bot_1.gif) left top no-repeat !important;
+}
+.excel-button {
+	background: url(../images/icons/excel.gif) left top no-repeat !important;
+}
+.import-button {
+	background: url(../images/icons/imp.png) left top no-repeat !important;
+}
+.export-button {
+	background: url(../images/icons/emp.png) left top no-repeat !important;
+}
+.edit-button {
+	background: url(../images/icons/edit.gif) left top no-repeat !important;
+}
+.query-button{ 
+	background: url(../images/icons/magnifier.png) left top no-repeat!important;  
+}
+.delete-button {
+	background: url(../images/icons/drop-no.gif) left top no-repeat !important;
+}
+.recover-button {
+	background: url(../images/icon_renew.gif) left top no-repeat !important;
+}
+.connect-button { 
+			background: url(../images/icons/folder_link.png) left top no-repeat!important;  
+}
+.search-button {
+	background: url(../images/icons/search.gif) left top no-repeat!important;
+}
+
+.reset-button {
+	background: url(../images/icons/reset.gif) left top no-repeat !important;
+}
+.report-button {
+	background: url(../images/icons/table_edit.png) left top no-repeat !important;
+}
+
+.audit-button {
+	background: url(../images/icons/audit.gif) left top no-repeat !important;
+}
+
+.help-button {
+	background: url(../images/icons/help.gif) left top no-repeat !important;
+}
+.count-button {
+	background: url(../images/icons/calculator.png) left top no-repeat !important;
+}
+.issued-button {
+	background: url(../images/icons/issued.gif) left top no-repeat !important;
+}
+.issuedtime-button {
+	background: url(../images/icons/issuedTime.gif) left top no-repeat !important;
+}
+.details-button {
+	background: url(../images/icons/details.gif) left top no-repeat !important;
+}
+
+.icon-uploadpic {
+	background: url(../images/icons/upImg.gif) left top no-repeat !important;
+}
+
+.icon-hengxiang {
+	background: url(../images/icons/heng.jpg) left top no-repeat !important;
+}
+
+.icon-expand-all {
+	background-image: url(../images/icons/expand-all.gif) !important;
+}
+
+.icon-collapse-all {
+	background-image: url(../images/icons/collapse-all.gif) !important;
+}
+
+.icon-wrench {
+	background-image: url(../images/icons/wrench_orange.png) !important;
+}
+
+.up{
+	background-image: url(../images/arrow_up.png);
+}
+
+.down{
+	background-image: url(../images/arrow_down.png);
+}
+
+.icon-sendReview{
+	background-image: url(../images/icons/sendReview.gif);
+}
+
+.icon-view{
+	background-image: url(../images/icons/view.gif);
+}
+
+.icon-processManage{
+	background-image: url(../images/icons/processManage.gif);
+}
+
+.icon-filing{
+	background-image: url(../images/icons/filing.jpg);
+}
+
+.addEvent-button{
+	background-image: url(../images/icons/addEvent.gif);
+}
+
+.revokeAlarm-button{
+	background-image: url(../images/icons/revoke.gif);
+}
+
+.icon-upgrade{
+	background-image: url(../images/icons/upgrade.jpg);
+}
+
+.icon-viewProcess{
+	background-image: url(../images/icons/viewProcess.gif);
+}
+
+.userImp-button { 
+   background: url(../images/page_white_put.png) left top no-repeat!important;  
+}
+.userExp-button { 
+   background: url(../images/page_white_get.png) left top no-repeat!important;  
+}
+
+.icon-question { 
+   background: url(../images/icons/=.gif) left no-repeat!important;  
+}
+
+.icon-help { 
+   background: url(../images/icons/-.gif) left no-repeat!important;  
+}
+.icon-tabs { 
+   background: url(../images/icons/tabs.gif) left no-repeat!important;  
+}
+.icon-next { 
+   background: url(../images/icons/next.gif) left no-repeat!important;  
+}
+.close-button { 
+   background: url(../images/icons/clo.gif) left no-repeat!important;  
+}
+.close-button2 { 
+   background: url(../images/delete.png) left no-repeat!important;  
+}
+
+.manual-button{
+   background: url(../images/icons/manual.jpg) left top no-repeat!important;  
+}
+.icon-qd { 
+   background: url(../images/icons/qd.gif) left no-repeat!important;  
+}
+.icon-bh { 
+   background: url(../images/icons/bh.gif) left no-repeat!important;  
+}
+.icon-ww {
+   background: url(../images/icons/ww.gif) left no-repeat!important;  
+}
+
+.update-button {
+	background: url(../images/icons/drop-yes.gif) left top no-repeat !important;
+}
+.up{
+	background-image: url(../images/icons/arrow_up.png);
+}
+
+.down{
+	background-image: url(../images/icons/arrow_down.png);
+}
+.resetPwd {
+	background: url(../images/icons/resetPwd.gif) left top no-repeat !important;
+}
+.download-button{background:url(../images/icons/download.gif)}
+
+.detail-button{
+		background:url(../images/icon/detail.gif)}
+		
+.null-button{ display:none;}

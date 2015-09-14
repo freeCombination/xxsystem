@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <link rel="stylesheet" type="text/css" href="../../scripts/extjs/resources/css/ext-all.css" />
+ <link rel="stylesheet" type="text/css" href="../shared/example.css" />
+ <link href="../../styles/icons.css" rel="stylesheet" type="text/css" />
+ <script type="text/javascript" src="../../scripts/extjs/ext-all.js"></script>
+ <script type="text/javascript" src="../../scripts/extjs/locale/ext-lang-zh_CN.js"></script>
+ <script type="text/javascript" src="../../scripts/extjs/ux/ExtjsExtend.js"></script>
+ <script type="text/javascript" src="HandleGrid.js"></script>
+<meta charset="UTF-8">
+<title>表格-查询按钮根据查询条件隐藏相应列</title>
+</head>
+<body>
+<h1>查询按钮根据查询条件隐藏相应列</h1>
+<h2>扩展类：Ext.Button</h2>
+<h2>扩展方式：<a href="../right.html">extend</a></h2>
+<h2>扩展功能：</h2>
+
+    <p>1.根据每条记录中某个或者多个数据的值去判断列的显示或者隐藏。</p>
+ 
+ <h2>示例：</h2>
+<div id="grid-example"></div>
+<p>示例源码：<a href="HandleGrid.js" target="_blank">查看</a></p>
+<!--<p>示例后台返回数据：<a href="roleListData.json" target="_blank">查看</a></p>-->
+
+  <h2>用法：</h2>
+ <p>引入控件JS文件</p>
+   <pre class="code">
+&lt;script type="text/javascript" src="../../scripts/extjs/ux/ExtjsExtend.js"&gt;&lt;/script&gt;
+ </pre>
+ <p>扩展功能1，按钮名称和样式已固定不需要再复写。</p>
+ <p>扩展功能2：</p>
+ <p>在操作列的按钮定义配置里添加属性 "隐藏表达式"
+ 	<br/> <span style="color:red;">dataIndex:'a&b'</span>
+ 	<br/>dataIndex:'a&b' 表示行记录中dataIndex : 'a'和dataIndex : 'b'的列。
+ 	<br/>所以，表达式的含义隐藏列表中列的dataIndex为a和b的列隐藏。
+    <br/>当选择项为'全部'，value为'all'的时候，显示出该列，但有一个前置条件，如示例源码中所示：当选择部门后，部门被隐藏；选择装置条件为全部的时候存在并行处理显示 部门和装置两个列，但前置条件部门这条列已经被隐藏了，所以不应该再显示出来。
+ </p>
+<p>参考代码如下： </p>
+ <pre class="code">
+    '部门',{  
+    xtype : 'combo',
+    width : 90,
+    dataIndex: 'a',
+    store : Ext.create('Ext.data.ArrayStore',
+    {
+        fields : ['value', 'display'],
+        data : [[1, "一部门"], [2, "二部门"], ['all', "全部"]]
+    }
+    ),
+    displayField : 'display',
+    valueField : 'value',
+    value:'all'
+    },'装置',{  
+    xtype : 'combo',
+    width : 90,
+    dataIndex: 'a&b',
+    store : Ext.create('Ext.data.ArrayStore',
+    {
+        fields : ['value', 'display'],
+        data : [[1, "装置1"], [2, "装置2"], ['all', "全部"]]
+    }
+    ),
+    displayField : 'display',
+    valueField : 'value',
+    value:'all'
+    },
+    {
+        xtype:'searchBtn'//查询按钮
+    }
+   </pre>
+</body>
+</html>

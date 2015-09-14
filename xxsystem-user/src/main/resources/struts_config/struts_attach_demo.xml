@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+
+	<package name="attachDemo" extends="json-default" namespace="/attach/demo">
+		
+		<action name="toAddAttach">
+			<result>/WEB-INF/pages/attach/attachDemo.jsp</result>
+		</action>
+		
+		<action name="addAttach" class="com.xx.system.attach.action.AttachAction" method="addAttach">
+			<!-- :date(日期格式)  此表达会以当前时间来替换-->
+			<param name="savePath">upload/demo/:date(yyyy-MM)</param>
+			<param name="maximumSize">1073741824</param>
+			<param name="allowedExtensions">gif,jpg,jpeg,png,bmp</param>
+		</action>
+		
+	</package>
+	
+</struts>       

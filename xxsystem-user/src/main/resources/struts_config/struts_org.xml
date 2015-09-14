@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="org" extends="st" namespace="/org">
+		<action name="toOrgIndex" class="com.xx.system.org.action.OrgAction" method="toOrgIndex">
+			<result>/WEB-INF/pages/org/orgIndex.jsp</result>
+		</action>
+		<action name="getOrgList" class="com.xx.system.org.action.OrgAction" method="getOrgList">
+		</action>
+		<action name="getOrgById" class="com.xx.system.org.action.OrgAction" method="getOrgById">
+		</action>
+		<action name="getUnitTreeList" class="com.xx.system.org.action.OrgAction" method="getUnitTreeListForAddUser">
+			<result type="json">
+				<param name="root">treeNodeList</param>
+			</result>
+		</action>
+		
+		<action name="getUnitTreeListForModifyUser" class="com.xx.system.org.action.OrgAction" method="getUnitTreeListForModifyUser">
+			<result type="json">
+				<param name="root">treeNodeList</param>
+			</result>
+		</action>
+		
+		
+		<action name="getUnitTreeListForUpdateOrg" class="com.xx.system.org.action.OrgAction" method="getUnitTreeListForUpdateOrg">
+			<result type="json">
+				<param name="root">treeNodeList</param>
+			</result>
+		</action>
+		
+		
+		<action name="getUnitTreeListNotCheck" class="com.xx.system.org.action.OrgAction" method="getUnitTreeListNotCheck">
+			<result type="json">
+				<param name="root">treeNodeList</param>
+				<param name="excludeProperties">
+					\[\d+\]\.checked
+				</param> 
+			</result>
+		</action>
+		
+		<action name="getUnitTreeListNotCheckForRoleSearch" class="com.xx.system.org.action.OrgAction" method="getUnitTreeListNotCheckForRoleSearch">
+			<result type="json">
+				<param name="root">treeNodeList</param>
+				<param name="excludeProperties">
+					\[\d+\]\.checked
+				</param> 
+			</result>
+		</action>
+		
+		<action name="getOrgTreeList" class="com.xx.system.org.action.OrgAction" method="getOrgTreeList">
+			<result type="json">
+				<param name="root">treeNodeList</param>
+				<param name="excludeProperties">
+					\[\d+\]\.checked
+				</param> 
+			</result>
+		</action>
+		
+		<action name="getAllOrgForTree" class="com.xx.system.org.action.OrgAction" method="getAllOrg">
+			<result type="json">
+           		<param name="root">orgs</param>
+           		<param name="includeProperties">\[\d+\]\.orgId,\[\d+\]\.orgName,\[\d+\]\.organization\.orgId</param> 
+			</result>
+		</action>
+		<action name="getUserOrgs" class="com.xx.system.org.action.OrgAction" method="getUserOrgs">
+			<result type="json">
+           		<param name="root">orgs</param>
+           		<param name="includeProperties">\[\d+\]\.orgId,\[\d+\]\.orgName,\[\d+\]\.organization\.orgId</param> 
+			</result>
+		</action>
+		<action name="getUserOrgsTreeNodes" class="com.xx.system.org.action.OrgAction" method="getUserOrgsTreeNodes">
+			<result name="success" type="json">
+           		<param name="root">zTreeNodes</param>
+           		<param name="excludeProperties">\[\d+\]\.checked</param>
+			</result>
+		</action>
+		<action name="addOrg" class="com.xx.system.org.action.OrgAction" method="addOrg">
+		</action>
+		<action name="orgIsExist" class="com.xx.system.org.action.OrgAction" method="orgIsExist">
+		</action>
+		<action name="synchOrgData" class="com.xx.system.org.action.OrgAction" method="synchOrgData">
+		</action>
+		<action name="updateOrgName" class="com.xx.system.org.action.OrgAction" method="updateOrgName">
+			<result type="json">
+           		<param name="root">result</param>
+			</result>
+		</action>
+		<action name="updateOrg" class="com.xx.system.org.action.OrgAction" method="updateOrg">
+		</action>
+		<action name="validateOrgProperties" class="com.xx.system.org.action.OrgAction" method="validateOrgProperties">
+		</action>
+		<action name="updateOrgDisOrder" class="com.xx.system.org.action.OrgAction" method="updateOrgDisOrder">
+			<result type="json">
+           		<param name="root">result</param>
+			</result>
+		</action>
+		<action name="delOrg" class="com.xx.system.org.action.OrgAction" method="delOrg">
+		</action>
+		
+		<!-- 下载组织导入模版 -->
+		<action name="downloadOrgExcelTemplate" class="com.xx.system.org.action.OrgAction">
+			<result name="success" type="stream">
+				<param name="ContentType">application/vnd.ms-excel</param>
+				<param name="inputName">excelTemplateInputStream</param>
+				<param name="contentDisposition">attachment;filename="${filename}"</param>
+			</result>
+		</action>
+		<!-- 上传EXCEL导入组织 -->
+		<action name="uploadExcelToBacthImportOrg" class="com.xx.system.org.action.OrgAction" method="uploadExcelToBacthImportOrg">
+		</action>
+	</package>
+</struts>

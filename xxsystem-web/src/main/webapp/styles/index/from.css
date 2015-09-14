@@ -1,0 +1,174 @@
+.from_1 {
+	border: none;
+	background: #DDDDDD;
+	clear: both;
+}
+
+.from_1 td {
+	padding: 2px;
+	background: #FFF
+}
+
+.from_2 {
+	margin: 10px;
+	background: #DDDDDD;
+	clear: both;
+}
+
+.from_2 td {
+	line-height: 30px;
+	padding: 3px;
+	background: #FFF;
+	padding-left: 5px;
+}
+
+.from_3 {
+	background: #DDDDDD;
+	clear: both;
+}
+
+.from_3 td {
+	padding: 0;
+	background: #FFF
+}
+
+.from_3 td div {
+	margin: 4px 10px;
+}
+
+.from_3 td div img {
+	border: 0;
+}
+
+.from_4 {
+	background: #DDDDDD;
+	clear: both;
+}
+
+.from_4 td {
+	line-height: 30px;
+	padding: 3px;
+	background: #FFF
+}
+
+.td_gray {
+	background: #EBEBEB;
+	!
+	important
+}
+
+.td_blue {
+	background: #E4EDF8;
+	!
+	important
+}
+
+.from_bottom {
+	text-align: center;
+	margin: 10px 0 5px 0;
+}
+
+.from_bottom p {
+	margin: 5px 0;
+	padding: 0;
+	color: #F00;
+}
+
+.from_1 input {
+	color: #666
+}
+
+.onfocus_input {
+	background: #FDF5DF;
+}
+
+.must_fill_txt {
+	border: #F00 solid 1px;
+}
+
+.from_tool {
+	background: url(../../mages/index/container_toolBg.jpg) repeat-x top;
+	border-bottom: #8DB2E3 solid 1px;
+	line-height: 28px; +
+	line-height: 28px;
+	padding-right: 10px;
+	padding: 4px; +
+	padding: 5px 0 0 10px;
+	text-align: right;
+}
+
+.ul_1 {
+	margin: 2px;
+	padding: 0;
+	line-height: 24px;
+	color: #999;
+}
+
+.ul_1 li {
+	list-style: none;
+}
+
+.ul_1 a {
+	
+}
+
+.ul_1 a:hover {
+	text-decoration: underline;
+}
+
+.ul_1 .a_red {
+	color: #F00;
+}
+
+.ul_1 .a_red:hover {
+	color: #D20000;
+	text-decoration: underline;
+}
+
+.ul_1 .a_blue {
+	color: #5182B5;
+}
+
+.ul_1 .a_blue:hover {
+	color: #14418B;
+	text-decoration: underline;
+}
+
+.hot {
+	background: url(../../images/index/hot.jpg) no-repeat right;
+	padding-right: 33px
+}
+
+.news {
+	
+}
+
+.news h2 {
+	font-size: 20px;
+	font-weight: bold;
+	text-align: center;
+	display: block;
+}
+
+.news p {
+	margin: 15px 30px;
+	font-size: 14px;
+	text-indent: 2em;
+	line-height: 28px;
+}
+
+.xw_con {
+	text-align: center;
+	border-bottom: #666 dotted 1px;
+	margin: 0 10px;
+}
+
+.xw_mid {
+	color: #999;
+	margin-right: 20px;
+}
+
+.xw_right {
+	color: #06F;
+	float: right;
+}

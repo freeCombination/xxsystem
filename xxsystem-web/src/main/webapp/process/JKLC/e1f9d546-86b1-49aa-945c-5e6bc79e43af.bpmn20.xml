@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <process id="JKLC" name="借款流程" activiti:bpmType="1750">
+    <startEvent id="node4" name="开始"/>
+    <userTask id="node5" name="申请" activiti:user="" activiti:roleIds="" activiti:formUrl="WWW.GOOGLE.COM" activiti:taskType="bpm_apply">
+      <extensionElements>
+        <activiti:taskListener event="create" expression="${taskAssignHandler.createTaskListener(task)}"/>
+        <activiti:taskListener event="assignment" expression="${taskAssignHandler.assignTaskListener(task)}"/>
+        <activiti:taskListener event="complete" expression="${taskAssignHandler.completeTaskListener(task)}"/>
+        <activiti:executionListener expression="${taskAssignHandler.executionStart(execution)}" event="start"/>
+      </extensionElements>
+    </userTask>
+    <userTask id="node7" name="总经理会签" activiti:user="" activiti:roleIds="1565" activiti:formUrl="WWW.GOOGLE.COM" activiti:taskType="bpm_countersign" activiti:assignee="${assignee}">
+      <extensionElements>
+        <activiti:taskListener event="create" expression="${taskAssignHandler.createTaskListener(task)}"/>
+        <activiti:taskListener event="assignment" expression="${taskAssignHandler.assignTaskListener(task)}"/>
+        <activiti:taskListener event="complete" expression="${taskAssignHandler.completeTaskListener(task)}"/>
+        <activiti:executionListener expression="${taskAssignHandler.executionStart(execution)}" event="start"/>
+      </extensionElements>
+      <multiInstanceLoopCharacteristics isSequential="false" activiti:collection="assigneeList" activiti:elementVariable="assignee">
+        <completionCondition>${nrOfCompletedInstances/nrOfInstances &gt;= 1}</completionCondition> 
+      </multiInstanceLoopCharacteristics>
+    </userTask>
+    <userTask id="node8" name="项目经理审核" activiti:user="" activiti:roleIds="1657" activiti:formUrl="WWW.GOOGLE.COM" activiti:taskType="bpm_approve">
+      <extensionElements>
+        <activiti:taskListener event="create" expression="${taskAssignHandler.createTaskListener(task)}"/>
+        <activiti:taskListener event="assignment" expression="${taskAssignHandler.assignTaskListener(task)}"/>
+        <activiti:taskListener event="complete" expression="${taskAssignHandler.completeTaskListener(task)}"/>
+        <activiti:executionListener expression="${taskAssignHandler.executionStart(execution)}" event="start"/>
+      </extensionElements>
+    </userTask>
+    <endEvent id="node10" name="结束"/>
+    <userTask id="node11" name="财务归档" activiti:user="jg_admin" activiti:roleIds="" activiti:formUrl="WWW.GOOGLE.COM" activiti:taskType="bpm_exa_approve">
+      <extensionElements>
+        <activiti:taskListener event="create" expression="${taskAssignHandler.createTaskListener(task)}"/>
+        <activiti:taskListener event="assignment" expression="${taskAssignHandler.assignTaskListener(task)}"/>
+        <activiti:taskListener event="complete" expression="${taskAssignHandler.completeTaskListener(task)}"/>
+        <activiti:executionListener expression="${taskAssignHandler.executionStart(execution)}" event="start"/>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow1" name="" sourceRef="node8" targetRef="node7"/>
+    <sequenceFlow id="flow2" name="" sourceRef="node5" targetRef="node8"/>
+    <sequenceFlow id="flow3" name="" sourceRef="node4" targetRef="node5"/>
+    <sequenceFlow id="flow6" name="" sourceRef="node7" targetRef="node11"/>
+    <sequenceFlow id="flow9" name="" sourceRef="node11" targetRef="node10"/>
+  </process>  
+  <bpmndi:BPMNDiagram id="BPMNDiagram_JKLC">
+    <bpmndi:BPMNPlane bpmnElement="JKLC" id="BPMNPlane_JKLC">
+      <bpmndi:BPMNShape bpmnElement="node4" id="BPMNShape_node4">
+        <omgdc:Bounds height="60" width="100" x="33" y="19"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="node5" id="BPMNShape_node5">
+        <omgdc:Bounds height="60" width="100" x="183" y="19"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="node7" id="BPMNShape_node7">
+        <omgdc:Bounds height="60" width="100" x="469" y="21"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="node8" id="BPMNShape_node8">
+        <omgdc:Bounds height="60" width="100" x="332" y="21"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="node10" id="BPMNShape_node10">
+        <omgdc:Bounds height="60" width="100" x="715" y="26"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="node11" id="BPMNShape_node11">
+        <omgdc:Bounds height="60" width="100" x="600" y="20"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="382" y="51"/>
+        <omgdi:waypoint x="519" y="51"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="233" y="49"/>
+        <omgdi:waypoint x="382" y="51"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="83" y="49"/>
+        <omgdi:waypoint x="233" y="49"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow6" id="BPMNEdge_flow6">
+        <omgdi:waypoint x="519" y="51"/>
+        <omgdi:waypoint x="650" y="50"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow9" id="BPMNEdge_flow9">
+        <omgdi:waypoint x="650" y="50"/>
+        <omgdi:waypoint x="765" y="56"/>
+      </bpmndi:BPMNEdge> 
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="role" extends="st" namespace="/role">
+		<!-- 跳转到roleManage -->
+		<action name="toRoleIndex" class="com.xx.system.role.action.RoleAction" method="toRoleManage">
+			<result name="success">/WEB-INF/pages/role/roleManage.jsp</result>
+		</action>
+		<action name="getRoleResource" class="com.xx.system.role.action.RoleAction" method="getRoleResource">
+		</action>
+		<action name="getRoleResourceForTree" class="com.xx.system.role.action.RoleAction" method="getRoleResourceForTree">
+			<!-- <result type="json">
+				<param name="root">treeNodeList</param>
+			</result> -->
+		</action>
+		<!-- 查询Role列表 -->
+		<action name="getRoleList" class="com.xx.system.role.action.RoleAction" method="getRoleList">
+		</action>
+		<!-- 添加角色验证角色名是否唯一 -->
+		<action name="validateAddRoleName" class="com.xx.system.role.action.RoleAction" method="validateAddRoleName">
+		</action>
+		<!-- 添加角色验证角色编码是否唯一 -->
+		<action name="validateAddRoleCode" class="com.xx.system.role.action.RoleAction" method="validateAddRoleCode">
+		</action>
+		<!-- 添加角色 -->
+		<action name="addRole" class="com.xx.system.role.action.RoleAction" method="addRole">
+		</action>
+		<!-- 同步角色 -->
+		<action name="synchronizeRoleInfo" class="com.xx.system.role.action.RoleAction" method="synchronizeRoleInfo">
+		</action>
+		<action name="roleIsExist" class="com.xx.system.role.action.RoleAction" method="roleIsExist">
+		</action>
+		<!-- 修改角色，验证角色名是否唯一-->
+		<action name="validateUpdateRoleName" class="com.xx.system.role.action.RoleAction" method="validateUpdateRoleName">
+		</action>
+		<!-- 修改角色，验证角色编码是否唯一-->
+		<action name="validateUpdateRoleCode" class="com.xx.system.role.action.RoleAction" method="validateUpdateRoleCode">
+		</action>
+		<!-- 修改角色-->
+		<action name="updateRole" class="com.xx.system.role.action.RoleAction" method="updateRole">
+		</action>
+		<!-- 删除角色 -->
+		<action name="deleteRole" class="com.xx.system.role.action.RoleAction" method="deleteRole">
+		</action>
+		<!-- 下载角色资源关系导入模版 -->
+		<action name="downloadRoleResourceExcelTemplate" class="com.xx.system.role.action.RoleAction">
+			<result name="success" type="stream">
+				<param name="ContentType">application/vnd.ms-excel</param>
+				<param name="inputName">excelTemplateStream</param>
+				<param name="contentDisposition">attachment;filename="${filename}"</param>
+			</result>
+		</action>
+		<!-- 上传EXCEL，导入角色与资源关系 -->
+		<action name="uploadExcelToBacthImportRoleResource" class="com.xx.system.role.action.RoleAction" method="uploadExcelToBacthImportRoleResource">
+		</action>
+		
+		<action name="toAddRole" class="com.xx.system.role.action.RoleAction" method="toAddRole">
+			<result>/WEB-INF/pages/user/roleAdd.jsp</result>
+		</action>
+		<action name="getRoleById" class="com.xx.system.role.action.RoleAction" method="getRoleById">
+		</action>
+		<action name="deleteRole" class="com.xx.system.role.action.RoleAction" method="deleteRole">
+			<result type="redirectAction">/getRoleList</result>
+		</action>
+		<action name="addRoleResource" class="com.xx.system.role.action.RoleAction" method="addRoleResource">
+			<result type="json">
+				<param name="root">result</param>
+			</result>
+		</action>
+		<action name="delRoleResource" class="com.xx.system.role.action.RoleAction" method="delRoleResource">
+			<result type="json">
+				<param name="root">result</param>
+			</result>
+		</action>
+		
+		<!-- 跳转到roleMemberManager页面 -->
+		<action name="toRoleMember" class="com.xx.system.role.action.RoleAction" method="toRoleMember">
+			<result name="success">/WEB-INF/pages/rolemember/roleMemberManager.jsp</result>
+		</action>
+		
+		<action name="addRoleMember" class="com.xx.system.role.action.RoleAction" method="addRoleMember">
+		</action>
+		
+		<action name="getRoleMember" class="com.xx.system.role.action.RoleAction" method="getRoleMember">
+		</action>
+		
+		<action name="checkRGIsExist" class="com.xx.system.role.action.RoleAction" method="checkRGIsExist">
+		</action>
+		
+		<action name="delRoleGroup" class="com.xx.system.role.action.RoleAction" method="delRoleGroup">
+		</action>
+		
+		<action name="getRoleMemberByUser" class="com.xx.system.role.action.RoleAction" method="getRoleMemberByUser">
+		</action>
+		
+		<action name="getUserListByRoleMemberId" class="com.xx.system.role.action.RoleAction" method="getUserListByRoleMemberId">
+		</action>
+		
+		<action name="addRoleUser" class="com.xx.system.role.action.RoleAction" method="addRoleUser">
+		</action>
+		
+		<action name="addMeberUserScope" class="com.xx.system.role.action.RoleAction" method="addMeberUserScope">
+		</action>
+		
+		<action name="checkRUIsExist" class="com.xx.system.role.action.RoleAction" method="checkRUIsExist">
+		</action>
+		
+		<action name="delRoleUser" class="com.xx.system.role.action.RoleAction" method="delRoleUser">
+		</action>
+		
+		<action name="delScopeUser" class="com.xx.system.role.action.RoleAction" method="delScopeUser">
+		</action>
+		
+		<action name="addRoleOrg" class="com.xx.system.role.action.RoleAction" method="addRoleOrg">
+		</action>
+		
+		<action name="getRoleOrgForTree" class="com.xx.system.role.action.RoleAction" method="getRoleOrgForTree">
+		</action>
+		
+		<action name="delRoleOrg" class="com.xx.system.role.action.RoleAction" method="delRoleOrg">
+		</action>
+		
+	</package>
+</struts>

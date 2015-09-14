@@ -1,0 +1,69 @@
+﻿一、maven帮助
+1）安装maven，apache官方网站有下载，请安装最新正式发布版。安装完将maven的bin目录加入到环境变量path中。
+2）安装maven插件
+　　先安装zest - http://download.eclipse.org/tools/gef/updates/interim/ 安装最新版3.7.0。安装完毕后安装m2eclipse插件，地址：http://m2eclipse.sonatype.org/sites/m2e。
+　　安装完毕修改eclipse.ini，增加-vm参数，指向jdkbin中的javaw.exe，-vm和路径不能在同一行。
+3）将项目根目录下的settings.xml拷贝到.m2目录下
+4）maven常用命令。
+　　mvn archetype:create ：创建 Maven 项目 
+　　mvn compile ：编译源代码 
+　　mvn test-compile ：编译测试代码 
+　　mvn test ： 运行应用程序中的单元测试 
+　　mvn site [:stage -DstagingDirectory=D:\tmp]： 生成项目相关信息的网站 [并发布到tmp临时目录，父子模块可相互连接查看]
+　　mvn clean ：清除目标目录中的生成结果 
+　　mvn package ： 依据项目生成 jar 文件 
+　　mvn install ：在本地 Repository 中安装 jar  
+　　mvn deploy：将jar包发布到远程仓库 tomcat:redeploy  -Xms256m -Xmx512m
+　　mvn eclipse:eclipse ：生成 Eclipse 项目文件
+	  mvn -N versions:update-child-modules :更新所有子模块的版本号。
+
+
+　　如果希望跳过test可以使用package -X -Dmaven.test.skip=true。
+      上传jar至maven仓库
+   mvn deploy
+      其中groupid，artifactId，version，file需要根据上传的jar文件修改
+   -file -DgroupId=com.dqgb  -DartifactId=alarmHistory -Dversion=1.0 -Dpackaging=jar -Dfile=D:\Workspace\sshFrame\alarmHistory\target\alarmHistory-1.0.jar  -Durl=http://10.114.72.60:8083/nexus/content/repositories/thirdparty  -DrepositoryId=thirdparty
+5）部署方式。
+　　服务器端tomcat 中配置文件tomcat_user 添加用户和角色如下
+	<role rolename="admin-gui"/>
+	<role rolename="admin-script"/>
+	<role rolename="manager-gui"/>
+	<role rolename="manager-script"/>
+	<role rolename="manager-jmx"/>
+	<role rolename="manager-status"/>
+	<user username="admin" password="admin" roles="manager-gui,manager-script,manager-jmx,manager-status,admin-script,admin-gui"/>
+	
+	mvn命令使用tomcat:redeploy ，如果报错添加jvm参数 -Xms256m -Xmx512m
+	本地setting.xml文件中添加server 信息如下：
+	<server>
+		<id>tomcat</id>
+		<username>admin</username>
+		<password>admin</password>
+	</server>
+	此信息要与pom文件中configuration标签一致
+
+6）nexus仓库用法
+    nexus仓库地址为：http://10.114.72.60:8083/nexus。需要jar包时可到nexus仓库中搜索，得到dependenc配置，复制到自己项目的pom中。如果nexus中没有需要的jar包，则需要自行从网上找到jar和对应的pom，上传至nexus仓库。
+二、泛型DAO的使用
+　　这里提供一个例子，大家参照这个例子配置：
+    <bean id="userDao" parent="abstractDao">
+        <property name="proxyInterfaces">
+            <value>com.dqgb.dao.sample.IUserDAO</value>
+        </property>
+        <property name="target">
+            <bean parent="baseDAO">
+                <constructor-arg>
+                    <value>com.dqgb.entity.sample.UserInfo</value>
+                </constructor-arg>
+            </bean>
+        </property>
+    </bean>
+    IUserDAO代码如下：
+    package com.dqgb.dao.sample;
+
+    import com.dqgb.dao.common.IGenericDAO;
+    import com.dqgb.entity.sample.UserInfo;
+    
+    public interface IUserDAO extends IGenericDAO<UserInfo, Integer> {
+    
+    }

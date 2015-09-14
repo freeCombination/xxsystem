@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	 <package name="bpm" extends="st" namespace="/bpm">
+	  
+	   <action name="toProcess*" class="com.dqgb.sshframe.bpm.action.BPMAction" method="toProcess">
+	       <result>/WEB-INF/pages/bpm/process{1}.jsp</result>
+	  </action>
+	  
+	   <action name="toPerson*" class="com.dqgb.sshframe.bpm.action.BPMAction" method="toPerson">
+	       <result>/WEB-INF/pages/bpm/person{1}.jsp</result>
+	  </action>
+	 
+	  <action name="*" class="com.dqgb.sshframe.bpm.action.BPMAction" method="formRedirect">
+	       <result>/WEB-INF/pages/bpmForm/${jspLocation}.jsp</result>
+	  </action>
+	  
+	  <!-- 获取相关业务数据 -->
+		<action name="getBusinessData" class="com.dqgb.sshframe.bpm.action.BPMAction" method="getBusinessData"></action>
+		
+		<!-- 获取流程人员列表 -->
+		<action name="getUserListForFlow" class="com.dqgb.sshframe.bpm.action.BPMAction" method="getUserListForFlow"></action>
+	
+	
+	   <!-- 流程模板 -->
+		<!-- 增加流程模版 -->
+		<action name="addActivitiDefineTemplate" class="com.dqgb.sshframe.bpm.action.ActivitiDefineTemplateAction" method="addActivitiDefineTemplate"></action>
+		
+		<!-- 分页查询流程模版 -->
+	   <action name="getActivitiDefineTemplateByPage" class="com.dqgb.sshframe.bpm.action.ActivitiDefineTemplateAction" method="getActivitiDefineTemplateByPage"></action>
+		<!-- 分页查询流程模版 -->
+	   <action name="checkActivitiDefineTemplate" class="com.dqgb.sshframe.bpm.action.ActivitiDefineTemplateAction" method="checkActivitiDefineTemplate"></action>
+	   
+	   <!-- 查询修改流程模版的数据-->
+	   <action name="modifyActivitiDefineTemplatePre" class="com.dqgb.sshframe.bpm.action.ActivitiDefineTemplateAction" method="modifyActivitiDefineTemplatePre"></action>
+	   
+	    <!-- 修改流程模版 -->
+	   <action name="updateActivitiDefineTemplate" class="com.dqgb.sshframe.bpm.action.ActivitiDefineTemplateAction" method="updateActivitiDefineTemplate"></action>
+	    <!-- 删除流程模版 -->
+	   <action name="deleteActivitiDefineTemplate" class="com.dqgb.sshframe.bpm.action.ActivitiDefineTemplateAction" method="deleteActivitiDefineTemplate"></action>
+	   	
+		<!-- 获取流程模版数据-->
+	   <action name="getActivitiDefineTemplateInfo" class="com.dqgb.sshframe.bpm.action.ActivitiDefineTemplateAction" method="getActivitiDefineTemplateInfo">
+	   <result>/WEB-INF/pages/bpm/processDefinitionDetail.jsp</result>
+	   </action>
+	   <!-- 流程模板结束 -->
+	   
+	   <!-- 流程模板种类-->
+	   <!-- 获取流程模板种类树形结构 -->
+	   <action name="getCategoryTree" class="com.dqgb.sshframe.bpm.action.ActivitiCategoryAction" method="getCategoryTree">
+	   </action>
+	   <action name="getCategoryTreeByCheck" class="com.dqgb.sshframe.bpm.action.ActivitiCategoryAction" method="getCategoryTreeByCheck">
+	   </action>
+	     <!-- 增加种类-->
+	   <action name="addCategory" class="com.dqgb.sshframe.bpm.action.ActivitiCategoryAction" method="addCategory">
+	   </action>
+	    <!-- 删除种类-->
+	   <action name="deleteCategory" class="com.dqgb.sshframe.bpm.action.ActivitiCategoryAction" method="deleteCategory">
+	   </action>
+	    <!-- 修改种类-->
+	   <action name="updateCategory" class="com.dqgb.sshframe.bpm.action.ActivitiCategoryAction" method="updateCategory">
+	   </action>
+	   <!-- 获取种类数据-->
+	   <action name="getCategoryById" class="com.dqgb.sshframe.bpm.action.ActivitiCategoryAction" method="getCategoryById">
+	   </action>
+	   	<!-- 获取流程模版种类 -->
+		<action name="getBPMType" class="com.dqgb.sshframe.bpm.action.ActivitiCategoryAction" method="getBPMType"></action>
+	    <!-- 流程模板种类结束-->
+	    
+	    
+	    
+	     <!-- 获取历史流程实例-->
+	   <action name="getAllProcessInstanceByPage" class="com.dqgb.sshframe.bpm.action.BPMAction" method="getAllProcessInstanceByPage">
+	   </action>
+	   
+	    <!-- 获取历史流程实例-->
+	   <action name="getProcessInstanceByPage" class="com.dqgb.sshframe.bpm.action.BPMAction" method="getProcessInstanceByPage">
+	   </action>
+	   
+	   <!-- 任务 -->
+	   <!-- 获取代办任务-->
+	   <action name="getToDoTaskListByPage" class="com.dqgb.sshframe.bpm.action.ActivitiTaskAction" method="getToDoTaskListByPage">
+	   </action>
+	   	   <!-- 获取已办任务-->
+	   <action name="getDoneTaskListByPage" class="com.dqgb.sshframe.bpm.action.ActivitiTaskAction" method="getDoneTaskListByPage">
+	   </action>
+	     <!-- 更新任务操作-->
+	   <action name="updateTask" class="com.dqgb.sshframe.bpm.action.ActivitiTaskAction" method="updateTask">
+	   </action>
+	   
+	    <!-- 撤销任务-->
+	   <action name="rejectTask" class="com.dqgb.sshframe.bpm.action.ActivitiTaskAction" method="rejectTask">
+	   </action>
+	   
+	     <!-- 驳回任务-->
+	   <action name="rejectTaskForApply" class="com.dqgb.sshframe.bpm.action.ActivitiTaskAction" method="rejectTaskForApply">
+	   </action>
+	   
+	    <!-- 驳回任务到第一个节点-->
+	   <action name="rejectTaskToFirstNode" class="com.dqgb.sshframe.bpm.action.ActivitiTaskAction" method="rejectTaskToFirstNode">
+	   </action>
+	   
+	    <!-- 获取流程节点，根据是否有checked-->
+	   <action name="getFlowNodeByCheck" class="com.dqgb.sshframe.bpm.action.ActivitiTaskAction" method="getFlowNodeByCheck">
+	   </action>
+	   
+	    <!-- 移交任务-->
+	   <action name="moveTask" class="com.dqgb.sshframe.bpm.action.ActivitiTaskAction" method="moveTask">
+	   </action>
+	   
+	       <!-- 获取历史任务-->
+	   <action name="getHistoryTask" class="com.dqgb.sshframe.bpm.action.ActivitiTaskAction" method="getHistoryTask">
+	   </action>
+	   
+	   
+	   
+	   
+	   
+	   
+	      <!-- 获取xml任务-->
+	   <action name="getXmlUserTaskForm" class="com.dqgb.sshframe.bpm.action.BPMAction" method="getXmlUserTaskForm">
+	   </action>
+	   
+	      <!-- 更新xml任务表单-->
+	   <action name="updateXmlUserTaskForm" class="com.dqgb.sshframe.bpm.action.BPMAction" method="updateXmlUserTaskForm">
+	   </action>
+	   
+	    <!-- 提交任务-->
+	   <action name="compeleteTask" class="com.dqgb.sshframe.bpm.action.BPMAction" method="compeleteTask">
+	   </action>
+	   
+	   
+	       <!-- 更新任务操作-->
+	   <action name="getStartNextNodeType" class="com.dqgb.sshframe.bpm.action.BPMAction" method="getStartNextNodeType">
+	   </action>
+	   
+	   
+	       <!-- 终止任务-->
+	   <action name="endProcessInstance" class="com.dqgb.sshframe.bpm.action.BPMAction" method="endProcessInstance">
+	   </action>
+	    <!-- 获取已经执行的xml报文-->
+	   <action name="getProcessResource" class="com.dqgb.sshframe.bpm.action.BPMAction" method="getProcessResource">
+	   </action>
+	   
+	     <!-- 获取流程展示数据-->
+	   <action name="getProcessListenerShowData" class="com.dqgb.sshframe.bpm.action.BPMAction" method="getProcessListenerShowData">
+	   </action>
+	   
+	     <!-- 获取节点人员数据-->
+	   <action name="getProcessUserData" class="com.dqgb.sshframe.bpm.action.BPMAction" method="getProcessUserData">
+	   </action>
+	      
+	     <!-- 获取节点人员数据-->
+	   <action name="getUserByLoginName" class="com.dqgb.sshframe.bpm.action.BPMAction" method="getUserByLoginName">
+	   </action>
+	   
+	    <!-- 删除流程实例-->
+	   <action name="deleteProcessInstance" class="com.dqgb.sshframe.bpm.action.BPMAction" method="deleteProcessInstance">
+	   </action>
+	     <!-- 删除流程实例-->
+	   <action name="updateProcessInstance" class="com.dqgb.sshframe.bpm.action.BPMAction" method="updateProcessInstance">
+	   </action>
+	    <!-- 托管设置 -->
+	    <!-- 添加托管-->
+	   <action name="addDelegate" class="com.dqgb.sshframe.bpm.action.ActivitiDelegateAction" method="addDelegate">
+	   </action>
+	    <!-- 更新托管-->
+	   <action name="updateDelegate" class="com.dqgb.sshframe.bpm.action.ActivitiDelegateAction" method="updateDelegate">
+	   </action>
+	      <!-- 删除托管-->
+	   <action name="deleteDelegate" class="com.dqgb.sshframe.bpm.action.ActivitiDelegateAction" method="deleteDelegate">
+	   </action>
+	     <!-- 分页查询托管-->
+	   <action name="getDelegateByPage" class="com.dqgb.sshframe.bpm.action.ActivitiDelegateAction" method="getDelegateByPage">
+	   </action>
+	   
+	   <!-- 流程表单操作 -->
+	   <!-- 增加表单地址-->
+	   <action name="addActivitiForm" class="com.dqgb.sshframe.bpm.action.ActivitiFormAction" method="addActivitiForm">
+	   </action>
+	   <!-- 更新表单 -->
+	   <action name="updateActivitiForm" class="com.dqgb.sshframe.bpm.action.ActivitiFormAction" method="updateActivitiForm">
+	   </action>
+	     <!-- 查询表单地址-->
+	   <action name="getActivitiFormByPage" class="com.dqgb.sshframe.bpm.action.ActivitiFormAction" method="getActivitiFormByPage">
+	   </action>
+	   
+	   <!-- 删除表单地址-->
+	   <action name="deleteActivitiForm" class="com.dqgb.sshframe.bpm.action.ActivitiFormAction" method="deleteActivitiForm">
+	   </action>
+	   
+	    <!-- 查看表单地址-->
+	   <action name="toViewActivitiForm" class="com.dqgb.sshframe.bpm.action.ActivitiFormAction" method="toViewActivitiForm">
+	   <result>/WEB-INF/pages/bpm/activitiFormDetail.jsp</result>
+	   </action>
+	   <!-- 表单操作结束 -->
+	   
+	    <!-- 启动流程 -->
+	   <action name="startProcess" class="com.dqgb.sshframe.bpm.action.BPMAction" method="startProcess">
+	   </action>
+	   
+	     <!-- 启动流程 -->
+	   <action name="userLogin" class="com.dqgb.sshframe.bpm.action.BPMAction" method="userLogin">
+	        <result type="redirectAction">
+
+            <param name="actionName">toIndex</param>
+
+            <param name="namespace">/</param>
+
+        </result>
+
+    </action>
+    
+       <!-- 获取用户 -->
+	   <action name="getUserListForBpmByPage" class="com.dqgb.sshframe.bpm.action.BPMAction" method="getUserListForBpmByPage">
+	   
+    </action>
+	    <!-- 获取单位 -->
+	   <action name="getOrgTreeForBpm" class="com.dqgb.sshframe.bpm.action.BPMAction" method="getOrgTreeForBpm">
+
+    </action>
+    
+     <!-- 获取角色 -->
+	   <action name="getRoleForBpmByPage" class="com.dqgb.sshframe.bpm.action.BPMAction" method="getRoleForBpmByPage">
+       <result type="json">
+       <param name="root">listVo</param>
+       <param name="excludeProperties">
+          list.*\.userRoles,
+          list.*\.roleResources
+        </param>
+      </result>
+    </action>
+    
+     <!-- 获取角色 -->
+	   <action name="getRoleForBpmById" class="com.dqgb.sshframe.bpm.action.BPMAction" method="getRoleForBpmById">
+       <result type="json">
+       <param name="root">outPut</param>
+       <param name="excludeProperties">
+          data.*\.userRoles,
+          data.*\.roleResources
+        </param>
+      </result>
+    </action>
+	<!-- 获取能够驳回的节点 -->
+   <action name="getRejectTask" class="com.dqgb.sshframe.bpm.action.ActivitiTaskAction" method="getRejectTask">
+    </action>
+	   
+	   <action name="sendEmailToCurrentCheckUser" class="com.dqgb.sshframe.bpm.action.ActivitiTaskAction" method="sendEmailToCurrentCheckUser">
+    </action>
+	   
+	  <!-- 发起指标模板申报流程 
+		<action name="testStartBpm" class="com.dqgb.sshframe.bpm.action.TestBpmAction" method="testStartBpm">
+			<result name="success">/WEB-INF/pages/bpm/activitiFormDetail.jsp</result>
+		</action>
+		
+		<action name="completeTaskOne" class="com.dqgb.sshframe.bpm.action.TestBpmAction" method="completeTaskOne">
+			<result name="success">/WEB-INF/pages/bpm/activitiFormDetail.jsp</result>
+		</action> -->
+	   
+	   
+    </package>
+</struts>

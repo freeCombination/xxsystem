@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+
+	<package name="attach" extends="struts-default" namespace="/attach">
+		
+		<action name="addAttach" class="com.xx.system.attach.action.AttachAction" method="addAttach">
+			<!-- ${date(日期格式)  此表达会以当前时间来替换-->
+			<!-- <param name="savePath">C:\\uploadFile\\$date{yyyy}\\$date{MM}</param> -->
+			<param name="maximumSize">1073741824</param>
+			<param name="allowedExtensions">gif,jpg,jpeg,png,bmp,rar,zip,txt,doc,docx,xls,xlsx,ppt,pptx,pdf,avi,rmvb,swf</param>
+		</action>
+		
+		<action name="deleteAttach" class="com.xx.system.attach.action.AttachAction" method="deleteAttach"></action>
+		<action name="deleteAttachs" class="com.xx.system.attach.action.AttachAction" method="deleteAttachs"></action>
+		
+		<!-- 根据附件组下的所有附件 -->
+		<action name="getAttachsByGroupId" class="com.xx.system.attach.action.AttachAction" method="getAttachsByGroupId">
+		</action>
+		
+		<action name="downloadAttach" class="com.xx.system.attach.action.AttachAction" method="downloadAttach">
+			 <result name="success" type="stream">  
+	            <param name="contentType">application/octet-stream</param>
+	            <param name="inputName">fileStream</param>  
+	            <param name="contentDisposition">attachment;filename="${fileName}"</param>  
+	            <param name="bufferSize">1024</param>  
+        	</result>
+		</action>
+		
+		<action name="downLoadZip" class="com.xx.system.attach.action.DownZipAction" method="downLoadZip">
+		</action>
+		
+	</package>
+	
+</struts>

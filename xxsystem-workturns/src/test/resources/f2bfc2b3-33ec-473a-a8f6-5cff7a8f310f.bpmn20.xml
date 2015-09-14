@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <process id="testaaa" name="会签评审流程" activiti:bpmType="186">
+    <endEvent id="node10" name="结束"/>
+    <startEvent id="node11" name="开始"/>
+    <userTask id="node12" name="提交评审申请" activiti:user="" activiti:roleIds="" activiti:formUrl="common_apply.do" activiti:taskType="bpm_apply">
+      <extensionElements>
+        <activiti:taskListener event="create" expression="${taskAssignHandler.createTaskListener(task)}"/>
+        <activiti:taskListener event="assignment" expression="${taskAssignHandler.assignTaskListener(task)}"/>
+        <activiti:taskListener event="complete" expression="${taskAssignHandler.completeTaskListener(task)}"/>
+        <activiti:executionListener expression="${taskAssignHandler.executionStart(execution)}" event="start"/>
+      </extensionElements>
+    </userTask>
+    <userTask id="node13" name="建议评审小组" activiti:user="" activiti:roleIds="" activiti:formUrl="common_approve.do" activiti:taskType="bpm_approve" activiti:assignee="${assigneeUser}">
+      <extensionElements>
+        <activiti:taskListener event="create" expression="${taskAssignHandler.createTaskListener(task)}"/>
+        <activiti:taskListener event="assignment" expression="${taskAssignHandler.assignTaskListener(task)}"/>
+        <activiti:taskListener event="complete" expression="${taskAssignHandler.completeTaskListener(task)}"/>
+        <activiti:executionListener expression="${taskAssignHandler.executionStart(execution)}" event="start"/>
+      </extensionElements>
+    </userTask>
+    <userTask id="node14" name="项目部经理审批" activiti:user="" activiti:roleIds="" activiti:formUrl="common_approve.do" activiti:taskType="bpm_approve" activiti:assignee="${assigneeUser}">
+      <extensionElements>
+        <activiti:taskListener event="create" expression="${taskAssignHandler.createTaskListener(task)}"/>
+        <activiti:taskListener event="assignment" expression="${taskAssignHandler.assignTaskListener(task)}"/>
+        <activiti:taskListener event="complete" expression="${taskAssignHandler.completeTaskListener(task)}"/>
+        <activiti:executionListener expression="${taskAssignHandler.executionStart(execution)}" event="start"/>
+      </extensionElements>
+    </userTask>
+    <userTask id="node15" name="填写评审意见" activiti:user="" activiti:roleIds="" activiti:formUrl="common_approve.do" activiti:taskType="bpm_countersign" activiti:assignee="${assignee}">
+      <extensionElements>
+        <activiti:taskListener event="create" expression="${taskAssignHandler.createTaskListener(task)}"/>
+        <activiti:taskListener event="assignment" expression="${taskAssignHandler.assignTaskListener(task)}"/>
+        <activiti:taskListener event="complete" expression="${taskAssignHandler.completeTaskListener(task)}"/>
+        <activiti:executionListener expression="${taskAssignHandler.executionStart(execution)}" event="start"/>
+      </extensionElements>
+      <multiInstanceLoopCharacteristics isSequential="false" activiti:collection="assigneeList" activiti:elementVariable="assignee">
+        <completionCondition>${nrOfCompletedInstances/nrOfInstances &gt;= 1}</completionCondition> 
+      </multiInstanceLoopCharacteristics>
+    </userTask>
+    <userTask id="node16" name="修改缺陷" activiti:user="" activiti:roleIds="" activiti:formUrl="common_approve.do" activiti:taskType="bpm_approve" activiti:assignee="${assigneeUser}">
+      <extensionElements>
+        <activiti:taskListener event="create" expression="${taskAssignHandler.createTaskListener(task)}"/>
+        <activiti:taskListener event="assignment" expression="${taskAssignHandler.assignTaskListener(task)}"/>
+        <activiti:taskListener event="complete" expression="${taskAssignHandler.completeTaskListener(task)}"/>
+        <activiti:executionListener expression="${taskAssignHandler.executionStart(execution)}" event="start"/>
+      </extensionElements>
+    </userTask>
+    <userTask id="node17" name="验证缺陷" activiti:user="" activiti:roleIds="" activiti:formUrl="common_approve.do" activiti:taskType="bpm_approve" activiti:assignee="${assigneeUser}">
+      <extensionElements>
+        <activiti:taskListener event="create" expression="${taskAssignHandler.createTaskListener(task)}"/>
+        <activiti:taskListener event="assignment" expression="${taskAssignHandler.assignTaskListener(task)}"/>
+        <activiti:taskListener event="complete" expression="${taskAssignHandler.completeTaskListener(task)}"/>
+        <activiti:executionListener expression="${taskAssignHandler.executionStart(execution)}" event="start"/>
+      </extensionElements>
+    </userTask>
+    <userTask id="node18" name="填写评审结论" activiti:user="" activiti:roleIds="" activiti:formUrl="common_approve.do" activiti:taskType="bpm_exa_approve" activiti:assignee="${assigneeUser}">
+      <extensionElements>
+        <activiti:taskListener event="create" expression="${taskAssignHandler.createTaskListener(task)}"/>
+        <activiti:taskListener event="assignment" expression="${taskAssignHandler.assignTaskListener(task)}"/>
+        <activiti:taskListener event="complete" expression="${taskAssignHandler.completeTaskListener(task)}"/>
+        <activiti:executionListener expression="${taskAssignHandler.executionStart(execution)}" event="start"/>
+      </extensionElements>
+    </userTask>
+    <userTask id="node19" name="填写发布评审通知" activiti:user="" activiti:roleIds="" activiti:formUrl="common_approve.do" activiti:taskType="bpm_approve" activiti:assignee="${assigneeUser}">
+      <extensionElements>
+        <activiti:taskListener event="create" expression="${taskAssignHandler.createTaskListener(task)}"/>
+        <activiti:taskListener event="assignment" expression="${taskAssignHandler.assignTaskListener(task)}"/>
+        <activiti:taskListener event="complete" expression="${taskAssignHandler.completeTaskListener(task)}"/>
+        <activiti:executionListener expression="${taskAssignHandler.executionStart(execution)}" event="start"/>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow1" name="" sourceRef="node18" targetRef="node10"/>
+    <sequenceFlow id="flow2" name="" sourceRef="node17" targetRef="node18"/>
+    <sequenceFlow id="flow3" name="" sourceRef="node16" targetRef="node17"/>
+    <sequenceFlow id="flow4" name="" sourceRef="node15" targetRef="node16"/>
+    <sequenceFlow id="flow5" name="" sourceRef="node19" targetRef="node15"/>
+    <sequenceFlow id="flow6" name="" sourceRef="node14" targetRef="node19"/>
+    <sequenceFlow id="flow7" name="" sourceRef="node13" targetRef="node14"/>
+    <sequenceFlow id="flow8" name="" sourceRef="node12" targetRef="node13"/>
+    <sequenceFlow id="flow9" name="" sourceRef="node11" targetRef="node12"/>
+  </process>  
+  <bpmndi:BPMNDiagram id="BPMNDiagram_testaaa">
+    <bpmndi:BPMNPlane bpmnElement="testaaa" id="BPMNPlane_testaaa">
+      <bpmndi:BPMNShape bpmnElement="node10" id="BPMNShape_node10">
+        <omgdc:Bounds height="60" width="100" x="795" y="252"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="node11" id="BPMNShape_node11">
+        <omgdc:Bounds height="60" width="100" x="173" y="2"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="node12" id="BPMNShape_node12">
+        <omgdc:Bounds height="60" width="100" x="337" y="3"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="node13" id="BPMNShape_node13">
+        <omgdc:Bounds height="60" width="100" x="488" y="3"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="node14" id="BPMNShape_node14">
+        <omgdc:Bounds height="60" width="100" x="642" y="4"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="node15" id="BPMNShape_node15">
+        <omgdc:Bounds height="60" width="100" x="352" y="168"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="node16" id="BPMNShape_node16">
+        <omgdc:Bounds height="60" width="100" x="349" y="254"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="node17" id="BPMNShape_node17">
+        <omgdc:Bounds height="60" width="100" x="505" y="254"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="node18" id="BPMNShape_node18">
+        <omgdc:Bounds height="60" width="100" x="648" y="254"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="node19" id="BPMNShape_node19">
+        <omgdc:Bounds height="60" width="100" x="350" y="75"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="698" y="284"/>
+        <omgdi:waypoint x="845" y="282"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="555" y="284"/>
+        <omgdi:waypoint x="698" y="284"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="399" y="284"/>
+        <omgdi:waypoint x="555" y="284"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
+        <omgdi:waypoint x="402" y="198"/>
+        <omgdi:waypoint x="399" y="284"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
+        <omgdi:waypoint x="400" y="105"/>
+        <omgdi:waypoint x="402" y="198"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow6" id="BPMNEdge_flow6">
+        <omgdi:waypoint x="692" y="34"/>
+        <omgdi:waypoint x="400" y="105"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow7" id="BPMNEdge_flow7">
+        <omgdi:waypoint x="538" y="33"/>
+        <omgdi:waypoint x="692" y="34"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow8" id="BPMNEdge_flow8">
+        <omgdi:waypoint x="387" y="33"/>
+        <omgdi:waypoint x="538" y="33"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow9" id="BPMNEdge_flow9">
+        <omgdi:waypoint x="223" y="32"/>
+        <omgdi:waypoint x="387" y="33"/>
+      </bpmndi:BPMNEdge> 
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

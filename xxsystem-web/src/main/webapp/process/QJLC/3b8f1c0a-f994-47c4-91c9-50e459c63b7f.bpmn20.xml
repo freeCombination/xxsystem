@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <process id="qinjia" name="请假流程" activiti:bpmType="1748">
+    <startEvent id="node8" name="开始"/>
+    <endEvent id="node10" name="结束"/>
+    <userTask id="node11" name="部门经理审批" activiti:user="" activiti:roleIds="1506" activiti:formUrl="offtime.com" activiti:taskType="bpm_exa_approve">
+      <extensionElements>
+        <activiti:taskListener event="create" expression="${taskAssignHandler.createTaskListener(task)}"/>
+        <activiti:taskListener event="assignment" expression="${taskAssignHandler.assignTaskListener(task)}"/>
+        <activiti:taskListener event="complete" expression="${taskAssignHandler.completeTaskListener(task)}"/>
+        <activiti:executionListener expression="${taskAssignHandler.executionStart(execution)}" event="start"/>
+      </extensionElements>
+    </userTask>
+    <userTask id="node12" name="部门经理审核" activiti:user="" activiti:roleIds="1506" activiti:formUrl="offtime.com" activiti:taskType="bpm_approve">
+      <extensionElements>
+        <activiti:taskListener event="create" expression="${taskAssignHandler.createTaskListener(task)}"/>
+        <activiti:taskListener event="assignment" expression="${taskAssignHandler.assignTaskListener(task)}"/>
+        <activiti:taskListener event="complete" expression="${taskAssignHandler.completeTaskListener(task)}"/>
+        <activiti:executionListener expression="${taskAssignHandler.executionStart(execution)}" event="start"/>
+      </extensionElements>
+    </userTask>
+    <userTask id="node13" name="总经理审批" activiti:user="" activiti:roleIds="1565" activiti:formUrl="offtime.com" activiti:taskType="bpm_exa_approve">
+      <extensionElements>
+        <activiti:taskListener event="create" expression="${taskAssignHandler.createTaskListener(task)}"/>
+        <activiti:taskListener event="assignment" expression="${taskAssignHandler.assignTaskListener(task)}"/>
+        <activiti:taskListener event="complete" expression="${taskAssignHandler.completeTaskListener(task)}"/>
+        <activiti:executionListener expression="${taskAssignHandler.executionStart(execution)}" event="start"/>
+      </extensionElements>
+    </userTask>
+    <userTask id="node14" name="申请" activiti:user="" activiti:roleIds="" activiti:formUrl="offtime.com" activiti:taskType="bpm_apply">
+      <extensionElements>
+        <activiti:taskListener event="create" expression="${taskAssignHandler.createTaskListener(task)}"/>
+        <activiti:taskListener event="assignment" expression="${taskAssignHandler.assignTaskListener(task)}"/>
+        <activiti:taskListener event="complete" expression="${taskAssignHandler.completeTaskListener(task)}"/>
+        <activiti:executionListener expression="${taskAssignHandler.executionStart(execution)}" event="start"/>
+      </extensionElements>
+    </userTask>
+    <userTask id="node15" name="考勤员审查" activiti:user="qiubo" activiti:roleIds="" activiti:formUrl="offtime.com" activiti:taskType="bpm_investigate">
+      <extensionElements>
+        <activiti:taskListener event="create" expression="${taskAssignHandler.createTaskListener(task)}"/>
+        <activiti:taskListener event="assignment" expression="${taskAssignHandler.assignTaskListener(task)}"/>
+        <activiti:taskListener event="complete" expression="${taskAssignHandler.completeTaskListener(task)}"/>
+        <activiti:executionListener expression="${taskAssignHandler.executionStart(execution)}" event="start"/>
+      </extensionElements>
+    </userTask>
+    <exclusiveGateway id="node16" name="判断"/>
+    <sequenceFlow id="flow1" name="" sourceRef="node11" targetRef="node10"/>
+    <sequenceFlow id="flow2" name="" sourceRef="node12" targetRef="node13"/>
+    <sequenceFlow id="flow3" name="" sourceRef="node13" targetRef="node10"/>
+    <sequenceFlow id="flow4" name="" sourceRef="node16" targetRef="node11">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${day<3}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow5" name="" sourceRef="node16" targetRef="node12">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${day>=3}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow6" name="" sourceRef="node15" targetRef="node16"/>
+    <sequenceFlow id="flow7" name="" sourceRef="node8" targetRef="node14"/>
+    <sequenceFlow id="flow9" name="" sourceRef="node14" targetRef="node15"/>
+  </process>  
+  <bpmndi:BPMNDiagram id="BPMNDiagram_qinjia">
+    <bpmndi:BPMNPlane bpmnElement="qinjia" id="BPMNPlane_qinjia">
+      <bpmndi:BPMNShape bpmnElement="node8" id="BPMNShape_node8">
+        <omgdc:Bounds height="60" width="100" x="17" y="46"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="node10" id="BPMNShape_node10">
+        <omgdc:Bounds height="60" width="100" x="824" y="20"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="node11" id="BPMNShape_node11">
+        <omgdc:Bounds height="60" width="100" x="590" y="20"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="node12" id="BPMNShape_node12">
+        <omgdc:Bounds height="60" width="100" x="597" y="109"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="node13" id="BPMNShape_node13">
+        <omgdc:Bounds height="60" width="100" x="739" y="111"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="node14" id="BPMNShape_node14">
+        <omgdc:Bounds height="60" width="100" x="154" y="50"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="node15" id="BPMNShape_node15">
+        <omgdc:Bounds height="60" width="100" x="300" y="47"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="node16" id="BPMNShape_node16">
+        <omgdc:Bounds height="60" width="100" x="441" y="47"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="640" y="50"/>
+        <omgdi:waypoint x="874" y="50"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="647" y="139"/>
+        <omgdi:waypoint x="789" y="141"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="789" y="141"/>
+        <omgdi:waypoint x="874" y="50"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
+        <omgdi:waypoint x="491" y="77"/>
+        <omgdi:waypoint x="640" y="50"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
+        <omgdi:waypoint x="491" y="77"/>
+        <omgdi:waypoint x="647" y="139"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow6" id="BPMNEdge_flow6">
+        <omgdi:waypoint x="350" y="77"/>
+        <omgdi:waypoint x="491" y="77"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow7" id="BPMNEdge_flow7">
+        <omgdi:waypoint x="67" y="76"/>
+        <omgdi:waypoint x="204" y="80"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow9" id="BPMNEdge_flow9">
+        <omgdi:waypoint x="204" y="80"/>
+        <omgdi:waypoint x="350" y="77"/>
+      </bpmndi:BPMNEdge> 
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

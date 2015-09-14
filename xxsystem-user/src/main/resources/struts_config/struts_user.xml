@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="user" extends="st" namespace="/user">
+		<action name="toMain" class="com.xx.system.user.action.LoginAction" method="getMenu">
+       		<result name="success">/WEB-INF/pages/main/index1.jsp</result>
+        </action>
+	
+		<action name="login" class="com.xx.system.user.action.LoginAction" method="login">
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+		</action>
+		<action name="logout" class="com.xx.system.user.action.LoginAction" method="logout">
+		</action>
+		<!-- 跳转到用户管理页面 -->	
+		<action name="toUserIndex" class="com.xx.system.user.action.UserAction" method="getUserManage">
+			<result>/WEB-INF/pages/user/userManage.jsp</result>
+		</action>
+		<action name="getSelectionsByType" class="com.xx.system.user.action.UserAction" method="getSelectionsByType">
+		</action>
+		<!-- 查询用户列表 -->
+		<action name="getUserList" class="com.xx.system.user.action.UserAction" method="getUserList">
+		</action>
+		<!-- 查询用户列表 -->
+		<action name="getUserListByRole" class="com.xx.system.user.action.UserAction" method="getUserListByRole">
+		</action>
+		<!-- 修改密码首页跳转-->		
+		<action name="modifyPasswordIndex" class="com.xx.system.user.action.UserAction" method="modifyPasswordIndex">
+			<result>/pages/personalcenter/modifyPassword.jsp</result>
+		</action>
+		<!-- 修改密码，验证输入的原密码是否正确 -->		
+		<action name="validatePassword" class="com.xx.system.user.action.UserAction" method="validatePassword">
+		</action>
+		<!-- 添加用户，验证输入的用户名是否唯一 -->		
+		<action name="validateAddUserName" class="com.xx.system.user.action.UserAction" method="validateAddUserName">
+		</action>
+		<!-- 修改用户，验证输入的用户名是否唯一 -->		
+		<action name="validateUpdateUserName" class="com.xx.system.user.action.UserAction" method="validateUpdateUserName">
+		</action>
+		<!-- 修改用户启用/锁定 -->
+		<action name="updateUserEnable" class="com.xx.system.user.action.UserAction" method="updateUserEnable">
+		</action>
+		<!-- 重置密码 -->
+		<action name="resetUserPassword" class="com.xx.system.user.action.UserAction" method="resetUserPassword">
+		</action>
+	
+	
+		<!-- 获取用户 -->
+		<action name="getUserByIdForUpdate" class="com.xx.system.user.action.UserAction" method="getUserByIdForUpdate">
+		</action>
+	
+		<action name="synchronizeUserInfo" class="com.xx.system.user.action.UserAction" method="synchronizeUserInfo">
+		</action>
+		<action name="validateUserName" class="com.xx.system.user.action.UserAction" method="validateUserName">
+		</action>
+	
+		<action name="getUsersByOrg" class="com.xx.system.user.action.UserAction" method="getUsersByOrg">
+			<result type="json">
+				<param name="root">users</param>
+				<param name="includeProperties">
+					\[\d+\]\.userId,\[\d+\]\.realname,\[\d+\]\.username
+				</param> 
+			</result>
+		</action>
+		
+		<action name="addUser" class="com.xx.system.user.action.UserAction" method="addUser">
+		</action>
+		<action name="userIsExist" class="com.xx.system.user.action.UserAction" method="userIsExist">
+		</action>
+		<action name="editUser" class="com.xx.system.user.action.UserAction" method="editUser">
+		</action>
+		<action name="updateDefaultHome" class="com.xx.system.user.action.UserAction" method="updateDefaultHome">
+        	 <result type="json">
+	        	<param name="root">result</param>
+        	</result>
+		</action>
+		<action name="updatePassword" class="com.xx.system.user.action.UserAction" method="updatePassword">
+		</action>
+		<action name="deleteUser" class="com.xx.system.user.action.UserAction" method="deleteUser">
+		</action>
+		<action name="addUserRole" class="com.xx.system.user.action.UserAction" method="addUserRole">
+		</action>
+		<action name="deleteUserRole" class="com.xx.system.user.action.UserAction" method="deleteUserRole">
+		</action>
+		<action name="queryUserRoleUnderOrg" class="com.xx.system.user.action.UserAction" method="queryUserRoleUnderOrg">
+		</action>
+		<action name="addUserResource" class="com.xx.system.user.action.UserAction" method="addUserResource">
+		</action>
+		<action name="deleteUserResource" class="com.xx.system.user.action.UserAction" method="deleteUserResource">
+		</action>
+		<action name="queryUserResources" class="com.xx.system.user.action.UserAction" method="queryUserResources">
+		</action>
+		<action name="getUserOrgs" class="com.xx.system.user.action.UserAction" method="getUserOrgs">
+		</action>
+		<action name="downloadUserExcelTemplate" class="com.xx.system.user.action.UserAction">
+			<result name="success" type="stream">
+				<param name="ContentType">application/vnd.ms-excel</param>
+				<param name="inputName">excelTemplateStream</param>
+				<param name="contentDisposition">attachment;filename="${filename}"</param>
+			</result>
+		</action>
+		<action name="uploadExcelToBacthImportUser" class="com.xx.system.user.action.UserAction" method="uploadExcelToBacthImportUser">
+		</action>
+		<action name="uploadExcelToBacthImportUserRole" class="com.xx.system.user.action.UserAction" method="uploadExcelToBacthImportUserRole">
+		</action>
+		<action name="exportAllUsers" class="com.xx.system.user.action.UserAction">
+			<result name="success" type="stream">
+				<param name="ContentType">application/vnd.ms-excel</param>
+				<param name="inputName">exportAllUsersInputStream</param>
+				<param name="contentDisposition">attachment;filename="${filename}"</param>
+			</result>
+		</action>
+	</package>
+	
+	<!-- 群组管理 -->
+	<package name="group" extends="st" namespace="/group">
+		<action name="toGroupManagementIndex" class="com.xx.system.user.action.GroupManagerAction" method="toGroupManagement">
+			<result name="success">/WEB-INF/pages/user/groupManagement.jsp</result>
+		</action>
+		<action name="*" class="com.xx.system.user.action.GroupManagerAction" method="{1}">
+			
+		</action>
+	</package>
+	
+</struts>
