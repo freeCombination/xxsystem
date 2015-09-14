@@ -14,12 +14,13 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<dependencies>
+		<!--  
 		<dependency>
 			<groupId>com.xx.xxsystem</groupId>
 			<artifactId>xxsystem-user</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<!--  
+		
 		 <dependency>
 			<groupId>com.xx.xxsystem</groupId>
 			<artifactId>xxsystem-bpm</artifactId>

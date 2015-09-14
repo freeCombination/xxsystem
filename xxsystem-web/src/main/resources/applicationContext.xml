@@ -68,12 +68,8 @@
 	
 	<!-- 配置注解方式管理事务 -->
 	<tx:annotation-driven transaction-manager="txManager"  />
-
-
-
 	
 	<!--
-	
 	<aop:config proxy-target-class="true">
 		<aop:advisor pointcut="execution(* com.xx.system.*.service.impl.*Impl.*(..))" advice-ref="txAdvice" />
 	</aop:config>配置事务的传播特性
@@ -112,6 +108,7 @@
 		</tx:attributes>
 	</tx:advice>
 	-->
+	
 	<aop:config>
 	    <aop:aspect ref="logAspect" >
 		<aop:pointcut id="transactionPoint"
@@ -119,7 +116,6 @@
 	    <aop:after method="doSystemLog" pointcut-ref="transactionPoint"/>
 	    </aop:aspect>
 	</aop:config>
-	 
 	
 	<!-- <import resource="classpath:/spring_config/applicationContext_bpm.xml"/> -->
 	
