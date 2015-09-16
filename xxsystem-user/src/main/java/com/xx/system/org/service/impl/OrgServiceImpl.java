@@ -101,7 +101,7 @@ public class OrgServiceImpl implements IOrgService {
      * 添加组织
      * 
      * @Title addOrg
-     * @author wanglc
+     * @author hedong
      * @Description:
      * @date 2013-11-25
      * @param org 组织对象
@@ -117,7 +117,7 @@ public class OrgServiceImpl implements IOrgService {
      * 取得所有的组织列表,不包含禁用的和已删除的
      * 
      * @Title getAllOrg
-     * @author wanglc
+     * @author hedong
      * @Description:
      * @date 2013-11-25
      * @return List<Organization>
@@ -138,7 +138,7 @@ public class OrgServiceImpl implements IOrgService {
      * 根据组织ID获取所有的组织列表
      * 
      * @Title getAllOrg
-     * @author wanglc
+     * @author hedong
      * @Description:
      * @date 2013-11-25
      * @param orgId orgId 组织ID
@@ -164,7 +164,7 @@ public class OrgServiceImpl implements IOrgService {
      * 根据父节点获取该节点下所有子节点组织
      * 
      * @Title getAllSonOrgByParentId
-     * @author wanglc
+     * @author hedong
      * @Description:
      * @date 2013-11-25
      * @param parentId 父节点组织
@@ -217,7 +217,7 @@ public class OrgServiceImpl implements IOrgService {
      * 获取部门树的根节点
      * 
      * @Title getRootOrg
-     * @author wanglc
+     * @author hedong
      * @Description:
      * @param param 权限范围和权限flag等参数
      * @date 2013-11-25
@@ -232,8 +232,8 @@ public class OrgServiceImpl implements IOrgService {
         ArrayList<TreeNode> treeNodeList = new ArrayList<TreeNode>();
         // 新建查询的hql语句
         StringBuffer sb =
-            new StringBuffer("from Organization o where o.enable = ");
-        sb.append(Constant.ENABLE);
+            new StringBuffer("from Organization o where 1 = 1");//o.enable = 
+        //sb.append(Constant.ENABLE);
         sb.append(" and o.status = ");
         sb.append(Constant.STATUS_NOT_DELETE);
         if (StringUtils.isNotBlank(permissionFlag)) {
@@ -272,7 +272,7 @@ public class OrgServiceImpl implements IOrgService {
      * 取得组织分页列表
      * 
      * @Title getOrgList
-     * @author wanglc
+     * @author hedong
      * @Description:
      * @date 2013-11-25
      * @param start 查询起始位置
@@ -324,7 +324,7 @@ public class OrgServiceImpl implements IOrgService {
      * 根据用户ID和菜单的编码取得用户在某个菜单下能够操作的组织列表，实现方式为先根据菜单取得拥有这个菜单的角色列表，再根据用户ID和角色列表筛选出组织列表
      * 
      * @Title getUserOrgs
-     * @author wanglc
+     * @author hedong
      * @Description:
      * @date 2013-11-25
      * @param userId 用户主键
@@ -361,7 +361,7 @@ public class OrgServiceImpl implements IOrgService {
      * 根据用户ID和菜单编码获取用户特殊资源树
      * 
      * @Title getUserOrgsTreeNodes
-     * @author wanglc
+     * @author hedong
      * @Description:
      * @date 2013-11-25
      * @param userId 用户ID
@@ -442,7 +442,7 @@ public class OrgServiceImpl implements IOrgService {
      * 更新组织
      * 
      * @Title updateOrg
-     * @author wanglc
+     * @author hedong
      * @Description:
      * @date 2013-11-25
      * @param org 组织对象
@@ -471,7 +471,7 @@ public class OrgServiceImpl implements IOrgService {
      * 调整组织顺序(prev拖到目标前面 inner拖到目标里面 next拖到目标后面)
      * 
      * @Title updateOrder
-     * @author wanglc
+     * @author hedong
      * @Description:
      * @date 2013-11-25
      * @throws BusinessException
@@ -509,7 +509,7 @@ public class OrgServiceImpl implements IOrgService {
      * 判断某个父组织下面给定名字子机构是否存在
      * 
      * @Title checkOrgName
-     * @author wanglc
+     * @author hedong
      * @Description:
      * @date 2013-11-25
      * @param Organization o 组织对象
@@ -546,7 +546,6 @@ public class OrgServiceImpl implements IOrgService {
      * 检查某个编码是否存在，数据表级别的唯一
      * 
      * @Title checkOrgCode
-     * @author wanglc
      * @Description:
      * @date 2013-11-25
      * @param org 组织
@@ -577,7 +576,6 @@ public class OrgServiceImpl implements IOrgService {
      * 根据ID取得组织
      * 
      * @Title getOrgById
-     * @author wanglc
      * @Description:
      * @date 2013-11-25
      * @param id 组织主键
@@ -593,7 +591,6 @@ public class OrgServiceImpl implements IOrgService {
      * 添加的时候验证组织名称是否唯一
      * 
      * @Title validateAddOrgName
-     * @author wanglc
      * @Description:
      * @date 2013-12-6
      * @param orgName
@@ -616,7 +613,6 @@ public class OrgServiceImpl implements IOrgService {
     
     /**
      * @Title importOrg
-     * @author wanglc
      * @Description: 上传EXCEL导入组织
      * @date 2013-11-25
      * @param attachUrl 附件URL
@@ -762,7 +758,6 @@ public class OrgServiceImpl implements IOrgService {
      * 根据组织编码获取组织对象
      * 
      * @Title getOrganizationByCode
-     * @author wanglc
      * @Description:
      * @date 2013-11-25
      * @param code 组织编码
@@ -784,33 +779,7 @@ public class OrgServiceImpl implements IOrgService {
     }
     
     /**
-     * 获取当前用户的权限组织
-     * 
-     * @Title getMyOrganization
-     * @author wanglc
-     * @Description:
-     * @date 2013-11-25
-     * @param user 用户对象
-     * @return List<Organization>
-     */
-    /*@Override
-    public List<Organization> getMyOrganization(User user)
-        throws BusinessException {
-        List<Organization> orgList = new ArrayList<Organization>();
-        String hql =
-            "from UserOrgResource uor where uor.user.userId = '"
-                + user.getUserId() + "'";
-        List<UserOrgResource> uList =
-            (List<UserOrgResource>)this.baseDao.queryEntitys(hql);
-        for (UserOrgResource u : uList) {
-            orgList.add(u.getOrganization());
-        }
-        return orgList;
-    }*/
-    
-    /**
      * @Title getOrgCodeById
-     * @author wanglc
      * @Description: 根据组织主键获取组织编码
      * @date 2013-11-25
      * @param departmentId 组织主键
@@ -830,25 +799,17 @@ public class OrgServiceImpl implements IOrgService {
      * 删除本地组织数据
      * 
      * @Title deleteLocalOrgInfoLogic
-     * @author wanglc
      * @Description:
      * @date 2013-12-16
      */
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED)
     private void deleteLocalOrgInfoLogic(List<Organization> orgList) {
         for (Organization org : orgList) {
-            // if (org.getOrgFrom() == 0)
-            // 删除数据自动跳过架构
-            // {
-            // continue;
-            // }
-            if (org.getIsDeleteAble() != 1) {
-                baseDao.delete(org.getOrgId() + "",
-                    "Organization",
-                    "status",
-                    "orgId",
-                    "2");
-            }
+            baseDao.delete(org.getOrgId() + "",
+                "Organization",
+                "status",
+                "orgId",
+                "2");
         }
     }
     
@@ -856,7 +817,7 @@ public class OrgServiceImpl implements IOrgService {
      * 取本地数库中的当前组织
      * 
      * @Title getLocalOrgByCode
-     * @author wanglc
+     * @author hedong
      * @Description:
      * @date 2013-12-16
      * @param code
@@ -887,7 +848,7 @@ public class OrgServiceImpl implements IOrgService {
     
     /**
      * @Title updateOrg
-     * @author wanglc
+     * @author hedong
      * @Description: 更新组织
      * @date 2014-2-10
      * @param org 组织对象
@@ -1013,7 +974,7 @@ public class OrgServiceImpl implements IOrgService {
      * 取根节点部门信息,并带出当前部门当前角色下的人数
      * 
      * @Title getRootOrgForRoleSearch
-     * @author wanglc
+     * @author hedong
      * @Description:
      * @date 2014-2-18
      * @return
@@ -1062,7 +1023,7 @@ public class OrgServiceImpl implements IOrgService {
      * 获取子节点部门信息,并带出当前部门当前角色下的人数
      * 
      * @Title getAllSonOrgByParentIdForRoleSearch
-     * @author wanglc
+     * @author hedong
      * @Description:
      * @date 2014-2-18
      * @param parentId
@@ -1107,7 +1068,7 @@ public class OrgServiceImpl implements IOrgService {
      * 获取组织列表
      * 
      * @Title getOrgList
-     * @author wanglc
+     * @author hedong
      * @Description:
      * @date 2014-2-25
      * @param map
@@ -1170,8 +1131,6 @@ public class OrgServiceImpl implements IOrgService {
             hql.append(")");
             hql.append(" and o.status = ");
             hql.append(Constant.STATUS_NOT_DELETE);
-            hql.append(" and o.enable = ");
-            hql.append(Constant.ENABLE);
             
             totalSize = baseDao.queryTotalCount(hql.toString(), 
                 new HashMap<String, Object>());
@@ -1197,7 +1156,7 @@ public class OrgServiceImpl implements IOrgService {
      * 校验组织属性值的唯一性
      * 
      * @Title validateOrgTypeproperties
-     * @author wanglc
+     * @author hedong
      * @Description:
      * @date 2014-2-25
      * @param paramsMap
@@ -1251,7 +1210,7 @@ public class OrgServiceImpl implements IOrgService {
      * 判断是否是叶子节点组织
      * 
      * @Title isLeafOrg
-     * @author wanglc
+     * @author hedong
      * @Description:
      * @date 2014-2-25
      * @return

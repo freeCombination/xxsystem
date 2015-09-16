@@ -8,7 +8,12 @@ Ext.define("orgModel",{
 			{name: "orgType"},
 			{name: "orgTypeValue"},
 			{name: "orgTypeName"},
-			{name: "orgCode"}
+			{name: "orgCode"},
+			{name: "superiorLeaderId",type:"int"}, 
+			{name: "superiorLeader"},
+			{name: "deptLeaderId",type:"int"}, 
+			{name: "deptLeader"},
+			{name: "enable", type:"int"}
 		]
 });
 var orgStore=Ext.create("Ext.data.Store", {
@@ -31,19 +36,25 @@ var orgGrid = Ext.create("Ext.grid.Panel", {
 	    {xtype: "rownumberer",width:60,text:'序号',align:"center"},
 	    {header: "orgId",dataIndex: "orgId",hidden: true},
 	    {header: "parentOrgId",dataIndex: "parentOrgId",hidden: true},
-	    {header: "上级",width: 200,dataIndex: "parentOrgName"},
-	    {header: "名称",width: 200,dataIndex: "orgName"},
-	    {header: "类型",width: 200,dataIndex: "orgTypeValue",sortable :false,menuDisabled: true,
-        	renderer: function(value, cellmeta, record, rowIndex, columnIndex, store){
-        		for(var i=0;i<orgTypeArr.length;i++){
-					if(value==orgTypeArr[i].value){
-						cellmeta.tdAttr = 'data-qtip="' + orgTypeArr[i].name + '"';
-						return orgTypeArr[i].name;
-					}
-				}
+	    {header: "deptLeaderId",dataIndex: "deptLeaderId",hidden: true},
+	    {header: "superiorLeaderId",dataIndex: "superiorLeaderId",hidden: true},
+	    {header: "上级部门",width: 200,dataIndex: "parentOrgName"},
+	    {header: "部门名称",width: 200,dataIndex: "orgName"},
+	    {header: "部门类型",width: 200,dataIndex: "orgTypeName",sortable :false,menuDisabled: true},
+        {header: "部门编码",width: 200,dataIndex: "orgCode"},
+        {header: "部门领导",width: 200,dataIndex: "deptLeader"},
+	    {header: "分管领导",width: 200,dataIndex: "superiorLeader"},
+	    {header: "操作",width: 200,dataIndex: "enable",
+	    	renderer: function(value, cellmeta, record, rowIndex, columnIndex, store){
+	    		//cellmeta.tdAttr = 'data-qtip="' + orgTypeArr[i].name + '"';
+	    		if (value == 0) {
+	    			return '<a>停用</a>';
+	    		}
+	    		else {
+	    			return '<a>启用</a>';
+	    		}
         	}
-        },
-        {header: "编码",width: 200,dataIndex: "orgCode"}   
+	    }
 	],
 	tbar : [ '->', {
 		xtype : 'button',

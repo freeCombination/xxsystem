@@ -18,6 +18,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.BatchSize;
 
 import com.xx.system.dict.entity.Dictionary;
+import com.xx.system.user.entity.User;
 
 /**
  * Organization实体定义
@@ -61,13 +62,15 @@ public class Organization implements java.io.Serializable {
      */
     private Dictionary orgType;
     
-    /** @Fields orgTypeUUID : 组织类型字典数据UUID */
-    private String orgTypeUUID;
+    /**
+     * @Fields deptLeader : 部门领导
+     */
+    private User deptLeader;
     
     /**
-     * @Fields orgFrom : 组织来源 0：架构自行添加 1：继承平台同步
+     * @Fields superiorLeader : 分管领导
      */
-    private int orgFrom;
+    private User superiorLeader;
     
     /**
      * @Fields disOrder : 组织排序
@@ -80,14 +83,9 @@ public class Organization implements java.io.Serializable {
     private int enable;
     
     /**
-     * @Fields status : 删除标志：0未删除 1架构已删除2集成平台已删除
+     * @Fields status : 删除标志：0未删除 1已删除
      */
     private int status;
-    
-    /**
-     * @Fields isDeleteAble : 1不允许删除；0可以删除
-     */
-    private int isDeleteAble;
     
     /**
      * @Fields orgUsers : 组织用户
@@ -187,14 +185,12 @@ public class Organization implements java.io.Serializable {
     
     /**
      * @Title getOrgId
-     * @author wanglc
      * @Description: 主键
      * @date 2013-12-6
      * @return 主键
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-
     @Column(name = "ORG_ID", nullable = false)
     public int getOrgId() {
         return this.orgId;
@@ -206,7 +202,6 @@ public class Organization implements java.io.Serializable {
     
     /**
      * @Title getOrganization
-     * @author wanglc
      * @Description: 上级组织
      * @date 2013-12-6
      * @return 上级组织
@@ -223,7 +218,6 @@ public class Organization implements java.io.Serializable {
     
     /**
      * @Title getOrgName
-     * @author wanglc
      * @Description: 组织名称
      * @date 2013-12-6
      * @return 组织名称
@@ -239,7 +233,6 @@ public class Organization implements java.io.Serializable {
     
     /**
      * @Title getOrgCode
-     * @author wanglc
      * @Description: 组织编码
      * @date 2013-12-6
      * @return 组织编码
@@ -255,7 +248,6 @@ public class Organization implements java.io.Serializable {
     
     /**
      * @Title getOrgType
-     * @author wanglc
      * @Description: 组织类型
      * @date 2013-12-6
      * @return 组织类型
@@ -272,7 +264,6 @@ public class Organization implements java.io.Serializable {
     
     /**
      * @Title getDisOrder
-     * @author wanglc
      * @Description: 排序
      * @date 2013-12-6
      * @return 排序
@@ -288,7 +279,6 @@ public class Organization implements java.io.Serializable {
     
     /**
      * @Title getEnable
-     * @author wanglc
      * @Description: 标志位：0可用 1不可用
      * @date 2013-12-6
      * @return 标志位：0可用 1不可用
@@ -304,7 +294,6 @@ public class Organization implements java.io.Serializable {
     
     /**
      * @Title getStatus
-     * @author wanglc
      * @Description: 标志位：0未删除 1删除
      * @date 2013-12-6
      * @return 标志位：0未删除 1删除
@@ -320,7 +309,6 @@ public class Organization implements java.io.Serializable {
     
     /**
      * @Title getOrgUsers
-     * @author wanglc
      * @Description: 组织用户关系
      * @date 2013-12-6
      * @return 组织用户关系
@@ -337,7 +325,6 @@ public class Organization implements java.io.Serializable {
     
     /**
      * @Title getOrganizations
-     * @author wanglc
      * @Description: 上级组织
      * @date 2013-12-6
      * @return
@@ -350,49 +337,24 @@ public class Organization implements java.io.Serializable {
     public void setOrganizations(Set<Organization> organizations) {
         this.organizations = organizations;
     }
-    
-    /**
-     * @return orgFrom
-     */
-    @Column(name = "ORG_FROM")
-    public int getOrgFrom() {
-        return orgFrom;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "FK_DEPT_LEADER")
+    public User getDeptLeader() {
+        return deptLeader;
     }
-    
-    /**
-     * @param orgFrom 要设置的 orgFrom
-     */
-    public void setOrgFrom(int orgFrom) {
-        this.orgFrom = orgFrom;
+
+    public void setDeptLeader(User deptLeader) {
+        this.deptLeader = deptLeader;
     }
-    
-    /**
-     * @return orgTypeUUID
-     */
-    @Column(name = "FK_ORGTYPE_UUID")
-    public String getOrgTypeUUID() {
-        return orgTypeUUID;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "FK_SUP_LEADER")
+    public User getSuperiorLeader() {
+        return superiorLeader;
     }
-    
-    /**
-     * @param orgTypeUUID 要设置的 orgTypeUUID
-     */
-    public void setOrgTypeUUID(String orgTypeUUID) {
-        this.orgTypeUUID = orgTypeUUID;
+
+    public void setSuperiorLeader(User superiorLeader) {
+        this.superiorLeader = superiorLeader;
     }
-    
-    /**
-     * @return isDeleteAble
-     */
-    public int getIsDeleteAble() {
-        return isDeleteAble;
-    }
-    
-    /**
-     * @param isDeleteAble 要设置的 isDeleteAble
-     */
-    public void setIsDeleteAble(int isDeleteAble) {
-        this.isDeleteAble = isDeleteAble;
-    }
-    
 }

@@ -73,12 +73,6 @@ public class OrgAction extends BaseAction {
     public IOrgUserService orgUserService;
     
     /**
-     * @Fields userService : 用户服务
-     */
-    /*@Resource
-    public IUserService userService;*/
-    
-    /**
      * @Fields result : 返回数据
      */
     private String result;
@@ -132,7 +126,7 @@ public class OrgAction extends BaseAction {
      * 获取组织列表
      * 
      * @Title getOrgList
-     * @author wanglc
+     * @author hedong
      * @Description:
      * @date 2013-11-25
      * @return String
@@ -154,7 +148,7 @@ public class OrgAction extends BaseAction {
      * 根据ID获取组织对象
      * 
      * @Title getOrgById
-     * @author wanglc
+     * @author hedong
      * @Description:
      * @date 2013-11-25
      * @return
@@ -189,7 +183,7 @@ public class OrgAction extends BaseAction {
     
     /**
      * @Title toOrgIndex
-     * @author wanglc
+     * @author hedong
      * @Description: 组织管理页面跳转
      * @date 2013-11-25
      * @return
@@ -205,7 +199,7 @@ public class OrgAction extends BaseAction {
      * 取得所以组织用于显示组织树
      * 
      * @Title getAllOrg
-     * @author wanglc
+     * @author hedong
      * @Description:
      * @date 2013-11-25
      * @return String
@@ -224,7 +218,7 @@ public class OrgAction extends BaseAction {
      * 添加用户时构造组织树
      * 
      * @Title getUnitTreeListForAddUser
-     * @author wanglc
+     * @author hedong
      * @Description:
      * @date 2013-11-25
      * @return String
@@ -298,7 +292,7 @@ public class OrgAction extends BaseAction {
      * 返回没有复选框的组织树
      * 
      * @Title getUnitTreeListNotCheck
-     * @author wanglc
+     * @author hedong
      * @Description:
      * @date 2013-11-25
      * @return
@@ -329,7 +323,7 @@ public class OrgAction extends BaseAction {
      * 返回没有复选框的组织树
      * 
      * @Title getUnitTreeListNotCheckForRoleSearch
-     * @author wanglc
+     * @author hedong
      * @Description:
      * @date 2013-11-25
      * @return
@@ -359,7 +353,7 @@ public class OrgAction extends BaseAction {
      * 返回非叶子节点的组织树
      * 
      * @Title getOrgTreeList
-     * @author wanglc
+     * @author hedong
      * @Description:
      * @date 2013-11-25
      * @return
@@ -390,7 +384,7 @@ public class OrgAction extends BaseAction {
      * 判断组织树节点是否为叶子节点
      * 
      * @Title decideIsLeaf
-     * @author wanglc
+     * @author hedong
      * @Description:
      * @date 2013-11-25
      * @param org 组织对象
@@ -417,7 +411,7 @@ public class OrgAction extends BaseAction {
      * 根据用户ID和菜单的编码取得用户在某个菜单下能够操作的组织列表
      * 
      * @Title getUserOrgs
-     * @author wanglc
+     * @author hedong
      * @Description:
      * @date 2013-11-25
      * @return String
@@ -439,7 +433,7 @@ public class OrgAction extends BaseAction {
     
     /**
      * @Title getUserOrgsTreeNodes
-     * @author wanglc
+     * @author hedong
      * @Description: 根据用户ID和菜单的编码取得用户在某个菜单下能够操作的组织和用户列表，以树的形式返回
      * @date 2013-11-25
      * @return
@@ -464,7 +458,7 @@ public class OrgAction extends BaseAction {
      * 添加组织
      * 
      * @Title addOrg
-     * @author wanglc
+     * @author hedong
      * @Description:
      * @date 2013-11-25
      * @return String
@@ -476,9 +470,7 @@ public class OrgAction extends BaseAction {
                 || org.getOrganization().getOrgId() == 0) {
                 org.setOrganization(null);
             }
-            Dictionary dict =
-                dictService.getDictById(org.getOrgType().getPkDictionaryId());
-            org.setOrgTypeUUID(dict.getDictUUID());
+            
             organizationService.addOrg(org);
             msg = "{success:'true',msg:'组织添加成功',orgId:" + org.getOrgId() + "}";
             this.excepAndLogHandle(OrgAction.class, "添加组织", null, true);
@@ -492,7 +484,7 @@ public class OrgAction extends BaseAction {
     
     /**
      * @Title updateOrg
-     * @author wanglc
+     * @author hedong
      * @Description: 修改组织
      * @date 2013-11-25
      * @return String
@@ -522,7 +514,6 @@ public class OrgAction extends BaseAction {
             {
                 updateOrg.setOrganization(org.getOrganization());
             }
-            updateOrg.setOrgTypeUUID(dict.getDictUUID());
             updateOrg.setOrgType(dict);
             updateOrg.setOrgName(org.getOrgName());
             updateOrg.setDisOrder(org.getDisOrder());
@@ -541,7 +532,7 @@ public class OrgAction extends BaseAction {
      * 修改组织排序
      * 
      * @Title updateOrgDisOrder
-     * @author wanglc
+     * @author hedong
      * @Description:
      * @date 2013-11-25
      * @return String
@@ -563,7 +554,7 @@ public class OrgAction extends BaseAction {
      * 删除组织
      * 
      * @Title delOrg
-     * @author wanglc
+     * @author hedong
      * @Description:
      * @date 2013-11-25
      * @return String
@@ -628,7 +619,7 @@ public class OrgAction extends BaseAction {
      * 上传EXCEL，导入组织
      * 
      * @Title uploadExcelToBacthImportOrg
-     * @author wanglc
+     * @author hedong
      * @Description:
      * @date 2013-11-25
      * @return String
@@ -656,7 +647,7 @@ public class OrgAction extends BaseAction {
      * 下载组织导入模版
      * 
      * @Title getExcelTemplateInputStream
-     * @author wanglc
+     * @author hedong
      * @Description:
      * @date 2013-11-25
      * @return
@@ -682,7 +673,7 @@ public class OrgAction extends BaseAction {
      * 验证组织
      * 
      * @Title validateOrgProperties
-     * @author wanglc
+     * @author hedong
      * @Description:
      * @date 2013-11-25
      * @return
@@ -770,7 +761,7 @@ public class OrgAction extends BaseAction {
     
     /**
      * @Title setOrganizationService
-     * @author wanglc
+     * @author hedong
      * @Description: setOrganizationService
      * @date 2013-12-6
      * @param organizationService
@@ -857,7 +848,7 @@ public class OrgAction extends BaseAction {
     
     /**
      * @Title setUserService
-     * @author wanglc
+     * @author hedong
      * @Description: userService
      * @date 2013-12-6
      * @param userService
