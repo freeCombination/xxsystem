@@ -44,16 +44,6 @@ public class OrgVo {
     private String superiorLeader;
     
     /**
-     * @Fields deptLeader : 部门领导ID
-     */
-    private Integer deptLeaderId;
-    
-    /**
-     * @Fields superiorLeader : 分管领导ID
-     */
-    private Integer superiorLeaderId;
-    
-    /**
      * @Fields enable : 是否可用：0 是 1 否
      */
     private int enable;
@@ -90,16 +80,6 @@ public class OrgVo {
             o.getOrganization() == null ? "" : o.getOrganization().getOrgName();
         this.orgTypeValue = o.getOrgType().getDictionaryValue();
         this.orgTypeName = o.getOrgType().getDictionaryName();
-        
-        if (o.getDeptLeader() != null) {
-        	this.deptLeader = o.getDeptLeader().getRealname();
-        	this.deptLeaderId = o.getDeptLeader().getUserId();
-        }
-        
-        if (o.getSuperiorLeader() != null) {
-        	this.superiorLeader = o.getSuperiorLeader().getRealname();
-        	this.superiorLeaderId = o.getSuperiorLeader().getUserId();
-        }
         
         this.enable = o.getEnable();
     }
@@ -216,22 +196,6 @@ public class OrgVo {
 
 	public void setSuperiorLeader(String superiorLeader) {
 		this.superiorLeader = superiorLeader;
-	}
-
-	public Integer getDeptLeaderId() {
-		return deptLeaderId;
-	}
-
-	public void setDeptLeaderId(Integer deptLeaderId) {
-		this.deptLeaderId = deptLeaderId;
-	}
-
-	public Integer getSuperiorLeaderId() {
-		return superiorLeaderId;
-	}
-
-	public void setSuperiorLeaderId(Integer superiorLeaderId) {
-		this.superiorLeaderId = superiorLeaderId;
 	}
 
 	public int getEnable() {

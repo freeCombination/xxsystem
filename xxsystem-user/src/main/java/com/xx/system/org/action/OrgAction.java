@@ -470,6 +470,7 @@ public class OrgAction extends BaseAction {
                 || org.getOrganization().getOrgId() == 0) {
                 org.setOrganization(null);
             }
+            org.setEnable(1);
             
             organizationService.addOrg(org);
             msg = "{success:'true',msg:'组织添加成功',orgId:" + org.getOrgId() + "}";
@@ -517,6 +518,7 @@ public class OrgAction extends BaseAction {
             updateOrg.setOrgType(dict);
             updateOrg.setOrgName(org.getOrgName());
             updateOrg.setDisOrder(org.getDisOrder());
+            updateOrg.setEnable(1);
             organizationService.updateOrg(updateOrg);
             JsonUtil.outJson("{success:'true',msg:'修改成功'}");
             this.excepAndLogHandle(OrgAction.class, "修改组织", null, true);
@@ -561,7 +563,7 @@ public class OrgAction extends BaseAction {
      */
     public String delOrg() {
         try {
-            // TODO 删除的时候验证当前组织下是否有用户存在，如存在提示，并不允许删除
+            // 删除的时候验证当前组织下是否有用户存在，如存在提示，并不允许删除
             String orgIds = RequestUtil.getString(getRequest(), "orgIds");
             if (orgIds.split(",").length == 1)
             {

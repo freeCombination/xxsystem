@@ -175,7 +175,7 @@ insert into T_RESOURCE (RESOURCE_ID, CODE, CREATE_DATE, DIS_ORDER, ISDELETEABLE,
 insert into T_USER (USER_ID, USERNAME, ERP_ID, PASSWORD, MOBILE_PHONE1, ELECTRONIC_SIGNATURE, PERSONAL_IMAGE, REALNAME, GENDER, STATUS,DIS_ORDER, ISENABLE, FK_TYPE, USER_ONLINE, FK_TEAM, SHORT_NO1, PHONE_NO, BIRTH_PLACE, EMAIL, CARD_CODE, ID_CARD, FK_POSTTITLE, FK_POST, FK_JOB1, FK_JOBLEVEL, BIRTHDAY, ISDELETABLE, MOBILE_PHONE2, SHORT_NO2, FK_JOB2, FK_USERTYPE_UUID, FK_TEAM_UUID, FK_POSTTITLE_UUID, FK_POST_UUID, FK_JOB1_UUID, FK_JOB2_UUID, FK_JOBLEVEL_UUID)values (1, 'jg_admin', '111111', 'e10adc3949ba59abbe56e057f20f883e', '12345678911', null, null, '管理员', '男', 0, null, 0, 8, 0, null, null, null, null, null, null, null, null, null, null, null, null, 0, null, null, null, 'Dictionary-d9e3b576-6880-4d15-aff8-97fba5daf111', null, null, null, null, null, null);
 
 -- 初始化组织数据
-INSERT INTO `t_organization` VALUES (1, 1, 0, 'ZCL_CD', '中储粮成都粮食储藏所', 0, 1, 71, NULL, 1);
+INSERT INTO `t_organization` VALUES (1, 1, 0, 'ZCL_CD', '中储粮成都粮食储藏所', 0, 71, NULL);
 
 -- 初始化用户组织关系
 insert into T_ORG_USER (PK_ORG_USER_ID, FK_ORG_ID, FK_USER_ID, ISDELETE) values (1, 1, 1, 0);

@@ -18,7 +18,6 @@ import javax.persistence.Table;
 import org.hibernate.annotations.BatchSize;
 
 import com.xx.system.dict.entity.Dictionary;
-import com.xx.system.user.entity.User;
 
 /**
  * Organization实体定义
@@ -61,16 +60,6 @@ public class Organization implements java.io.Serializable {
      * @Fields orgType : 组织类型(字典数据) 0：公司；1：部门；2：小组；3：装置
      */
     private Dictionary orgType;
-    
-    /**
-     * @Fields deptLeader : 部门领导
-     */
-    private User deptLeader;
-    
-    /**
-     * @Fields superiorLeader : 分管领导
-     */
-    private User superiorLeader;
     
     /**
      * @Fields disOrder : 组织排序
@@ -336,25 +325,5 @@ public class Organization implements java.io.Serializable {
     
     public void setOrganizations(Set<Organization> organizations) {
         this.organizations = organizations;
-    }
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "FK_DEPT_LEADER")
-    public User getDeptLeader() {
-        return deptLeader;
-    }
-
-    public void setDeptLeader(User deptLeader) {
-        this.deptLeader = deptLeader;
-    }
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "FK_SUP_LEADER")
-    public User getSuperiorLeader() {
-        return superiorLeader;
-    }
-
-    public void setSuperiorLeader(User superiorLeader) {
-        this.superiorLeader = superiorLeader;
     }
 }

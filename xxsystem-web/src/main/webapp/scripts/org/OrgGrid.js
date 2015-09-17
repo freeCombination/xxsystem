@@ -9,9 +9,7 @@ Ext.define("orgModel",{
 			{name: "orgTypeValue"},
 			{name: "orgTypeName"},
 			{name: "orgCode"},
-			{name: "superiorLeaderId",type:"int"}, 
 			{name: "superiorLeader"},
-			{name: "deptLeaderId",type:"int"}, 
 			{name: "deptLeader"},
 			{name: "enable", type:"int"}
 		]
@@ -36,15 +34,13 @@ var orgGrid = Ext.create("Ext.grid.Panel", {
 	    {xtype: "rownumberer",width:60,text:'序号',align:"center"},
 	    {header: "orgId",dataIndex: "orgId",hidden: true},
 	    {header: "parentOrgId",dataIndex: "parentOrgId",hidden: true},
-	    {header: "deptLeaderId",dataIndex: "deptLeaderId",hidden: true},
-	    {header: "superiorLeaderId",dataIndex: "superiorLeaderId",hidden: true},
 	    {header: "上级部门",width: 200,dataIndex: "parentOrgName"},
 	    {header: "部门名称",width: 200,dataIndex: "orgName"},
 	    {header: "部门类型",width: 200,dataIndex: "orgTypeName",sortable :false,menuDisabled: true},
         {header: "部门编码",width: 200,dataIndex: "orgCode"},
         {header: "部门领导",width: 200,dataIndex: "deptLeader"},
 	    {header: "分管领导",width: 200,dataIndex: "superiorLeader"},
-	    {header: "操作",width: 200,dataIndex: "enable",
+	    {header: "状态",width: 200,dataIndex: "enable",
 	    	renderer: function(value, cellmeta, record, rowIndex, columnIndex, store){debugger;
 	    		//cellmeta.tdAttr = 'data-qtip="' + orgTypeArr[i].name + '"';
 	    		var orgId = record.get('orgId');
@@ -68,7 +64,7 @@ var orgGrid = Ext.create("Ext.grid.Panel", {
 		xtype : 'button',
 		id : 'updateOrg',
 		text : SystemConstant.modifyBtnText,
-		disabledExpr : "$selectedRows != 1",// $selected 表示选中的记录数不等于1
+		disabledExpr : "$selectedRows != 1 && $enable == 0",// $selected 表示选中的记录数不等于1
 		disabled : true,
 		iconCls : 'edit-button',
 		handler : function() {
@@ -79,7 +75,7 @@ var orgGrid = Ext.create("Ext.grid.Panel", {
 		text : SystemConstant.deleteBtnText,
 		id:'deleteOrg',
 		disabled : true,
-		disabledExpr : "$selectedRows == 0",
+		disabledExpr : "$selectedRows == 0 && $enable == 0",
 		iconCls : 'delete-button',
 		handler : function() {
 			deleteOrg();
@@ -88,18 +84,18 @@ var orgGrid = Ext.create("Ext.grid.Panel", {
 });
 var addOrg = function() {
 	orgWin.setTitle(SystemConstant.addBtnText);
-	var row = orgGrid.getSelectionModel().getSelection()
+	//var row = orgGrid.getSelectionModel().getSelection()
 	var basicForm = orgWin.down('form').getForm();
 	basicForm.reset();
 	basicForm.url = basePath + '/org/addOrg.action';
 	orgTypeStore.load();
-	if(row!=''){
+	/*if(row!='' && row[0].data.parentOrgId){
 		basicForm.findField('org.organization.orgId').setValue(row[0].data.parentOrgId);
 		basicForm.findField('org.organization.orgName').setValue(row[0].data.parentOrgName);
-	}else{
+	}else{*/
 		basicForm.findField('org.organization.orgId').setValue(selectNode.raw.nodeId);
 		basicForm.findField('org.organization.orgName').setValue(selectNode.raw.text);
-	}
+	//}
 	basicForm.findField('org.orgCode').setDisabled(false);
 	orgWin.show();
 };
