@@ -45,14 +45,14 @@ var orgGrid = Ext.create("Ext.grid.Panel", {
         {header: "部门领导",width: 200,dataIndex: "deptLeader"},
 	    {header: "分管领导",width: 200,dataIndex: "superiorLeader"},
 	    {header: "操作",width: 200,dataIndex: "enable",
-	    	renderer: function(value, cellmeta, record, rowIndex, columnIndex, store){
+	    	renderer: function(value, cellmeta, record, rowIndex, columnIndex, store){debugger;
 	    		//cellmeta.tdAttr = 'data-qtip="' + orgTypeArr[i].name + '"';
-	    		if (value == 0) {
-	    			return '<a>停用</a>';
-	    		}
-	    		else {
-	    			return '<a>启用</a>';
-	    		}
+	    		var orgId = record.get('orgId');
+				if(value == 1){
+					return '<img title="点击锁定部门" src="'+basePath+'/images/icons/unlock.gif" style="cursor: pointer" onclick="lockupOrg('+orgId+','+value+')"/>';
+				}else{
+					return '<img title="点击解锁部门" src="'+basePath+'/images/icons/lock.gif" style="cursor: pointer" onclick="lockupOrg('+orgId+','+value+')"/>';
+				}
         	}
 	    }
 	],
