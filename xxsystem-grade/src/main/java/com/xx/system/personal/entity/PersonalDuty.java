@@ -12,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.BatchSize;
+
 /**
  * 个人职责明细
  * 
@@ -20,6 +22,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "T_PERSONAL_DUTY")
+@BatchSize(size = 50)
 public class PersonalDuty implements Serializable {
 
 	/**
