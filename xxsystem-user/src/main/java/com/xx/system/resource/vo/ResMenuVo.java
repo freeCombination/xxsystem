@@ -1,5 +1,6 @@
 package com.xx.system.resource.vo;
 
+import java.io.Serializable;
 import java.util.List;
 /**
  * 组装菜单的VO
@@ -10,8 +11,11 @@ import java.util.List;
  * @since V1.20
  * @depricated
  */
-public class ResMenuVo {
-    /**
+public class ResMenuVo implements Serializable{
+	
+	private static final long serialVersionUID = 6128984411941110612L;
+
+	/**
      * 名称
      */
     private String name;

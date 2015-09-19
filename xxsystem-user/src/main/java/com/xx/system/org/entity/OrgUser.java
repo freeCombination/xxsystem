@@ -86,7 +86,6 @@ public class OrgUser implements java.io.Serializable {
     
     /**
      * @Title getPkOrgUserId
-     * @author wanglc
      * @Description: 主键
      * @date 2013-12-6
      * @return 主键
@@ -104,7 +103,6 @@ public class OrgUser implements java.io.Serializable {
     
     /**
      * @Title getOrganization
-     * @author wanglc
      * @Description: 组织对象
      * @date 2013-12-6
      * @return 组织对象
@@ -121,7 +119,6 @@ public class OrgUser implements java.io.Serializable {
     
     /**
      * @Title getUser
-     * @author wanglc
      * @Description: 用户对象
      * @date 2013-12-6
      * @return 用户对象
@@ -138,7 +135,6 @@ public class OrgUser implements java.io.Serializable {
     
     /**
      * @Title setIsDelete
-     * @author wanglc
      * @Description: 删除标志：0未删除 1已删除
      * @date 2013-12-6
      * @param isDelete

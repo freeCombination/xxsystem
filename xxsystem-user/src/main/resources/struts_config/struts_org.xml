@@ -110,5 +110,10 @@
 		<!-- 上传EXCEL导入组织 -->
 		<action name="uploadExcelToBacthImportOrg" class="com.xx.system.org.action.OrgAction" method="uploadExcelToBacthImportOrg">
 		</action>
+		
+		<!-- 岗位管理 -->
+		<action name="toResponsibilities" class="com.xx.system.org.action.RespAction">
+            <result>/WEB-INF/pages/org/responsibilitiesManage.jsp</result>
+        </action>
 	</package>
 </struts>
