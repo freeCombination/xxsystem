@@ -429,7 +429,9 @@
 			                    id:'respNumber',
 			                    fieldLabel: '岗位编号',
 			                    name: 'respVo.number',
-			                    maxLength:50,
+			                    maxLength:25,
+			                    regex : new RegExp('^([^<^>])*$'),
+			                    regexText : '不能包含特殊字符！',
 			                    allowBlank: false,
 			                    validator: function(value){
 			                        var returnObj = null;
@@ -472,17 +474,17 @@
 							    id:'respName',
 							    fieldLabel: '岗位名称',
 							    name: 'respVo.name',
-							    regex : new RegExp('^([\u4E00-\u9FFF]*-*\\w*)*$'),
-							    regexText : '不能包含特殊字符',
-							    maxLength:100,
+							    regex : new RegExp('^([^<^>])*$'),
+			                    regexText : '不能包含特殊字符！',
+							    maxLength:50,
 							    allowBlank: false
 							},
 							{
 			                    id: 'respRank',
 			                    fieldLabel: '岗位级别',
 			                    name: 'respVo.rank',
-			                    regex : new RegExp('^([\u4E00-\u9FFF]*-*\\w*)*$'),
-			                    regexText : '不能包含特殊字符',
+			                    regex : new RegExp('^([^<^>])*$'),
+			                    regexText : '不能包含特殊字符！',
 			                    maxLength:50
 			                }
                         ]
@@ -521,6 +523,8 @@
                     field: {
                     	xtype:'textfield',
                     	maxLength:25,
+                    	regex : new RegExp('^([^<^>])*$'),
+                        regexText : '不能包含特殊字符！',
                     	allowBlank: false
                     }
 
@@ -538,6 +542,8 @@
                         },
                     	height:60,
                     	maxLength:1000,
+                    	regex : new RegExp('^([^<^>])*$'),
+                        regexText : '不能包含特殊字符！',
                         allowBlank: false
                     }
                 },
@@ -554,6 +560,8 @@
                         },
                     	height:60,
                     	maxLength:100,
+                    	regex : new RegExp('^([^<^>])*$'),
+                        regexText : '不能包含特殊字符！',
                         allowBlank: false
                     }
                 }
