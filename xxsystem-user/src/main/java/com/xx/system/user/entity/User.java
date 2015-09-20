@@ -17,6 +17,7 @@ import org.hibernate.annotations.BatchSize;
 
 import com.xx.system.dict.entity.Dictionary;
 import com.xx.system.org.entity.OrgUser;
+import com.xx.system.org.entity.Responsibilities;
 
 /**
  * 用户 实体类
@@ -209,6 +210,11 @@ public class User implements java.io.Serializable {
     private Integer isDeletAble;
     
     /**
+     * 岗位
+     */
+    private Responsibilities responsibilities;
+    
+	/**
      * <p>
      * Title: 用户构造方法
      * </p>
@@ -910,4 +916,13 @@ public class User implements java.io.Serializable {
         this.jobLevelUUID = jobLevelUUID;
     }
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "FK_RESP_ID")
+    public Responsibilities getResponsibilities() {
+		return responsibilities;
+	}
+
+	public void setResponsibilities(Responsibilities responsibilities) {
+		this.responsibilities = responsibilities;
+	}
 }

@@ -224,7 +224,7 @@ Ext.define("Ext.window.WindowOverride",{
 	buttonAlign: "center",
 	modal: true,
 	layout : 'fit',
-	closeAction : 'hide'
+	closeAction : 'destroy'
 });
 
  /**
