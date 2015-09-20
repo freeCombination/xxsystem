@@ -14,7 +14,7 @@
 
     
 	<context:annotation-config></context:annotation-config>
-	<context:component-scan base-package="com.xx.system"></context:component-scan>
+	<context:component-scan base-package="com.xx.system,com.xx.grade"></context:component-scan>
     <bean
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
@@ -57,7 +57,7 @@
 				<!-- <value>com.xx.system.bpm.entity</value>
 				<value>com.xx.system.workturns.entity</value> -->
 				<value>com.xx.system.attach.entity</value>
-				<value>com.xx.system.personal.entity</value>
+				<value>com.xx.grade.personal.entity</value>
 			</list>
 		</property>
 		<property name="configLocation" value="classpath:hibernate.cfg.xml" />
@@ -75,7 +75,7 @@
 	<aop:config>
 	    <aop:aspect ref="logAspect" >
 		<aop:pointcut id="transactionPoint"
-			expression="execution(* com.xx.system.*.service..*.*(..))" />
+			expression="execution(* com.xx.*.*.service..*.*(..))" />
 	    <aop:after method="doSystemLog" pointcut-ref="transactionPoint"/>
 	    </aop:aspect>
 	</aop:config>

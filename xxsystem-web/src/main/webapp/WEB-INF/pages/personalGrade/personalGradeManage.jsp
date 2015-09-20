@@ -29,8 +29,10 @@ Ext.onReady(function(){
 		Ext.create("Ext.container.Viewport", {
 		    layout: "border",
 			renderTo: Ext.getBody(),
-			items: [personalGradeForm]
+			items: [grade.personalGrade.PersonalGradeGrid]
 		});
+		
+		grade.personalGrade.PersonalGradeStore.load();
 });
 
 </script>

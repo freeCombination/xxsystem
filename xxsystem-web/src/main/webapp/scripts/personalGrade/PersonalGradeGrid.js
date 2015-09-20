@@ -27,7 +27,7 @@ grade.personalGrade.PersonalGradeStore = Ext.create('Ext.data.Store', {
 	model : 'grade.personalGrade.PersonalGradeModel',
 	proxy : {
 		type : "format",
-		url : basePath + "/grade/getPersonalGradeList.action"
+		url : basePath + "/grade/getPersonalGradeForUserSelfList.action"
 	}
 });
 
