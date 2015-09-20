@@ -52,8 +52,30 @@ public class RespServiceImpl implements IRespService {
 
 	@Override
 	public Map<String, Object> checkNumber(String number) throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		Map<String, Object> vaildator = new HashMap<String, Object>();
+        
+        int totleSize = 0;
+        if (StringUtil.isNotBlank(number)) {
+            StringBuffer countHql = new StringBuffer();
+            countHql.append(" from Responsibilities r ");
+            countHql.append(" where r.number = '");
+            countHql.append(number + "'");
+            
+            totleSize = baseDao.queryTotalCount(countHql.toString(),
+                new HashMap<String, Object>());
+        }
+        
+        if (totleSize > 0) {
+            vaildator.put("success", true);
+            vaildator.put("valid", false);
+            vaildator.put("reason", "该岗位编号已被占用！");
+        }
+        else {
+            vaildator.put("success", true);
+            vaildator.put("valid", true);
+            vaildator.put("reason", "");
+        }
+        return vaildator;
 	}
 
 	@Override
@@ -141,9 +163,49 @@ public class RespServiceImpl implements IRespService {
 	}
 
 	@Override
-	public void updateResp(RespVo respVo) throws BusinessException {
-		// TODO Auto-generated method stub
-		
+	public void updateResp(RespVo respVo, List<DutyVo> dvoLst) throws BusinessException {
+		if (respVo != null) {
+			String respHql = " from Responsibilities r where r.isDelete = 0 and r.enable = 1"
+					+ " and r.pkRespId = " + respVo.getRespId();
+			List<Responsibilities> lst = (List<Responsibilities>)baseDao.queryEntitys(respHql);
+			Responsibilities resp = null;
+			if (!CollectionUtils.isEmpty(lst)) {
+				resp = lst.get(0);
+				resp.setNumber(respVo.getNumber());
+				resp.setName(respVo.getName());
+				if (respVo.getRank() != null) {
+					resp.setRank(respVo.getRank());
+				}
+				resp.setEnable(1);
+				resp.setIsDelete(0);
+				
+				Organization org = organizationService.getOrgById(respVo.getOrgId());
+				resp.setOrganization(org);
+				
+				baseDao.save(resp);
+				
+				// 保存岗位职责前删除关联的所有职责，实现更新的功能
+				String delHql = " delete from Duty d where d.responsibilities.pkRespId = " + respVo.getRespId();
+				baseDao.executeHql(delHql);
+				
+				if (!CollectionUtils.isEmpty(dvoLst)) {
+					Duty duty = null;
+					List<Duty> dutyLst = new ArrayList<Duty>();
+					for (DutyVo vo : dvoLst) {
+						duty = new Duty();
+						
+						duty.setNumber(vo.getNumber());
+						duty.setDutyContent(vo.getDutyContent());
+						duty.setDutyType(vo.getDutyType());
+						duty.setResponsibilities(resp);
+						duty.setIsDelete(0);
+						
+						dutyLst.add(duty);
+					}
+					baseDao.saveAll(dutyLst);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -154,8 +216,16 @@ public class RespServiceImpl implements IRespService {
 
 	@Override
 	public String delResps(String ids) throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		if (StringUtil.isNotBlank(ids)) {
+			// 先删除岗位职责
+			String delDuty = " delete from Duty d where d.responsibilities.pkRespId in (" + ids + ")";
+			baseDao.executeHql(delDuty);
+			
+			// 然后删除岗位
+			String delResp = " delete from Responsibilities r where r.pkRespId in (" + ids + ")";
+			baseDao.executeHql(delResp);
+		}
+		return "success";
 	}
 
 	@Override
@@ -182,5 +252,23 @@ public class RespServiceImpl implements IRespService {
 		}
 		
 		return lstVo;
+	}
+
+	@Override
+	public void lockUnLock(Integer respId) throws BusinessException {
+		if (respId != null && respId != 0) {
+			Responsibilities resp = (Responsibilities)baseDao.queryEntityById(Responsibilities.class, respId);
+			
+			if (resp != null) {
+				if (resp.getEnable() == 1) {
+					resp.setEnable(0);
+				}
+				else {
+					resp.setEnable(1);
+				}
+				
+				baseDao.update(resp);
+			}
+		}
 	}
 }

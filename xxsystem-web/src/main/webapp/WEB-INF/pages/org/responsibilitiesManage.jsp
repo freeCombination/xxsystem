@@ -99,12 +99,31 @@
 		      selectionchange: function(){
 		        	var c = respGrid.getSelectionModel().getSelection();
 					if(c.length > 0){
-						Ext.getCmp('delRespBtn').setDisabled(false);
+						var enable = 1;
+						for (var i = 0; i < c.length; i++) {
+							if (c[i].get('enable') != 1) {
+								enable = 0;
+								break;
+							}
+						}
+						
+						if (enable == 1) {
+							Ext.getCmp('delRespBtn').setDisabled(false);
+						}
+						else {
+							Ext.getCmp('delRespBtn').setDisabled(true);
+						}
 					}else{
 						Ext.getCmp('delRespBtn').setDisabled(true);
 					}
 					if(c.length == 1){
-						Ext.getCmp('updateRespBtn').setDisabled(false);
+						var enable = c[0].get('enable');
+						if (enable == 1) {
+							Ext.getCmp('updateRespBtn').setDisabled(false);
+						}
+						else {
+							Ext.getCmp('updateRespBtn').setDisabled(true);
+						}
 					}else{
 						Ext.getCmp('updateRespBtn').setDisabled(true);
 					}
@@ -142,11 +161,11 @@
 				{header: "状态",width: 200,dataIndex: "enable",
 		            renderer: function(value, cellmeta, record, rowIndex, columnIndex, store){
 		                //cellmeta.tdAttr = 'data-qtip="' + orgTypeArr[i].name + '"';
-		                var orgId = record.get('orgId');
+		                var respId = record.get('respId');
 		                if(value == 1){
-		                    return '<img title="点击锁定部门" src="'+basePath+'/images/icons/unlock.gif" style="cursor: pointer" onclick="lockupOrg('+orgId+','+value+')"/>';
+		                    return '<img title="点击锁定部门" src="'+basePath+'/images/icons/unlock.gif" style="cursor: pointer;padding:0;margin:0;" onclick="lockUnLock(\''+respId+'\',\''+value+'\')"/>';
 		                }else{
-		                    return '<img title="点击解锁部门" src="'+basePath+'/images/icons/lock.gif" style="cursor: pointer" onclick="lockupOrg('+orgId+','+value+')"/>';
+		                    return '<img title="点击解锁部门" src="'+basePath+'/images/icons/lock.gif" style="cursor: pointer;padding:0;margin:0;" onclick="lockUnLock(\''+respId+'\',\''+value+'\')"/>';
 		                }
 		            }
 		        }
@@ -232,13 +251,9 @@
 				iconCls:'search-button',
 				handler:function(){
 					var proxy = respStore.getProxy();
-					proxy.setExtraParam("dictName",Ext.getCmp("dictName").getValue());
-					var dictType = Ext.getCmp("typeCombox").getValue();
-					if(dictType=='全部') {
-						dictType = '';
-					}
-					
-					proxy.setExtraParam("dictType",dictType);
+					proxy.setExtraParam("respVo.number",Ext.getCmp("respNoQuery").getValue());
+					proxy.setExtraParam("respVo.name",Ext.getCmp("respNameQuery").getValue());
+					proxy.setExtraParam("respVo.orgId",Ext.getCmp("respOrgQuery").getValue());
 					respStore.loadPage(1);
 				}
 			},'->',
@@ -273,59 +288,41 @@
 				disabled:true,
 				iconCls:'delete-button',
 				handler:function(){
-					var ck = Ext.getCmp('dictGrid').getSelectionModel().getSelection();
+					var ck = respGrid.getSelectionModel().getSelection();
 					var itemsArray = new Array();
 					for(var i=0;i<ck.length;i++){
-						itemsArray.push(ck[i].data.pkDictionaryId);
+						itemsArray.push(ck[i].data.respId);
 					}
 					var idss = itemsArray.toString();
-					Ext.Ajax.request({
-						url : '${ctx}/dict/checkDictIsExist.action',
-						params : {ids: idss},
-						success : function(res, options) {
-							 var data = Ext.decode(res.responseText);
-							 if(data.success){
-							 	Ext.Msg.confirm(SystemConstant.alertTitle,"确认删除所选字典数据吗？",function(btn) {
-									if (btn == 'yes') {
-										Ext.Ajax.request({
-											url : '${ctx}/dict/delDictInfo.action',
-											params : {ids: idss},
-											success : function(res, options) {
-												var result = Ext.decode(res.responseText);
-												if(result.success == 'true'){
-													new Ext.ux.TipsWindow(
-															{
-																title: SystemConstant.alertTitle,
-																autoHide: 3,
-																html:result.msg
-															}
-													).show();
-												}else{
-													Ext.MessageBox.show({
-														title: SystemConstant.alertTitle,
-														msg: result.msg,
-														buttons: Ext.MessageBox.OK,
-														icon: Ext.MessageBox.INFO
-													});
-												}
-												dictStore.loadPage(1);
-												typeNameStore.loadPage(1);
-											}
-										});
-									}
-								});
-							 }else{
-							 	dictStore.loadPage(1);
-							 	Ext.MessageBox.show({
-									title: SystemConstant.alertTitle,
-									msg: data.msg,
-									buttons: Ext.MessageBox.OK,
-									icon: Ext.MessageBox.INFO
-								});
-							 	return false;
-							 }
-						}
-					});
+					
+					Ext.Msg.confirm(SystemConstant.alertTitle,"确认删除所选岗位数据吗？",function(btn) {
+                        if (btn == 'yes') {
+                            Ext.Ajax.request({
+                                url : '${ctx}/org/delResps.action',
+                                params : {ids: idss},
+                                success : function(res, options) {
+                                    var result = Ext.decode(res.responseText);
+                                    if(result.success == 'true'){
+                                        new Ext.ux.TipsWindow(
+                                                {
+                                                    title: SystemConstant.alertTitle,
+                                                    autoHide: 3,
+                                                    html:result.msg
+                                                }
+                                        ).show();
+                                    }else{
+                                        Ext.MessageBox.show({
+                                            title: SystemConstant.alertTitle,
+                                            msg: result.msg,
+                                            buttons: Ext.MessageBox.OK,
+                                            icon: Ext.MessageBox.INFO
+                                        });
+                                    }
+                                    respStore.loadPage(1);
+                                }
+                            });
+                        }
+                    });
 				}
 			}]/* , 
 			listeners:{
@@ -354,10 +351,11 @@
 		
 		function addRespInfo(row){
 			var count = 0;
-			
+			var oldNumber = '';
 			var respId = '';
 			if (row) {
 				respId = row.get('respId');
+				oldNumber = row.get('number');
 			}
 			
 			var belongToDept = Ext.create("Ext.ux.TreePicker", {
@@ -432,26 +430,30 @@
 			                    fieldLabel: '岗位编号',
 			                    name: 'respVo.number',
 			                    maxLength:50,
-			                    allowBlank: false/* ,
+			                    allowBlank: false,
 			                    validator: function(value){
 			                        var returnObj = null;
-			                        $.ajax({
-			                            url : '${ctx}/dict/validateDictTypeProperties.action',
-			                            data:{key:'1',value:value},
-			                            cache : false,
-			                            async : false,
-			                            type : "POST",
-			                            dataType : 'json',
-			                            success : function (result){
-			                                if(!result.valid){
-			                                    returnObj = result.reason;
-			                                }else{
-			                                    returnObj = true;
+			                        if(value == oldNumber){
+			                            return true;
+			                        }else{
+			                            $.ajax({
+			                                url : '${ctx}/org/checkNumber.action',
+			                                data:{value:value},
+			                                cache : false,
+			                                async : false,
+			                                type : "POST",
+			                                dataType : 'json',
+			                                success : function (result){
+			                                    if(!result.valid){
+			                                        returnObj = result.reason;
+			                                    }else{
+			                                        returnObj = true;
+			                                    }
 			                                }
-			                            }
-			                        });
-			                        return returnObj;
-			                    } */
+			                            });
+			                            return returnObj;
+			                        }
+			                    }
 			                },
 			                belongToDept
 					    ]
@@ -634,8 +636,15 @@
 		    });
 			dutyStore.load();
             
+			var winTitle = '添加岗位';
+			var formUrl = '${ctx}/org/addResp.action?';
+			if (row) {
+				winTitle = '修改岗位';
+	            formUrl = '${ctx}/org/updateResp.action?';
+			}
+			
             var respWin=Ext.create("Ext.window.Window",{
-                title: '添加岗位',
+                title: winTitle,
                 resizable: false,
                 buttonAlign:"center",
                 height: 360,
@@ -690,7 +699,7 @@
                             }
                                 
                             respForm.form.submit({
-                                url:"${ctx}/org/addResp.action?" + dutyLst.substring(1),
+                                url : formUrl + dutyLst.substring(1),
                                 success : function(form, action) {
                                     new Ext.ux.TipsWindow({
                                         title: SystemConstant.alertTitle,
@@ -738,8 +747,45 @@
              }).show();
 		}
 		
-		
-		
+		lockUnLock = function(respId, enable){
+			var title = '确认锁定所选岗位数据吗？';
+			if (enable == 0) {
+				title = '确认解锁所选岗位数据吗？';
+			}
+			
+			Ext.Msg.confirm(SystemConstant.alertTitle, title, function(btn) {
+                if (btn == 'yes') {
+                	Ext.Ajax.request({
+                        url: '${ctx}/org/lockUnLock.action',
+                        async:false,
+                        params: {
+                            respId: respId,
+                            enable: enable
+                        },
+                        success : function(res, options) {
+                            var result = Ext.decode(res.responseText);
+                            if(result.success == 'true'){
+                                new Ext.ux.TipsWindow(
+                                        {
+                                            title: SystemConstant.alertTitle,
+                                            autoHide: 3,
+                                            html:result.msg
+                                        }
+                                ).show();
+                            }else{
+                                Ext.MessageBox.show({
+                                    title: SystemConstant.alertTitle,
+                                    msg: result.msg,
+                                    buttons: Ext.MessageBox.OK,
+                                    icon: Ext.MessageBox.INFO
+                                });
+                            }
+                            respStore.loadPage(1);
+                        }
+                    });
+                }
+            });
+		}
 	});
 	</script>
 </body>

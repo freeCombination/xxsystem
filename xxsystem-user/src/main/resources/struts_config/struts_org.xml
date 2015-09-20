@@ -118,6 +118,9 @@
         <action name="getRespList" class="com.xx.system.org.action.RespAction" method="getRespList"></action>
         <action name="addResp" class="com.xx.system.org.action.RespAction" method="addResp"></action>
         <action name="getDutyListByRespId" class="com.xx.system.org.action.RespAction" method="getDutyListByRespId"></action>
-        
+        <action name="updateResp" class="com.xx.system.org.action.RespAction" method="updateResp"></action>
+        <action name="delResps" class="com.xx.system.org.action.RespAction" method="delResps"></action>
+        <action name="checkNumber" class="com.xx.system.org.action.RespAction" method="checkNumber"></action>
+        <action name="lockUnLock" class="com.xx.system.org.action.RespAction" method="lockUnLock"></action>
 	</package>
 </struts>

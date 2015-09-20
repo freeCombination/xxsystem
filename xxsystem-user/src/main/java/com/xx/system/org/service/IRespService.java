@@ -67,7 +67,7 @@ public interface IRespService {
      * @date 2013-11-25
      * @param respVo 岗位对象
      */
-    public void updateResp(RespVo respVo)
+    public void updateResp(RespVo respVo, List<DutyVo> dvoLst)
         throws BusinessException;
     
     /**
@@ -99,4 +99,12 @@ public interface IRespService {
      * @throws BusinessException
      */
     public List<DutyVo> getDutyListByRespId(Integer respId) throws BusinessException;
+    
+    /**
+     * 锁定解锁岗位
+     * 
+     * @param respId
+     * @throws BusinessException
+     */
+    public void lockUnLock(Integer respId) throws BusinessException;
 }
