@@ -115,5 +115,9 @@
 		<action name="toResponsibilities" class="com.xx.system.org.action.RespAction">
             <result>/WEB-INF/pages/org/responsibilitiesManage.jsp</result>
         </action>
+        <action name="getRespList" class="com.xx.system.org.action.RespAction" method="getRespList"></action>
+        <action name="addResp" class="com.xx.system.org.action.RespAction" method="addResp"></action>
+        <action name="getDutyListByRespId" class="com.xx.system.org.action.RespAction" method="getDutyListByRespId"></action>
+        
 	</package>
 </struts>
