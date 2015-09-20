@@ -29,7 +29,6 @@ import com.xx.system.common.constant.Constant;
 import com.xx.system.common.dao.IBaseDao;
 import com.xx.system.common.exception.BusinessException;
 import com.xx.system.common.interceptor.Log;
-import com.xx.system.common.sso.LoginYu;
 import com.xx.system.common.util.MD5Util;
 import com.xx.system.common.util.StringUtil;
 import com.xx.system.common.util.UUIDUtil;
@@ -1448,54 +1447,30 @@ public class UserServiceImpl implements IUserService {
      * 用户登录
      * 
      * @Title login
-     * @author wanglc
      * @throws Exception 
-     * @throws CordysException 
+     * @throws BusinessException 
      * @date 2013-12-13
      */
     @Override
     public Map<String, String> userLogin(Map<String, String> paramMap, User user)
         throws BusinessException, Exception {
         Map<String, String> map = new HashMap<String, String>();
-        String username = paramMap.get("userName");
+        //String username = paramMap.get("userName");
         String password = paramMap.get("password");
-        // String userType = paramMap.get("userType");
-        String userType = user.getType().getDictionaryValue();
        
         if (user == null || user.getStatus() == Constant.STATUS_IS_DELETED) {
             map.put("flag", "false");
             map.put("msg", "用户不存在");
             return map;
         }
-        if (Integer.parseInt(userType) == Constant.USER_TYPE_LOCAL) { // 本地登录
-            /*
-             * if (!userType.equals(user.getType().getDictionaryValue())) { map.put("flag",
-             * "false"); map.put("msg", "用户不存在"); return map; } else
-             */if (!user.getPassword().equals(MD5Util.encode(password))) {
-                map.put("flag", "false");
-                map.put("msg", "密码错误");
-                return map;
-            }
-            else {
-                map.put("flag", "true");
-            }
+        
+        if (!user.getPassword().equals(MD5Util.encode(password))) {
+            map.put("flag", "false");
+            map.put("msg", "密码错误");
+            return map;
         }
-        else if (Integer.parseInt(userType) == Constant.USER_TYPE_REMOTE) {// 中油邮箱登录
-            if (!(user.getType().getPkDictionaryId() == Integer.parseInt(userType))) {
-                map.put("flag", "false");
-                map.put("msg", "您不属于中油用户");
-                return map;
-            }
-            String ldapurl = "ldap://10.33.17.1:389";
-            LoginYu login = new LoginYu(ldapurl);
-            if (!login.connectPtr(ldapurl, username, password) == true) {
-                map.put("flag", "false");
-                map.put("msg", "密码错误");
-                return map;
-            }
-            else {
-                map.put("flag", "true");
-            }
+        else {
+            map.put("flag", "true");
         }
         return map;
     }
@@ -1504,7 +1479,6 @@ public class UserServiceImpl implements IUserService {
      * 逻辑删除用户，更改用户状态为2（集成平台已删除）
      * 
      * @Title deleteLocalUserLogic
-     * @author wanglc
      * @date 2013-12-17
      * @param user
      * @param ui
@@ -1512,17 +1486,14 @@ public class UserServiceImpl implements IUserService {
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED)
     private void deleteLocalUserLogic(User user)
         throws BusinessException {
-        if (user.getIsDeletAble() == Constant.ALLOW_DELETE) {
-            user.setStatus(Constant.STATUS_DELETE_BYJCPT);
-            baseDao.saveOrUpdate(user);
-        }
+        user.setStatus(Constant.STATUS_DELETE_BYJCPT);
+        baseDao.saveOrUpdate(user);
     }
     
     /**
      * 取本地数库中的当前组织
      * 
      * @Title getLocalOrgByCode
-     * @author wanglc
      * @date 2013-12-16
      * @param code
      * @return
@@ -2011,21 +1982,6 @@ public class UserServiceImpl implements IUserService {
         Map<String, Object> data = new HashMap<String, Object>();
         if (user != null)
         {
-        //职位
-        data.put("user.post.pkDictionaryId",user.getPost() == null ? "" : user.getPost()
-            .getPkDictionaryId());
-        //职称
-        data.put("user.postTitle.pkDictionaryId",user.getPostTitle() == null ? ""
-            : user.getPostTitle().getPkDictionaryId());
-        //职务1
-        data.put("user.job1.pkDictionaryId",user.getJob1() == null ? "" : user.getJob1()
-            .getPkDictionaryId());
-        //职务2
-        data.put("user.job2.pkDictionaryId",user.getJob2() == null ? "" : user.getJob2()
-            .getPkDictionaryId());
-        //职级
-        data.put("user.jobLevel.pkDictionaryId",user.getJobLevel() == null ? ""
-            : user.getJobLevel().getPkDictionaryId());
         //出生日期
         data.put("user.birthDay",user.getBirthDay() == null ? "" : user.getBirthDay());
         //排序
@@ -2034,19 +1990,12 @@ public class UserServiceImpl implements IUserService {
         data.put("user.gender",user.getGender() == null ? "" : user.getGender());
         //邮箱
         data.put("user.email",user.getEmail() == null ? "" : user.getEmail());
-        //移动电话1
-        data.put("user.mobileNo1",user.getMobileNo1() == null ? "" : user.getMobileNo1());
-        //移动电话2
-        data.put("user.mobileNo2",user.getMobileNo2() == null ? "" : user.getMobileNo2());
+        //移动电话
+        data.put("user.mobileNo",user.getMobileNo() == null ? "" : user.getMobileNo());
         //电话号码
         data.put("user.phoneNo",user.getPhoneNo() == null ? "" : user.getPhoneNo());
-        //集团短号1
-        data.put("user.shortNo1",user.getShortNo1() == null ? "" : user.getShortNo1());
-        //集团短号2
-        data.put("user.shortNo2",user.getShortNo2() == null ? "" : user.getShortNo2());
-        //班组
-        data.put("user.team.pkDictionaryId",user.getTeam() == null ? "" : user.getTeam()
-            .getPkDictionaryId());
+        //集团短号
+        data.put("user.shortNo",user.getShortNo() == null ? "" : user.getShortNo());
         //出生地
         data.put("user.birthPlace",user.getBirthPlace() == null ? ""
             : user.getBirthPlace());
@@ -2054,13 +2003,29 @@ public class UserServiceImpl implements IUserService {
         //data.put("user.password",user.getPassword() == null ? "" : user.getPassword());
         //真实姓名
         data.put("user.realname",user.getRealname() == null ? "" : user.getRealname());
-        //用户类别
-        data.put("user.type.pkDictionaryId",user.getType() == null ? "" : user.getType()
-            .getPkDictionaryId());
         //id
         data.put("user.userId",user.getUserId() == null ? 0 : user.getUserId());
         data.put("user.username",user.getUsername() == null ? "" : user.getUsername());
         data.put("user.erpId",user.getErpId() == null ? "" : user.getErpId());
+        
+        if (user.getResponsibilities() != null) {
+        	data.put("user.respId",user.getResponsibilities().getPkRespId());
+            data.put("user.respName",user.getResponsibilities().getName());
+        }
+        
+        data.put("user.nationality", user.getNationality() == null ? "" : user.getNationality());
+        data.put("user.partyDate", user.getPartyDate() == null ? "" : user.getPartyDate());
+        data.put("user.jobStartDate", user.getJobStartDate() == null ? "" : user.getJobStartDate());
+        data.put("user.officeHoldingDate", user.getOfficeHoldingDate() == null ? "" : user.getOfficeHoldingDate());
+        data.put("user.educationBackground", user.getEducationBackground() == null ? "" : user.getEducationBackground());
+        data.put("user.technicaTitles", user.getTechnicaTitles() == null ? "" : user.getTechnicaTitles());
+        data.put("user.comeDate", user.getComeDate() == null ? "" : user.getComeDate());
+        data.put("user.skill", user.getSkill() == null ? "" : user.getSkill());
+        data.put("user.performance", user.getPerformance() == null ? "" : user.getPerformance());
+        data.put("user.employmentInfo", user.getEmploymentInfo() == null ? "" : user.getEmploymentInfo());
+        data.put("user.postWage", user.getPostWage() == null ? "" : user.getPostWage());
+        data.put("user.trainInfo", user.getTrainInfo() == null ? "" : user.getTrainInfo());
+        
         // 组织
         String orgId = "";
         String orgName = "";
@@ -2105,56 +2070,41 @@ public class UserServiceImpl implements IUserService {
     public UserVo convertVo(User user)
         throws BusinessException {
         UserVo vo = new UserVo();
-        vo.setPostText(user.getPost() == null ? "" : user.getPost()
-            .getDictionaryName());
-        vo.setPostValue(user.getPost() == null ? Constant.ZORE : user.getPost()
-            .getPkDictionaryId());
-        vo.setPostTitleValue(user.getPostTitle() == null ? Constant.ZORE
-            : user.getPostTitle().getPkDictionaryId());
-        vo.setPostTitleText(user.getPostTitle() == null ? ""
-            : user.getPostTitle().getDictionaryName());
-        vo.setJobValue1(user.getJob1() == null ? Constant.ZORE : user.getJob1()
-            .getPkDictionaryId());
-        vo.setJobText1(user.getJob1() == null ? "" : user.getJob1()
-            .getDictionaryName());
-        vo.setJobValue2(user.getJob2() == null ? Constant.ZORE : user.getJob2()
-            .getPkDictionaryId());
-        vo.setJobText2(user.getJob2() == null ? "" : user.getJob2()
-            .getDictionaryName());
-        vo.setJobLevelValue(user.getJobLevel() == null ? Constant.ZORE
-            : user.getJobLevel().getPkDictionaryId());
-        vo.setJobLevelText(user.getJobLevel() == null ? "" : user.getJobLevel()
-            .getDictionaryName());
-        vo.setIsDeletable(user.getIsDeletAble());
         vo.setBirthDay(user.getBirthDay() == null ? "" : user.getBirthDay());
         vo.setDisOrder(user.getDisOrder() == null ? 0 : user.getDisOrder());
         vo.setEnable(user.getEnable());
         vo.setGender(user.getGender() == null ? "" : user.getGender());
         vo.setEmail(user.getEmail() == null ? "" : user.getEmail());
         vo.setIdCard(user.getIdCard() == null ? "" : user.getIdCard());
-        vo.setMobileNo1(user.getMobileNo1() == null ? "" : user.getMobileNo1());
-        vo.setMobileNo2(user.getMobileNo2() == null ? "" : user.getMobileNo2());
+        vo.setMobileNo(user.getMobileNo() == null ? "" : user.getMobileNo());
         vo.setPhoneNo(user.getPhoneNo() == null ? "" : user.getPhoneNo());
-        vo.setShortNo1(user.getShortNo1() == null ? "" : user.getShortNo1());
-        vo.setShortNo2(user.getShortNo2() == null ? "" : user.getShortNo2());
-        vo.setTeamText(user.getTeam() == null ? "" : user.getTeam()
-            .getDictionaryName());
-        vo.setTeamValue(user.getTeam() == null ? Constant.ZORE : user.getTeam()
-            .getPkDictionaryId());
+        vo.setShortNo(user.getShortNo() == null ? "" : user.getShortNo());
         vo.setBirthPlace(user.getBirthPlace() == null ? ""
             : user.getBirthPlace());
         vo.setPassword(user.getPassword() == null ? "" : user.getPassword());
         vo.setRealname(user.getRealname() == null ? "" : user.getRealname());
         vo.setStatus(user.getStatus());
-        vo.setTypeValue(user.getType() == null ? Constant.ZORE : user.getType()
-            .getPkDictionaryId());
-        vo.setTypeText(user.getType() == null ? "" : user.getType()
-            .getDictionaryName());
         vo.setUserId(user.getUserId() == null ? 0 : user.getUserId());
         vo.setUsername(user.getUsername() == null ? "" : user.getUsername());
         vo.setErpId(user.getErpId() == null ? "" : user.getErpId());
-        vo.setIsDeletable(user.getIsDeletAble() == null ? 0
-            : user.getIsDeletAble());
+        
+        if (user.getResponsibilities() != null) {
+        	vo.setRespId(user.getResponsibilities().getPkRespId());
+        	vo.setRespName(user.getResponsibilities().getName());
+        }
+        
+        vo.setNationality(user.getNationality() == null ? "" : user.getNationality());
+        vo.setPartyDate(user.getPartyDate() == null ? "" : user.getPartyDate());
+        vo.setJobStartDate(user.getJobStartDate() == null ? "" : user.getJobStartDate());
+        vo.setOfficeHoldingDate(user.getOfficeHoldingDate() == null ? "" : user.getOfficeHoldingDate());
+        vo.setEducationBackground(user.getEducationBackground() == null ? "" : user.getEducationBackground());
+        vo.setTechnicaTitles(user.getTechnicaTitles() == null ? "" : user.getTechnicaTitles());
+        vo.setComeDate(user.getComeDate() == null ? "" : user.getComeDate());
+        vo.setSkill(user.getSkill() == null ? "" : user.getSkill());
+        vo.setPerformance(user.getPerformance() == null ? "" : user.getPerformance());
+        vo.setEmploymentInfo(user.getEmploymentInfo() == null ? "" : user.getEmploymentInfo());
+        vo.setPostWage(user.getPostWage() == null ? "" : user.getPostWage());
+        vo.setTrainInfo(user.getTrainInfo() == null ? "" : user.getTrainInfo());
         
         // 属于多部门的情况，进行部门名称的拼接
         Set<OrgUser> ouSet = user.getOrgUsers();

@@ -399,26 +399,26 @@ public class HSSFUtils {
             cell = row.createCell(1);
             cell.setCellStyle(cellStyle);
             cell.setCellType(HSSFCell.ENCODING_UTF_16);
-            cell.setCellValue(user.getPost() == null ? "" : user.getPost()
-                .getDictionaryName());
+            //cell.setCellValue(user.getPost() == null ? "" : user.getPost()
+            //    .getDictionaryName());
             
             cell = row.createCell(2);
             cell.setCellStyle(cellStyle);
             cell.setCellType(HSSFCell.ENCODING_UTF_16);
-            cell.setCellValue(user.getJob1() == null ? "" : user.getJob1()
-                .getDictionaryName());
+            //cell.setCellValue(user.getJob1() == null ? "" : user.getJob1()
+            //    .getDictionaryName());
             
             cell = row.createCell(3);
             cell.setCellStyle(cellStyle);
             cell.setCellType(HSSFCell.ENCODING_UTF_16);
-            cell.setCellValue(user.getPostTitle() == null ? ""
-                : user.getPostTitle().getDictionaryName());
+            //cell.setCellValue(user.getPostTitle() == null ? ""
+            //    : user.getPostTitle().getDictionaryName());
             
             cell = row.createCell(4);
             cell.setCellStyle(cellStyle);
             cell.setCellType(HSSFCell.ENCODING_UTF_16);
-            cell.setCellValue(user.getJobLevel() == null ? ""
-                : user.getJobLevel().getDictionaryName());
+            //cell.setCellValue(user.getJobLevel() == null ? ""
+            //    : user.getJobLevel().getDictionaryName());
             
             cell = row.createCell(5);
             cell.setCellStyle(cellStyle);
@@ -443,13 +443,13 @@ public class HSSFUtils {
             cell = row.createCell(9);
             cell.setCellStyle(cellStyle);
             cell.setCellType(HSSFCell.ENCODING_UTF_16);
-            cell.setCellValue(user.getMobileNo1());
+            //cell.setCellValue(user.getMobileNo1());
             
             cell = row.createCell(10);
             cell.setCellStyle(cellStyle);
             cell.setCellType(HSSFCell.ENCODING_UTF_16);
-            cell.setCellValue(user.getType() == null ? "" : user.getType()
-                .getDictionaryName());
+            //cell.setCellValue(user.getType() == null ? "" : user.getType()
+            //    .getDictionaryName());
         }
         File file = new File("importUserTemp.xls");
         try {

@@ -1,8 +1,5 @@
 package com.xx.system.user.vo;
 
-import com.xx.system.org.entity.Organization;
-import com.xx.system.user.entity.User;
-
 /**
  * 用户Vo
  * 
@@ -53,14 +50,9 @@ public class UserVo {
     private String gender;
     
     /**
-     * @Fields mobileNo1 : 手机1
+     * @Fields mobileNo1 : 手机
      */
-    private String mobileNo1;
-    
-    /**
-     * @Fields mobileNo2 : 手机2
-     */
-    private String mobileNo2;
+    private String mobileNo;
     
     /**
      * @Fields phoneNo : 固话
@@ -73,14 +65,9 @@ public class UserVo {
     private String idCard;
     
     /**
-     * @Fields shortNo1 : 短号1
+     * @Fields shortNo1 : 短号
      */
-    private String shortNo1;
-    
-    /**
-     * @Fields shortNo2 : 短号2
-     */
-    private String shortNo2;
+    private String shortNo;
     
     /**
      * @Fields status : 状态
@@ -98,71 +85,6 @@ public class UserVo {
     private int enable;
     
     /**
-     * @Fields typeValue : 用户类别值
-     */
-    private int typeValue;
-    
-    /**
-     * @Fields typeText : 用户类别
-     */
-    private String typeText;
-    
-    /**
-     * @Fields postValue : 职位值
-     */
-    private int postValue;
-    
-    /**
-     * @Fields postText : 职位名称
-     */
-    private String postText;
-    
-    /**
-     * @Fields postTitleValue : 职称值
-     */
-    private int postTitleValue;
-    
-    /**
-     * @Fields postTitleText :职称名称
-     */
-    private String postTitleText;
-    
-    /**
-     * @Fields jobValue1 : 职务值1
-     */
-    private int jobValue1;
-    
-    /**
-     * @Fields jobText1 : 职务名称1
-     */
-    private String jobText1;
-    
-    /**
-     * @Fields jobValue2 : 职务值2
-     */
-    private int jobValue2;
-    
-    /**
-     * @Fields jobText2 : 职务名称2
-     */
-    private String jobText2;
-    
-    /**
-     * @Fields jobLevelValue : 职级值
-     */
-    private int jobLevelValue;
-    
-    /**
-     * @Fields jobLevelText : 职级名称
-     */
-    private String jobLevelText;
-    
-    /**
-     * @Fields isDeletable : 是否允许删除
-     */
-    private int isDeletable;
-    
-    /**
      * @Fields birthPlace :出生地
      */
     private String birthPlace;
@@ -171,16 +93,6 @@ public class UserVo {
      * @Fields email : 邮箱
      */
     private String email;
-    
-    /**
-     * @Fields teamValue : 班组值
-     */
-    private int teamValue;
-    
-    /**
-     * @Fields teamText : 班组名称
-     */
-    private String teamText;
     
     /**
      * @Fields erpId : erp编号
@@ -203,120 +115,74 @@ public class UserVo {
     private String flag;
     
     /**
-     * <p>
-     * Title: UserVo
-     * </p>
-     * <p>
-     * Description: 默认构造方法
-     * </p>
+     * 岗位
      */
-    public UserVo() {
-    }
+    private String respName;
     
     /**
-     * <p>
-     * Title: UserVo
-     * </p>
-     * <p>
-     * Description: 带参数的构造方法
-     * </p>
-     * 
-     * @param org 组织对象
-     * @param user 用户对象
+     * 岗位ID
      */
-    public UserVo(Organization org, User user) {
-        /*this.postText =
-            user.getPost() == null ? "" : user.getPost().getDictionaryName();
-        this.postValue =
-            user.getPost() == null ? Constant.ZORE : user.getPost()
-                .getPkDictionaryId();
-        this.postTitleValue =
-            user.getPostTitle() == null ? Constant.ZORE : user.getPostTitle()
-                .getPkDictionaryId();
-        this.postTitleText =
-            user.getPostTitle() == null ? "" : user.getPostTitle()
-                .getDictionaryName();
-        this.jobValue1 =
-            user.getJob1() == null ? Constant.ZORE : user.getJob1()
-                .getPkDictionaryId();
-        this.jobText1 =
-            user.getJob1() == null ? "" : user.getJob1().getDictionaryName();
-        this.jobValue2 =
-            user.getJob2() == null ? Constant.ZORE : user.getJob2()
-                .getPkDictionaryId();
-        this.jobText2 =
-            user.getJob2() == null ? "" : user.getJob2().getDictionaryName();
-        this.jobLevelValue =
-            user.getJobLevel() == null ? Constant.ZORE : user.getJobLevel()
-                .getPkDictionaryId();
-        this.jobLevelText =
-            user.getJobLevel() == null ? "" : user.getJobLevel()
-                .getDictionaryName();
-        this.isDeletable = user.getIsDeletAble();
-        this.birthDay = user.getBirthDay() == null ? "" : user.getBirthDay();
-        this.disOrder = user.getDisOrder() == null ? 0 : user.getDisOrder();
-        this.enable = user.getEnable();
-        this.gender = user.getGender() == null ? "" : user.getGender();
-        this.email = user.getEmail() == null ? "" : user.getEmail();
-        this.idCard = user.getIdCard() == null ? "" : user.getIdCard();
-        this.mobileNo1 = user.getMobileNo1() == null ? "" : user.getMobileNo1();
-        this.mobileNo2 = user.getMobileNo2() == null ? "" : user.getMobileNo2();
-        this.phoneNo = user.getPhoneNo() == null ? "" : user.getPhoneNo();
-        this.shortNo1 = user.getShortNo1() == null ? "" : user.getShortNo1();
-        this.shortNo2 = user.getShortNo2() == null ? "" : user.getShortNo2();
-        this.teamText =
-            user.getTeam() == null ? "" : user.getTeam().getDictionaryName();
-        this.teamValue =
-            user.getTeam() == null ? Constant.ZORE : user.getTeam()
-                .getPkDictionaryId();
-        this.birthPlace =
-            user.getBirthPlace() == null ? "" : user.getBirthPlace();
-        this.password = user.getPassword() == null ? "" : user.getPassword();
-        this.realname = user.getRealname() == null ? "" : user.getRealname();
-        this.status = user.getStatus();
-        this.typeValue =
-            user.getType() == null ? Constant.ZORE : user.getType()
-                .getPkDictionaryId();
-        this.typeText =
-            user.getType() == null ? "" : user.getType().getDictionaryName();
-        this.userId = user.getUserId() == null ? 0 : user.getUserId();
-        this.username = user.getUsername() == null ? "" : user.getUsername();
-        this.erpId = user.getErpId() == null ? "0" : user.getErpId();
-        this.isDeletable =
-            user.getIsDeletAble() == null ? 0 : user.getIsDeletAble();
-        
-        // 属于多部门的情况，进行部门名称的拼接
-        Set<OrgUser> ouSet = user.getOrgUsers();
-        if (ouSet.size() <= 1) {
-            this.orgName = ouSet.iterator().next().getOrganization().getOrgName();
-        }
-        else {
-            Set<OrgUser> sort = new TreeSet<OrgUser>(new Comparator<OrgUser>() {
-                @Override
-                public int compare(OrgUser ou1, OrgUser ou2) {
-                    return ou1.getOrganization().getOrgId() - ou2.getOrganization().getOrgId();
-                }
-            });
-            
-            Iterator<OrgUser> sortIt = ouSet.iterator();
-            String orgs = "";
-            while (sortIt.hasNext()) {
-                sort.add(sortIt.next());
-            }
-            
-            Iterator<OrgUser> it = sort.iterator();
-            while (it.hasNext()) {
-                OrgUser ou = it.next();
-                if (ou.getIsDelete() == Constant.STATUS_NOT_DELETE) {
-                    orgs = orgs + "," + ou.getOrganization().getOrgName();
-                }
-            }
-            
-            this.orgName = StringUtils.isBlank(orgs) ? "" : orgs.substring(1);
-        }*/
-        
-        //this.orgId = org.getOrgId();
-    }
+    private Integer respId;
+    
+    /**
+     * 民族
+     */
+    private String nationality;
+    
+    /**
+     * 入党团时间
+     */
+    private String partyDate;
+    
+    /**
+     * 参加工作时间
+     */
+    private String jobStartDate;
+    
+    /**
+     * 党政职务及任职时间
+     */
+    private String officeHoldingDate;
+    
+    /**
+     * 学历（专业、毕业时间、学校）
+     */
+    private String educationBackground;
+    
+    /**
+     * 现技术职称及确定时间
+     */
+    private String technicaTitles;
+    
+    /**
+     * 进所时间
+     */
+    private String comeDate;
+    
+    /**
+     * 技能
+     */
+    private String skill;
+    
+    /**
+     * 业绩
+     */
+    private String performance;
+    
+    /**
+     * 用工信息
+     */
+    private String employmentInfo;
+    
+    /**
+     * 岗位工资
+     */
+    private String postWage;
+    
+    /**
+     * 培训情况
+     */
+    private String trainInfo;
     
     /**
      * @return userId
@@ -417,31 +283,17 @@ public class UserVo {
     }
     
     /**
-     * @return mobileNo1
+     * @return mobileNo
      */
-    public String getMobileNo1() {
-        return mobileNo1;
+    public String getMobileNo() {
+        return mobileNo;
     }
     
     /**
      * @param mobileNo 要设置的 mobileNo
      */
-    public void setMobileNo1(String mobileNo1) {
-        this.mobileNo1 = mobileNo1;
-    }
-    
-    /**
-     * @return mobileNo2
-     */
-    public String getMobileNo2() {
-        return mobileNo2;
-    }
-    
-    /**
-     * @param mobileNo2 要设置的 mobileNo2
-     */
-    public void setMobileNo2(String mobileNo2) {
-        this.mobileNo2 = mobileNo2;
+    public void setMobileNo(String mobileNo) {
+        this.mobileNo = mobileNo;
     }
     
     /**
@@ -473,31 +325,17 @@ public class UserVo {
     }
     
     /**
-     * @return shortNo1
+     * @return shortNo
      */
-    public String getShortNo1() {
-        return shortNo1;
+    public String getShortNo() {
+        return shortNo;
     }
     
     /**
      * @param shortNo1 要设置的 shortNo1
      */
-    public void setShortNo1(String shortNo1) {
-        this.shortNo1 = shortNo1;
-    }
-    
-    /**
-     * @return shortNo2
-     */
-    public String getShortNo2() {
-        return shortNo2;
-    }
-    
-    /**
-     * @param shortNo2 要设置的 shortNo2
-     */
-    public void setShortNo2(String shortNo2) {
-        this.shortNo2 = shortNo2;
+    public void setShortNo(String shortNo) {
+        this.shortNo = shortNo;
     }
     
     /**
@@ -543,188 +381,6 @@ public class UserVo {
     }
     
     /**
-     * @return typeValue
-     */
-    public int getTypeValue() {
-        return typeValue;
-    }
-    
-    /**
-     * @param typeValue 要设置的 typeValue
-     */
-    public void setTypeValue(int typeValue) {
-        this.typeValue = typeValue;
-    }
-    
-    /**
-     * @return typeText
-     */
-    public String getTypeText() {
-        return typeText;
-    }
-    
-    /**
-     * @param typeText 要设置的 typeText
-     */
-    public void setTypeText(String typeText) {
-        this.typeText = typeText;
-    }
-    
-    /**
-     * @return postValue
-     */
-    public int getPostValue() {
-        return postValue;
-    }
-    
-    /**
-     * @param postValue 要设置的 postValue
-     */
-    public void setPostValue(int postValue) {
-        this.postValue = postValue;
-    }
-    
-    /**
-     * @return postText
-     */
-    public String getPostText() {
-        return postText;
-    }
-    
-    /**
-     * @param postText 要设置的 postText
-     */
-    public void setPostText(String postText) {
-        this.postText = postText;
-    }
-    
-    /**
-     * @return postTitleValue
-     */
-    public int getPostTitleValue() {
-        return postTitleValue;
-    }
-    
-    /**
-     * @param postTitleValue 要设置的 postTitleValue
-     */
-    public void setPostTitleValue(int postTitleValue) {
-        this.postTitleValue = postTitleValue;
-    }
-    
-    /**
-     * @return postTitleText
-     */
-    public String getPostTitleText() {
-        return postTitleText;
-    }
-    
-    /**
-     * @param postTitleText 要设置的 postTitleText
-     */
-    public void setPostTitleText(String postTitleText) {
-        this.postTitleText = postTitleText;
-    }
-    
-    /**
-     * @return jobValue1
-     */
-    public int getJobValue1() {
-        return jobValue1;
-    }
-    
-    /**
-     * @param jobValue1 要设置的 jobValue1
-     */
-    public void setJobValue1(int jobValue1) {
-        this.jobValue1 = jobValue1;
-    }
-    
-    /**
-     * @return jobText1
-     */
-    public String getJobText1() {
-        return jobText1;
-    }
-    
-    /**
-     * @param jobText1 要设置的 jobText1
-     */
-    public void setJobText1(String jobText1) {
-        this.jobText1 = jobText1;
-    }
-    
-    /**
-     * @return jobValue2
-     */
-    public int getJobValue2() {
-        return jobValue2;
-    }
-    
-    /**
-     * @param jobValue2 要设置的 jobValue2
-     */
-    public void setJobValue2(int jobValue2) {
-        this.jobValue2 = jobValue2;
-    }
-    
-    /**
-     * @return jobText2
-     */
-    public String getJobText2() {
-        return jobText2;
-    }
-    
-    /**
-     * @param jobText2 要设置的 jobText2
-     */
-    public void setJobText2(String jobText2) {
-        this.jobText2 = jobText2;
-    }
-    
-    /**
-     * @return jobLevelValue
-     */
-    public int getJobLevelValue() {
-        return jobLevelValue;
-    }
-    
-    /**
-     * @param jobLevelValue 要设置的 jobLevelValue
-     */
-    public void setJobLevelValue(int jobLevelValue) {
-        this.jobLevelValue = jobLevelValue;
-    }
-    
-    /**
-     * @return jobLevelText
-     */
-    public String getJobLevelText() {
-        return jobLevelText;
-    }
-    
-    /**
-     * @param jobLevelText 要设置的 jobLevelText
-     */
-    public void setJobLevelText(String jobLevelText) {
-        this.jobLevelText = jobLevelText;
-    }
-    
-    /**
-     * @return isDeletable
-     */
-    public int getIsDeletable() {
-        return isDeletable;
-    }
-    
-    /**
-     * @param isDeletable 要设置的 isDeletable
-     */
-    public void setIsDeletable(int isDeletable) {
-        this.isDeletable = isDeletable;
-    }
-    
-    /**
      * @return birthPlace
      */
     public String getBirthPlace() {
@@ -750,34 +406,6 @@ public class UserVo {
      */
     public void setEmail(String email) {
         this.email = email;
-    }
-    
-    /**
-     * @return teamValue
-     */
-    public int getTeamValue() {
-        return teamValue;
-    }
-    
-    /**
-     * @param teamValue 要设置的 teamValue
-     */
-    public void setTeamValue(int teamValue) {
-        this.teamValue = teamValue;
-    }
-    
-    /**
-     * @return teamText
-     */
-    public String getTeamText() {
-        return teamText;
-    }
-    
-    /**
-     * @param teamText 要设置的 teamText
-     */
-    public void setTeamText(String teamText) {
-        this.teamText = teamText;
     }
     
     /**
@@ -849,4 +477,116 @@ public class UserVo {
     public void setRoleMemberId(int roleMemberId) {
         this.roleMemberId = roleMemberId;
     }
+
+	public String getRespName() {
+		return respName;
+	}
+
+	public void setRespName(String respName) {
+		this.respName = respName;
+	}
+
+	public Integer getRespId() {
+		return respId;
+	}
+
+	public void setRespId(Integer respId) {
+		this.respId = respId;
+	}
+
+	public String getNationality() {
+		return nationality;
+	}
+
+	public void setNationality(String nationality) {
+		this.nationality = nationality;
+	}
+
+	public String getPartyDate() {
+		return partyDate;
+	}
+
+	public void setPartyDate(String partyDate) {
+		this.partyDate = partyDate;
+	}
+
+	public String getJobStartDate() {
+		return jobStartDate;
+	}
+
+	public void setJobStartDate(String jobStartDate) {
+		this.jobStartDate = jobStartDate;
+	}
+
+	public String getOfficeHoldingDate() {
+		return officeHoldingDate;
+	}
+
+	public void setOfficeHoldingDate(String officeHoldingDate) {
+		this.officeHoldingDate = officeHoldingDate;
+	}
+
+	public String getEducationBackground() {
+		return educationBackground;
+	}
+
+	public void setEducationBackground(String educationBackground) {
+		this.educationBackground = educationBackground;
+	}
+
+	public String getTechnicaTitles() {
+		return technicaTitles;
+	}
+
+	public void setTechnicaTitles(String technicaTitles) {
+		this.technicaTitles = technicaTitles;
+	}
+
+	public String getComeDate() {
+		return comeDate;
+	}
+
+	public void setComeDate(String comeDate) {
+		this.comeDate = comeDate;
+	}
+
+	public String getSkill() {
+		return skill;
+	}
+
+	public void setSkill(String skill) {
+		this.skill = skill;
+	}
+
+	public String getPerformance() {
+		return performance;
+	}
+
+	public void setPerformance(String performance) {
+		this.performance = performance;
+	}
+
+	public String getEmploymentInfo() {
+		return employmentInfo;
+	}
+
+	public void setEmploymentInfo(String employmentInfo) {
+		this.employmentInfo = employmentInfo;
+	}
+
+	public String getPostWage() {
+		return postWage;
+	}
+
+	public void setPostWage(String postWage) {
+		this.postWage = postWage;
+	}
+
+	public String getTrainInfo() {
+		return trainInfo;
+	}
+
+	public void setTrainInfo(String trainInfo) {
+		this.trainInfo = trainInfo;
+	}
 }
