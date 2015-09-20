@@ -1,20 +1,22 @@
-package com.xx.system.personal.service.impl;
+package com.xx.grade.personal.service.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+
+import com.xx.grade.personal.entity.PersonalGrade;
+import com.xx.grade.personal.service.IPersonalGradeService;
+import com.xx.grade.personal.vo.PersonalGradeVo;
 import com.xx.system.common.dao.IBaseDao;
 import com.xx.system.common.exception.BusinessException;
 import com.xx.system.common.util.StringUtil;
 import com.xx.system.common.vo.ListVo;
-import com.xx.system.personal.entity.PersonalGrade;
-import com.xx.system.personal.service.IPersonalGradeService;
-import com.xx.system.personal.vo.PersonalGradeVo;
 
 
 /**
@@ -41,8 +43,8 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		String userId = paramMap.get("userId");
 		StringBuffer hql = new StringBuffer();
 		StringBuffer counthql = new StringBuffer();
-		hql.append(" From PersonalGrade pg where 1=1 ");
-		counthql.append(" select count(*) From PersonalGrade pg where 1=1 ");
+		hql.append(" From PersonalGrade pg where 1=1 and pg.isDelete = 0 ");
+		counthql.append(" select count(*) From PersonalGrade pg where 1=1 and pg.isDelete = 0 ");
 		if (StringUtil.isNotEmpty(userId)) {
 			hql.append(" and pg.user.userId = " + Integer.parseInt(userId));
 			counthql.append(" and pg.user.userId = " + Integer.parseInt(userId));

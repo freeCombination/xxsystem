@@ -1,10 +1,10 @@
-package com.xx.system.personal.service;
+package com.xx.grade.personal.service;
 
 import java.util.Map;
 
+import com.xx.grade.personal.vo.PersonalGradeVo;
 import com.xx.system.common.exception.BusinessException;
 import com.xx.system.common.vo.ListVo;
-import com.xx.system.personal.vo.PersonalGradeVo;
 
 /**
  * 个人评分服务

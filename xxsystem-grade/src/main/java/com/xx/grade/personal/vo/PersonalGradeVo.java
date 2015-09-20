@@ -1,4 +1,4 @@
-package com.xx.system.personal.vo;
+package com.xx.grade.personal.vo;
 
 /**
  * 个人评分vo

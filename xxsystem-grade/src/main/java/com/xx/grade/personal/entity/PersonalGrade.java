@@ -1,4 +1,4 @@
-package com.xx.system.personal.entity;
+package com.xx.grade.personal.entity;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -199,7 +199,7 @@ public class PersonalGrade implements Serializable {
 		this.result = result;
 	}
 
-	@Column(name = "title")
+	@Column(name = "TITLE")
 	public String getTitle() {
 		return title;
 	}

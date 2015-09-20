@@ -1,4 +1,4 @@
-package com.xx.system.personal.action;
+package com.xx.grade.personal.action;
 
 import java.util.Map;
 
@@ -11,7 +11,6 @@ import com.xx.system.common.util.RequestUtil;
 import com.xx.system.common.vo.ListVo;
 import com.xx.system.personal.service.IPersonalGradeService;
 import com.xx.system.personal.vo.PersonalGradeVo;
-import com.xx.system.role.action.RoleAction;
 import com.xx.system.user.entity.User;
 
 /**

@@ -1,4 +1,4 @@
-package com.xx.system.personal.entity;
+package com.xx.grade.personal.entity;
 
 import java.io.Serializable;
 import java.util.Date;

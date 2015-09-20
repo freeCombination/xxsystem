@@ -7,6 +7,6 @@
 		<action name="toPersonalGradeIndex" >
 			<result>/WEB-INF/pages/personalGrade/personalGradeManage.jsp</result>
 		</action>
-		<action name="*" class="com.xx.system.personal.action。PersonalGradeAction" method="{1}"></action>
+		<action name="*" class="com.xx.grade.personal.action。PersonalGradeAction" method="{1}"></action>
 	</package>
 </struts>
