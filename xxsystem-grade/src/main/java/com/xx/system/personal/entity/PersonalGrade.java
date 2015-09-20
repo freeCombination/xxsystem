@@ -1,7 +1,7 @@
 package com.xx.system.personal.entity;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -55,6 +55,11 @@ public class PersonalGrade implements Serializable {
 	private String gradeYear ;
 	
 	/**
+	 * 标题
+	 */
+	private String title ;
+	
+	/**
 	 * 存在问题
 	 */
 	private String problem ;
@@ -67,7 +72,7 @@ public class PersonalGrade implements Serializable {
 	/**
 	 * 综合得分
 	 */
-	private double compositeScores ;
+	private Double compositeScores ;
 	
 	/**
 	 * 状态（0:创建（可修改），1:提交（不可修改，他人进行评分），2:归档（评分完毕，不可修改））
@@ -82,12 +87,12 @@ public class PersonalGrade implements Serializable {
 	/**
 	 * 个人职责列表
 	 */
-	private List<PersonalDuty> personalDutys ;
+	private Set<PersonalDuty> personalDutys ;
 	
 	/**
 	 * 个人评分结果列表
 	 */
-	private List<PersonalGradeResult> result ;
+	private Set<PersonalGradeResult> result ;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -147,12 +152,12 @@ public class PersonalGrade implements Serializable {
 		this.workPlan = workPlan;
 	}
 
-	@Column(name = "WORK_PLAN")
-	public double getCompositeScores() {
+	@Column(name = "COMPOSITE_SCORES")
+	public Double getCompositeScores() {
 		return compositeScores;
 	}
 
-	public void setCompositeScores(double compositeScores) {
+	public void setCompositeScores(Double compositeScores) {
 		this.compositeScores = compositeScores;
 	}
 
@@ -176,23 +181,30 @@ public class PersonalGrade implements Serializable {
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "personalGrade")
 	@OrderBy(clause="ID desc")
-	public List<PersonalDuty> getPersonalDutys() {
+	public Set<PersonalDuty> getPersonalDutys() {
 		return personalDutys;
 	}
 
-	public void setPersonalDutys(List<PersonalDuty> personalDutys) {
+	public void setPersonalDutys(Set<PersonalDuty> personalDutys) {
 		this.personalDutys = personalDutys;
 	}
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "personalGrade")
 	@OrderBy(clause="GRADE_DATE desc")
-	public List<PersonalGradeResult> getResult() {
+	public Set<PersonalGradeResult> getResult() {
 		return result;
 	}
 
-	public void setResult(List<PersonalGradeResult> result) {
+	public void setResult(Set<PersonalGradeResult> result) {
 		this.result = result;
 	}
-	
-	
+
+	@Column(name = "title")
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
 }

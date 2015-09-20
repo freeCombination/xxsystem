@@ -418,6 +418,6 @@
         <module>xxsystem-dict</module>
         <module>xxsystem-mq</module>
          -->
-    
+      <module>xxsystem-grade</module>
   </modules>
 </project>
