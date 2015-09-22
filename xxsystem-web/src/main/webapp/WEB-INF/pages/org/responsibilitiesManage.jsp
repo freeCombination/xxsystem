@@ -655,6 +655,7 @@
                 title: winTitle,
                 resizable: false,
                 buttonAlign:"center",
+                closeAction : 'destroy',
                 height: 360,
                 width: 600,
                 modal:true,

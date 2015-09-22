@@ -50,8 +50,6 @@
 		<action name="getUserByIdForUpdate" class="com.xx.system.user.action.UserAction" method="getUserByIdForUpdate">
 		</action>
 	
-		<action name="synchronizeUserInfo" class="com.xx.system.user.action.UserAction" method="synchronizeUserInfo">
-		</action>
 		<action name="validateUserName" class="com.xx.system.user.action.UserAction" method="validateUserName">
 		</action>
 	

@@ -231,7 +231,7 @@ public class User implements java.io.Serializable {
      * 
      * <p>
      * Title:User(int userId, String username, String password, String realname, int status, Integer
-     * disOrder, Dictionary type, int enable, int isDeletAble)
+     * disOrder, Dictionary type, int enable)
      * </p>
      * <p>
      * Description:
@@ -245,11 +245,9 @@ public class User implements java.io.Serializable {
      * @param disOrder
      * @param type
      * @param enable
-     * @param isDeletAble
      */
     public User(int userId, String username, String password, String realname,
-        int status, Integer disOrder, Dictionary type, int enable,
-        int isDeletAble) {
+        int status, Integer disOrder, Dictionary type, int enable) {
         this.userId = userId;
         this.username = username;
         this.password = password;

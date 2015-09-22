@@ -37,11 +37,9 @@ Ext.define("sshframe.user.userModel",{
 		{name:"password"},
 		{name:"realname"},
 		{name:"gender"},
-		{name:"mobileNo1"},
-		{name:"mobileNo2"},
+		{name:"mobileNo"},
 		{name:"phoneNo"},
-		{name:"shortNo1"},
-		{name:"shortNo2"},
+		{name:"shortNo"},
 		{name:"idCard"},
 		{name:"birthPlace"},
 		{name:"erpId"},
@@ -49,23 +47,24 @@ Ext.define("sshframe.user.userModel",{
 		{name:"status"},
 		{name:"disOrder"},
 		{name:"enable"},
-		{name:"typeText"},
-		{name:"typeValue"},
-		{name: "postText"},
-		{name: "postValue"},
-		{name: "postTitleText"},
-		{name: "postTitleValue"},
-		{name: "jobText1"},
-		{name: "jobValue1"},
-		{name: "jobText2"},
-		{name: "jobValue2"},
-		{name: "jobLevelText"},
-		{name: "jobLevelValue"},
-		{name: "teamText"},
-		{name: "teamValue"},
 		{name: "email"},
 		{name: "isDeletable"},
-		{name: "birthDay"}
+		{name: "birthDay"},
+		
+		{name:"respName"},
+		{name:"respId"},
+		{name: "nationality"},
+		{name: "partyDate"},
+		{name: "jobStartDate"},
+		{name: "officeHoldingDate"},
+		{name: "educationBackground"},
+		{name: "technicaTitles"},
+		{name: "comeDate"},
+		{name: "skill"},
+		{name: "performance"},
+		{name: "employmentInfo"},
+		{name: "postWage"},
+		{name: "trainInfo"}
 	]
 });
 
@@ -102,12 +101,10 @@ var cm=[
         	{header: "登录名",align:'left',dataIndex: "username",width:90},
         	{header: "姓名",align:'left',dataIndex: "realname",width:90},
         	{header: "ERPID",align:'left',dataIndex: "erpId",width:90},
-        	{header: "职务一",align:'left',dataIndex: "jobText1",width:90},
-        	{header: "职务二",align:'left',dataIndex: "jobText2",width:90},
-        	{header: "用户类别",align:'left',dataIndex: "typeText",width:90},
-        	{header: "性别",dataIndex: "gender",width:50},
-        	{header: "手机1",align:'left',dataIndex: "mobileNo1",width:90},
-        	{header: "集团短号1",align:'left',dataIndex: "shortNo1",width:90},
+        	{header: "性别",align:'left',dataIndex: "gender",width:90},
+        	{header: "岗位",align:'left',dataIndex: "respName",width:90},
+        	{header: "电话",align:'left',dataIndex: "mobileNo",width:90},
+        	{header: "办公电话",dataIndex: "phoneNo",width:90},
         	{header: "禁用",dataIndex: "",width:50,
         		renderer:function(value, cellmeta, record, rowIndex, columnIndex, store){
 						var isLockup = record.get('enable');
@@ -148,9 +145,6 @@ sshframe.user.userGrid =  Ext.create("Ext.grid.Panel",{
 			 for(var i = 0;i < userPermissionArr.length;i++){
 					if("usermanage_add_btn" == userPermissionArr[i].name){
 						Ext.getCmp('addUser').setVisible(true);
-					}
-					if("usermanage_synch_btn" == userPermissionArr[i].name){
-						Ext.getCmp('synchronizeUserInfoBtn').setVisible(true);
 					}
 					if("usermanage_delete_btn" == userPermissionArr[i].name){
 						Ext.getCmp('deleteUser').setVisible(true);
@@ -204,7 +198,7 @@ sshframe.user.userGrid =  Ext.create("Ext.grid.Panel",{
 			iconCls: "resetPwd",
 			hidden:false,
 			disabled:true,
-			disabledExpr : "$selectedRows != 1",
+			disabledExpr : "$selectedRows != 1 && $enable == 0",
 			handler: function(){
 				sshframe.user.resetPwd();
 			}
@@ -266,7 +260,7 @@ sshframe.user.userGrid =  Ext.create("Ext.grid.Panel",{
 			text:SystemConstant.modifyBtnText,
 			id:"updateUser",
 			disabled: true,
-			disabledExpr : "$selectedRows != 1",
+			disabledExpr : "$selectedRows != 1 && $enable == 0",
 			iconCls: "edit-button",
 			hidden:true,
 			handler:function(){
@@ -278,21 +272,12 @@ sshframe.user.userGrid =  Ext.create("Ext.grid.Panel",{
 			text:SystemConstant.deleteBtnText,
 			id:"deleteUser",
 			disabled:true,
-			disabledExpr : "$selectedRows == 0",
+			disabledExpr : "$selectedRows == 0 && $enable == 0",
 			hidden:true,
 			iconCls: "delete-button",
 			handler:function(){
 				sshframe.user.deleteUser();
 			}
-		},
-		{
-			text : SystemConstant.synchronizeBtnText, 
-			iconCls: "refresh-button",
-			id: "synchronizeUserInfoBtn", 
-			hidden:true,
-			handler:function(){
-				sshframe.user.synchronizeUser();
-			} 
 		}
 	]
 });
@@ -421,26 +406,6 @@ function refreshUserGrid(){
 	store.load();
 }
 
-function synchronizeUserInfo(){
-		var synBtn = Ext.getCmp('synchronizeUserInfoBtn');
-		synBtn.setText('同步中...');
-		synBtn.disable();
-		Ext.Ajax.request({
-        	url: '${base}/user/synchronizeUserInfo.action',
-     		success: function(response, opts) {
-     	      	var data = Ext.decode(response.responseText);
-     	      	if(data.success){
-					Ext.Msg.showTip(data.msg);
-				}else{
-					Ext.Msg.showInfo(data.result);
-				}
-     	      	userManageStore.loadPage(1);
-				synBtn.setText('同步');
-				synBtn.enable();
-     	   	}
-    	});
-}
-
 function uploadExcelToImportUserRole(){
 	if($('#importUserRoleForm')[0].uploadAttach.value=="" || null==$('#importUserRoleForm')[0].uploadAttach.value){
 	            	    		$('#uploadTips').text('选择Excel文件先！');
@@ -523,11 +488,6 @@ sshframe.user.resetPwd =function(){
 	var currentUserId = "<s:property value='#session.CurrentUser.userId' />" ;
 	
 	if(rows.length > 0){
-		if(rows[0].get('typeText') != '本地用户'){
-			Ext.Msg.showInfo('非本地用户不能重置密码');
-			return;
-		}
-        
         Ext.Msg.confirm('系统提示','你确定要将这'+rows.length+'条数据密码重置为'+ SystemConstant.defaultPassword +'吗?',function(btn){
             if(btn=='yes'){
                 var userIds = new Array();
@@ -653,36 +613,6 @@ sshframe.user.deleteUser = function() {
 }
 
 /**
- * 调用后台同步用户
- */
-sshframe.user.synchronizeUser = function(){
-	  Ext.Msg.confirm(SystemConstant.alertTitle,"同步将会删除现有数据，确定要同步吗？",function(btn) {
-		  	if (btn == 'yes') {
-		  		Ext.MessageBox.wait("", "同步用户数据", 
-							{
-								text:"请稍后..."
-							}
-						);
-						Ext.Ajax.request({
-							timeout:600000000,
-							url:basePath+'/user/synchronizeUserInfo.action',   
-							success:function(response, opts){
-								var data = Ext.decode(response.responseText);
-								Ext.MessageBox.hide();
-								if(data.success){
-									Ext.Msg.showTip(data.msg);
-									sshframe.user.userStore.load();
-									orgTreeStore2.load();
-								}else{
-									Ext.Msg.showInfo(data.msg);
-								}
-							}
-						});
-		  	}
-	  });
-}
-
-/**
  * 调用后台添加用户
  */
 sshframe.user.addUser = function() {
@@ -695,7 +625,6 @@ sshframe.user.addUser = function() {
 	basicForm.findField('user.password').setDisabled(false);
 	basicForm.findField('confirmPassword').setDisabled(false);
 	basicForm.findField('user.username').setDisabled(false);
-	sshframe.user.userTypeStore.load();
 	sshframe.user.UserWin.show();
 }
 

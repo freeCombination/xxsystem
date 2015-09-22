@@ -122,5 +122,6 @@
         <action name="delResps" class="com.xx.system.org.action.RespAction" method="delResps"></action>
         <action name="checkNumber" class="com.xx.system.org.action.RespAction" method="checkNumber"></action>
         <action name="lockUnLock" class="com.xx.system.org.action.RespAction" method="lockUnLock"></action>
+        <action name="getAllResp" class="com.xx.system.org.action.RespAction" method="getAllResp"></action>
 	</package>
 </struts>

@@ -313,8 +313,8 @@ public class UserServiceImpl implements IUserService {
         String orgIds = "";
         
         String orgUserHql =
-            "select distinct u from OrgUser ou,User u where u.userId=ou.user.userId and ou.user.isDeletAble = "
-                + Constant.ALLOW_DELETE + " and ou.isDelete = "
+            "select distinct u from OrgUser ou,User u where u.userId=ou.user.userId "
+                + " and ou.isDelete = "
                 + Constant.STATUS_NOT_DELETE + " and ou.user.status = "
                 + Constant.STATUS_NOT_DELETE + " and ou.organization.status ="
                 + Constant.STATUS_NOT_DELETE;
@@ -966,9 +966,6 @@ public class UserServiceImpl implements IUserService {
                     sql[j].append(",USER_ONLINE");
                     sqlParam.append("," + 0 + "");
                     
-                    sql[j].append(",ISDELETABLE");
-                    sqlParam.append("," + 0 + "");
-                    
                     sql[j].append(",STATUS");
                     sqlParam.append("," + 0 + "");
                     
@@ -1526,8 +1523,7 @@ public class UserServiceImpl implements IUserService {
         throws BusinessException {
         List<User> userList = new ArrayList<User>();
         String hql =
-            "from User u where u.username = '" + userName
-                + "' and u.isDeletAble = " + Constant.ALLOW_DELETE;
+            "from User u where u.username = '" + userName + "'";
         userList = baseDao.queryEntitys(hql);
         if (userList != null && userList.size() > 0) {
             return userList.get(0);
@@ -2007,9 +2003,10 @@ public class UserServiceImpl implements IUserService {
         data.put("user.userId",user.getUserId() == null ? 0 : user.getUserId());
         data.put("user.username",user.getUsername() == null ? "" : user.getUsername());
         data.put("user.erpId",user.getErpId() == null ? "" : user.getErpId());
+        data.put("user.idCard",user.getIdCard() == null ? "" : user.getIdCard());
         
         if (user.getResponsibilities() != null) {
-        	data.put("user.respId",user.getResponsibilities().getPkRespId());
+        	data.put("user.responsibilities.pkRespId",user.getResponsibilities().getPkRespId());
             data.put("user.respName",user.getResponsibilities().getName());
         }
         
