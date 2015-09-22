@@ -9,6 +9,7 @@
 <%@include file="../common/ext.jsp"%>
 <title>个人评分</title>
 <script type="text/javascript" src="${ctx}/scripts/personalGrade/PersonalGradeGrid.js"></script>
+<script type="text/javascript" src="${ctx}/scripts/personalGrade/PersonalGradeWin.js"></script>
 <link href="" rel="SHORTCUT ICON" />
 </head>
 <body>

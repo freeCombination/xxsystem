@@ -3,7 +3,7 @@
         "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
         "http://struts.apache.org/dtds/struts-2.0.dtd">
 <struts>
-	<package name="grade" extends="st" namespace="/grade">
+	<package name="personalGrade" extends="st" namespace="/personalGrade">
 		<action name="toPersonalGradeIndex" >
 			<result>/WEB-INF/pages/personalGrade/personalGradeManage.jsp</result>
 		</action>

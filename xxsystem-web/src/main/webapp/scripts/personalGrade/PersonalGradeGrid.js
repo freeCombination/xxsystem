@@ -27,7 +27,7 @@ grade.personalGrade.PersonalGradeStore = Ext.create('Ext.data.Store', {
 	model : 'grade.personalGrade.PersonalGradeModel',
 	proxy : {
 		type : "format",
-		url : basePath + "/grade/getPersonalGradeForUserSelfList.action"
+		url : basePath + "/personalGrade/getPersonalGradeForUserSelfList.action"
 	}
 });
 
@@ -113,6 +113,26 @@ grade.personalGrade.PersonalGradeGrid = Ext.create("Ext.grid.Panel", {
 		}
 	} ]
 });
+
+/**
+ * 编辑个人评分
+ */
+grade.personalGrade.EditPersonalGrade = function() {
+	grade.personalGrade.PersonalGradeWin.setTitle('编辑');
+	var row = grade.personalGrade.PersonalGradeGrid.getSelectionModel().getSelection()
+	var id = row[0].data.id;
+	var basicForm = grade.personalGrade.PersonalGradeWin.down('form').getForm();
+	basicForm.reset();
+	basicForm.url = basePath + '/personalGrade/editPersonalGrade.action';
+	basicForm.findField('id').setValue(id);
+	basicForm.load({
+		url : basePath + '/personalGrade/getPersonalGradeById.action',
+		params : {
+			id : id
+		}
+	});
+	grade.personalGrade.PersonalGradeWin.show();
+}
 
 
 

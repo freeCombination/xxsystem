@@ -83,4 +83,22 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		vo.setWorkPlan(grade.getWorkPlan());
 	}
 
+	@Override
+	public PersonalGradeVo getPersonalGradeById(int id) throws BusinessException {
+		PersonalGrade grade = (PersonalGrade)baseDao.queryEntityById(PersonalGrade.class, id);
+		PersonalGradeVo vo = new PersonalGradeVo();
+		buildEntityToVo(grade, vo);
+		return vo;
+	}
+
+	@Override
+	public void editPersonalGrade(PersonalGrade grade) throws BusinessException {
+		baseDao.updateEntity(grade);
+	}
+
+	@Override
+	public PersonalGrade getPersonalGradeEntityById(int id) throws BusinessException {
+		PersonalGrade grade = (PersonalGrade)baseDao.queryEntityById(PersonalGrade.class, id);
+		return grade ;
+	}
 }

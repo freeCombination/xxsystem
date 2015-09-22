@@ -2,6 +2,7 @@ package com.xx.grade.personal.service;
 
 import java.util.Map;
 
+import com.xx.grade.personal.entity.PersonalGrade;
 import com.xx.grade.personal.vo.PersonalGradeVo;
 import com.xx.system.common.exception.BusinessException;
 import com.xx.system.common.vo.ListVo;
@@ -22,5 +23,34 @@ public interface IPersonalGradeService {
 	 */
 	public ListVo<PersonalGradeVo> getPersonalGradeList(Map<String, String> paramMap)
             throws BusinessException;
+
+	/**
+	 * 获取个人评分实体
+	 * 
+	 * @param id
+	 * @return
+	 * @throws BusinessException
+	 */
+	public PersonalGradeVo getPersonalGradeById(int id) 
+			throws BusinessException;
+	
+	/**
+	 * 获取个人评分实体
+	 * 
+	 * @param id
+	 * @return
+	 * @throws BusinessException
+	 */
+	public PersonalGrade getPersonalGradeEntityById(int id) 
+			throws BusinessException;
+
+	/**
+	 * 修改个人评分
+	 * 
+	 * @param grade
+	 * @throws BusinessException
+	 */
+	public void editPersonalGrade(PersonalGrade grade)
+			throws BusinessException;
 	
 }
