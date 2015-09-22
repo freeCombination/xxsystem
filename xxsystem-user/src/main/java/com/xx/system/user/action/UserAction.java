@@ -305,52 +305,13 @@ public class UserAction extends BaseAction {
         
         try {
             String orgIds = getRequest().getParameter("orgIds");
-            user.setIsDeletAble(Constant.ALLOW_DELETE);
             user.setStatus(Constant.STATUS_NOT_DELETE);
             user.setEnable(Constant.ENABLE);
-            if (user.getJob1() != null
-                && (user.getJob1().getPkDictionaryId() == null || user.getJob1()
-                    .getPkDictionaryId() == 0)) {
-                user.setJob1(null);
-            } else {
-                user.setJob1UUID(dictService.getUUIDById(user.getJob1()
-                    .getPkDictionaryId()));
-            }
-            
-            
-            if (user.getJobLevel() != null
-                && (user.getJobLevel().getPkDictionaryId() == null || user.getJobLevel()
-                    .getPkDictionaryId() == 0)) {
-                user.setJobLevel(null);
-            } else {
-                user.setJobLevelUUID(dictService.getUUIDById(user.getJobLevel()
-                    .getPkDictionaryId()));
-            }
-            
-            if (user.getPost() != null
-                && (user.getPost().getPkDictionaryId() == null || user.getPost()
-                    .getPkDictionaryId() == 0)) {
-                user.setPost(null);
-            } else {
-                user.setPostUUID(dictService.getUUIDById(user.getPost()
-                    .getPkDictionaryId()));
-            }
-            
-            if (user.getPostTitle() != null
-                && (user.getPostTitle().getPkDictionaryId() == null || user.getPostTitle()
-                    .getPkDictionaryId() == 0)) {
-                user.setPostTitle(null);
-            } else {
-                user.setPostTitleUUID(dictService.getUUIDById(user.getPostTitle()
-                    .getPkDictionaryId()));
-            }
             
             if (user.getDisOrder() == null || user.getDisOrder() == 0) {
                 user.setDisOrder(0);
             }
             
-            user.setUserTypeUUID(dictService.getUUIDById(user.getType()
-                .getPkDictionaryId()));
             user.setPassword(MD5Util.encode(user.getPassword()));
             userService.addUpdateUser(user);
             String[] ids = orgIds.split(",");
@@ -438,7 +399,6 @@ public class UserAction extends BaseAction {
      * 修改用户信息
      * 
      * @Title editUser
-     * @author wanglc
      * @date 2013-11-25
      * @return
      */
@@ -452,84 +412,32 @@ public class UserAction extends BaseAction {
             if (StringUtils.isNotBlank(user.getRealname())) {
                 oldUser.setRealname(user.getRealname());
             }
-            oldUser.setMobileNo1(user.getMobileNo1());
-            oldUser.setMobileNo2(user.getMobileNo2());
+            oldUser.setMobileNo(user.getMobileNo());
             oldUser.setPhoneNo(user.getPhoneNo());
-            oldUser.setShortNo1(user.getShortNo1());
-            oldUser.setShortNo2(user.getShortNo2());
+            oldUser.setShortNo(user.getShortNo());
             oldUser.setEmail(user.getEmail());
             oldUser.setErpId(user.getErpId());
             oldUser.setBirthDay(user.getBirthDay());
             oldUser.setDisOrder(user.getDisOrder());
             oldUser.setBirthPlace(user.getBirthPlace());
-            if (user.getType() != null
-                && user.getType().getPkDictionaryId() != null
-                && user.getType().getPkDictionaryId() != 0) {
-                Dictionary dict =
-                    dictService.getDictById(user.getType().getPkDictionaryId());
-                oldUser.setUserTypeUUID(dict.getDictUUID());
-                oldUser.setType(dict);
-            } else{
-            	 oldUser.setUserTypeUUID(null);
-                 oldUser.setType(null);
+            
+            if (user.getResponsibilities() != null) {
+            	oldUser.setResponsibilities(user.getResponsibilities());
             }
-            if (user.getPost() != null
-                && user.getPost().getPkDictionaryId() != null
-                && user.getPost().getPkDictionaryId() != 0) {
-                Dictionary dict =
-                    dictService.getDictById(user.getPost().getPkDictionaryId());
-                oldUser.setPostUUID(dict.getDictUUID());
-                oldUser.setPost(dict);
-            }else{
-            	oldUser.setPostUUID(null);
-                oldUser.setPost(null);
-            }
-            if (user.getPostTitle() != null
-                && user.getPostTitle().getPkDictionaryId() != null
-                && user.getPostTitle().getPkDictionaryId() != 0) {
-                Dictionary dict =
-                    dictService.getDictById(user.getPostTitle()
-                        .getPkDictionaryId());
-                oldUser.setPostTitleUUID(dict.getDictUUID());
-                oldUser.setPostTitle(dict);
-            }else{
-            	oldUser.setPostTitleUUID(null);
-                oldUser.setPostTitle(null);
-            }
-            if (user.getJob1() != null
-                && user.getJob1().getPkDictionaryId() != null
-                && user.getJob1().getPkDictionaryId() != 0) {
-                Dictionary dict =
-                    dictService.getDictById(user.getJob1().getPkDictionaryId());
-                oldUser.setJob1UUID(dict.getDictUUID());
-                oldUser.setJob1(dict);
-            }else{
-            	 oldUser.setJob1UUID(null);
-                 oldUser.setJob1(null);
-            }
-            if (user.getJob2() != null
-                && user.getJob2().getPkDictionaryId() != null
-                && user.getJob2().getPkDictionaryId() != 0) {
-                Dictionary dict =
-                    dictService.getDictById(user.getJob2().getPkDictionaryId());
-                oldUser.setJob2UUID(dict.getDictUUID());
-                oldUser.setJob2(dict);
-            }else{
-            	oldUser.setPostTitleUUID(null);
-                oldUser.setPostTitle(null);
-            }
-            if (user.getJobLevel() != null
-                && user.getJobLevel().getPkDictionaryId() != null
-                && user.getJobLevel().getPkDictionaryId() != 0) {
-                Dictionary dict =
-                    dictService.getDictById(user.getJobLevel()
-                        .getPkDictionaryId());
-                oldUser.setJobLevelUUID(dict.getDictUUID());
-                oldUser.setJobLevel(dict);
-            }else{
-            	oldUser.setJobLevelUUID(null);
-                oldUser.setJobLevel(null);
-            }
+            
+            oldUser.setNationality(user.getNationality());
+            oldUser.setPartyDate(user.getPartyDate());
+            oldUser.setJobStartDate(user.getJobStartDate());
+            oldUser.setOfficeHoldingDate(user.getOfficeHoldingDate());
+            oldUser.setEducationBackground(user.getEducationBackground());
+            oldUser.setTechnicaTitles(user.getTechnicaTitles());
+            oldUser.setComeDate(user.getComeDate());
+            oldUser.setSkill(user.getSkill());
+            oldUser.setPerformance(user.getPerformance());
+            oldUser.setEmploymentInfo(user.getEmploymentInfo());
+            oldUser.setPostWage(user.getPostWage());
+            oldUser.setTrainInfo(user.getTrainInfo());
+            
             userService.addUpdateUser(oldUser);
             
             String orgIds = getRequest().getParameter("orgIds");

@@ -25,7 +25,6 @@ import com.xx.system.org.entity.Responsibilities;
  * @version V1.20,2013-12-6 下午3:30:06
  * @see [相关类/方法]
  * @since V1.20
- * @depricated
  */
 @Entity
 @Table(name = "T_USER")
@@ -69,14 +68,9 @@ public class User implements java.io.Serializable {
     private String gender;
     
     /**
-     * 手机号码1
+     * 手机号码
      */
-    private String mobileNo1;
-    
-    /**
-     * 手机号码2
-     */
-    private String mobileNo2;
+    private String mobileNo;
     
     /**
      * 座机号码
@@ -84,14 +78,9 @@ public class User implements java.io.Serializable {
     private String phoneNo;
     
     /**
-     * 集团短号1
+     * 集团短号
      */
-    private String shortNo1;
-    
-    /**
-     * 集团短号2
-     */
-    private String shortNo2;
+    private String shortNo;
     
     /**
      * 出生地
@@ -124,22 +113,6 @@ public class User implements java.io.Serializable {
     private long userOnline;
     
     /**
-     * 类型：本地、中邮用户
-     */
-    private Dictionary type;
-    
-    /** @Fields userTypeUUID :用户类型字典数据UUID */
-    private String userTypeUUID;
-    
-    /**
-     * 班组
-     */
-    private Dictionary team;
-    
-    /** @Fields teamUUID : 班组UUID */
-    private String teamUUID;
-    
-    /**
      * 卡号
      */
     private String cardCode;
@@ -165,54 +138,69 @@ public class User implements java.io.Serializable {
     private String birthDay;
     
     /**
-     * 职称
-     */
-    private Dictionary postTitle;
-    
-    /** @Fields postTitleUUID : 职称UUID */
-    private String postTitleUUID;
-    
-    /**
-     * 职位
-     */
-    private Dictionary post;
-    
-    /** @Fields postUUID : 职位UUID */
-    private String postUUID;
-    
-    /**
-     * 职务1
-     */
-    private Dictionary job1;
-    
-    /** @Fields job1UUID : 职务1UUID */
-    private String job1UUID;
-    
-    /**
-     * 职务2
-     */
-    private Dictionary job2;
-    
-    /** @Fields job2UUID : 职务2UUID */
-    private String job2UUID;
-    
-    /**
-     * 职级
-     */
-    private Dictionary jobLevel;
-    
-    /** @Fields jobLevelUUID : 职级UUID */
-    private String jobLevelUUID;
-    
-    /**
-     * 是否允许删除
-     */
-    private Integer isDeletAble;
-    
-    /**
      * 岗位
      */
     private Responsibilities responsibilities;
+    
+    /**
+     * 民族
+     */
+    private String nationality;
+    
+    /**
+     * 入党团时间
+     */
+    private String partyDate;
+    
+    /**
+     * 参加工作时间
+     */
+    private String jobStartDate;
+    
+    /**
+     * 党政职务及任职时间
+     */
+    private String officeHoldingDate;
+    
+    /**
+     * 学历（专业、毕业时间、学校）
+     */
+    private String educationBackground;
+    
+    /**
+     * 现技术职称及确定时间
+     */
+    private String technicaTitles;
+    
+    /**
+     * 进所时间
+     */
+    private String comeDate;
+    
+    /**
+     * 技能
+     */
+    private String skill;
+    
+    /**
+     * 业绩
+     */
+    private String performance;
+    
+    /**
+     * 用工信息
+     */
+    private String employmentInfo;
+    
+    /**
+     * 岗位工资
+     */
+    private String postWage;
+    
+    /**
+     * 培训情况
+     */
+    private String trainInfo;
     
 	/**
      * <p>
@@ -268,22 +256,18 @@ public class User implements java.io.Serializable {
         this.realname = realname;
         this.status = status;
         this.disOrder = disOrder;
-        this.type = type;
         this.enable = enable;
-        this.isDeletAble = isDeletAble;
     }
     
     /**
      * 主键
      * 
      * @Title getUserId
-     * @author wanglc
      * @date 2013-12-6
      * @return 主键
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-
     @Column(name = "USER_ID")
     public Integer getUserId() {
         return this.userId;
@@ -297,7 +281,6 @@ public class User implements java.io.Serializable {
      * 用户名
      * 
      * @Title getUsername
-     * @author wanglc
      * @date 2013-12-6
      * @return 用户名
      */
@@ -314,7 +297,6 @@ public class User implements java.io.Serializable {
      * 密码
      * 
      * @Title getPassword
-     * @author wanglc
      * @date 2013-12-6
      * @return 密码
      */
@@ -331,7 +313,6 @@ public class User implements java.io.Serializable {
      * 真实姓名
      * 
      * @Title getRealname
-     * @author wanglc
      * @date 2013-12-6
      * @return 真实姓名
      */
@@ -348,7 +329,6 @@ public class User implements java.io.Serializable {
      * 性别
      * 
      * @Title getGender
-     * @author wanglc
      * @date 2013-12-6
      * @return 性别
      */
@@ -365,7 +345,6 @@ public class User implements java.io.Serializable {
      * 出生日期
      * 
      * @Title getBirthDay
-     * @author wanglc
      * @date 2013-12-6
      * @return 出生日期
      */
@@ -379,78 +358,41 @@ public class User implements java.io.Serializable {
     }
     
     /**
-     * 手机号1
+     * 手机号
      * 
-     * @Title getMobileNo1
-     * @author yzg
+     * @Title getMobileNo
      * @date 2014-2-13
-     * @return 手机号1
+     * @return 手机号
      */
-    @Column(name = "MOBILE_PHONE1", length = 20)
-    public String getMobileNo1() {
-        return mobileNo1;
+    @Column(name = "MOBILE_PHONE", length = 20)
+    public String getMobileNo() {
+        return mobileNo;
     }
     
-    public void setMobileNo1(String mobileNo1) {
-        this.mobileNo1 = mobileNo1;
+    public void setMobileNo(String mobileNo) {
+        this.mobileNo = mobileNo;
     }
     
     /**
-     * 手机号2
+     * 短号
      * 
-     * @Title getMobileNo2
-     * @author yzg
+     * @Title getShortNo
      * @date 2014-2-13
-     * @return 手机号2
+     * @return 短号
      */
-    @Column(name = "MOBILE_PHONE2", length = 20)
-    public String getMobileNo2() {
-        return mobileNo2;
+    @Column(name = "SHORT_NO", length = 20)
+    public String getShortNo() {
+        return shortNo;
     }
     
-    public void setMobileNo2(String mobileNo2) {
-        this.mobileNo2 = mobileNo2;
-    }
-    
-    /**
-     * 短号1
-     * 
-     * @Title getShortNo1
-     * @author yzg
-     * @date 2014-2-13
-     * @return 短号1
-     */
-    @Column(name = "SHORT_NO1", length = 20)
-    public String getShortNo1() {
-        return shortNo1;
-    }
-    
-    public void setShortNo1(String shortNo1) {
-        this.shortNo1 = shortNo1;
-    }
-    
-    /**
-     * 短号2
-     * 
-     * @Title getShortNo2
-     * @author yzg
-     * @date 2014-2-13
-     * @return 短号2
-     */
-    @Column(name = "SHORT_NO2", length = 20)
-    public String getShortNo2() {
-        return shortNo2;
-    }
-    
-    public void setShortNo2(String shortNo2) {
-        this.shortNo2 = shortNo2;
+    public void setShortNo(String shortNo) {
+        this.shortNo = shortNo;
     }
     
     /**
      * 固话
      * 
      * @Title getPhoneNo
-     * @author wanglc
      * @date 2013-12-6
      * @return 固话
      */
@@ -467,7 +409,6 @@ public class User implements java.io.Serializable {
      * 状态：0可用 1不可用
      * 
      * @Title getStatus
-     * @author wanglc
      * @date 2013-12-6
      * @return 状态：0可用 1不可用
      */
@@ -484,7 +425,6 @@ public class User implements java.io.Serializable {
      * 排序
      * 
      * @Title getDisOrder
-     * @author wanglc
      * @date 2013-12-6
      * @return 排序
      */
@@ -501,7 +441,6 @@ public class User implements java.io.Serializable {
      * 状态：0未禁用 1已禁用
      * 
      * @Title getEnable
-     * @author wanglc
      * @date 2013-12-6
      * @return 状态：0未禁用 1已禁用
      */
@@ -515,28 +454,9 @@ public class User implements java.io.Serializable {
     }
     
     /**
-     * 类型
-     * 
-     * @Title getType
-     * @author wanglc
-     * @date 2013-12-6
-     * @return 类型
-     */
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "FK_TYPE")
-    public Dictionary getType() {
-        return type;
-    }
-    
-    public void setType(Dictionary type) {
-        this.type = type;
-    }
-    
-    /**
      * 在线
      * 
      * @Title getUserOnline
-     * @author wanglc
      * @date 2013-12-6
      * @return
      */
@@ -553,7 +473,6 @@ public class User implements java.io.Serializable {
      * 出生地
      * 
      * @Title getBirthPlace
-     * @author wanglc
      * @date 2013-12-6
      * @return 出生地
      */
@@ -570,7 +489,6 @@ public class User implements java.io.Serializable {
      * 邮箱
      * 
      * @Title getEmail
-     * @author wanglc
      * @date 2013-12-6
      * @return 邮箱
      */
@@ -584,28 +502,9 @@ public class User implements java.io.Serializable {
     }
     
     /**
-     * 班组
-     * 
-     * @Title getTeam
-     * @author wanglc
-     * @date 2013-12-6
-     * @return 班组
-     */
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "FK_TEAM")
-    public Dictionary getTeam() {
-        return team;
-    }
-    
-    public void setTeam(Dictionary team) {
-        this.team = team;
-    }
-    
-    /**
      * 卡号
      * 
      * @Title getCardCode
-     * @author wanglc
      * @date 2013-12-6
      * @return 卡号
      */
@@ -622,7 +521,6 @@ public class User implements java.io.Serializable {
      * ERP编号
      * 
      * @Title getErpId
-     * @author wanglc
      * @date 2013-12-6
      * @return ERP编号
      */
@@ -639,7 +537,6 @@ public class User implements java.io.Serializable {
      * 电子签名
      * 
      * @Title geteSignature
-     * @author wanglc
      * @date 2013-12-6
      * @return 电子签名
      */
@@ -656,7 +553,6 @@ public class User implements java.io.Serializable {
      * 个人头像
      * 
      * @Title getPersonImage
-     * @author wanglc
      * @date 2013-12-6
      * @return 个人头像
      */
@@ -673,7 +569,6 @@ public class User implements java.io.Serializable {
      * 身份证号
      * 
      * @Title getIdCard
-     * @author wanglc
      * @date 2013-12-6
      * @return 身份证号
      */
@@ -684,113 +579,6 @@ public class User implements java.io.Serializable {
     
     public void setIdCard(String idCard) {
         this.idCard = idCard;
-    }
-    
-    /**
-     * 是否允许删除
-     * 
-     * @Title getIsDeletAble
-     * @author wanglc
-     * @date 2013-12-6
-     * @return 是否允许删除
-     */
-    @Column(name = "ISDELETABLE")
-    public Integer getIsDeletAble() {
-        return isDeletAble;
-    }
-    
-    public void setIsDeletAble(Integer isDeletAble) {
-        this.isDeletAble = isDeletAble;
-    }
-    
-    /**
-     * 职称
-     * 
-     * @Title getPostTitle
-     * @author wanglc
-     * @date 2013-12-6
-     * @return 职称
-     */
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "FK_POSTTITLE")
-    public Dictionary getPostTitle() {
-        return postTitle;
-    }
-    
-    public void setPostTitle(Dictionary postTitle) {
-        this.postTitle = postTitle;
-    }
-    
-    /**
-     * 职务
-     * 
-     * @Title getPost
-     * @author wanglc
-     * @date 2013-12-6
-     * @return 职务
-     */
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "FK_POST")
-    public Dictionary getPost() {
-        return post;
-    }
-    
-    public void setPost(Dictionary post) {
-        this.post = post;
-    }
-    
-    /**
-     * 职位1
-     * 
-     * @Title getJob1
-     * @author yzg
-     * @date 2014-2-13
-     * @return 职位1
-     */
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "FK_JOB1")
-    public Dictionary getJob1() {
-        return job1;
-    }
-    
-    public void setJob1(Dictionary job1) {
-        this.job1 = job1;
-    }
-    
-    /**
-     * 职位2
-     * 
-     * @Title getJob2
-     * @author yzg
-     * @date 2014-2-13
-     * @return 职位2
-     */
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "FK_JOB2")
-    public Dictionary getJob2() {
-        return job2;
-    }
-    
-    public void setJob2(Dictionary job2) {
-        this.job2 = job2;
-    }
-    
-    /**
-     * 职级
-     * 
-     * @Title getJobLevel
-     * @author wanglc
-     * @date 2013-12-6
-     * @return 职级
-     */
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "FK_JOBLEVEL")
-    public Dictionary getJobLevel() {
-        return jobLevel;
-    }
-    
-    public void setJobLevel(Dictionary jobLevel) {
-        this.jobLevel = jobLevel;
     }
     
     /**
@@ -811,111 +599,6 @@ public class User implements java.io.Serializable {
         this.orgUsers = orgUsers;
     }
     
-    /**
-     * @return userTypeUUID
-     */
-    @Column(name = "FK_USERTYPE_UUID")
-    public String getUserTypeUUID() {
-        return userTypeUUID;
-    }
-    
-    /**
-     * @param userTypeUUID 要设置的 userTypeUUID
-     */
-    public void setUserTypeUUID(String userTypeUUID) {
-        this.userTypeUUID = userTypeUUID;
-    }
-    
-    /**
-     * @return teamUUID
-     */
-    @Column(name = "FK_TEAM_UUID")
-    public String getTeamUUID() {
-        return teamUUID;
-    }
-    
-    /**
-     * @param teamUUID 要设置的 teamUUID
-     */
-    public void setTeamUUID(String teamUUID) {
-        this.teamUUID = teamUUID;
-    }
-    
-    /**
-     * @return postTitleUUID
-     */
-    @Column(name = "FK_POSTTITLE_UUID")
-    public String getPostTitleUUID() {
-        return postTitleUUID;
-    }
-    
-    /**
-     * @param postTitleUUID 要设置的 postTitleUUID
-     */
-    public void setPostTitleUUID(String postTitleUUID) {
-        this.postTitleUUID = postTitleUUID;
-    }
-    
-    /**
-     * @return postUUID
-     */
-    @Column(name = "FK_POST_UUID")
-    public String getPostUUID() {
-        return postUUID;
-    }
-    
-    /**
-     * @param postUUID 要设置的 postUUID
-     */
-    public void setPostUUID(String postUUID) {
-        this.postUUID = postUUID;
-    }
-    
-    /**
-     * @return job1UUID
-     */
-    @Column(name = "FK_JOB1_UUID")
-    public String getJob1UUID() {
-        return job1UUID;
-    }
-    
-    /**
-     * @param job1uuid 要设置的 job1UUID
-     */
-    public void setJob1UUID(String job1uuid) {
-        job1UUID = job1uuid;
-    }
-    
-    /**
-     * @return job2UUID
-     */
-    @Column(name = "FK_JOB2_UUID")
-    public String getJob2UUID() {
-        return job2UUID;
-    }
-    
-    /**
-     * @param job2uuid 要设置的 job2UUID
-     */
-    public void setJob2UUID(String job2uuid) {
-        job2UUID = job2uuid;
-    }
-    
-    /**
-     * @return jobLevelUUID
-     */
-    @Column(name = "FK_JOBLEVEL_UUID")
-    public String getJobLevelUUID() {
-        return jobLevelUUID;
-    }
-    
-    /**
-     * @param jobLevelUUID 要设置的 jobLevelUUID
-     */
-    public void setJobLevelUUID(String jobLevelUUID) {
-        this.jobLevelUUID = jobLevelUUID;
-    }
-    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FK_RESP_ID")
     public Responsibilities getResponsibilities() {
@@ -924,5 +607,113 @@ public class User implements java.io.Serializable {
 
 	public void setResponsibilities(Responsibilities responsibilities) {
 		this.responsibilities = responsibilities;
+	}
+	
+	@Column(name = "NATIONALITY")
+	public String getNationality() {
+		return nationality;
+	}
+
+	public void setNationality(String nationality) {
+		this.nationality = nationality;
+	}
+
+	@Column(name = "PARTY_DATE")
+	public String getPartyDate() {
+		return partyDate;
+	}
+
+	public void setPartyDate(String partyDate) {
+		this.partyDate = partyDate;
+	}
+
+	@Column(name = "JOB_START_DATE")
+	public String getJobStartDate() {
+		return jobStartDate;
+	}
+
+	public void setJobStartDate(String jobStartDate) {
+		this.jobStartDate = jobStartDate;
+	}
+
+	@Column(name = "OFFICE_HOLDING_DATE")
+	public String getOfficeHoldingDate() {
+		return officeHoldingDate;
+	}
+
+	public void setOfficeHoldingDate(String officeHoldingDate) {
+		this.officeHoldingDate = officeHoldingDate;
+	}
+
+	@Column(name = "EDUCATION_BACKGROUND")
+	public String getEducationBackground() {
+		return educationBackground;
+	}
+
+	public void setEducationBackground(String educationBackground) {
+		this.educationBackground = educationBackground;
+	}
+
+	@Column(name = "TECHNICA_TITLES")
+	public String getTechnicaTitles() {
+		return technicaTitles;
+	}
+
+	public void setTechnicaTitles(String technicaTitles) {
+		this.technicaTitles = technicaTitles;
+	}
+
+	@Column(name = "COME_DATE")
+	public String getComeDate() {
+		return comeDate;
+	}
+
+	public void setComeDate(String comeDate) {
+		this.comeDate = comeDate;
+	}
+
+	@Column(name = "SKILL")
+	public String getSkill() {
+		return skill;
+	}
+
+	public void setSkill(String skill) {
+		this.skill = skill;
+	}
+
+	@Column(name = "PERFORMANCE")
+	public String getPerformance() {
+		return performance;
+	}
+
+	public void setPerformance(String performance) {
+		this.performance = performance;
+	}
+
+	@Column(name = "EMPLOYMENT_INFO")
+	public String getEmploymentInfo() {
+		return employmentInfo;
+	}
+
+	public void setEmploymentInfo(String employmentInfo) {
+		this.employmentInfo = employmentInfo;
+	}
+
+	@Column(name = "POST_WAGE")
+	public String getPostWage() {
+		return postWage;
+	}
+
+	public void setPostWage(String postWage) {
+		this.postWage = postWage;
+	}
+
+	@Column(name = "TRAIN_INFO")
+	public String getTrainInfo() {
+		return trainInfo;
+	}
+
+	public void setTrainInfo(String trainInfo) {
+		this.trainInfo = trainInfo;
 	}
 }
