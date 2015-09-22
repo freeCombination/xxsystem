@@ -14,7 +14,7 @@
 
     
 	<context:annotation-config></context:annotation-config>
-	<context:component-scan base-package="com.xx.system"></context:component-scan>
+	<context:component-scan base-package="com.xx.system,com.xx.grade"></context:component-scan>
     <bean
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
@@ -57,6 +57,7 @@
 				<!-- <value>com.xx.system.bpm.entity</value>
 				<value>com.xx.system.workturns.entity</value> -->
 				<value>com.xx.system.attach.entity</value>
+				<value>com.xx.grade.personal.entity</value>
 			</list>
 		</property>
 		<property name="configLocation" value="classpath:hibernate.cfg.xml" />
@@ -69,50 +70,12 @@
 	<!-- 配置注解方式管理事务 -->
 	<tx:annotation-driven transaction-manager="txManager"  />
 	
-	<!--
-	<aop:config proxy-target-class="true">
-		<aop:advisor pointcut="execution(* com.xx.system.*.service.impl.*Impl.*(..))" advice-ref="txAdvice" />
-	</aop:config>配置事务的传播特性
 	
-	<tx:advice id="txAdvice" transaction-manager="txManager">
-		<tx:attributes>
-			<tx:method name="add*" propagation="REQUIRED"  />
-			<tx:method name="change*" propagation="REQUIRED"  />
-			<tx:method name="update*" propagation="REQUIRED" />
-			<tx:method name="query*" read-only="true" />
-			<tx:method name="delete*" propagation="REQUIRED" />
-			<tx:method name="save*" propagation="REQUIRED" />
-			<tx:method name="edit*" propagation="REQUIRED" />
-			<tx:method name="merge*" propagation="REQUIRED" />
-			<tx:method name="ajax*" propagation="REQUIRED" />
-			<tx:method name="filing*" propagation="REQUIRED" />
-			<tx:method name="end*" propagation="REQUIRED" />
-			<tx:method name="send*" propagation="REQUIRED" />
-			<tx:method name="start*" propagation="REQUIRED" />
-			<tx:method name="import*" propagation="REQUIRED" />
-			<tx:method name="compelete*" propagation="REQUIRED" />
-			<tx:method name="complete*" propagation="REQUIRED" />
-			<tx:method name="lockup*" propagation="REQUIRED" />
-			<tx:method name="commit*" propagation="REQUIRED" />
-			<tx:method name="check*" propagation="REQUIRED" />
-			<tx:method name="revoke*" propagation="REQUIRED" />
-			<tx:method name="cancel*" propagation="REQUIRED" />
-			<tx:method name="reject*" propagation="REQUIRED" />
-			<tx:method name="move*" propagation="REQUIRED" />
-			<tx:method name="quickCreate*" propagation="REQUIRED" />
-			<tx:method name="synchro*" propagation="REQUIRED" />
-			<tx:method name="get*" read-only="true" />
-			<tx:method name="upload*" propagation="REQUIRED" />
-			<tx:method name="set*" propagation="REQUIRED" />
-			<tx:method name="is*" read-only="true" />
-		</tx:attributes>
-	</tx:advice>
-	-->
 	
 	<aop:config>
 	    <aop:aspect ref="logAspect" >
 		<aop:pointcut id="transactionPoint"
-			expression="execution(* com.xx.system.*.service..*.*(..))" />
+			expression="execution(* com.xx.*.*.service..*.*(..))" />
 	    <aop:after method="doSystemLog" pointcut-ref="transactionPoint"/>
 	    </aop:aspect>
 	</aop:config>
