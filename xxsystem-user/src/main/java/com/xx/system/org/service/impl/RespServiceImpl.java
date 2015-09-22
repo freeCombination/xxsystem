@@ -46,8 +46,26 @@ public class RespServiceImpl implements IRespService {
 
 	@Override
 	public List<RespVo> getAllResp(Integer orgId) throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		List<RespVo> voLst = new ArrayList<RespVo>();
+		
+		String respHql = " from Responsibilities r where r.isDelete = 0 and r.enable = 0";
+		if (orgId != null && orgId != 0) {
+			respHql += " and r.organization.orgId = " + orgId;
+		}
+		
+		List<Responsibilities> respLst = (List<Responsibilities>)baseDao.queryEntitys(respHql);
+		if (!CollectionUtils.isEmpty(respLst)) {
+			RespVo vo = null;
+			for (Responsibilities r : respLst) {
+				vo = new RespVo();
+				
+				vo.setRespId(r.getPkRespId());
+				vo.setName(r.getName());
+				
+				voLst.add(vo);
+			}
+		}
+		return voLst;
 	}
 
 	@Override

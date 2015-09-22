@@ -168,4 +168,19 @@ public class RespAction extends BaseAction {
 		}
 		return null;
 	}
+	
+	/**
+	 * 根据部门查询岗位
+	 */
+	public String getAllResp() {
+		String orgId = getRequest().getParameter("orgId");
+		int id = StringUtil.isNotBlank(orgId) ? Integer.valueOf(orgId) : 0;
+		try {
+			JsonUtil.outJsonArray(respService.getAllResp(id));
+		} catch (Exception e) {
+			this.excepAndLogHandle(RespAction.class, "锁定和解锁岗位", e, false);
+		}
+		
+		return null;
+	}
 }

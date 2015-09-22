@@ -361,8 +361,7 @@ public class OrgUserServiceImpl implements IOrgUserService {
     @Override
     public void deleteLocalOrgUser() {
         String hql =
-            "from OrgUser ou where ou.organization.orgFrom <> 0 and ou.user.isDeletAble <> "
-                + Constant.NOT_ALLOW_DELETE + "";
+            "from OrgUser ou where ou.organization.orgFrom <> 0";
         List<OrgUser> ouList = baseDao.queryEntitys(hql);
         baseDao.deleteEntities(ouList);
     }

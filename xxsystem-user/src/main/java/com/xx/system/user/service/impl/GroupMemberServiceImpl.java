@@ -479,8 +479,7 @@ public class GroupMemberServiceImpl implements IGroupMemberService {
         
         // 用户存储hql语句
         StringBuffer hql = new StringBuffer();
-        hql.append("from OrgUser ou where ou.user.isDeletAble="
-            + Constant.ALLOW_DELETE);
+        hql.append("from OrgUser ou where 1=1");
         hql.append(" and ou.isDelete=" + Constant.STATUS_NOT_DELETE);
         hql.append(" and ou.user.status=" + Constant.STATUS_NOT_DELETE);
         hql.append(" and ou.organization.status=" + Constant.STATUS_NOT_DELETE);

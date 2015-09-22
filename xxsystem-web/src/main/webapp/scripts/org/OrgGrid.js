@@ -108,7 +108,7 @@ var updateOrg = function() {
 	basicForm.url = basePath + '/org/updateOrg.action';
 	basicForm.findField('org.orgId').setValue(orgId);
 	basicForm.load({
-		url : basePath + '/org/getOById.action',
+		url : basePath + '/org/getOrgById.action',
 		params : {
 			orgId : orgId
 		}

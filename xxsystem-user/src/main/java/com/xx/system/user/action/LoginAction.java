@@ -132,7 +132,7 @@ public class LoginAction extends BaseAction {
                 JsonUtil.outJson("{success:false,msg:'0'}");
                 return null;
             }
-            if (user.getEnable() == Constant.DISABLE) {
+            if (user.getEnable() == Constant.ENABLE) {
                 // 用户已被禁用
                 JsonUtil.outJson("{success:false,msg:'1'}");
                 return null;

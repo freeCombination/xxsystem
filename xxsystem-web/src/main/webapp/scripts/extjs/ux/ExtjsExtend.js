@@ -160,7 +160,7 @@ Ext.define('Ext.grid.PanelOverride', {
 	 */
 Ext.define("Ext.form.PanelOverride",{
 	extend : 'Ext.form.Panel',
-	frame: false,   
+	frame: false,
 	layout:'column',
 	bodyPadding: 0, 
 	region:'east',
@@ -224,7 +224,7 @@ Ext.define("Ext.window.WindowOverride",{
 	buttonAlign: "center",
 	modal: true,
 	layout : 'fit',
-	closeAction : 'destroy'
+	closeAction : 'close'
 });
 
  /**

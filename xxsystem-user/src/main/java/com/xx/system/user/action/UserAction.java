@@ -420,6 +420,7 @@ public class UserAction extends BaseAction {
             oldUser.setBirthDay(user.getBirthDay());
             oldUser.setDisOrder(user.getDisOrder());
             oldUser.setBirthPlace(user.getBirthPlace());
+            oldUser.setIdCard(user.getIdCard());
             
             if (user.getResponsibilities() != null) {
             	oldUser.setResponsibilities(user.getResponsibilities());
