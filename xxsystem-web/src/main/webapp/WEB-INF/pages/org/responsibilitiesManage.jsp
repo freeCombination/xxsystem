@@ -163,9 +163,9 @@
 		                //cellmeta.tdAttr = 'data-qtip="' + orgTypeArr[i].name + '"';
 		                var respId = record.get('respId');
 		                if(value == 1){
-		                    return '<img title="点击锁定部门" src="'+basePath+'/images/icons/unlock.gif" style="cursor: pointer;padding:0;margin:0;" onclick="lockUnLock(\''+respId+'\',\''+value+'\')"/>';
+		                    return '<img title="点击锁定岗位" src="'+basePath+'/images/icons/unlock.gif" style="cursor: pointer;padding:0;margin:0;" onclick="lockUnLock(\''+respId+'\',\''+value+'\')"/>';
 		                }else{
-		                    return '<img title="点击解锁部门" src="'+basePath+'/images/icons/lock.gif" style="cursor: pointer;padding:0;margin:0;" onclick="lockUnLock(\''+respId+'\',\''+value+'\')"/>';
+		                    return '<img title="点击解锁岗位" src="'+basePath+'/images/icons/lock.gif" style="cursor: pointer;padding:0;margin:0;" onclick="lockUnLock(\''+respId+'\',\''+value+'\')"/>';
 		                }
 		            }
 		        }
@@ -645,10 +645,10 @@
 			dutyStore.load();
             
 			var winTitle = '添加岗位';
-			var formUrl = '${ctx}/org/addResp.action?';
+			var formUrl = '${ctx}/org/addResp.action';
 			if (row) {
 				winTitle = '修改岗位';
-	            formUrl = '${ctx}/org/updateResp.action?';
+	            formUrl = '${ctx}/org/updateResp.action';
 			}
 			
             var respWin=Ext.create("Ext.window.Window",{
@@ -706,9 +706,10 @@
                                 		    + '&dvoLst[' + i + '].dutyContent=' + dutyContent
                                 		    + '&dvoLst[' + i + '].dutyType=' + dutyType;
                             }
-                                
+                            
                             respForm.form.submit({
-                                url : formUrl + dutyLst.substring(1),
+                                url : formUrl,
+                                params : dutyLst.substring(1),
                                 success : function(form, action) {
                                     new Ext.ux.TipsWindow({
                                         title: SystemConstant.alertTitle,
@@ -794,7 +795,8 @@
                     });
                 }
             });
-		}
+		};
+		
 	});
 	</script>
 </body>
