@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.xx.grade.personal.entity.PersonalDuty;
 import com.xx.grade.personal.entity.PersonalGrade;
 import com.xx.grade.personal.service.IPersonalGradeService;
+import com.xx.grade.personal.vo.PersonalDutyVo;
 import com.xx.grade.personal.vo.PersonalGradeVo;
 import com.xx.system.common.dao.IBaseDao;
 import com.xx.system.common.exception.BusinessException;
@@ -100,5 +102,41 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 	public PersonalGrade getPersonalGradeEntityById(int id) throws BusinessException {
 		PersonalGrade grade = (PersonalGrade)baseDao.queryEntityById(PersonalGrade.class, id);
 		return grade ;
+	}
+
+	@Override
+	public ListVo<PersonalDutyVo> getPersonalDutyList(Map<String, String> paramMap) throws BusinessException {
+		ListVo<PersonalDutyVo> result = new ListVo();
+		List<PersonalDutyVo> list = new ArrayList<PersonalDutyVo>(); 
+		//用户ID 用户自评只能看自己的数据 
+		String personalGradeId = paramMap.get("personalGradeId");
+		StringBuffer hql = new StringBuffer();
+		StringBuffer counthql = new StringBuffer();
+		hql.append(" From PersonalDuty pg where 1=1  ");
+		if (StringUtil.isNotEmpty(personalGradeId)) {
+			hql.append(" and pg.personalGrade.id = " + Integer.parseInt(personalGradeId));
+		}else{
+			
+		}
+		List<PersonalDuty> personalDutyLists =  (List<PersonalDuty>)baseDao.queryEntitys(hql.toString());
+		for (PersonalDuty duty : personalDutyLists) {
+			PersonalDutyVo vo = new PersonalDutyVo();
+			buildDutyEntityToVo(duty,vo);
+			list.add(vo);
+		}
+		result.setList(list);
+		result.setTotalSize(list.size());
+		return result;
+	}
+
+	/**
+	 * 用户自评职责明细实体转换
+	 * @param duty
+	 * @param vo
+	 */
+	private void buildDutyEntityToVo(PersonalDuty duty, PersonalDutyVo vo) {
+		vo.setId(duty.getId());
+		vo.setWorkDuty(duty.getWorkDuty());
+		vo.setCompletion(duty.getCompletion());
 	}
 }

@@ -5,7 +5,7 @@
  */
 
 /**
- * 定义用户Model
+ * 定义Model
  */
 Ext.define("grade.personalGrade.PersonalGradeModel",{
 					extend:"Ext.data.Model",

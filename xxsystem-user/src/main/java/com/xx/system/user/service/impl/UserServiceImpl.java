@@ -241,6 +241,7 @@ public class UserServiceImpl implements IUserService {
             }
         }
         catch (Exception e) {
+        	e.printStackTrace();
         }
         return user;
     }

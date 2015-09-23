@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.xx.grade.personal.entity.PersonalGrade;
 import com.xx.grade.personal.service.IPersonalGradeService;
+import com.xx.grade.personal.vo.PersonalDutyVo;
 import com.xx.grade.personal.vo.PersonalGradeVo;
 import com.xx.system.common.action.BaseAction;
 import com.xx.system.common.util.JsonUtil;
@@ -64,6 +65,23 @@ public class PersonalGradeAction extends BaseAction {
 		}
 		return null;
 	}
+	
+	/**
+	 * 获取用户自评职责明细
+	 * 
+	 * @return
+	 */
+	public String getPersonalDutyList() {
+		try {
+			Map<String, String> paramMap = RequestUtil.getParameterMap(getRequest());
+			ListVo<PersonalDutyVo> personalDutyList = this.personalGradeService.getPersonalDutyList(paramMap);
+			JsonUtil.outJson(personalDutyList);
+		} catch (Exception e) {
+			this.excepAndLogHandle(PersonalGradeAction.class, "获取用户自评职责明细列表失败", e, false);
+		}
+		return null;
+	}
+	
 
 	/**
 	 * 获取个人评分实体

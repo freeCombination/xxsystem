@@ -9,6 +9,7 @@
  */
 grade.personalGrade.PersonalGradeForm = Ext.create("Ext.form.Panel", {
 	layout : 'form',
+	region: "north",
 	bodyStyle : 'padding:15px 10px 0 0',
 	border : false,
 	labelAlign : 'right',
@@ -23,6 +24,7 @@ grade.personalGrade.PersonalGradeForm = Ext.create("Ext.form.Panel", {
 	defaultType : 'textfield',
     items: [
             {
+            	id:'personalGradeId',
         		name : 'id',
         		hidden : true
         	},
@@ -44,10 +46,13 @@ grade.personalGrade.PersonalGradeForm = Ext.create("Ext.form.Panel", {
 });
 
 
+
+
 grade.personalGrade.PersonalGradeWin = Ext.create("Ext.window.Window", {
 	height : 400,
 	width : 600,
-	items : [ grade.personalGrade.PersonalGradeForm ],
+	layout: 'border',
+	items : [ grade.personalGrade.PersonalGradeForm , grade.personalDuty.PersonalDutyGrid],
 	buttons : [ {
 		text : '确定',
 		handler : function() {
@@ -69,7 +74,18 @@ grade.personalGrade.PersonalGradeWin = Ext.create("Ext.window.Window", {
 		handler : function() {
 			grade.personalGrade.PersonalGradeWin.hide();
 		}
-	} ]
+	} ],
+	listeners: {
+    	afterrender: function(){
+    		var personalGradeId = Ext.getCmp('personalGradeId').getValue();
+    		grade.personalDuty.PersonalDutyStore.load({
+    			params:
+    				{
+    					personalGradeId : personalGradeId
+    				}
+    			});
+    	}
+	}
 });
 
 
