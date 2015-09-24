@@ -45,7 +45,7 @@ public interface IRespService {
      * @param start 查询起始位置
      * @param limit 每页限制条数
      * @param respVo 岗位对象
-     * @return PagerVo<RespVo>
+     * @return ListVo<RespVo>
      */
     public ListVo<RespVo> getRespList(int start, int limit, RespVo respVo)
         throws BusinessException;

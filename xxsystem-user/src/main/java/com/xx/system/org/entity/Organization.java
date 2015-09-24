@@ -17,6 +17,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.BatchSize;
 
+import com.xx.system.deptgrade.entity.IndexClassify;
 import com.xx.system.dict.entity.Dictionary;
 
 /**
@@ -85,6 +86,11 @@ public class Organization implements java.io.Serializable {
      * @Fields organizations : 上级组织
      */
     private Set<Organization> organizations = new HashSet<Organization>(0);
+    
+    /**
+     * 指标分类
+     */
+    private IndexClassify indexClassify;
     
     /**
      * <p>
@@ -326,4 +332,14 @@ public class Organization implements java.io.Serializable {
     public void setOrganizations(Set<Organization> organizations) {
         this.organizations = organizations;
     }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "FK_CLASSIFY_ID")
+	public IndexClassify getIndexClassify() {
+		return indexClassify;
+	}
+
+	public void setIndexClassify(IndexClassify indexClassify) {
+		this.indexClassify = indexClassify;
+	}
 }

@@ -419,5 +419,6 @@
         <module>xxsystem-mq</module>
          -->
       <module>xxsystem-grade</module>
+    <module>xxsystem-deptgrade</module>
   </modules>
 </project>

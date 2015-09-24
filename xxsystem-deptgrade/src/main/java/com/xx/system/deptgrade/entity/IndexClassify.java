@@ -1,4 +1,4 @@
-package com.xx.system.org.entity;
+package com.xx.system.deptgrade.entity;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -10,58 +10,50 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.BatchSize;
 
-import com.xx.system.user.entity.User;
+import com.xx.system.org.entity.Organization;
 
 /**
- * 岗位实体定义
+ * 考核指标分类实体定义
  * 
  * @version V1.20,2013-11-25 下午3:37:13
  * @see [相关类/方法]
  * @since V1.20
  */
 @Entity
-@Table(name = "T_RESPONSIBILITIES")
+@Table(name = "T_INDEXCLASSIFY")
 @BatchSize(size = 50)
-public class Responsibilities implements java.io.Serializable {
-    
-	private static final long serialVersionUID = -4897082516701301833L;
+public class IndexClassify implements java.io.Serializable {
+	private static final long serialVersionUID = -3109594331047803529L;
 
 	/**
-     * @Fields pkRespId : 主键
+     * @Fields pkClassifyId : 主键
      */
-    private int pkRespId;
+    private int pkClassifyId;
     
     /**
-     * 岗位编号
+     * 考核指标分类编号
      */
     private String number;
     
     /**
-     * 岗位名称
+     * 考核指标分类名称
      */
     private String name;
     
     /**
-     * @Fields organization : 所属部门
+     * @Fields orgs : 考核部门
      */
-    private Organization organization;
+    private Set<Organization> orgs = new HashSet<Organization>(0);
     
     /**
-     * 岗位级别
+     * @Fields 评分年份
      */
-    private String rank;
-    
-    /**
-     * @Fields user : 用户对象
-     */
-    private Set<User> users = new HashSet<User>(0);
+    private String electYear;
     
     /**
      * @Fields enable : 是否可用：0 是 1 否
@@ -74,20 +66,20 @@ public class Responsibilities implements java.io.Serializable {
     private int isDelete;
     
     /**
-     * @Title getPkRespId
+     * @Title getPkClassifyId
      * @Description: 主键
      * @date 2013-12-6
      * @return 主键
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "PK_RESP_ID", nullable = false)
-    public int getPkRespId() {
-		return pkRespId;
+    @Column(name = "PK_CLASSIFY_ID", nullable = false)
+    public int getPkClassifyId() {
+		return pkClassifyId;
 	}
 
-	public void setPkRespId(int pkRespId) {
-		this.pkRespId = pkRespId;
+	public void setPkClassifyId(int pkClassifyId) {
+		this.pkClassifyId = pkClassifyId;
 	}
     
 	@Column(name = "NUMBER", nullable = true, length = 50)
@@ -108,22 +100,6 @@ public class Responsibilities implements java.io.Serializable {
 		this.name = name;
 	}
 	
-    /**
-     * @Title getOrganization
-     * @Description: 组织对象
-     * @date 2013-12-6
-     * @return 组织对象
-     */
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "FK_ORG_ID", nullable = false)
-    public Organization getOrganization() {
-        return this.organization;
-    }
-    
-    public void setOrganization(Organization organization) {
-        this.organization = organization;
-    }
-    
     @Column(name = "ISDELETE", nullable = false, precision = 22, scale = 0)
     public int getIsDelete() {
         return isDelete;
@@ -133,15 +109,6 @@ public class Responsibilities implements java.io.Serializable {
         this.isDelete = isDelete;
     }
     
-    @Column(name = "RANK", nullable = false, length = 100)
-	public String getRank() {
-		return rank;
-	}
-
-	public void setRank(String rank) {
-		this.rank = rank;
-	}
-
 	@Column(name = "ENABLE", nullable = false, precision = 22, scale = 0)
 	public int getEnable() {
 		return enable;
@@ -151,13 +118,22 @@ public class Responsibilities implements java.io.Serializable {
 		this.enable = enable;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "responsibilities")
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "indexClassify")
     @BatchSize(size = 50)
-	public Set<User> getUsers() {
-		return users;
+	public Set<Organization> getOrgs() {
+		return orgs;
 	}
 
-	public void setUsers(Set<User> users) {
-		this.users = users;
+	public void setOrgs(Set<Organization> orgs) {
+		this.orgs = orgs;
+	}
+
+	@Column(name = "ELECTYEAR", nullable = true, length = 10)
+	public String getElectYear() {
+		return electYear;
+	}
+
+	public void setElectYear(String electYear) {
+		this.electYear = electYear;
 	}
 }

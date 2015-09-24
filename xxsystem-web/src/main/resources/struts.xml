@@ -52,6 +52,7 @@
 <include file="struts_config/struts_attach.xml"></include> 
 <include file="struts_config/struts_attach_demo.xml"></include>
 <include file="struts_config/struts_grade.xml"></include>
+<include file="struts_config/struts_deptgrade.xml"></include>
 <!-- <include file="struts_config/struts_bpm.xml"></include>
 <include file="struts_config/struts_workturns.xml"></include> -->
 </struts>

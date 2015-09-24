@@ -58,6 +58,7 @@
 				<value>com.xx.system.workturns.entity</value> -->
 				<value>com.xx.system.attach.entity</value>
 				<value>com.xx.grade.personal.entity</value>
+				<value>com.xx.system.deptgrade.entity</value>
 			</list>
 		</property>
 		<property name="configLocation" value="classpath:hibernate.cfg.xml" />

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="deptgrade" extends="st" namespace="/deptgrade">
+		<action name="toIndexManage" class="com.xx.system.deptgrade.action.IndexManageAction">
+       		<result name="success">/WEB-INF/pages/deptGrade/indexManage.jsp</result>
+        </action>
+        
+        <action name="*" class="com.xx.system.deptgrade.action.IndexManageAction" method="{1}"></action>
+	</package>
+</struts>
