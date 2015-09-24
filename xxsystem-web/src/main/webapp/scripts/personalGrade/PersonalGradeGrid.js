@@ -66,7 +66,16 @@ var cm = [
 		},
 		{
 			header : "状态",
-			dataIndex : "status"
+			dataIndex : "status",
+			renderer:function(value, cellmeta, record, rowIndex, columnIndex, store){
+				if(value == '0'){
+					return '草稿';
+				}else if(value == '1'){
+					return '已提交';
+				}else if(value == '2'){
+					return '已归档';
+				}
+			}
 		}
           ]
 
@@ -96,7 +105,7 @@ grade.personalGrade.PersonalGradeGrid = Ext.create("Ext.grid.Panel", {
 	}, '->', {
 		xtype : 'button',
 		text : '编辑',
-		disabledExpr : "$selectedRows != 1",// $selected 表示选中的记录数不等于1
+		disabledExpr : "$selectedRows != 1 || $status!='0'",// $selected 表示选中的记录数不等于1
 		disabled : true,
 		iconCls : 'edit-button',
 		handler : function() {
@@ -105,7 +114,7 @@ grade.personalGrade.PersonalGradeGrid = Ext.create("Ext.grid.Panel", {
 	},{
 		xtype : 'button',
 		text : '提交',
-		disabledExpr : "$selectedRows != 1",// $selected 表示选中的记录数不等于1
+		disabledExpr : "$status=='0'",// $selected 表示选中的记录数不等于1
 		disabled : true,
 		iconCls : 'edit-button',
 		handler : function() {
@@ -132,6 +141,40 @@ grade.personalGrade.EditPersonalGrade = function() {
 		}
 	});
 	grade.personalGrade.PersonalGradeWin.show();
+}
+
+/**
+ * 提交个人评分 预留可选多个提交
+ */
+grade.personalGrade.SubmitPersonalGrade = function() {
+	
+	var rows = grade.personalGrade.PersonalGradeGrid.getSelectionModel().getSelection();
+	var ids = "";
+	for (var i = 0; i < rows.length; i++) {
+		ids += (rows[i].data.id + ",");
+	}
+	ids = ids.substring(0, ids.length - 1);
+	Ext.Msg.confirm(SystemConstant.alertTitle, "确认提交这" + rows.length + "条数据吗?提交后不可修改!", function(btn) {
+		if (btn == 'yes') {
+			Ext.Ajax.request({
+				url : basePath + '/personalGrade/submitPersonalGrade.action',
+				params : {
+					ids : ids
+				},
+				success : function(res, options) {
+					var data = Ext.decode(res.responseText);
+					if (data.success) {
+						Ext.Msg.showTip(data.msg);
+						grade.personalGrade.PersonalGradeStore.loadPage(1);
+					} else {
+						Ext.Msg.showError(data.msg);
+					}
+				},
+				failure : sshframe.FailureProcess.Ajax
+			});
+		}
+	});
+	
 }
 
 

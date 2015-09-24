@@ -73,7 +73,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		vo.setId(grade.getId());
 		vo.setTitle(grade.getTitle());
 		if (grade.getCompositeScores() != null) {
-			vo.setCompositeScores(grade.getCompositeScores());
+			vo.setCompositeScores(String.valueOf(grade.getCompositeScores()));
 		}
 		vo.setGradeYear(grade.getGradeYear());
 		vo.setProblem(grade.getProblem());
@@ -150,5 +150,20 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 	@Override
 	public void updatePersonalDuty(PersonalDuty duty) throws BusinessException {
 		this.baseDao.saveOrUpdate(duty);
+	}
+
+	@Override
+	public String submitPersonalGrade(String ids) {
+		try {
+			if (StringUtil.isNotEmpty(ids)) {
+				StringBuffer sql = new StringBuffer();
+				sql.append(" update T_PERSONAL_GRADE t set t.STATUS = 1 ");
+				sql.append(" where t.id in ('").append(ids).append("')");
+				this.baseDao.executeNativeSQL(sql.toString());
+			}
+			return "{success:true,msg:'提交个人评分成功！'}";
+		} catch (Exception e) {
+			return "{success:false,msg:'提交个人评分失败！'}";
+		}
 	}
 }

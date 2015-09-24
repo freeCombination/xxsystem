@@ -46,7 +46,7 @@ public class PersonalGradeVo {
 	/**
 	 * 综合得分
 	 */
-	private double compositeScores ;
+	private String compositeScores ;
 	
 	/**
 	 * 状态（0:创建（可修改），1:提交（不可修改，他人进行评分），2:归档（评分完毕，不可修改））
@@ -109,11 +109,11 @@ public class PersonalGradeVo {
 		this.workPlan = workPlan;
 	}
 
-	public double getCompositeScores() {
+	public String getCompositeScores() {
 		return compositeScores;
 	}
 
-	public void setCompositeScores(double compositeScores) {
+	public void setCompositeScores(String compositeScores) {
 		this.compositeScores = compositeScores;
 	}
 

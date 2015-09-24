@@ -168,6 +168,25 @@ public class PersonalGradeAction extends BaseAction {
 		}
 		return grade;
 	}
+	
+	/**
+	 * 提交个人评分数据
+	 * 
+	 * @return
+	 */
+    public String submitPersonalGrade() {
+        try {
+            String ids = this.getRequest().getParameter("ids");
+            String result = personalGradeService.submitPersonalGrade(ids);
+            JsonUtil.outJson(result);
+            this.excepAndLogHandle(PersonalGradeAction.class, "提交个人评分", null, true);
+        }
+        catch (Exception e) {
+            JsonUtil.outJson("{success:false,msg:'提交个人评分失败！'}");
+            this.excepAndLogHandle(PersonalGradeAction.class, "提交个人评分", e, false);
+        }
+        return null;
+    }
 
 	/**
 	 * get && set

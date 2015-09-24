@@ -83,5 +83,7 @@ public interface IPersonalGradeService {
 	 */
 	public void updatePersonalDuty(PersonalDuty duty)
 			throws BusinessException;
+
+	public String submitPersonalGrade(String ids);
 	
 }

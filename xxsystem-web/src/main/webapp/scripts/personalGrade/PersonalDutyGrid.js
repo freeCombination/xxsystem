@@ -66,7 +66,7 @@ var cm = [
                 		var row = grade.personalDuty.PersonalDutyGrid.getSelectionModel().getSelection();
         				var id = row[0].data.id;
         					Ext.Ajax.request({ 
-        				 		url: '${ctx}/personalGrade/updatePersonalDuty.action',
+        				 		url: basePath+'/personalGrade/updatePersonalDuty.action',
         					    method: "post",
         					    params:{
         					    			id:id,

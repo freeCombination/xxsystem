@@ -62,6 +62,11 @@ public class PersonalGradeResult implements Serializable{
 	 * 评分时间
 	 */
 	private Date gradeDate ;
+	
+	/**
+	 * 状态 0可修改 1提交（不可修改）
+	 */
+	private Integer state ;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -121,5 +126,14 @@ public class PersonalGradeResult implements Serializable{
 
 	public void setGradeDate(Date gradeDate) {
 		this.gradeDate = gradeDate;
+	}
+
+	@Column(name = "state")
+	public Integer getState() {
+		return state;
+	}
+
+	public void setState(Integer state) {
+		this.state = state;
 	}
 }
