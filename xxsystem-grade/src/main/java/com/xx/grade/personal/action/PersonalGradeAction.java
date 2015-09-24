@@ -5,6 +5,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import com.xx.grade.personal.entity.PersonalDuty;
 import com.xx.grade.personal.entity.PersonalGrade;
 import com.xx.grade.personal.service.IPersonalGradeService;
 import com.xx.grade.personal.vo.PersonalDutyVo;
@@ -112,12 +113,36 @@ public class PersonalGradeAction extends BaseAction {
 			JsonUtil.outJson("{success:true,msg:'修改个人评分成功！'}");
 			this.excepAndLogHandle(PersonalGradeAction.class, "修改个人评分信息", null, true);
 		} catch (Exception e) {
-			JsonUtil.outJson("{success:false,msg:'修改角色失败！'}");
-			this.excepAndLogHandle(PersonalGradeAction.class, "修改角色信息", e, false);
+			JsonUtil.outJson("{success:false,msg:'修改个人评分失败！'}");
+			this.excepAndLogHandle(PersonalGradeAction.class, "修改个人评分信息", e, false);
 			return null;
 		}
 		return null;
 	}
+	
+	/**
+	 * 更改职责明细
+	 * 
+	 * @return
+	 */
+	public String updatePersonalDuty() {
+		try {
+			Map<String, String> dutyMap = RequestUtil.getParameterMap(super.getRequest());
+			String id = dutyMap.get("id");
+			String completion = dutyMap.get("completion");
+			PersonalDuty duty = this.personalGradeService.getPersonalDutyBy(Integer.parseInt(id));
+			duty.setCompletion(completion);
+			this.personalGradeService.updatePersonalDuty(duty);
+			JsonUtil.outJson("{success:true,msg:'修改个人评分职责明细成功！'}");
+			this.excepAndLogHandle(PersonalGradeAction.class, "修改个人评分职责明细信息", null, true);
+		} catch (Exception e) {
+			JsonUtil.outJson("{success:false,msg:'修改个人评分职责明细信息失败！'}");
+			this.excepAndLogHandle(PersonalGradeAction.class, "修改个人评分职责明细信息", e, false);
+			return null;
+		}
+		return null;
+	}
+	
 
 	/**
 	 * 组装个人评分实体

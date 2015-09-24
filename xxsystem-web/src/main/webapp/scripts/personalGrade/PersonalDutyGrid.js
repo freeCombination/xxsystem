@@ -61,7 +61,26 @@ var cm = [
             	maxLength:1000,
             	regex : new RegExp('^([^<^>])*$'),
                 regexText : '不能包含特殊字符！',
-                allowBlank: false
+                listeners:{
+                	'change':function(thiz, newValue,oldValue){
+                		var row = grade.personalDuty.PersonalDutyGrid.getSelectionModel().getSelection();
+        				var id = row[0].data.id;
+        					Ext.Ajax.request({ 
+        				 		url: '${ctx}/personalGrade/updatePersonalDuty.action',
+        					    method: "post",
+        					    params:{
+        					    			id:id,
+        					    			completion:newValue
+        					    		}, 
+        					    success: function(response, config){ 
+        					    	
+        					    }, 
+        					    failure: function(){ 
+        					       
+        					    }
+        					});
+                	}
+                }
             }
 		}
           ]

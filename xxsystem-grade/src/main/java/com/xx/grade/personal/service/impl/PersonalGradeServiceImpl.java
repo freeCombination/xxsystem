@@ -139,4 +139,16 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		vo.setWorkDuty(duty.getWorkDuty());
 		vo.setCompletion(duty.getCompletion());
 	}
+
+	@Override
+	public PersonalDuty getPersonalDutyBy(int id)
+			throws BusinessException {
+		PersonalDuty duty = (PersonalDuty)this.baseDao.queryEntityById(PersonalDuty.class, id);
+		return duty;
+	}
+
+	@Override
+	public void updatePersonalDuty(PersonalDuty duty) throws BusinessException {
+		this.baseDao.saveOrUpdate(duty);
+	}
 }
