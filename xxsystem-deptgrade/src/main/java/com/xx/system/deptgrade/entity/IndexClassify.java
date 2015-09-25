@@ -15,8 +15,6 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.BatchSize;
 
-import com.xx.system.org.entity.Organization;
-
 /**
  * 考核指标分类实体定义
  * 
@@ -48,7 +46,7 @@ public class IndexClassify implements java.io.Serializable {
     /**
      * @Fields orgs : 考核部门
      */
-    private Set<Organization> orgs = new HashSet<Organization>(0);
+    private Set<OrgAndClassify> orgCfs = new HashSet<OrgAndClassify>(0);
     
     /**
      * @Fields 评分年份
@@ -118,16 +116,6 @@ public class IndexClassify implements java.io.Serializable {
 		this.enable = enable;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "indexClassify")
-    @BatchSize(size = 50)
-	public Set<Organization> getOrgs() {
-		return orgs;
-	}
-
-	public void setOrgs(Set<Organization> orgs) {
-		this.orgs = orgs;
-	}
-
 	@Column(name = "ELECTYEAR", nullable = true, length = 10)
 	public String getElectYear() {
 		return electYear;
@@ -135,5 +123,15 @@ public class IndexClassify implements java.io.Serializable {
 
 	public void setElectYear(String electYear) {
 		this.electYear = electYear;
+	}
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "classify")
+    @BatchSize(size = 50)
+	public Set<OrgAndClassify> getOrgCfs() {
+		return orgCfs;
+	}
+
+	public void setOrgCfs(Set<OrgAndClassify> orgCfs) {
+		this.orgCfs = orgCfs;
 	}
 }
