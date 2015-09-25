@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.xx.system.common.exception.BusinessException;
 import com.xx.system.common.vo.ListVo;
+import com.xx.system.deptgrade.vo.GradeIndexVo;
 import com.xx.system.deptgrade.vo.IndexClassifyVo;
 
 /**
@@ -86,4 +87,79 @@ public interface IIndexManageService {
      * @throws BusinessException
      */
     public void lockUnLock(Integer classifyId) throws BusinessException;
+    
+    /************指标管理*************/
+    
+    /**
+     * 根据指标分类id查询所有指标
+     * 
+     * @Title getAllIndex
+     * @date 2013-11-25
+     * @return List<GradeIndexVo>
+     */
+    public List<GradeIndexVo> getAllIndex(Integer cfId)
+        throws BusinessException;
+    
+    /**
+     * 检查指标编号的唯一性
+     * 
+     * @Title checkIndexNumber
+     * @date 2013-11-25
+     * @param number 指标编号
+     * @return boolean 返回true表示不存在
+     */
+    public Map<String, Object> checkIndexNumber(String number)
+        throws BusinessException;
+    
+    /**
+     * 取得指标分页列表
+     * 
+     * @Title getIndexList
+     * @date 2013-11-25
+     * @param start 查询起始位置
+     * @param limit 每页限制条数
+     * @param indexVo 指标对象
+     * @return ListVo<GradeIndexVo>
+     */
+    public ListVo<GradeIndexVo> getIndexList(int start, int limit, GradeIndexVo indexVo)
+        throws BusinessException;
+    
+    /**
+     * 添加指标
+     * 
+     * @Title addIndex
+     * @date 2013-11-25
+     * @param indexVo 指标对象
+     */
+    public void addIndex(GradeIndexVo indexVo, List<GradeIndexVo> indexLst)
+        throws BusinessException;
+    
+    /**
+     * 更新指标
+     * 
+     * @Title updateIndex
+     * @date 2013-11-25
+     * @param indexVo 指标对象
+     */
+    public void updateIndex(GradeIndexVo indexVo, List<GradeIndexVo> indexLst)
+        throws BusinessException;
+    
+    /**
+     * 批量删除指标
+     * 
+     * @param ids 指标ids
+     * @return String msg
+     * @throws BusinessException
+     */
+    public String delIndexes(String ids)
+        throws BusinessException;
+    
+    /**
+     * 根据一级指标id查询二级指标
+     * 
+     * @param index1Id 一级指标id
+     * @return
+     * @throws BusinessException
+     */
+    public List<GradeIndexVo> getIndex2ListByIndex1Id(Integer index1Id) throws BusinessException;
 }

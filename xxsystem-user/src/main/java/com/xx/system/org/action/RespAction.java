@@ -178,7 +178,7 @@ public class RespAction extends BaseAction {
 		try {
 			JsonUtil.outJsonArray(respService.getAllResp(id));
 		} catch (Exception e) {
-			this.excepAndLogHandle(RespAction.class, "锁定和解锁岗位", e, false);
+			this.excepAndLogHandle(RespAction.class, "根据部门查询岗位", e, false);
 		}
 		
 		return null;

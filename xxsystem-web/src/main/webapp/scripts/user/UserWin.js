@@ -164,7 +164,7 @@ sshframe.user.UserForm = Ext.create("Ext.form.Panel", {
 										}
 									}
 								},
-								{ 
+								{
 									xtype: 'combobox',
 									fieldLabel: '岗位',
 									id:'respCombobox',

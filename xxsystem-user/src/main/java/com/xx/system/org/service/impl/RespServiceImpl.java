@@ -114,7 +114,7 @@ public class RespServiceImpl implements IRespService {
 			}
 		}
 		
-		int count = baseDao.getTotalCount(respHql, new HashMap<String, Object>());
+		int count = baseDao.queryTotalCount(respHql, new HashMap<String, Object>());
 		
 		respHql += " order by r.organization.orgName, r.name";
 		List<Responsibilities> respLst = (List<Responsibilities>)baseDao.queryEntitysByPage(start, limit, 

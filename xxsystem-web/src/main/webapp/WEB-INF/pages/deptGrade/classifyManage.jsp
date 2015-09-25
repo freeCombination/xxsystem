@@ -7,7 +7,7 @@
 <%@include file="../common/taglibs.jsp"%>
 <%@include file="../common/css.jsp"%>
 <%@include file="../common/ext.jsp"%>
-<title>岗位管理</title>
+<title>指标分类管理</title>
 <link href="" rel="SHORTCUT ICON" />
 <style type="text/css">
   .x-form-layout-table{

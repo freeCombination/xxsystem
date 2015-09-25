@@ -2,15 +2,13 @@ package com.xx.system.deptgrade.service.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -21,13 +19,17 @@ import com.xx.system.common.dao.IBaseDao;
 import com.xx.system.common.exception.BusinessException;
 import com.xx.system.common.util.StringUtil;
 import com.xx.system.common.vo.ListVo;
+import com.xx.system.deptgrade.entity.GradeIndex;
 import com.xx.system.deptgrade.entity.IndexClassify;
 import com.xx.system.deptgrade.entity.OrgAndClassify;
 import com.xx.system.deptgrade.service.IIndexManageService;
+import com.xx.system.deptgrade.vo.GradeIndexVo;
 import com.xx.system.deptgrade.vo.IndexClassifyVo;
+import com.xx.system.org.entity.Duty;
 import com.xx.system.org.entity.Organization;
 import com.xx.system.org.entity.Responsibilities;
 import com.xx.system.org.service.IOrgService;
+import com.xx.system.org.vo.DutyVo;
 
 /**
  * 指标逻辑接口实现
@@ -51,8 +53,25 @@ public class IndexManageServiceImpl implements IIndexManageService {
 
 	@Override
 	public List<IndexClassifyVo> getAllClassifies() throws BusinessException {
-		// TODO Auto-generated method stub
-		return null;
+		String cfHql = " from IndexClassify i where i.isDelete = 0 and i.enable = 0 order by i.name";
+		List<IndexClassify> cfLst = (List<IndexClassify>)baseDao.queryEntitys(cfHql);
+		
+		IndexClassifyVo icvo = null;
+		List<IndexClassifyVo> voLst = new ArrayList<IndexClassifyVo>();
+		
+		if (!CollectionUtils.isEmpty(cfLst)) {
+			for (IndexClassify cf : cfLst) {
+				icvo = new IndexClassifyVo();
+				
+				icvo.setClassifyId(cf.getPkClassifyId());
+				icvo.setNumber(cf.getNumber());
+				icvo.setName(cf.getName());
+				
+				voLst.add(icvo);
+			}
+		}
+		
+		return voLst;
 	}
 
 	@Override
@@ -97,17 +116,17 @@ public class IndexManageServiceImpl implements IIndexManageService {
 			}
 		}
 		
-		int count = baseDao.getTotalCount(cfHql, new HashMap<String, Object>());
+		int count = baseDao.queryTotalCount(cfHql, new HashMap<String, Object>());
 		
 		cfHql += " order by i.name";
-		List<IndexClassify> respLst = (List<IndexClassify>)baseDao.queryEntitysByPage(start, limit, 
+		List<IndexClassify> cfLst = (List<IndexClassify>)baseDao.queryEntitysByPage(start, limit, 
 				cfHql, new HashMap<String, Object>());
 		
 		IndexClassifyVo icvo = null;
 		List<IndexClassifyVo> voLst = new ArrayList<IndexClassifyVo>();
 		
-		if (!CollectionUtils.isEmpty(respLst)) {
-			for (IndexClassify cf : respLst) {
+		if (!CollectionUtils.isEmpty(cfLst)) {
+			for (IndexClassify cf : cfLst) {
 				icvo = new IndexClassifyVo();
 				
 				icvo.setClassifyId(cf.getPkClassifyId());
@@ -251,5 +270,211 @@ public class IndexManageServiceImpl implements IIndexManageService {
 			}
 		}
 		
+	}
+
+	/************指标管理*************/
+	
+	@Override
+	public List<GradeIndexVo> getAllIndex(Integer cfId) throws BusinessException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, Object> checkIndexNumber(String number) throws BusinessException {
+		Map<String, Object> vaildator = new HashMap<String, Object>();
+        
+        int totleSize = 0;
+        if (StringUtil.isNotBlank(number)) {
+            StringBuffer countHql = new StringBuffer();
+            countHql.append(" from GradeIndex g ");
+            countHql.append(" where g.number = '");
+            countHql.append(number + "'");
+            
+            totleSize = baseDao.queryTotalCount(countHql.toString(),
+                new HashMap<String, Object>());
+        }
+        
+        if (totleSize > 0) {
+            vaildator.put("success", true);
+            vaildator.put("valid", false);
+            vaildator.put("reason", "该指标编号已被占用！");
+        }
+        else {
+            vaildator.put("success", true);
+            vaildator.put("valid", true);
+            vaildator.put("reason", "");
+        }
+        return vaildator;
+	}
+
+	@Override
+	public ListVo<GradeIndexVo> getIndexList(int start, int limit, GradeIndexVo indexVo) throws BusinessException {
+		ListVo<GradeIndexVo> lstVo = new ListVo<GradeIndexVo>();
+		String indexHql = " from GradeIndex g where g.isDelete = 0";
+		if (indexVo != null) {
+			if (StringUtil.isNotBlank(indexVo.getNumber())) {
+				indexHql += " and g.number like '%" + indexVo.getNumber() + "%'";
+			}
+			
+			if (StringUtil.isNotBlank(indexVo.getName())) {
+				indexHql += " and g.name like '%" + indexVo.getName() + "%'";
+			}
+		}
+		indexHql += " and g.classify is not null and g.gradeIndex is null";
+		
+		int count = baseDao.queryTotalCount(indexHql, new HashMap<String, Object>());
+		
+		indexHql += " order by g.name";
+		List<GradeIndex> indexLst = (List<GradeIndex>)baseDao.queryEntitysByPage(start, limit, 
+				indexHql, new HashMap<String, Object>());
+		
+		GradeIndexVo vo = null;
+		List<GradeIndexVo> voLst = new ArrayList<GradeIndexVo>();
+		
+		if (!CollectionUtils.isEmpty(indexLst)) {
+			for (GradeIndex index : indexLst) {
+				vo = new GradeIndexVo();
+				
+				vo.setIndexId(index.getPkIndexId());
+				vo.setNumber(index.getNumber());
+				vo.setName(index.getName());
+				vo.setClassifyName(index.getClassify().getName());
+				vo.setClassifyId(index.getClassify().getPkClassifyId());
+				vo.setGrade(index.getGrade());
+				vo.setRemark(index.getRemark());
+				
+				voLst.add(vo);
+			}
+		}
+		lstVo.setList(voLst);
+		lstVo.setTotalSize(count);
+		
+		return lstVo;
+	}
+
+	@Override
+	public void addIndex(GradeIndexVo indexVo, List<GradeIndexVo> indexLst) throws BusinessException {
+		if (indexVo != null) {
+			GradeIndex index = new GradeIndex();
+			index.setNumber(indexVo.getNumber());
+			index.setName(indexVo.getName());
+			
+			IndexClassify cf = (IndexClassify)baseDao.queryEntityById(IndexClassify.class, indexVo.getClassifyId());
+			if (cf != null) {
+				index.setClassify(cf);
+			}
+			
+			index.setGrade(indexVo.getGrade());
+			index.setRemark(indexVo.getRemark());
+			index.setIsDelete(0);
+			
+			
+			baseDao.save(index);
+			
+			if (!CollectionUtils.isEmpty(indexLst)) {
+				GradeIndex index2 = null;
+				List<GradeIndex> index2Lst = new ArrayList<GradeIndex>();
+				for (GradeIndexVo vo : indexLst) {
+					index2 = new GradeIndex();
+					index2.setNumber(vo.getNumber());
+					index2.setName(vo.getName());
+					index2.setGrade(vo.getGrade());
+					index2.setRemark(vo.getRemark());
+					index2.setGradeIndex(index);
+					index2.setIsDelete(0);
+					
+					index2Lst.add(index2);
+				}
+				baseDao.saveAll(index2Lst);
+			}
+		}
+	}
+
+	@Override
+	public void updateIndex(GradeIndexVo indexVo, List<GradeIndexVo> indexLst) throws BusinessException {
+		if (indexVo != null) {
+			String indexHql = " from GradeIndex g where g.isDelete = 0"
+					+ " and g.pkIndexId = " + indexVo.getIndexId();
+			List<GradeIndex> lst = (List<GradeIndex>)baseDao.queryEntitys(indexHql);
+			GradeIndex index = null;
+			if (!CollectionUtils.isEmpty(lst)) {
+				index = lst.get(0);
+				
+				index.setNumber(indexVo.getNumber());
+				index.setName(indexVo.getName());
+				
+				IndexClassify cf = (IndexClassify)baseDao.queryEntityById(IndexClassify.class, indexVo.getClassifyId());
+				if (cf != null) {
+					index.setClassify(cf);
+				}
+				
+				index.setGrade(indexVo.getGrade());
+				index.setRemark(indexVo.getRemark());
+				index.setIsDelete(0);
+				
+				baseDao.update(index);
+				
+				// 先删除后重新保存，实现更新的功能
+				String delHql = " delete from GradeIndex g where g.gradeIndex.pkIndexId = " + indexVo.getIndexId();
+				baseDao.executeHql(delHql);
+				
+				if (!CollectionUtils.isEmpty(indexLst)) {
+					GradeIndex index2 = null;
+					List<GradeIndex> index2Lst = new ArrayList<GradeIndex>();
+					for (GradeIndexVo vo : indexLst) {
+						index2 = new GradeIndex();
+						index2.setNumber(vo.getNumber());
+						index2.setName(vo.getName());
+						index2.setGrade(vo.getGrade());
+						index2.setRemark(vo.getRemark());
+						index2.setGradeIndex(index);
+						index2.setIsDelete(0);
+						
+						index2Lst.add(index2);
+					}
+					baseDao.saveAll(index2Lst);
+				}
+			}
+		}
+	}
+
+	@Override
+	public String delIndexes(String ids) throws BusinessException {
+		if (StringUtil.isNotBlank(ids)) {
+			// 先删除二级指标
+			String delIndex2 = " delete from GradeIndex g where g.gradeIndex.pkIndexId in (" + ids + ")";
+			baseDao.executeHql(delIndex2);
+			
+			// 然后删除一级指标
+			String delIndex = " delete from GradeIndex g where g.pkIndexId in (" + ids + ")";
+			baseDao.executeHql(delIndex);
+		}
+		return "success";
+	}
+
+	@Override
+	public List<GradeIndexVo> getIndex2ListByIndex1Id(Integer index1Id) throws BusinessException {
+		List<GradeIndexVo> lstVo = new ArrayList<GradeIndexVo>();
+		if (index1Id != null && index1Id != 0) {
+			String index2Hql = " from GradeIndex g where g.isDelete = 0 and g.gradeIndex.pkIndexId = " + index1Id;
+			List<GradeIndex> index2Lst = (List<GradeIndex>)baseDao.queryEntitys(index2Hql);
+			GradeIndexVo vo = null;
+			if (!CollectionUtils.isEmpty(index2Lst)) {
+				for (GradeIndex i : index2Lst) {
+					vo = new GradeIndexVo();
+					
+					vo.setIndexId(i.getPkIndexId());
+					vo.setNumber(i.getNumber());
+					vo.setName(i.getName());
+					vo.setGrade(i.getGrade());
+					vo.setRemark(i.getRemark());
+					
+					lstVo.add(vo);
+				}
+			}
+		}
+		
+		return lstVo;
 	}
 }

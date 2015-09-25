@@ -120,7 +120,7 @@ public class GradeIndex implements java.io.Serializable {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "FK_CLASSIFY_ID", nullable = false)
+    @JoinColumn(name = "FK_CLASSIFY_ID", nullable = true)
 	public IndexClassify getClassify() {
 		return classify;
 	}
