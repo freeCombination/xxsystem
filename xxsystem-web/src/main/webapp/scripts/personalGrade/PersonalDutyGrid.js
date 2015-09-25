@@ -52,6 +52,9 @@ var cm = [
 		{
 			header : "完成情况",
 			dataIndex : "completion",
+			renderer:function(value,p,record){
+				return '<div style="white-space:normal">'+value+"</div>";
+			},
 			field: {
             	xtype:'textarea',
             	style: {
@@ -83,7 +86,7 @@ var cm = [
                 }
             }
 		}
-          ]
+          ];
 
 /**
  * 定义Grid
@@ -102,7 +105,35 @@ grade.personalDuty.PersonalDutyGrid = Ext.create("Ext.grid.Panel", {
                 text:'导出',
                 iconCls:'add-button',
                 handler:function(){
-                	
+                	var personalGradeId = Ext.getCmp('personalGradeId').getValue();
+                	Ext.Ajax.request({ 
+				 		url: basePath+'/personalGrade/exportPersonalDuty.action',
+					    method: "post",
+					    params:{
+					    			personalGradeId:personalGradeId
+					    		}, 
+					    success: function(response, config){ 
+					    	var result = Ext.decode(response.responseText);
+					    	if(result.success==false){
+                                Ext.Msg.alert('系统提示', "导出失败!");
+                            }else{
+                                var url = basePath+"/personalGrade/exportPersonalDutyFile.action";
+                                window.location.href = url;
+                            }
+					    }, 
+					    failure: function(){ 
+					       
+					    }
+					});
+                }
+            },
+            {
+                xtype:'button',
+                disabled:false,
+                text:'导入',
+                iconCls:'add-button',
+                handler:function(){
+                	importUserWin.show();
                 }
             }
 	        ]

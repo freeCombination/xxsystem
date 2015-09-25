@@ -1,7 +1,14 @@
 package com.xx.grade.personal.action;
 
+import java.io.File;
+import java.io.OutputStream;
+import java.util.Date;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -11,14 +18,13 @@ import com.xx.grade.personal.service.IPersonalGradeService;
 import com.xx.grade.personal.vo.PersonalDutyVo;
 import com.xx.grade.personal.vo.PersonalGradeVo;
 import com.xx.system.common.action.BaseAction;
+import com.xx.system.common.util.DateUtil;
+import com.xx.system.common.util.FileUtil;
 import com.xx.system.common.util.JsonUtil;
 import com.xx.system.common.util.RequestUtil;
 import com.xx.system.common.util.StringUtil;
 import com.xx.system.common.vo.ListVo;
 import com.xx.system.common.vo.ResponseVo;
-import com.xx.system.dict.entity.Dictionary;
-import com.xx.system.role.action.RoleAction;
-import com.xx.system.role.entity.Role;
 import com.xx.system.user.entity.User;
 
 /**
@@ -46,6 +52,42 @@ public class PersonalGradeAction extends BaseAction {
 	 * 评分实体
 	 */
 	private PersonalGrade grade;
+	
+	/**
+     * @Fields uploadAttach :
+     */
+    private File uploadAttach;
+    
+    /**
+     * @Fields downloadType :
+     */
+    private String downloadType;
+    
+    private String filename;
+    
+    public File getUploadAttach() {
+        return uploadAttach;
+    }
+    
+    public void setUploadAttach(File uploadAttach) {
+        this.uploadAttach = uploadAttach;
+    }
+    
+    public String getDownloadType() {
+        return downloadType;
+    }
+    
+    public void setDownloadType(String downloadType) {
+        this.downloadType = downloadType;
+    }
+    
+    public String getFilename() {
+        return filename;
+    }
+    
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
 
 	/**
 	 * 获取用户自评页面列表
@@ -54,19 +96,22 @@ public class PersonalGradeAction extends BaseAction {
 	 */
 	public String getPersonalGradeForUserSelfList() {
 		try {
-			Map<String, String> paramMap = RequestUtil.getParameterMap(getRequest());
+			Map<String, String> paramMap = RequestUtil
+					.getParameterMap(getRequest());
 			User user = getCurrentUser();
 			if (user != null) {
 				paramMap.put("userId", user.getUserId().toString());
 			}
-			ListVo<PersonalGradeVo> personalGradeList = this.personalGradeService.getPersonalGradeList(paramMap);
+			ListVo<PersonalGradeVo> personalGradeList = this.personalGradeService
+					.getPersonalGradeList(paramMap);
 			JsonUtil.outJson(personalGradeList);
 		} catch (Exception e) {
-			this.excepAndLogHandle(PersonalGradeAction.class, "获取用户自评列表失败", e, false);
+			this.excepAndLogHandle(PersonalGradeAction.class, "获取用户自评列表失败", e,
+					false);
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 获取用户自评职责明细
 	 * 
@@ -74,15 +119,17 @@ public class PersonalGradeAction extends BaseAction {
 	 */
 	public String getPersonalDutyList() {
 		try {
-			Map<String, String> paramMap = RequestUtil.getParameterMap(getRequest());
-			ListVo<PersonalDutyVo> personalDutyList = this.personalGradeService.getPersonalDutyList(paramMap);
+			Map<String, String> paramMap = RequestUtil
+					.getParameterMap(getRequest());
+			ListVo<PersonalDutyVo> personalDutyList = this.personalGradeService
+					.getPersonalDutyList(paramMap);
 			JsonUtil.outJson(personalDutyList);
 		} catch (Exception e) {
-			this.excepAndLogHandle(PersonalGradeAction.class, "获取用户自评职责明细列表失败", e, false);
+			this.excepAndLogHandle(PersonalGradeAction.class, "获取用户自评职责明细列表失败",
+					e, false);
 		}
 		return null;
 	}
-	
 
 	/**
 	 * 获取个人评分实体
@@ -92,11 +139,13 @@ public class PersonalGradeAction extends BaseAction {
 	public String getPersonalGradeById() {
 		try {
 			ResponseVo rv = new ResponseVo();
-			PersonalGradeVo vo = this.personalGradeService.getPersonalGradeById(id);
+			PersonalGradeVo vo = this.personalGradeService
+					.getPersonalGradeById(id);
 			rv.setData(vo);
 			JsonUtil.outJson(rv);
 		} catch (Exception e) {
-			this.excepAndLogHandle(PersonalGradeAction.class, "根据ID获取个人评分", e, false);
+			this.excepAndLogHandle(PersonalGradeAction.class, "根据ID获取个人评分", e,
+					false);
 		}
 		return null;
 	}
@@ -111,15 +160,17 @@ public class PersonalGradeAction extends BaseAction {
 			grade = parseGradeFormRequest();
 			this.personalGradeService.editPersonalGrade(grade);
 			JsonUtil.outJson("{success:true,msg:'修改个人评分成功！'}");
-			this.excepAndLogHandle(PersonalGradeAction.class, "修改个人评分信息", null, true);
+			this.excepAndLogHandle(PersonalGradeAction.class, "修改个人评分信息", null,
+					true);
 		} catch (Exception e) {
 			JsonUtil.outJson("{success:false,msg:'修改个人评分失败！'}");
-			this.excepAndLogHandle(PersonalGradeAction.class, "修改个人评分信息", e, false);
+			this.excepAndLogHandle(PersonalGradeAction.class, "修改个人评分信息", e,
+					false);
 			return null;
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 更改职责明细
 	 * 
@@ -127,22 +178,114 @@ public class PersonalGradeAction extends BaseAction {
 	 */
 	public String updatePersonalDuty() {
 		try {
-			Map<String, String> dutyMap = RequestUtil.getParameterMap(super.getRequest());
+			Map<String, String> dutyMap = RequestUtil.getParameterMap(super
+					.getRequest());
 			String id = dutyMap.get("id");
 			String completion = dutyMap.get("completion");
-			PersonalDuty duty = this.personalGradeService.getPersonalDutyBy(Integer.parseInt(id));
+			PersonalDuty duty = this.personalGradeService
+					.getPersonalDutyBy(Integer.parseInt(id));
 			duty.setCompletion(completion);
 			this.personalGradeService.updatePersonalDuty(duty);
 			JsonUtil.outJson("{success:true,msg:'修改个人评分职责明细成功！'}");
-			this.excepAndLogHandle(PersonalGradeAction.class, "修改个人评分职责明细信息", null, true);
+			this.excepAndLogHandle(PersonalGradeAction.class, "修改个人评分职责明细信息",
+					null, true);
 		} catch (Exception e) {
 			JsonUtil.outJson("{success:false,msg:'修改个人评分职责明细信息失败！'}");
-			this.excepAndLogHandle(PersonalGradeAction.class, "修改个人评分职责明细信息", e, false);
+			this.excepAndLogHandle(PersonalGradeAction.class, "修改个人评分职责明细信息",
+					e, false);
 			return null;
 		}
 		return null;
 	}
-	
+
+	/**
+	 * 导出个人职责
+	 * 
+	 * @return
+	 */
+	public String exportPersonalDuty() {
+		try {
+			Map<String, String> dutyMap = RequestUtil.getParameterMap(super
+					.getRequest());
+			HSSFWorkbook workBook = this.personalGradeService
+					.exportPersonalDuty(dutyMap);
+			if (workBook != null) {
+				this.getRequest().getSession()
+						.setAttribute("personalDutyWorkBook", workBook);
+				JsonUtil.outJson("{success:true,msg:'导出个人职责明细成功！'}");
+				this.excepAndLogHandle(PersonalGradeAction.class, "导出个人职责明细信息",
+						null, true);
+			} else {
+				JsonUtil.outJson("{success:false,msg:'导出个人职责明细失败！'}");
+				this.excepAndLogHandle(PersonalGradeAction.class, "导出个人职责明细信息",
+						null, false);
+			}
+		} catch (Exception e) {
+			JsonUtil.outJson("{success:false,msg:'导出个人职责明细信息失败！'}");
+			this.excepAndLogHandle(PersonalGradeAction.class, "导出个人职责明细信息", e,
+					false);
+			return null;
+		}
+		return null;
+	}
+
+	/**
+	 * 导出excel
+	 * 
+	 * @return
+	 */
+	public String exportPersonalDutyFile() {
+		HttpServletRequest request = this.getRequest();
+		try {
+			HSSFWorkbook workBook = (HSSFWorkbook) request.getSession()
+					.getAttribute("personalDutyWorkBook");
+			this.getResponse().reset();
+			this.getResponse().setContentType(
+					"application/msexcel;charset=UTF-8");
+			try {
+				this.getResponse().addHeader(
+						"Content-Disposition",
+						"attachment;filename=\""
+								+ new String(("个人评分职责明细" + ".xls")
+										.getBytes("GBK"), "ISO8859_1") + "\"");
+				OutputStream out = this.getResponse().getOutputStream();
+				workBook.write(out);
+				out.flush();
+				out.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		request.getSession().removeAttribute("personalDutyWorkBook");
+		return null;
+	}
+
+	public String uploadPersonalDutyExcel() {
+		try {
+			Map<String, String> paramsMap = RequestUtil
+					.getParameterMap(getRequest());
+			HttpServletRequest request = this.getRequest();
+			ServletContext servletContext = request.getSession()
+					.getServletContext();
+			String uploadPath = servletContext.getRealPath("/")
+					+ "personalDuty" + File.separator;
+			String dateStr = DateUtil.dateToString(new Date(),
+					DateUtil.DATE_FORMAT);
+			String fileUrl = FileUtil.upload(uploadAttach, filename, uploadPath
+					+ dateStr);
+			String message = personalGradeService.uploadPersonalDutyExcel(fileUrl,
+					paramsMap);
+			this.excepAndLogHandle(PersonalGradeAction.class, "通过上传EXCEl文件，个人评分职责导入",
+					null, true);
+			JsonUtil.outJson("{success:true,msg:'" + message + "'}");
+		} catch (Exception e) {
+			this.excepAndLogHandle(PersonalGradeAction.class, "通过上传EXCEl文件，个人评分职责导入",
+					e, false);
+		}
+		return null;
+	}
 
 	/**
 	 * 组装个人评分实体
@@ -150,43 +293,49 @@ public class PersonalGradeAction extends BaseAction {
 	 * @return
 	 */
 	private PersonalGrade parseGradeFormRequest() {
-		PersonalGrade grade = null ;
+		PersonalGrade grade = null;
 		try {
-			Map<String, String> gradeMap = RequestUtil.getParameterMap(super.getRequest());
-			if (gradeMap.get("id") != null && StringUtil.isNotBlank(gradeMap.get("id"))) {
-				grade = this.personalGradeService.getPersonalGradeEntityById(Integer.parseInt(gradeMap.get("id")));
+			Map<String, String> gradeMap = RequestUtil.getParameterMap(super
+					.getRequest());
+			if (gradeMap.get("id") != null
+					&& StringUtil.isNotBlank(gradeMap.get("id"))) {
+				grade = this.personalGradeService
+						.getPersonalGradeEntityById(Integer.parseInt(gradeMap
+								.get("id")));
 			}
 			if (null != grade) {
 				grade.setWorkPlan(gradeMap.get("workPlan"));
 				grade.setProblem(gradeMap.get("problem"));
-			}else{
+			} else {
 				JsonUtil.outJson("{success:'false',msg:'编辑个人评分失败，未找到该数据！'}");
 			}
 		} catch (Exception e) {
 			JsonUtil.outJson("{success:'false',msg:'编辑个人评分失败！'}");
-			this.excepAndLogHandle(PersonalGradeAction.class, "编辑个人评分失败", e, false);
+			this.excepAndLogHandle(PersonalGradeAction.class, "编辑个人评分失败", e,
+					false);
 		}
 		return grade;
 	}
-	
+
 	/**
 	 * 提交个人评分数据
 	 * 
 	 * @return
 	 */
-    public String submitPersonalGrade() {
-        try {
-            String ids = this.getRequest().getParameter("ids");
-            String result = personalGradeService.submitPersonalGrade(ids);
-            JsonUtil.outJson(result);
-            this.excepAndLogHandle(PersonalGradeAction.class, "提交个人评分", null, true);
-        }
-        catch (Exception e) {
-            JsonUtil.outJson("{success:false,msg:'提交个人评分失败！'}");
-            this.excepAndLogHandle(PersonalGradeAction.class, "提交个人评分", e, false);
-        }
-        return null;
-    }
+	public String submitPersonalGrade() {
+		try {
+			String ids = this.getRequest().getParameter("ids");
+			String result = personalGradeService.submitPersonalGrade(ids);
+			JsonUtil.outJson(result);
+			this.excepAndLogHandle(PersonalGradeAction.class, "提交个人评分", null,
+					true);
+		} catch (Exception e) {
+			JsonUtil.outJson("{success:false,msg:'提交个人评分失败！'}");
+			this.excepAndLogHandle(PersonalGradeAction.class, "提交个人评分", e,
+					false);
+		}
+		return null;
+	}
 
 	/**
 	 * get && set

@@ -1,11 +1,16 @@
 package com.xx.grade.personal.service.impl;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -19,6 +24,7 @@ import com.xx.system.common.dao.IBaseDao;
 import com.xx.system.common.exception.BusinessException;
 import com.xx.system.common.util.StringUtil;
 import com.xx.system.common.vo.ListVo;
+import com.xx.system.user.util.HSSFUtils;
 
 
 /**
@@ -105,7 +111,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 	}
 
 	@Override
-	public ListVo<PersonalDutyVo> getPersonalDutyList(Map<String, String> paramMap) throws BusinessException {
+	public ListVo<PersonalDutyVo> getPersonalDutyList(Map<String, String> paramMap) {
 		ListVo<PersonalDutyVo> result = new ListVo();
 		List<PersonalDutyVo> list = new ArrayList<PersonalDutyVo>(); 
 		//用户ID 用户自评只能看自己的数据 
@@ -165,5 +171,81 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		} catch (Exception e) {
 			return "{success:false,msg:'提交个人评分失败！'}";
 		}
+	}
+
+	@Override
+	public HSSFWorkbook exportPersonalDuty(Map<String, String> dutyMap) {
+		ListVo<PersonalDutyVo> result =	getPersonalDutyList(dutyMap);
+		HSSFWorkbook wb = null;
+		if (result.getTotalSize() > 0) {
+			wb = new HSSFWorkbook();
+			HSSFSheet sheet = wb.createSheet("个人职责明细");
+			HSSFRow row = sheet.createRow(0);
+			HSSFCell cell = null;
+			//创建头部
+			cell = row.createCell(0);
+			cell.setCellValue("主键");
+			
+			cell = row.createCell(1);
+			cell.setCellValue("工作职责");
+			
+			cell = row.createCell(2);
+			cell.setCellValue("完成情况");
+			
+			List<PersonalDutyVo> list = result.getList();
+			for (int i = 0; i < list.size(); i++) {
+				PersonalDutyVo vo = list.get(i);
+				row = sheet.createRow(i + 1);
+				//id
+				cell = row.createCell(0);
+				cell.setCellValue(String.valueOf(vo.getId()));
+				
+				//工作职责
+				cell = row.createCell(1);
+				cell.setCellValue(String.valueOf(vo.getWorkDuty()));
+				
+				//完成情况
+				cell = row.createCell(2);
+				cell.setCellValue(String.valueOf(vo.getCompletion()));
+			}
+		}
+		return wb;
+	}
+
+	@Override
+	public String uploadPersonalDutyExcel(String fileUrl,
+			Map<String, String> paramsMap) {
+	       // 年月
+        String reportDate = paramsMap.get("reportDate");
+        // 标示
+        String message = "importSuccess";
+        String[][] content = null;
+        try {
+            content = HSSFUtils.extractTextFromExcel(fileUrl);
+        }
+        catch (Exception e) {
+        	message = "解析excel出错！";
+        }
+        
+        if (null == content) {
+            message = "不是有效的Excel文件,请按照模版来定义！";
+        }
+        else {
+            File attachFile = new File(fileUrl);
+            attachFile.delete();
+            int col = content.length;
+            List<PersonalDuty> duties = new ArrayList<PersonalDuty>();
+            for (int i = 1; i < col; i++) {
+            	String id = content[i][0];
+            	PersonalDuty duty = (PersonalDuty)this.baseDao.queryEntityById(PersonalDuty.class, Integer.parseInt(id));
+            	if (duty != null) {
+                	String workDuty = content[i][1];
+                	String completion = content[i][2];
+                	duty.setCompletion(completion);
+				}
+            }
+            this.baseDao.saveOrUpdate(duties);
+        }
+        return message ;
 	}
 }

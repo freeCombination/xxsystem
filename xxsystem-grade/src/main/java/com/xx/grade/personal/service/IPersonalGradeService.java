@@ -2,6 +2,8 @@ package com.xx.grade.personal.service;
 
 import java.util.Map;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
 import com.xx.grade.personal.entity.PersonalDuty;
 import com.xx.grade.personal.entity.PersonalGrade;
 import com.xx.grade.personal.vo.PersonalDutyVo;
@@ -62,8 +64,7 @@ public interface IPersonalGradeService {
 	 * @return
 	 * @throws BusinessException
 	 */
-	public ListVo<PersonalDutyVo> getPersonalDutyList(Map<String, String> paramMap)
-			throws BusinessException;
+	public ListVo<PersonalDutyVo> getPersonalDutyList(Map<String, String> paramMap);
 
 	/**
 	 * 获取职责明细实体
@@ -84,6 +85,30 @@ public interface IPersonalGradeService {
 	public void updatePersonalDuty(PersonalDuty duty)
 			throws BusinessException;
 
+	/**
+	 * 提交个人评分
+	 * 
+	 * @param ids
+	 * @return
+	 */
 	public String submitPersonalGrade(String ids);
+
+	/**
+	 * 导出工作职责
+	 * 
+	 * @param dutyMap
+	 * @return
+	 */
+	public HSSFWorkbook exportPersonalDuty(Map<String, String> dutyMap);
+
+	/**
+	 * 导入工作职责
+	 * 
+	 * @param fileUrl
+	 * @param paramsMap
+	 * @return
+	 */
+	public String uploadPersonalDutyExcel(String fileUrl,
+			Map<String, String> paramsMap);
 	
 }
