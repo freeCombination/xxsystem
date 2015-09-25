@@ -5,7 +5,7 @@
 <struts>
 	<package name="deptgrade" extends="st" namespace="/deptgrade">
 		<action name="toIndexManage" class="com.xx.system.deptgrade.action.IndexManageAction">
-       		<result name="success">/WEB-INF/pages/deptGrade/indexManage.jsp</result>
+       		<result name="success">/WEB-INF/pages/deptGrade/classifyManage.jsp</result>
         </action>
         
         <action name="*" class="com.xx.system.deptgrade.action.IndexManageAction" method="{1}"></action>
