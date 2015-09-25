@@ -660,7 +660,6 @@
                 width: 600,
                 modal:true,
                 layout: 'border',
-                modal : true,
                 items: [respForm, dutyGrid],
                 buttons:[{
                     text: SystemConstant.saveBtnText,

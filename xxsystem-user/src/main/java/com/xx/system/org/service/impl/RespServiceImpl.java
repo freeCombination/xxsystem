@@ -200,7 +200,7 @@ public class RespServiceImpl implements IRespService {
 				Organization org = organizationService.getOrgById(respVo.getOrgId());
 				resp.setOrganization(org);
 				
-				baseDao.save(resp);
+				baseDao.update(resp);
 				
 				// 保存岗位职责前删除关联的所有职责，实现更新的功能
 				String delHql = " delete from Duty d where d.responsibilities.pkRespId = " + respVo.getRespId();

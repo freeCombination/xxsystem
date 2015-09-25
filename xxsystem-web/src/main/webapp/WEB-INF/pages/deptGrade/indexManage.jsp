@@ -38,15 +38,15 @@
 		             "Ext.form.*",
 					 "Ext.data.*" ]);
 		//建立Model模型对象
-		Ext.define("Resp",{
+		Ext.define("Classify",{
 			extend:"Ext.data.Model",
 			fields:[
-				{name: "respId"}, 
+				{name: "classifyId"}, 
 				{name: "number"}, 
 				{name: "name"}, 
-				{name: "orgName"},
-				{name: "orgId"},
-				{name: "rank"},
+				{name: "orgNames"},
+				{name: "orgIds"},
+				{name: "electYear"},
 				{name: "enable"},
 				{name: "isDelete"}
 			]
@@ -75,16 +75,16 @@
 		});
 		
 		//建立数据Store
-		var respStore=Ext.create("Ext.data.Store", {
+		var classifyStore=Ext.create("Ext.data.Store", {
 	        pageSize: SystemConstant.commonSize,
-	        model:"Resp",
+	        model:"Classify",
 	        remoteSort:true,
 			proxy: {
 	            type:"ajax",
 	            actionMethods: {
                 	read: 'POST'
            		},
-			    url: "${ctx}/org/getRespList.action",
+			    url: "${ctx}/deptgrade/getClassifyList.action",
 			    reader: {
 				     totalProperty: "totalSize",
 				     root: "list"
@@ -97,7 +97,7 @@
 			injectCheckbox:1,
 	    	listeners: {
 		      selectionchange: function(){
-		        	var c = respGrid.getSelectionModel().getSelection();
+		        	var c = classifyGrid.getSelectionModel().getSelection();
 					if(c.length > 0){
 						var enable = 1;
 						for (var i = 0; i < c.length; i++) {
@@ -108,24 +108,24 @@
 						}
 						
 						if (enable == 1) {
-							Ext.getCmp('delRespBtn').setDisabled(false);
+							Ext.getCmp('delClassifyBtn').setDisabled(false);
 						}
 						else {
-							Ext.getCmp('delRespBtn').setDisabled(true);
+							Ext.getCmp('delClassifyBtn').setDisabled(true);
 						}
 					}else{
-						Ext.getCmp('delRespBtn').setDisabled(true);
+						Ext.getCmp('delClassifyBtn').setDisabled(true);
 					}
 					if(c.length == 1){
 						var enable = c[0].get('enable');
 						if (enable == 1) {
-							Ext.getCmp('updateRespBtn').setDisabled(false);
+							Ext.getCmp('updateClassifyBtn').setDisabled(false);
 						}
 						else {
-							Ext.getCmp('updateRespBtn').setDisabled(true);
+							Ext.getCmp('updateClassifyBtn').setDisabled(true);
 						}
 					}else{
-						Ext.getCmp('updateRespBtn').setDisabled(true);
+						Ext.getCmp('updateClassifyBtn').setDisabled(true);
 					}
 				}
 			}
@@ -133,26 +133,26 @@
 		
 		var cm=[
 				{header:"序号",xtype: "rownumberer",width:60,align:"center",menuDisabled: true,sortable :false},
-	            {header: "ID",width: 70,dataIndex: "respId",hidden: true,menuDisabled: true,sortable :false},
-	            {header: "岗位编号",width: 200,dataIndex: "number",menuDisabled: true,sortable :false,
+	            {header: "ID",width: 70,dataIndex: "classifyId",hidden: true,menuDisabled: true,sortable :false},
+	            {header: "指标分类编号",width: 200,dataIndex: "number",menuDisabled: true,sortable :false,
 					renderer : function(value, cellmeta, record, rowIndex,
 							columnIndex, store) {
 						cellmeta.tdAttr = 'data-qtip="' + value + '"';
 						return value;
 					}},
-	            {header: "名称",width: 200,dataIndex: "name",menuDisabled: true,sortable :false,
+	            {header: "指标分类名称",width: 200,dataIndex: "name",menuDisabled: true,sortable :false,
 					renderer : function(value, cellmeta, record, rowIndex,
 							columnIndex, store) {
 						cellmeta.tdAttr = 'data-qtip="' + value + '"';
 						return value;
 					}},
-	            {header: "所属部门",width: 200,dataIndex: "orgName",menuDisabled: true,sortable :false,
+	            {header: "参评部门",width: 200,dataIndex: "orgNames",menuDisabled: true,sortable :false,
 					renderer : function(value, cellmeta, record, rowIndex,
 							columnIndex, store) {
 						cellmeta.tdAttr = 'data-qtip="' + value + '"';
 						return value;
 					}},
-	            {header: "岗位级别",width: 200,dataIndex: "rank",menuDisabled: true,sortable :false,
+	            {header: "参评年份",width: 200,dataIndex: "electYear",menuDisabled: true,sortable :false,
 					renderer : function(value, cellmeta, record, rowIndex,
 							columnIndex, store) {
 						cellmeta.tdAttr = 'data-qtip="' + value + '"';
@@ -161,53 +161,18 @@
 				{header: "状态",width: 200,dataIndex: "enable",
 		            renderer: function(value, cellmeta, record, rowIndex, columnIndex, store){
 		                //cellmeta.tdAttr = 'data-qtip="' + orgTypeArr[i].name + '"';
-		                var respId = record.get('respId');
+		                var classify = record.get('classifyId');
 		                if(value == 1){
-		                    return '<img title="点击锁定岗位" src="'+basePath+'/images/icons/unlock.gif" style="cursor: pointer;padding:0;margin:0;" onclick="lockUnLock(\''+respId+'\',\''+value+'\')"/>';
+		                    return '<img title="点击锁定指标分类" src="'+basePath+'/images/icons/unlock.gif" style="cursor: pointer;padding:0;margin:0;" onclick="lockUnLock(\''+classify+'\',\''+value+'\')"/>';
 		                }else{
-		                    return '<img title="点击解锁岗位" src="'+basePath+'/images/icons/lock.gif" style="cursor: pointer;padding:0;margin:0;" onclick="lockUnLock(\''+respId+'\',\''+value+'\')"/>';
+		                    return '<img title="点击解锁指标分类" src="'+basePath+'/images/icons/lock.gif" style="cursor: pointer;padding:0;margin:0;" onclick="lockUnLock(\''+classify+'\',\''+value+'\')"/>';
 		                }
 		            }
 		        }
 	         ];
 		
-		var belongToDeptQuery = Ext.create("Ext.ux.TreePicker", {
-		    allowBlank: false,
-		    value:'0',
-		    id:'respOrgQuery',
-		    displayField: 'text',
-		    rootVisible: true,
-		    valueField: 'id',
-		    minPickerHeight: 200, //最小高度，不设置的话有时候下拉会出问题
-		    editable: false, //启用编辑，主要是为了清空当前的选择项
-		    enableKeyEvents: true, //激活键盘事件
-		    store: Ext.create("Ext.data.TreeStore", {
-		        model: 'treeModel',
-		        nodeParam:'parentId',
-		        autoLoad:false,
-		        clearOnLoad :true,
-		        proxy: {
-		            type: 'ajax',
-		            reader:{
-		                type: 'json'
-		            },
-		            folderSort: true,
-		            sorters: [{
-		                 property: 'nodeId',
-		                 direction: 'DESC'
-		            }],
-		            url :'${ctx}/org/getUnitTreeListNotCheck.action'
-		        },
-		        root: {
-		            expanded: true,
-		            id:"0",
-		            text:'全部'
-		        }
-		    })
-		});
-		
 		//grid组件
-		var respGrid =  Ext.create("Ext.grid.Panel",{
+		var classifyGrid =  Ext.create("Ext.grid.Panel",{
 			title:'指标分类管理',
 			border:false,
 			columnLines: true,
@@ -215,9 +180,9 @@
 			region: "center",
 			width: "100%",
 			height: document.body.clientHeight,
-			id: "respGrid",
+			id: "classifyGrid",
 			bbar:  Ext.create("Ext.PagingToolbar", {
-				store: respStore,
+				store: classifyStore,
 				displayInfo: true,
 				displayMsg: SystemConstant.displayMsg,
 				emptyMsg: SystemConstant.emptyMsg
@@ -225,80 +190,78 @@
 			columns:cm,
 	        selModel:sm,
 	     	forceFit : true,
-			store: respStore,
+			store: classifyStore,
 			autoScroll: true,
 			stripeRows: true,
-			tbar: ['岗位编号',
+			tbar: ['指标分类编号',
 			{
-				id: 'respNoQuery',
+				id: 'classifyNoQuery',
 				width: 100,   
 				labelWidth: 70,
 				xtype: 'textfield'
-			},'&nbsp;岗位名称',
+			},'&nbsp;指标分类名称',
 			{
-				id: 'respNameQuery',
+				id: 'classifyNameQuery',
                 width: 100,   
                 labelWidth: 70,
                 xtype: 'textfield'
-			},'&nbsp;所属部门',
-			belongToDeptQuery,
+			},
             '&nbsp;',
 			{
-				id:'searchRespBtn',
+				id:'searchClassifyBtn',
 				xtype:'button',
 				disabled:false,
 				text:'查询',
 				iconCls:'search-button',
 				handler:function(){
-					var proxy = respStore.getProxy();
-					proxy.setExtraParam("respVo.number",Ext.getCmp("respNoQuery").getValue());
-					proxy.setExtraParam("respVo.name",Ext.getCmp("respNameQuery").getValue());
-					proxy.setExtraParam("respVo.orgId",Ext.getCmp("respOrgQuery").getValue());
-					respStore.loadPage(1);
+					var proxy = classifyStore.getProxy();
+					proxy.setExtraParam("classifyVo.number",Ext.getCmp("classifyNoQuery").getValue());
+					proxy.setExtraParam("classifyVo.name",Ext.getCmp("classifyNameQuery").getValue());
+					classifyStore.loadPage(1);
 				}
 			},'->',
 			{
-				id:'addRespBtn',
+				id:'addClassifyBtn',
 				xtype:'button',
 				disabled:false,
 				text:'添加',
 				//hidden:true,
 				iconCls:'add-button',
 				handler:function(){
-					addRespInfo(null);
+					addClassify(null);
 				}
 			},
 			{
-				id:'updateRespBtn',
+				id:'updateClassifyBtn',
 				xtype:'button',
 				text:'修改',
 				//hidden:true,
 				disabled:true,
 				iconCls:'edit-button',
 				handler:function(){
-					var row = respGrid.getSelectionModel().getSelection()[0];
-					addRespInfo(row);
+					var row = classifyGrid.getSelectionModel().getSelection()[0];
+					addClassify(row);
 				}
 			},
 			{
-				id:'delRespBtn',
+				id:'delClassifyBtn',
 				xtype:'button',
 				text:'删除',
 				//hidden:true,
 				disabled:true,
 				iconCls:'delete-button',
 				handler:function(){
-					var ck = respGrid.getSelectionModel().getSelection();
+					var ck = classifyGrid.getSelectionModel().getSelection();
 					var itemsArray = new Array();
 					for(var i=0;i<ck.length;i++){
-						itemsArray.push(ck[i].data.respId);
+						itemsArray.push(ck[i].data.classifyId);
 					}
 					var idss = itemsArray.toString();
 					
-					Ext.Msg.confirm(SystemConstant.alertTitle,"确认删除所选岗位数据吗？",function(btn) {
+					Ext.Msg.confirm(SystemConstant.alertTitle,"确认删除所选指标分类数据吗？",function(btn) {
                         if (btn == 'yes') {
                             Ext.Ajax.request({
-                                url : '${ctx}/org/delResps.action',
+                                url : '${ctx}/deptgrade/delClassifies.action',
                                 params : {ids: idss},
                                 success : function(res, options) {
                                     var result = Ext.decode(res.responseText);
@@ -318,7 +281,7 @@
                                             icon: Ext.MessageBox.INFO
                                         });
                                     }
-                                    respStore.loadPage(1);
+                                    classifyStore.loadPage(1);
                                 }
                             });
                         }
@@ -329,80 +292,33 @@
 				'render': function() {
 					for(var i = 0;i < userPermissionArr.length;i++){
 						if("resp_add_btn" == userPermissionArr[i].name){
-							Ext.getCmp('addRespBtn').setVisible(true);
+							Ext.getCmp('addClassifyBtn').setVisible(true);
 						}
 						if("resp_update_btn" == userPermissionArr[i].name){
-							Ext.getCmp('updateRespBtn').setVisible(true);
+							Ext.getCmp('updateClassifyBtn').setVisible(true);
 						}
 						if("resp_delete_btn" == userPermissionArr[i].name){
-							Ext.getCmp('delRespBtn').setVisible(true);
+							Ext.getCmp('delClassifyBtn').setVisible(true);
 						}
 					}
 				}
 			} */
 		});
-		respStore.load({params:{start:0,limit:SystemConstant.commonSize}});
+		classifyStore.load({params:{start:0,limit:SystemConstant.commonSize}});
 		
 		Ext.create("Ext.container.Viewport", {
 		    layout: "border",
 			renderTo: Ext.getBody(),
-			items: [respGrid]
+			items: [classifyGrid]
 		});
 		
-		function addRespInfo(row){
-			var count = 0;
+		function addClassify(row){
 			var oldNumber = '';
-			var respId = '';
 			if (row) {
-				respId = row.get('respId');
 				oldNumber = row.get('number');
 			}
 			
-			var belongToDept = Ext.create("Ext.ux.TreePicker", {
-			    allowBlank: false,
-			    //value:'0',
-			    id:'respOrg',
-                fieldLabel: '所属部门',
-                labelAlign:'right',
-                name: 'respVo.orgId',
-			    displayField: 'text',
-			    rootVisible: true,
-			    valueField: 'id',
-			    minPickerHeight: 200, //最小高度，不设置的话有时候下拉会出问题
-			    editable: false, //启用编辑，主要是为了清空当前的选择项
-			    enableKeyEvents: true, //激活键盘事件
-			    store: Ext.create("Ext.data.TreeStore", {
-			        model: 'treeModel',
-			        nodeParam:'parentId',
-			        autoLoad:false,
-			        clearOnLoad :true,
-			        proxy: {
-			            type: 'ajax',
-			            reader:{
-			                type: 'json'
-			            },
-			            folderSort: true,
-			            sorters: [{
-			                 property: 'nodeId',
-			                 direction: 'DESC'
-			            }],
-			            url :'${ctx}/org/getUnitTreeListNotCheck.action'
-			        },
-			        root: {
-			            expanded: true,
-			            id:"0",
-			            text:'组织机构'
-			        },
-			        listeners:{
-			        	load: function(to, node, records, successful, eOpts ){
-			        		node.expandChildren(true);
-			        	}
-			        }
-			    })
-			});
-			
-			var respForm = Ext.create("Ext.form.Panel", {
-				region: "north",
+			var classifyForm = Ext.create("Ext.form.Panel", {
                 layout: 'form',
                 bodyStyle :'padding:2px 30px 2px 0',
                 border: false,
@@ -421,14 +337,14 @@
 					    border: false,
 					    items: [
 							{
-							    id:'respId',
-							    name: 'respVo.respId',
+							    id:'classifyVoId',
+							    name: 'classifyVo.classifyId',
 							    hidden:true
 							},
 							{
-			                    id:'respNumber',
-			                    fieldLabel: '岗位编号',
-			                    name: 'respVo.number',
+			                    id:'classifyVoNumber',
+			                    fieldLabel: '指标分类编号',
+			                    name: 'classifyVo.number',
 			                    maxLength:25,
 			                    regex : new RegExp('^([^<^>])*$'),
 			                    regexText : '不能包含特殊字符！',
@@ -439,7 +355,7 @@
 			                            return true;
 			                        }else{
 			                            $.ajax({
-			                                url : '${ctx}/org/checkNumber.action',
+			                                url : '${ctx}/deptgrade/checkNumber.action',
 			                                data:{value:value},
 			                                cache : false,
 			                                async : false,
@@ -457,7 +373,28 @@
 			                        }
 			                    }
 			                },
-			                belongToDept
+			                {
+			                	fieldLabel:'组织部门',
+                                id:'orgNames',
+                                name:'classifyVo.orgNames',
+                                labelAlign:'right',
+                                xtype:'textfield',
+                                readOnly:true,
+                                minWidth: 250,
+                                allowBlank:false,
+                                blankText : '组织部门不能为空',
+                                listeners:{
+                                    'focus':function(){
+                                        /* var userId = Ext.getCmp('userId').getValue();
+                                        if(userId && userId != 0){
+                                            chooseOrganization('orgNames','addOrgIds',userId);
+                                        }else{ */
+                                            chooseOrganization('orgNames','addOrgIds');
+                                        //}
+                                    }
+                                }
+			                },
+			                {id:'addOrgIds', name: 'classifyVo.orgIds',xtype:'hidden'}
 					    ]
 					},
 					{
@@ -471,18 +408,18 @@
                         border: false,
                         items: [
 							{
-							    id:'respName',
-							    fieldLabel: '岗位名称',
-							    name: 'respVo.name',
+							    id:'classifyVoName',
+							    fieldLabel: '指标分类名称',
+							    name: 'classifyVo.name',
 							    regex : new RegExp('^([^<^>])*$'),
 			                    regexText : '不能包含特殊字符！',
 							    maxLength:50,
 							    allowBlank: false
 							},
 							{
-			                    id: 'respRank',
-			                    fieldLabel: '岗位级别',
-			                    name: 'respVo.rank',
+			                    id: 'classifyVoElectYear',
+			                    fieldLabel: '参评年份',
+			                    name: 'classifyVo.electYear',
 			                    regex : new RegExp('^([^<^>])*$'),
 			                    regexText : '不能包含特殊字符！',
 			                    maxLength:50
@@ -492,166 +429,15 @@
 					]}
                 ]
             });
-			
-			var dutyStore = Ext.create("Ext.data.Store", {
-		        pageSize: SystemConstant.commonSize,
-		        model:"Duty",
-		        remoteSort:true,
-		        proxy: {
-		            type:"ajax",
-		            actionMethods: {
-		                read: 'POST'
-		            },
-		            extraParams:{respId : respId},
-		            url: "${ctx}/org/getDutyListByRespId.action",
-		            reader:{
-		                type:'json'
-		            },
-		            simpleSortMode :true
-		        }
-		    });
-			
-			var dutyCm=[
-                {header:"序号",xtype: "rownumberer",width:60,align:"center",menuDisabled: true,sortable :false},
-                {header: "ID",width: 50,dataIndex: "dutyId",hidden: true,menuDisabled: true,sortable :false},
-                {header: "职责编号",width: 100,dataIndex: "number",menuDisabled: true,sortable :false,
-                    renderer : function(value, cellmeta, record, rowIndex,
-                            columnIndex, store) {
-                        cellmeta.tdAttr = 'data-qtip="' + value + '"';
-                        return value;
-                    },
-                    field: {
-                    	xtype:'textfield',
-                    	maxLength:25,
-                    	regex : new RegExp('^([^<^>])*$'),
-                        regexText : '不能包含特殊字符！',
-                    	allowBlank: false
-                    }
-
-                },
-                {header: "职责内容",width: 200,dataIndex: "dutyContent",menuDisabled: true,sortable :false,
-                    renderer : function(value, cellmeta, record, rowIndex,
-                            columnIndex, store) {
-                        cellmeta.tdAttr = 'data-qtip="' + value + '"';
-                        return value;
-                    },
-                    field: {
-                    	xtype:'textarea',
-                    	style: {
-                            marginTop: '38px'
-                        },
-                    	height:60,
-                    	maxLength:1000,
-                    	regex : new RegExp('^([^<^>])*$'),
-                        regexText : '不能包含特殊字符！',
-                        allowBlank: false
-                    }
-                },
-                {header: "职责类型",width: 120,dataIndex: "dutyType",menuDisabled: true,sortable :false,
-                    renderer : function(value, cellmeta, record, rowIndex,
-                            columnIndex, store) {
-                        cellmeta.tdAttr = 'data-qtip="' + value + '"';
-                        return value;
-                    },
-                    field: {
-                    	xtype:'textarea',
-                    	style: {
-                            marginTop: '38px'
-                        },
-                    	height:60,
-                    	maxLength:100,
-                    	regex : new RegExp('^([^<^>])*$'),
-                        regexText : '不能包含特殊字符！',
-                        allowBlank: false
-                    }
-                }
-            ];
-			
-			var dutySm = Ext.create("Ext.selection.CheckboxModel",{
-		        injectCheckbox:0,
-		        listeners: {
-		            selectionchange: function(){
-		                var c = dutyGrid.getSelectionModel().getSelection();
-		                if (c.length > 0) {
-		                    Ext.getCmp('delDutyBtn').setDisabled(false);
-		                } else {
-		                    Ext.getCmp('delDutyBtn').setDisabled(true);
-		                }
-		            }
-		        }
-		    });
-			
-			var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-		        clicksToEdit: 1/* ,
-		        listeners : {
-		            beforeedit:function(editor, e, eOpts ){
-		                
-		            }
-		        } */
-		    });
-			
-			var dutyGrid =  Ext.create("Ext.grid.Panel",{
-		        border:false,
-		        columnLines: true,
-		        layout:"fit",
-		        region: "center",
-		        height: 120,
-		        id: "dutyGrid",
-		        columns:dutyCm,
-		        selModel:dutySm,
-		        plugins: [cellEditing],
-		        forceFit : true,
-		        store: dutyStore,
-		        autoScroll: true,
-		        stripeRows: true,
-		        tbar:["  岗位职责",
-		              "->",
-		            {
-		                xtype:'button',
-		                disabled:false,
-		                text:'添加',
-		                iconCls:'add-button',
-		                handler:function(){
-		                	count++;
-		                    //拼接一个数据格式;
-		                    var data= "{ dutyId:" + count
-		                            + ", number:''"
-                                    + ", dutyContent:''"
-                                    + ", dutyType:'' }";
-
-		                    dutyStore.add(eval("("+data+")"));
-		                }
-		            },
-		            {
-		                id : 'delDutyBtn',
-		                xtype : 'button',
-		                disabled : true,
-		                text : '删除',
-		                iconCls : 'delete-button',
-		                handler : function() {
-		                    var rows = dutyGrid.getSelectionModel().getSelection();
-		                    Ext.Msg.confirm('系统提示','确定要删除这'+rows.length+'条记录吗?',function(btn){
-		                        if(btn=='yes'){
-		                            for(var i=0; i<rows.length;i++){
-		                            	dutyStore.remove(rows[i]);
-		                            }
-		                            dutyGrid.getView().refresh();//刷新行号
-		                        }
-		                    });
-		                }
-		            }
-		        ]
-		    });
-			dutyStore.load();
             
-			var winTitle = '添加岗位';
-			var formUrl = '${ctx}/org/addResp.action';
+			var winTitle = '添加指标分类';
+			var formUrl = '${ctx}/deptgrade/addClassify.action';
 			if (row) {
-				winTitle = '修改岗位';
-	            formUrl = '${ctx}/org/updateResp.action';
+				winTitle = '修改指标分类';
+	            formUrl = '${ctx}/deptgrade/updateClassify.action';
 			}
 			
-            var respWin=Ext.create("Ext.window.Window",{
+            var classifyWin=Ext.create("Ext.window.Window",{
                 title: winTitle,
                 resizable: false,
                 buttonAlign:"center",
@@ -659,57 +445,20 @@
                 height: 360,
                 width: 600,
                 modal:true,
-                layout: 'border',
-                modal : true,
-                items: [respForm, dutyGrid],
+                items: [classifyForm],
                 buttons:[{
                     text: SystemConstant.saveBtnText,
                     handler: function(){
-                        if(respForm.form.isValid()){
+                        if(classifyForm.form.isValid()){
                             Ext.MessageBox.wait("", "添加岗位数据", 
                                 {
                                     text:"请稍后..."
                                 }
                             );
                             
-                            var c = dutyStore.getCount();
-                            if (c <= 0) {
-                            	Ext.MessageBox.show({
-                                    title:'提示信息',
-                                    msg:"请填写岗位职责",
-                                    buttons: Ext.Msg.YES,
-                                    modal : true,
-                                    icon: Ext.Msg.INFO
-                                });
-                            	return false;
-                            }
-                            
-                            var dutyLst = '';
-                            for(var i=0; i<dutyStore.getCount(); i++){
-                                var re = dutyStore.getAt(i);
-                                var number = re.get('number');
-                                var dutyContent = re.get('dutyContent');
-                                var dutyType = re.get('dutyType');
-                                
-                                if (!number || !dutyContent || !dutyType) {
-                                	Ext.MessageBox.show({
-                                        title:'提示信息',
-                                        msg:"岗位编号、内容、类型不能为空",
-                                        buttons: Ext.Msg.YES,
-                                        modal : true,
-                                        icon: Ext.Msg.INFO
-                                    });
-                                    return false;
-                                }
-                                
-                                dutyLst += '&dvoLst[' + i + '].number=' + number
-                                		    + '&dvoLst[' + i + '].dutyContent=' + dutyContent
-                                		    + '&dvoLst[' + i + '].dutyType=' + dutyType;
-                            }
-                            
-                            respForm.form.submit({
+                            classifyForm.form.submit({
                                 url : formUrl,
-                                params : dutyLst.substring(1),
+                                //params : dutyLst.substring(1),
                                 success : function(form, action) {
                                     new Ext.ux.TipsWindow({
                                         title: SystemConstant.alertTitle,
@@ -717,8 +466,8 @@
                                         html:action.result.msg
                                     }).show();
                                     
-                                    respStore.load();
-                                    respWin.close();
+                                    classifyStore.load();
+                                    classifyWin.close();
                                     Ext.MessageBox.hide();
                                 },
                                 failure : function(form,action){
@@ -729,8 +478,8 @@
                                         modal : true,
                                         icon: Ext.Msg.ERROR
                                     });
-                                    respStore.load();
-                                    respWin.close();
+                                    classifyStore.load();
+                                    classifyWin.close();
                                     Ext.MessageBox.hide();
                                  }
                             });
@@ -739,37 +488,121 @@
                 },{
                     text: '关闭',
                     handler: function(){
-                        respWin.close();
+                        classifyWin.close();
                     }
                 }],
                 listeners: {
                 	afterrender: function(){
                 		if (row) {
-                            Ext.getCmp('respId').setValue(row.get('respId'));
-                            Ext.getCmp('respNumber').setValue(row.get('number'));
-                            Ext.getCmp('respOrg').setValue(row.get('orgId'));
-                            //Ext.getCmp('respOrg').setRawValue(row.get('orgName'));
-                            Ext.getCmp('respRank').setValue(row.get('rank'));
-                            Ext.getCmp('respName').setValue(row.get('name'));
+                            Ext.getCmp('classifyVoId').setValue(row.get('classifyId'));
+                            Ext.getCmp('classifyVoNumber').setValue(row.get('number'));
+                            Ext.getCmp('orgNames').setValue(row.get('orgNames'));
+                            Ext.getCmp('addOrgIds').setRawValue(row.get('orgIds'));
+                            Ext.getCmp('classifyVoElectYear').setValue(row.get('electYear'));
+                            Ext.getCmp('classifyVoName').setValue(row.get('name'));
                         }
                 	}
                 }
              }).show();
 		}
 		
-		lockUnLock = function(respId, enable){
-			var title = '确认锁定所选岗位数据吗？';
+		/**
+		 * 选择组织
+		 */
+		function chooseOrganization(objName,objId,userId){
+		    var params = {};
+		    if(userId){
+		        params.userId = userId;
+		    }
+		    var orgTreePanel=Ext.create('Ext.tree.Panel', {
+		        autoScroll: true,
+		        border:false,
+		        rootVisible: false,
+		        store: Ext.create('Ext.data.TreeStore', {
+		                model: 'treeModel',
+		                nodeParam:'parentId',
+		                autoLoad:false,
+		                clearOnLoad :true,
+		                proxy: {
+		                    type: 'ajax',
+		                    extraParams:params,
+		                    reader:{
+		                             type: 'json'
+		                          },
+		                     folderSort: true,
+		                     sorters: [{
+		                                property: 'orgId',
+		                                direction: 'DESC'
+		                     }],
+		                    url :'${ctx}/org/getUnitTreeListForModifyUser.action'
+		                },
+		                root: {
+		                      expanded: true,
+		                      id:"0"
+		                      }
+		                })
+		    });
+		    
+		    var win = new Ext.Window({
+		            title: '选择组织',
+		            closable:true,
+		            width:300,
+		            height:300,
+		            modal:true,
+		            plain:true,
+		            layout:"fit",
+		            resizable:true,
+		            items: [
+		                 orgTreePanel
+		            ],
+		            buttonAlign:'center', 
+		            buttons:[{
+		                text:SystemConstant.yesBtnText,
+		                handler:function(){
+		                  var choosenNodes = [];
+		                  orgTreePanel.getRootNode().cascadeBy(function(child){
+		                        if(child.data.id != 0 && child.get('checked')){
+		                            choosenNodes.push(child);
+		                        }
+		                  });
+		                  if(choosenNodes.length<1){
+		                      Ext.Msg.showInfo("至少选择一个组织部门");
+		                      return;
+		                  }
+		                  var ids=[];
+		                  var names=[];
+		                  for(var i=0;i<choosenNodes.length;i++){
+		                      var node=choosenNodes[i];
+		                      ids.push(node.get('nodeId'));
+		                      names.push(node.get('text'));
+		                  }
+		                  Ext.getCmp(objName).setValue(names.join(","));
+		                  Ext.getCmp(objId).setValue(ids.join(","));
+		                  win.close();
+		                }
+		            },{
+		                text:SystemConstant.closeBtnText,
+		                handler:function(){
+		                    win.close();
+		                }
+		            }]
+		        });
+		    win.show();
+		}
+		
+		lockUnLock = function(classify, enable){
+			var title = '确认锁定所选指标分类数据吗？';
 			if (enable == 0) {
-				title = '确认解锁所选岗位数据吗？';
+				title = '确认解锁所选指标分类数据吗？';
 			}
 			
 			Ext.Msg.confirm(SystemConstant.alertTitle, title, function(btn) {
                 if (btn == 'yes') {
                 	Ext.Ajax.request({
-                        url: '${ctx}/org/lockUnLock.action',
+                        url: '${ctx}/deptgrade/lockUnLock.action',
                         async:false,
                         params: {
-                            respId: respId,
+                        	classify: classify,
                             enable: enable
                         },
                         success : function(res, options) {
@@ -790,7 +623,7 @@
                                     icon: Ext.MessageBox.INFO
                                 });
                             }
-                            respStore.loadPage(1);
+                            classifyStore.loadPage(1);
                         }
                     });
                 }
