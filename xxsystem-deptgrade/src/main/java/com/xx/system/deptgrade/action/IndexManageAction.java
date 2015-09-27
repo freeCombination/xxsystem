@@ -14,6 +14,7 @@ import com.xx.system.common.vo.ListVo;
 import com.xx.system.deptgrade.service.IIndexManageService;
 import com.xx.system.deptgrade.vo.GradeIndexVo;
 import com.xx.system.deptgrade.vo.IndexClassifyVo;
+import com.xx.system.deptgrade.vo.PercentageVo;
 import com.xx.system.org.action.RespAction;
 
 /**
@@ -41,6 +42,8 @@ public class IndexManageAction extends BaseAction {
     private GradeIndexVo indexVo;
     
     private List<GradeIndexVo> index2Lst = new ArrayList<GradeIndexVo>();
+    
+    private List<PercentageVo> perLst = new ArrayList<PercentageVo>();
 
 	public IndexClassifyVo getClassifyVo() {
 		return classifyVo;
@@ -64,6 +67,14 @@ public class IndexManageAction extends BaseAction {
 
 	public void setIndex2Lst(List<GradeIndexVo> index2Lst) {
 		this.index2Lst = index2Lst;
+	}
+	
+	public List<PercentageVo> getPerLst() {
+		return perLst;
+	}
+
+	public void setPerLst(List<PercentageVo> perLst) {
+		this.perLst = perLst;
 	}
 
 	/**
@@ -275,6 +286,51 @@ public class IndexManageAction extends BaseAction {
 		} catch (Exception e) {
 			this.excepAndLogHandle(RespAction.class, "根据一级指标id查询二级指标", e, false);
 		}
+		return null;
+    }
+    
+    /************权重管理*************/
+    
+    /**
+     * 检查单据编号的唯一性
+     */
+    public String checkreceiptsNum() {
+    	String number = getRequest().getParameter("value");
+		try {
+			Map<String, Object> vaildator = indexManageService.checkreceiptsNum(number);
+            JsonUtil.outJson(vaildator);
+		} catch (Exception e) {
+			this.excepAndLogHandle(RespAction.class, "检查单据编号的唯一性", e, false);
+		}
+		return null;
+    }
+    
+    /**
+     * 根据指标分类id查询权重管理所需基础数据
+     */
+    public String getBaseListByCfId() {
+    	try {
+			String id = getRequest().getParameter("cfId");
+			Integer cfId = StringUtil.isNotBlank(id) ? Integer.valueOf(id) : 0;
+			JsonUtil.outJsonArray(indexManageService.getBaseListByCfId(cfId));
+		} catch (Exception e) {
+			this.excepAndLogHandle(RespAction.class, "根据指标分类id查询权重管理所需基础数据", e, false);
+		}
+		return null;
+    }
+    
+    /**
+     * 保存权重设置
+     */
+    public String savePercentage() {
+    	String msg = "{success:'false',msg:'保存权重设置失败'}";
+		try {
+			indexManageService.savePercentage(perLst);
+			msg = "{success:'true',msg:'保存权重设置成功'}";
+		} catch (Exception e) {
+			this.excepAndLogHandle(RespAction.class, "保存权重设置", e, false);
+		}
+		JsonUtil.outJson(msg);
 		return null;
     }
 }

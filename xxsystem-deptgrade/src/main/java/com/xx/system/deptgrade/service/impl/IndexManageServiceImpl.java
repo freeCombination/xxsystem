@@ -8,7 +8,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -20,16 +19,16 @@ import com.xx.system.common.exception.BusinessException;
 import com.xx.system.common.util.StringUtil;
 import com.xx.system.common.vo.ListVo;
 import com.xx.system.deptgrade.entity.GradeIndex;
+import com.xx.system.deptgrade.entity.GradePercentage;
 import com.xx.system.deptgrade.entity.IndexClassify;
 import com.xx.system.deptgrade.entity.OrgAndClassify;
 import com.xx.system.deptgrade.service.IIndexManageService;
 import com.xx.system.deptgrade.vo.GradeIndexVo;
 import com.xx.system.deptgrade.vo.IndexClassifyVo;
-import com.xx.system.org.entity.Duty;
+import com.xx.system.deptgrade.vo.PercentageVo;
 import com.xx.system.org.entity.Organization;
 import com.xx.system.org.entity.Responsibilities;
 import com.xx.system.org.service.IOrgService;
-import com.xx.system.org.vo.DutyVo;
 
 /**
  * 指标逻辑接口实现
@@ -476,5 +475,93 @@ public class IndexManageServiceImpl implements IIndexManageService {
 		}
 		
 		return lstVo;
+	}
+
+	/************权重管理*************/
+	
+	@Override
+	public Map<String, Object> checkreceiptsNum(String number) throws BusinessException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<PercentageVo> getBaseListByCfId(Integer cfId) throws BusinessException {
+		List<PercentageVo> voLst = new ArrayList<PercentageVo>();
+		// 查询所有部门
+		String orgHql = " from Organization o where o.enable = 0 and o.status = 0"
+				+ " order by o.disOrder, o.orgName";
+		List<Organization> orgLst = (List<Organization>)baseDao.queryEntitys(orgHql);
+		if (!CollectionUtils.isEmpty(orgLst) && cfId != null && cfId != 0) {
+			PercentageVo vo = null;
+			GradePercentage gp = null;
+			for (Organization org : orgLst) {
+				// 根据orgId查询该部门下的 所有岗位
+				String respHql = " from Responsibilities r where r.enable = 0 and r.isDelete = 0"
+						+ " and r.organization.orgId = " + org.getOrgId();
+				List<Responsibilities> respLst = (List<Responsibilities>)baseDao.queryEntitys(respHql);
+				if (!CollectionUtils.isEmpty(respLst)) {
+					for (Responsibilities resp : respLst) {
+						vo = new PercentageVo();
+						
+						// 查询部门、岗位、指标类型对应的权重基础信息是否 已经生成
+						String gpHql = " from GradePercentage g where isDelete = 0 "
+								+ " and g.classify.pkClassifyId = " + cfId
+								+ " and g.org.orgId = " + org.getOrgId()
+								+ " and g.resp.pkRespId = " + resp.getPkRespId();
+						List<GradePercentage> perLst = (List<GradePercentage>)baseDao.queryEntitys(gpHql);
+						if (!CollectionUtils.isEmpty(perLst)) {
+							gp = perLst.get(0);
+						}
+						else {
+							gp = new GradePercentage();
+							gp.setOrg(org);
+							gp.setResp(resp);
+							// 查询指标分类
+							IndexClassify cf = (IndexClassify)baseDao.queryEntityById(IndexClassify.class, cfId);
+							if (cf != null) {
+								gp.setClassify(cf);
+							}
+							
+							baseDao.save(gp);
+						}
+						
+						vo.setPerId(gp.getPkPerId());
+						vo.setOrgName(gp.getOrg().getOrgName());
+						vo.setRespName(gp.getResp().getName());
+						vo.setReceiptsNum(gp.getReceiptsNum());
+						vo.setPercentage(gp.getPercentage());
+						vo.setRemark(gp.getRemark());
+						voLst.add(vo);
+					}
+				}
+			}
+		}
+		
+		return voLst;
+	}
+
+	@Override
+	public void savePercentage(List<PercentageVo> voLst) throws BusinessException {
+		if (!CollectionUtils.isEmpty(voLst)) {
+			GradePercentage gp = null;
+			List<GradePercentage> gpLst = new ArrayList<GradePercentage>();
+			for (PercentageVo vo : voLst) {
+				// 查询部门、岗位、指标类型对应的权重基础信息是否 已经生成
+				String gpHql = " from GradePercentage g where isDelete = 0 "
+						+ " and g.pkPerId = " + vo.getPerId();
+				List<GradePercentage> perLst = (List<GradePercentage>)baseDao.queryEntitys(gpHql);
+				if (!CollectionUtils.isEmpty(perLst)) {
+					gp = perLst.get(0);
+					gp.setRemark(vo.getRemark());
+					gp.setReceiptsNum(vo.getReceiptsNum());
+					gp.setPercentage(vo.getPercentage());
+					
+					gpLst.add(gp);
+				}
+			}
+			
+			baseDao.saveOrUpdate(gpLst);
+		}
 	}
 }

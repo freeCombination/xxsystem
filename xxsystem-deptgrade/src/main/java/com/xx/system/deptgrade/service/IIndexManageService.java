@@ -7,6 +7,7 @@ import com.xx.system.common.exception.BusinessException;
 import com.xx.system.common.vo.ListVo;
 import com.xx.system.deptgrade.vo.GradeIndexVo;
 import com.xx.system.deptgrade.vo.IndexClassifyVo;
+import com.xx.system.deptgrade.vo.PercentageVo;
 
 /**
  * 指标管理逻辑接口
@@ -162,4 +163,34 @@ public interface IIndexManageService {
      * @throws BusinessException
      */
     public List<GradeIndexVo> getIndex2ListByIndex1Id(Integer index1Id) throws BusinessException;
+    
+    /************权重管理*************/
+    
+    /**
+     * 检查单据编号的唯一性
+     * 
+     * @Title checkreceiptsNum
+     * @date 2013-11-25
+     * @param number 单据编号
+     * @return boolean 返回true表示不存在
+     */
+    public Map<String, Object> checkreceiptsNum(String number)
+        throws BusinessException;
+    
+    /**
+     * 根据指标分类id查询权重管理所需基础数据
+     * 
+     * @param cfId 指标分类id
+     * @return
+     * @throws BusinessException
+     */
+    public List<PercentageVo> getBaseListByCfId(Integer cfId) throws BusinessException;
+    
+    /**
+     * 保存权重设置
+     * 
+     * @param voLst 权重详请情集合
+     * @throws BusinessException
+     */
+    public void savePercentage(List<PercentageVo> voLst) throws BusinessException;
 }
