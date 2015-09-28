@@ -172,7 +172,14 @@
                 width: 100,   
                 labelWidth: 70,
                 xtype: 'textfield'
-			},
+			},'&nbsp;参评年份',
+            {
+                id: 'electYearQuery',
+                width: 100,   
+                labelWidth: 70,
+                value: Ext.Date.format(new Date(),"Y"),
+                xtype: 'textfield'
+            },
             '&nbsp;',
 			{
 				id:'searchRespBtn',
@@ -184,6 +191,7 @@
 					var proxy = indexStore.getProxy();
 					proxy.setExtraParam("indexVo.number",Ext.getCmp("indexNoQuery").getValue());
 					proxy.setExtraParam("indexVo.name",Ext.getCmp("indexNameQuery").getValue());
+					proxy.setExtraParam("indexVo.electYear",Ext.getCmp("electYearQuery").getValue());
 					indexStore.loadPage(1);
 				}
 			},'->',
@@ -271,7 +279,13 @@
 				}
 			} */
 		});
-		indexStore.load({params:{start:0,limit:SystemConstant.commonSize}});
+		indexStore.load({
+			params:{
+				start:0,
+				limit:SystemConstant.commonSize,
+				'indexVo.electYear':Ext.getCmp('electYearQuery').getValue()
+			}
+		});
 		
 		Ext.create("Ext.container.Viewport", {
 		    layout: "border",

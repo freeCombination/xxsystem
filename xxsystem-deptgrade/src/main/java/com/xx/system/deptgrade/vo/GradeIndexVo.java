@@ -47,6 +47,11 @@ public class GradeIndexVo implements java.io.Serializable {
     private String remark;
     
     /**
+     * @Fields 评分年份
+     */
+    private String electYear;
+    
+    /**
      * @Fields isDelete : 删除标志：0未删除 1已删除
      */
     private int isDelete;
@@ -139,5 +144,13 @@ public class GradeIndexVo implements java.io.Serializable {
 
 	public void setGradeIndexId(Integer gradeIndexId) {
 		this.gradeIndexId = gradeIndexId;
+	}
+
+	public String getElectYear() {
+		return electYear;
+	}
+
+	public void setElectYear(String electYear) {
+		this.electYear = electYear;
 	}
 }

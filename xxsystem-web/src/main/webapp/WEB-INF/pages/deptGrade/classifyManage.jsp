@@ -48,7 +48,8 @@
 				{name: "orgIds"},
 				{name: "electYear"},
 				{name: "enable"},
-				{name: "isDelete"}
+				{name: "isDelete"},
+                {name: "hasSubmit"}
 			]
 		});
 		
@@ -158,6 +159,18 @@
 						cellmeta.tdAttr = 'data-qtip="' + value + '"';
 						return value;
 					}},
+				{header: "是否提交评分",width: 200,dataIndex: "hasSubmit",menuDisabled: true,sortable :false,
+                    renderer : function(value, cellmeta, record, rowIndex,
+                            columnIndex, store) {
+                    	var hasSub = '<span style="color:red;">否</span>';
+                    	if (1 == value) {
+                    		hasSub = '<span style="color:green;">是</span>';
+                    	}
+                    	
+                        //cellmeta.tdAttr = 'data-qtip="' + value + '"';
+                        return hasSub;
+                    }
+				},
 				{header: "状态",width: 200,dataIndex: "enable",
 		            renderer: function(value, cellmeta, record, rowIndex, columnIndex, store){
 		                //cellmeta.tdAttr = 'data-qtip="' + orgTypeArr[i].name + '"';
@@ -205,7 +218,14 @@
                 width: 100,   
                 labelWidth: 70,
                 xtype: 'textfield'
-			},
+			},'&nbsp;参评年份',
+            {
+                id: 'electYearQuery',
+                width: 100,   
+                labelWidth: 70,
+                value: Ext.Date.format(new Date(),"Y"),
+                xtype: 'textfield'
+            },
             '&nbsp;',
 			{
 				id:'searchClassifyBtn',
@@ -217,6 +237,7 @@
 					var proxy = classifyStore.getProxy();
 					proxy.setExtraParam("classifyVo.number",Ext.getCmp("classifyNoQuery").getValue());
 					proxy.setExtraParam("classifyVo.name",Ext.getCmp("classifyNameQuery").getValue());
+					proxy.setExtraParam("classifyVo.electYear",Ext.getCmp("electYearQuery").getValue());
 					classifyStore.loadPage(1);
 				}
 			},'->',
@@ -304,7 +325,14 @@
 				}
 			} */
 		});
-		classifyStore.load({params:{start:0,limit:SystemConstant.commonSize}});
+		
+		classifyStore.load({
+            params:{
+                start:0,
+                limit:SystemConstant.commonSize,
+                'classifyVo.electYear':Ext.getCmp('electYearQuery').getValue()
+            }
+        });
 		
 		Ext.create("Ext.container.Viewport", {
 		    layout: "border",

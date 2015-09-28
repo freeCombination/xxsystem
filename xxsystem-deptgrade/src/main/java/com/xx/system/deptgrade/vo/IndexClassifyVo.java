@@ -42,6 +42,11 @@ public class IndexClassifyVo implements java.io.Serializable {
     private String electYear;
     
     /**
+     * @Fields hasSubmit : 是否已评分：0 否 1 是
+     */
+    private Integer hasSubmit;
+    
+    /**
      * @Fields enable : 是否可用：0 是 1 否
      */
     private int enable;
@@ -113,5 +118,13 @@ public class IndexClassifyVo implements java.io.Serializable {
 
 	public void setIsDelete(int isDelete) {
 		this.isDelete = isDelete;
+	}
+
+	public Integer getHasSubmit() {
+		return hasSubmit;
+	}
+
+	public void setHasSubmit(Integer hasSubmit) {
+		this.hasSubmit = hasSubmit;
 	}
 }

@@ -54,6 +54,11 @@ public class IndexClassify implements java.io.Serializable {
     private String electYear;
     
     /**
+     * @Fields hasSubmit : 是否已评分：0 否 1 是
+     */
+    private Integer hasSubmit;
+    
+    /**
      * @Fields enable : 是否可用：0 是 1 否
      */
     private int enable;
@@ -134,4 +139,14 @@ public class IndexClassify implements java.io.Serializable {
 	public void setOrgCfs(Set<OrgAndClassify> orgCfs) {
 		this.orgCfs = orgCfs;
 	}
+
+	@Column(name = "HAS_SUBMIT", nullable = false, precision = 22, scale = 0)
+	public Integer getHasSubmit() {
+		return hasSubmit;
+	}
+
+	public void setHasSubmit(Integer hasSubmit) {
+		this.hasSubmit = hasSubmit;
+	}
+	
 }

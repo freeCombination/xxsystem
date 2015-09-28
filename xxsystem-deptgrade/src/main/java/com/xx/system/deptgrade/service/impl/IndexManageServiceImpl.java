@@ -113,6 +113,10 @@ public class IndexManageServiceImpl implements IIndexManageService {
 			if (StringUtil.isNotBlank(vo.getName())) {
 				cfHql += " and i.name like '%" + vo.getName() + "%'";
 			}
+			
+			if (StringUtil.isNotBlank(vo.getElectYear())) {
+				cfHql += " and i.electYear = '" + vo.getElectYear() + "'";
+			}
 		}
 		
 		int count = baseDao.queryTotalCount(cfHql, new HashMap<String, Object>());
@@ -153,6 +157,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 				}
 				
 				icvo.setElectYear(cf.getElectYear());
+				icvo.setHasSubmit(cf.getHasSubmit());
 				icvo.setEnable(cf.getEnable());
 				
 				voLst.add(icvo);
@@ -171,6 +176,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 			cf.setNumber(vo.getNumber());
 			cf.setName(vo.getName());
 			cf.setElectYear(vo.getElectYear());
+			cf.setHasSubmit(0);
 			cf.setEnable(1);
 			cf.setIsDelete(0);
 			
@@ -208,6 +214,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 				cf.setNumber(vo.getNumber());
 				cf.setName(vo.getName());
 				cf.setElectYear(vo.getElectYear());
+				cf.setHasSubmit(0);
 				cf.setEnable(1);
 				cf.setIsDelete(0);
 				
@@ -318,6 +325,10 @@ public class IndexManageServiceImpl implements IIndexManageService {
 			
 			if (StringUtil.isNotBlank(indexVo.getName())) {
 				indexHql += " and g.name like '%" + indexVo.getName() + "%'";
+			}
+			
+			if (StringUtil.isNotBlank(indexVo.getElectYear())) {
+				indexHql += " and g.classify.electYear = '" + indexVo.getElectYear() + "'";
 			}
 		}
 		indexHql += " and g.classify is not null and g.gradeIndex is null";

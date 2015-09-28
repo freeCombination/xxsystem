@@ -87,8 +87,8 @@ Ext.define('Ext.ux.TreePicker', {
                 columns: me.columns,
                 minHeight: me.minPickerHeight,
                 maxHeight: me.maxPickerHeight,
-                manageHeight: false,
-                shadow: false,
+                manageHeight: true,
+                shadow: true,
                 listeners: {
                     scope: me,
                     itemclick: me.onItemClick
