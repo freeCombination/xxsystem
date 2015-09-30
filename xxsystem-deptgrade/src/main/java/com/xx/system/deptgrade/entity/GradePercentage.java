@@ -12,8 +12,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.BatchSize;
 
-import com.xx.system.org.entity.Organization;
-import com.xx.system.org.entity.Responsibilities;
+import com.xx.system.role.entity.Role;
 
 /**
  * 权重实体定义
@@ -45,14 +44,9 @@ public class GradePercentage implements java.io.Serializable {
     private String receiptsNum;
     
     /**
-     * @Fields classify : 部门
+     * @Fields orle : 角色
      */
-    private Organization org;
-    
-    /**
-     * 岗位
-     */
-    private Responsibilities resp;
+    private Role role;
     
     /**
      * 备注
@@ -124,23 +118,13 @@ public class GradePercentage implements java.io.Serializable {
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "FK_ORG_ID", nullable = true)
-	public Organization getOrg() {
-		return org;
+    @JoinColumn(name = "FK_ROLE_ID", nullable = true)
+	public Role getRole() {
+		return role;
 	}
 
-	public void setOrg(Organization org) {
-		this.org = org;
-	}
-
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "FK_RESP_ID", nullable = true)
-	public Responsibilities getResp() {
-		return resp;
-	}
-
-	public void setResp(Responsibilities resp) {
-		this.resp = resp;
+	public void setRole(Role role) {
+		this.role = role;
 	}
 
 	@Column(name = "PERCENTAGE", nullable = true, length = 20)

@@ -333,4 +333,16 @@ public class IndexManageAction extends BaseAction {
 		JsonUtil.outJson(msg);
 		return null;
     }
+    
+    /**
+     * 获取所有角色
+     */
+    public String getAllRole() {
+		try {
+			JsonUtil.outJsonArray(indexManageService.getAllRole());
+		} catch (Exception e) {
+			this.excepAndLogHandle(RespAction.class, "获取所有角色", e, false);
+		}
+		return null;
+    }
 }

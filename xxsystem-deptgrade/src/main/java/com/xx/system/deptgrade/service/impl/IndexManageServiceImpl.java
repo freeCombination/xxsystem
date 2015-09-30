@@ -29,6 +29,8 @@ import com.xx.system.deptgrade.vo.PercentageVo;
 import com.xx.system.org.entity.Organization;
 import com.xx.system.org.entity.Responsibilities;
 import com.xx.system.org.service.IOrgService;
+import com.xx.system.role.entity.Role;
+import com.xx.system.role.vo.RoleVo;
 
 /**
  * 指标逻辑接口实现
@@ -499,52 +501,24 @@ public class IndexManageServiceImpl implements IIndexManageService {
 	@Override
 	public List<PercentageVo> getBaseListByCfId(Integer cfId) throws BusinessException {
 		List<PercentageVo> voLst = new ArrayList<PercentageVo>();
-		// 查询所有部门
-		String orgHql = " from Organization o where o.enable = 0 and o.status = 0"
-				+ " order by o.disOrder, o.orgName";
-		List<Organization> orgLst = (List<Organization>)baseDao.queryEntitys(orgHql);
-		if (!CollectionUtils.isEmpty(orgLst) && cfId != null && cfId != 0) {
-			PercentageVo vo = null;
-			GradePercentage gp = null;
-			for (Organization org : orgLst) {
-				// 根据orgId查询该部门下的 所有岗位
-				String respHql = " from Responsibilities r where r.enable = 0 and r.isDelete = 0"
-						+ " and r.organization.orgId = " + org.getOrgId();
-				List<Responsibilities> respLst = (List<Responsibilities>)baseDao.queryEntitys(respHql);
-				if (!CollectionUtils.isEmpty(respLst)) {
-					for (Responsibilities resp : respLst) {
-						vo = new PercentageVo();
-						
-						// 查询部门、岗位、指标类型对应的权重基础信息是否 已经生成
-						String gpHql = " from GradePercentage g where isDelete = 0 "
-								+ " and g.classify.pkClassifyId = " + cfId
-								+ " and g.org.orgId = " + org.getOrgId()
-								+ " and g.resp.pkRespId = " + resp.getPkRespId();
-						List<GradePercentage> perLst = (List<GradePercentage>)baseDao.queryEntitys(gpHql);
-						if (!CollectionUtils.isEmpty(perLst)) {
-							gp = perLst.get(0);
-						}
-						else {
-							gp = new GradePercentage();
-							gp.setOrg(org);
-							gp.setResp(resp);
-							// 查询指标分类
-							IndexClassify cf = (IndexClassify)baseDao.queryEntityById(IndexClassify.class, cfId);
-							if (cf != null) {
-								gp.setClassify(cf);
-							}
-							
-							baseDao.save(gp);
-						}
-						
-						vo.setPerId(gp.getPkPerId());
-						vo.setOrgName(gp.getOrg().getOrgName());
-						vo.setRespName(gp.getResp().getName());
-						vo.setReceiptsNum(gp.getReceiptsNum());
-						vo.setPercentage(gp.getPercentage());
-						vo.setRemark(gp.getRemark());
-						voLst.add(vo);
-					}
+		
+		if (cfId != null && cfId != 0) {
+			// 查询指标类型对应的权重基础信息
+			String gpHql = " from GradePercentage g where isDelete = 0 "
+					+ " and g.classify.pkClassifyId = " + cfId;
+			List<GradePercentage> perLst = (List<GradePercentage>)baseDao.queryEntitys(gpHql);
+			if (!CollectionUtils.isEmpty(perLst)) {
+				PercentageVo vo = null;
+				
+				for (GradePercentage gp : perLst) {
+					vo = new PercentageVo();
+					vo.setPerId(gp.getPkPerId());
+					vo.setReceiptsNum(gp.getReceiptsNum());
+					vo.setRoleId(gp.getRole().getRoleId());
+					vo.setRoleName(gp.getRole().getRoleName());
+					vo.setPercentage(gp.getPercentage());
+					vo.setRemark(gp.getRemark());
+					voLst.add(vo);
 				}
 			}
 		}
@@ -574,5 +548,24 @@ public class IndexManageServiceImpl implements IIndexManageService {
 			
 			baseDao.saveOrUpdate(gpLst);
 		}
+	}
+
+	@Override
+	public List<RoleVo> getAllRole() throws BusinessException {
+		String roleHql = " from Role r where r.isDelete = 0";
+		List<Role> roleLst = (List<Role>)baseDao.queryEntitys(roleHql);
+		
+		List<RoleVo> voLst = new ArrayList<RoleVo>();
+		if (!CollectionUtils.isEmpty(roleLst)) {
+			for (Role role : roleLst) {
+				RoleVo vo = new RoleVo();
+				
+				vo.setRoleId(role.getRoleId());
+				vo.setRoleName(role.getRoleName());
+				
+				voLst.add(vo);
+			}
+		}
+		return voLst;
 	}
 }

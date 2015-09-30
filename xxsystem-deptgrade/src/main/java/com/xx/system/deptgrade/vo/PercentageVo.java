@@ -22,7 +22,7 @@ public class PercentageVo implements java.io.Serializable {
     private String classifyName;
     
     /**
-     * 考核指标ID
+     * 指标分类ID
      */
     private Integer classifyId;
     
@@ -32,24 +32,14 @@ public class PercentageVo implements java.io.Serializable {
     private String receiptsNum;
     
     /**
-     * @Fields orgName : 部门名称
+     * 角色名称
      */
-    private String orgName;
+    private String roleName;
     
     /**
-     * @Fields orgId : 部门ID
+     * 角色ID
      */
-    private Integer orgId;
-    
-    /**
-     * 岗位名称
-     */
-    private String respName;
-    
-    /**
-     * 岗位ID
-     */
-    private Integer respId;
+    private Integer roleId;
     
     /**
      * 权重
@@ -98,38 +88,6 @@ public class PercentageVo implements java.io.Serializable {
 		this.receiptsNum = receiptsNum;
 	}
 
-	public String getOrgName() {
-		return orgName;
-	}
-
-	public void setOrgName(String orgName) {
-		this.orgName = orgName;
-	}
-
-	public Integer getOrgId() {
-		return orgId;
-	}
-
-	public void setOrgId(Integer orgId) {
-		this.orgId = orgId;
-	}
-
-	public String getRespName() {
-		return respName;
-	}
-
-	public void setRespName(String respName) {
-		this.respName = respName;
-	}
-
-	public Integer getRespId() {
-		return respId;
-	}
-
-	public void setRespId(Integer respId) {
-		this.respId = respId;
-	}
-
 	public String getPercentage() {
 		return percentage;
 	}
@@ -152,6 +110,22 @@ public class PercentageVo implements java.io.Serializable {
 
 	public void setIsDelete(int isDelete) {
 		this.isDelete = isDelete;
+	}
+
+	public String getRoleName() {
+		return roleName;
+	}
+
+	public void setRoleName(String roleName) {
+		this.roleName = roleName;
+	}
+
+	public Integer getRoleId() {
+		return roleId;
+	}
+
+	public void setRoleId(Integer roleId) {
+		this.roleId = roleId;
 	}
 
 }

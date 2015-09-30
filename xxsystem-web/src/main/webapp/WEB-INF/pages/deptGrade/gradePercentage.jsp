@@ -59,12 +59,18 @@
                 {name: "classifyName"}, 
                 {name: "classifyId"}, 
                 {name: "receiptsNum"},
-                {name: "orgName"},
-                {name: "orgId"},
-                {name: "respName"},
-                {name: "respId"},
+                {name: "roleName"},
+                {name: "roleId"},
                 {name: "percentage"},
                 {name: "remark"}
+            ]
+        });
+		
+		Ext.define("Role",{
+            extend:"Ext.data.Model",
+            fields:[
+                {name: "roleId"}, 
+                {name: "roleName"}
             ]
         });
 		
@@ -73,6 +79,18 @@
             proxy: {
                type: 'ajax',
                url: basePath+'/deptgrade/getAllClassifies.action',
+               reader: {
+                  type: 'json'
+               }
+            },
+            autoLoad: true
+        });
+		
+		var roleStore = Ext.create('Ext.data.Store', {
+            model: 'Role',
+            proxy: {
+               type: 'ajax',
+               url: basePath+'/deptgrade/getAllRole.action',
                reader: {
                   type: 'json'
                }
@@ -100,18 +118,23 @@
 		var cm=[
 				{header:"序号",xtype: "rownumberer",width:60,align:"center",menuDisabled: true,sortable :false},
 	            {header: "ID",width: 70,dataIndex: "perId",hidden: true,menuDisabled: true,sortable :false},
-	            {header: "部门",width: 200,dataIndex: "orgName",menuDisabled: true,sortable :false,
+	            {header: "roleId",width: 70,dataIndex: "roleId",hidden: true,menuDisabled: true,sortable :false},
+	            {header: "角色",width: 200,dataIndex: "roleName",menuDisabled: true,sortable :false,
 					renderer : function(value, cellmeta, record, rowIndex,
 							columnIndex, store) {
 						cellmeta.tdAttr = 'data-qtip="' + value + '"';
 						return value;
-					}},
-	            {header: "岗位",width: 200,dataIndex: "respName",menuDisabled: true,sortable :false,
-					renderer : function(value, cellmeta, record, rowIndex,
-							columnIndex, store) {
-						cellmeta.tdAttr = 'data-qtip="' + value + '"';
-						return value;
-					}},
+					},
+                    field: {
+                        xtype:'combo',
+                        allowBlank: false,
+                        editable: false,
+                        store: roleStore,
+                        queryMode: 'remote',
+                        displayField: 'roleName',
+                        valueField: 'roleName'
+                    }
+	            },
 	            {header: "权重",width: 200,dataIndex: "percentage",menuDisabled: true,sortable :false,
 					renderer : function(value, cellmeta, record, rowIndex,
 							columnIndex, store) {
@@ -140,7 +163,7 @@
                         height:100,
                         maxLength:1000,
                         regex : new RegExp('^([^<^>])*$'),
-                        regexText : '不能包含特殊字符！',
+                        regexText : '不能包含特殊字符！'
                     }
 				}
 	         ];
@@ -149,7 +172,22 @@
             clicksToEdit: 1
         });
 		
+		var perSm = Ext.create("Ext.selection.CheckboxModel",{
+            injectCheckbox:0,
+            listeners: {
+                selectionchange: function(){
+                    var c = perGrid.getSelectionModel().getSelection();
+                    if (c.length > 0) {
+                        Ext.getCmp('delPerBtn').setDisabled(false);
+                    } else {
+                        Ext.getCmp('delPerBtn').setDisabled(true);
+                    }
+                }
+            }
+        });
+		
 		var oldNumber = '';
+		var count = 0;
 		//grid组件
 		var perGrid =  Ext.create("Ext.grid.Panel",{
 			title:'权重管理',
@@ -162,6 +200,7 @@
 			id: "perGrid",
 			columns:cm,
 			plugins: [cellEditing],
+			selModel:perSm,
 	     	forceFit : true,
 			store: perStore,
 			autoScroll: true,
@@ -223,6 +262,23 @@
                 } */
             },
             '->',
+            {
+                xtype:'button',
+                disabled:false,
+                text:'添加',
+                iconCls:'add-button',
+                handler:function(){
+                    count++;
+                    //拼接一个数据格式;
+                    var data= "{ indexId:" + count
+                            + ", roleId:''"
+                            + ", roleName:''"
+                            + ", percentage:''"
+                            + ", remark:'' }";
+
+                    perStore.add(eval("("+data+")"));
+                }
+            },
 			{
 				id:'addPercentageBtn',
 				xtype:'button',
@@ -297,7 +353,24 @@
                         }
 					}
 				}
-			}], 
+			},{
+                id : 'delPerBtn',
+                xtype : 'button',
+                disabled : true,
+                text : '删除',
+                iconCls : 'delete-button',
+                handler : function() {
+                    var rows = perGrid.getSelectionModel().getSelection();
+                    Ext.Msg.confirm('系统提示','确定要删除这'+rows.length+'条记录吗?',function(btn){
+                        if(btn=='yes'){
+                            for(var i=0; i<rows.length;i++){
+                            	perStore.remove(rows[i]);
+                            }
+                            perGrid.getView().refresh();//刷新行号
+                        }
+                    });
+                }
+            }], 
 			listeners:{
 				'render': function() {
 					oldNumber = '';

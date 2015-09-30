@@ -8,6 +8,7 @@ import com.xx.system.common.vo.ListVo;
 import com.xx.system.deptgrade.vo.GradeIndexVo;
 import com.xx.system.deptgrade.vo.IndexClassifyVo;
 import com.xx.system.deptgrade.vo.PercentageVo;
+import com.xx.system.role.vo.RoleVo;
 
 /**
  * 指标管理逻辑接口
@@ -193,4 +194,12 @@ public interface IIndexManageService {
      * @throws BusinessException
      */
     public void savePercentage(List<PercentageVo> voLst) throws BusinessException;
+    
+    /**
+     * 获取所有角色
+     * 
+     * @return
+     * @throws BusinessException
+     */
+    public List<RoleVo> getAllRole() throws BusinessException;
 }
