@@ -27,7 +27,6 @@ import com.xx.system.deptgrade.vo.GradeIndexVo;
 import com.xx.system.deptgrade.vo.IndexClassifyVo;
 import com.xx.system.deptgrade.vo.PercentageVo;
 import com.xx.system.org.entity.Organization;
-import com.xx.system.org.entity.Responsibilities;
 import com.xx.system.org.service.IOrgService;
 import com.xx.system.role.entity.Role;
 import com.xx.system.role.vo.RoleVo;
@@ -529,24 +528,34 @@ public class IndexManageServiceImpl implements IIndexManageService {
 	@Override
 	public void savePercentage(List<PercentageVo> voLst) throws BusinessException {
 		if (!CollectionUtils.isEmpty(voLst)) {
+			// 先删除所有该指标分类和角色对应的权重设置
+			String delHql = " delete from GradePercentage gp where gp.classify.pkClassifyId = "
+					+ voLst.get(0).getClassifyId();
+			
+			baseDao.executeHql(delHql);
+			
 			GradePercentage gp = null;
 			List<GradePercentage> gpLst = new ArrayList<GradePercentage>();
 			for (PercentageVo vo : voLst) {
-				// 查询部门、岗位、指标类型对应的权重基础信息是否 已经生成
-				String gpHql = " from GradePercentage g where isDelete = 0 "
-						+ " and g.pkPerId = " + vo.getPerId();
-				List<GradePercentage> perLst = (List<GradePercentage>)baseDao.queryEntitys(gpHql);
-				if (!CollectionUtils.isEmpty(perLst)) {
-					gp = perLst.get(0);
-					gp.setRemark(vo.getRemark());
-					gp.setReceiptsNum(vo.getReceiptsNum());
-					gp.setPercentage(vo.getPercentage());
-					
-					gpLst.add(gp);
-				}
+				gp = new GradePercentage();
+				
+				// 根据指标分类ID查询指标
+				IndexClassify cf = (IndexClassify)baseDao.queryEntityById(IndexClassify.class, vo.getClassifyId());
+				gp.setClassify(cf);
+				
+				// 根据角色ID查询角色
+				Role role = (Role)baseDao.queryEntityById(Role.class, vo.getRoleId());
+				gp.setRole(role);
+				
+				gp.setRemark(vo.getRemark());
+				gp.setReceiptsNum(vo.getReceiptsNum());
+				gp.setPercentage(vo.getPercentage());
+				gp.setIsDelete(0);
+				
+				gpLst.add(gp);
 			}
 			
-			baseDao.saveOrUpdate(gpLst);
+			baseDao.saveAll(gpLst);
 		}
 	}
 

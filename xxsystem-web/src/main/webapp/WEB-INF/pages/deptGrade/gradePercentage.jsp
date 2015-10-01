@@ -223,6 +223,8 @@
                         	callback: function(records, operation, success) {
                         		if (records.length > 0) {
 	                        		Ext.getCmp("receiptsNum").setValue(records[0].get('receiptsNum'));
+                        		}else{
+                        			Ext.getCmp("receiptsNum").setValue('');
                         		}
                             }
                         });
@@ -296,18 +298,21 @@
                             );
                         	
                         	var receiptsNum = Ext.getCmp("receiptsNum").getValue();
+                        	var classifyId = Ext.getCmp("classifyId").getValue();
                         	
                             for(var i=0; i<c; i++){
                                 var re = perStore.getAt(i);
                                 var perId = re.get('perId');
+                                var roleName = re.get('roleName');
+                                var roleId = roleStore.findRecord('roleName', roleName).get('roleId');
                                 var percentage = re.get('percentage');
                                 var remark = re.get('remark');
                                 
-                                if (!percentage) {
+                                if (!percentage || !roleName) {
                                 	Ext.MessageBox.hide();
                                     Ext.MessageBox.show({
                                         title:'提示信息',
-                                        msg:"权重不能为空",
+                                        msg:"权重、权重不能为空",
                                         buttons: Ext.Msg.YES,
                                         modal : true,
                                         icon: Ext.Msg.INFO
@@ -315,7 +320,8 @@
                                     return false;
                                 }
                                 
-                                data += '&perLst[' + i + '].perId=' + perId
+                                data += '&perLst[' + i + '].roleId=' + roleId
+                                            + '&perLst[' + i + '].classifyId=' + classifyId
                                             + '&perLst[' + i + '].receiptsNum=' + receiptsNum
                                             + '&perLst[' + i + '].percentage=' + percentage
                                             + '&perLst[' + i + '].remark=' + remark;
