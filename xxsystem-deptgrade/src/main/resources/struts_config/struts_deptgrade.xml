@@ -16,6 +16,10 @@
             <result name="success">/WEB-INF/pages/deptGrade/gradePercentage.jsp</result>
         </action>
         
+        <action name="toDeptGrade" class="com.xx.system.deptgrade.action.IndexManageAction">
+            <result name="success">/WEB-INF/pages/deptGrade/deptGrade.jsp</result>
+        </action>
+        
         <action name="*" class="com.xx.system.deptgrade.action.IndexManageAction" method="{1}"></action>
 	</package>
 </struts>

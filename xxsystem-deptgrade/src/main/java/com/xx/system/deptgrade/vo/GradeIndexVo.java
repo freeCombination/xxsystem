@@ -14,7 +14,7 @@ public class GradeIndexVo implements java.io.Serializable {
 	/**
      * @Fields indexId : 主键
      */
-    private int indexId;
+    private Integer indexId;
     
     /**
      * 考核指标编号
@@ -42,6 +42,11 @@ public class GradeIndexVo implements java.io.Serializable {
     private String grade;
     
     /**
+     * 考核分值2
+     */
+    private String grade2;
+    
+    /**
      * 考核说明
      */
     private String remark;
@@ -57,20 +62,25 @@ public class GradeIndexVo implements java.io.Serializable {
     private int isDelete;
     
     /**
-     * 一级指标
+     * 二级指标
      */
-    private String gradeIndexName;
+    private String gradeIndex2Name;
     
     /**
      * 一级指标ID
      */
-    private Integer gradeIndexId;
+    private Integer gradeIndex1Id;
+    
+    /**
+     * 部门得分数据字符串
+     */
+    private String gradeRecs;
 
-	public int getIndexId() {
+	public Integer getIndexId() {
 		return indexId;
 	}
 
-	public void setIndexId(int indexId) {
+	public void setIndexId(Integer indexId) {
 		this.indexId = indexId;
 	}
 
@@ -130,20 +140,20 @@ public class GradeIndexVo implements java.io.Serializable {
 		this.isDelete = isDelete;
 	}
 
-	public String getGradeIndexName() {
-		return gradeIndexName;
+	public String getGradeIndex2Name() {
+		return gradeIndex2Name;
 	}
 
-	public void setGradeIndexName(String gradeIndexName) {
-		this.gradeIndexName = gradeIndexName;
+	public void setGradeIndex2Name(String gradeIndex2Name) {
+		this.gradeIndex2Name = gradeIndex2Name;
 	}
 
-	public Integer getGradeIndexId() {
-		return gradeIndexId;
+	public Integer getGradeIndex1Id() {
+		return gradeIndex1Id;
 	}
 
-	public void setGradeIndexId(Integer gradeIndexId) {
-		this.gradeIndexId = gradeIndexId;
+	public void setGradeIndex1Id(Integer gradeIndex1Id) {
+		this.gradeIndex1Id = gradeIndex1Id;
 	}
 
 	public String getElectYear() {
@@ -152,5 +162,21 @@ public class GradeIndexVo implements java.io.Serializable {
 
 	public void setElectYear(String electYear) {
 		this.electYear = electYear;
+	}
+
+	public String getGrade2() {
+		return grade2;
+	}
+
+	public void setGrade2(String grade2) {
+		this.grade2 = grade2;
+	}
+
+	public String getGradeRecs() {
+		return gradeRecs;
+	}
+
+	public void setGradeRecs(String gradeRecs) {
+		this.gradeRecs = gradeRecs;
 	}
 }

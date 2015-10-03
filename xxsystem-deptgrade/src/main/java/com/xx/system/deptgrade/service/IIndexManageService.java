@@ -8,7 +8,9 @@ import com.xx.system.common.vo.ListVo;
 import com.xx.system.deptgrade.vo.GradeIndexVo;
 import com.xx.system.deptgrade.vo.IndexClassifyVo;
 import com.xx.system.deptgrade.vo.PercentageVo;
+import com.xx.system.org.vo.OrgVo;
 import com.xx.system.role.vo.RoleVo;
+import com.xx.system.user.entity.User;
 
 /**
  * 指标管理逻辑接口
@@ -202,4 +204,46 @@ public interface IIndexManageService {
      * @throws BusinessException
      */
     public List<RoleVo> getAllRole() throws BusinessException;
+    
+    /************部门评分*************/
+    
+    /**
+     * 查询指标分类用于部门评分
+     * 
+     * @Title getClassifyListForGrade
+     * @date 2013-11-25
+     * @param vo 指标分类对象
+     * @return List<RespVo>
+     */
+    public List<IndexClassifyVo> getClassifyListForGrade(IndexClassifyVo vo, User currUsr)
+        throws Exception;
+    
+    /**
+     * 查询用于评分部门
+     * 
+     * @Title getOrgListForGrade
+     * @date 2013-11-25
+     * @param vo 指标分类对象
+     * @return List<RespVo>
+     */
+    public List<OrgVo> getOrgListForGrade(IndexClassifyVo vo, User currUsr)
+        throws Exception;
+    
+    /**
+     * 根据指标分类id查询指标
+     * 
+     * @param cfId 指标分类id
+     * @return
+     * @throws Exception
+     */
+    public List<GradeIndexVo> getIndexListForGrade(Integer cfId, User currUsr) throws Exception;
+    
+    /**
+     * 保存部门评分
+     * 
+     * @param defen 得分数据
+     * @param currUsr 评分人
+     * @throws Exception
+     */
+    public void saveDeptGrade(String defen, User currUsr) throws Exception;
 }

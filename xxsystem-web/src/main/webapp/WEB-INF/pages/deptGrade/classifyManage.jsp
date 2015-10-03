@@ -159,7 +159,7 @@
 						cellmeta.tdAttr = 'data-qtip="' + value + '"';
 						return value;
 					}},
-				{header: "是否提交评分",width: 200,dataIndex: "hasSubmit",menuDisabled: true,sortable :false,
+				/* {header: "是否提交评分",width: 200,dataIndex: "hasSubmit",menuDisabled: true,sortable :false,
                     renderer : function(value, cellmeta, record, rowIndex,
                             columnIndex, store) {
                     	var hasSub = '<span style="color:red;">否</span>';
@@ -170,7 +170,7 @@
                         //cellmeta.tdAttr = 'data-qtip="' + value + '"';
                         return hasSub;
                     }
-				},
+				}, */
 				{header: "状态",width: 200,dataIndex: "enable",
 		            renderer: function(value, cellmeta, record, rowIndex, columnIndex, store){
 		                //cellmeta.tdAttr = 'data-qtip="' + orgTypeArr[i].name + '"';

@@ -1,6 +1,8 @@
 package com.xx.system.deptgrade.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -8,6 +10,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -20,16 +23,22 @@ import com.xx.system.common.util.StringUtil;
 import com.xx.system.common.vo.ListVo;
 import com.xx.system.deptgrade.entity.GradeIndex;
 import com.xx.system.deptgrade.entity.GradePercentage;
+import com.xx.system.deptgrade.entity.GradeRecord;
 import com.xx.system.deptgrade.entity.IndexClassify;
 import com.xx.system.deptgrade.entity.OrgAndClassify;
 import com.xx.system.deptgrade.service.IIndexManageService;
 import com.xx.system.deptgrade.vo.GradeIndexVo;
 import com.xx.system.deptgrade.vo.IndexClassifyVo;
 import com.xx.system.deptgrade.vo.PercentageVo;
+import com.xx.system.org.entity.OrgUser;
 import com.xx.system.org.entity.Organization;
 import com.xx.system.org.service.IOrgService;
+import com.xx.system.org.vo.OrgVo;
 import com.xx.system.role.entity.Role;
 import com.xx.system.role.vo.RoleVo;
+import com.xx.system.user.entity.User;
+
+import net.sf.json.JSONArray;
 
 /**
  * 指标逻辑接口实现
@@ -576,5 +585,391 @@ public class IndexManageServiceImpl implements IIndexManageService {
 			}
 		}
 		return voLst;
+	}
+
+	/************部门评分*************/
+	
+	/**
+     * 递归获取子部门
+     * 
+     * @Title recursionChildren
+     * @author dong.he
+     * @Description: 
+     * @date 2014年12月23日
+     * @param org
+     */
+    private void recursionChildren(Organization org, List<Organization> orgLst) 
+        throws Exception {
+        if (org != null && org.getOrganizations() != null) {
+        	Iterator<Organization> children = org.getOrganizations().iterator();
+    		while (children.hasNext()) {
+    			Organization o = children.next();
+    			orgLst.add(o);
+    			
+    			if (o.getOrganizations() != null) {
+    				recursionChildren(o, orgLst);
+    			}
+    		}
+        }
+    }
+    
+    /**
+     * 对部门进行排序
+     * 
+     * @Title orderOrg
+     * @author dong.he
+     * @date 2014年12月25日
+     * @param orgLst
+     */
+    private void orderOrg(List<Organization> orgLst){
+        Collections.sort(orgLst, new Comparator<Organization>() {
+            public int compare(Organization o1, Organization o2) {
+                if (o1.getDisOrder() - o2.getDisOrder() != 0) {
+                    return o1.getDisOrder() - o2.getDisOrder();
+                }
+                return o1.getOrgId() - o2.getOrgId();
+            }
+        });
+    }
+	
+    /**
+     * 对指标进行排序
+     * 
+     * @Title orderIndex
+     * @author dong.he
+     * @date 2014年12月25日
+     * @param inxLst
+     */
+    private void orderIndex(List<GradeIndex> inxLst){
+        Collections.sort(inxLst, new Comparator<GradeIndex>() {
+            public int compare(GradeIndex i1, GradeIndex i2) {
+                return i1.getPkIndexId() - i2.getPkIndexId();
+            }
+        });
+    }
+    
+	@Override
+	public List<IndexClassifyVo> getClassifyListForGrade(IndexClassifyVo vo, User currUsr) throws Exception {
+		String cfHql = " from IndexClassify i where i.isDelete = 0 and i.enable = 0";
+		if (vo != null) {
+			if (StringUtil.isNotBlank(vo.getElectYear())) {
+				cfHql += " and i.electYear = '" + vo.getElectYear() + "'";
+			}
+		}
+		
+		// 获取当前登陆用户所在部门，进而获取该用户可评分的部门
+		Iterator<OrgUser> ouIt = currUsr.getOrgUsers().iterator();
+		String selfDept = "";
+		String depts = "";
+		while (ouIt.hasNext()) {
+        	Organization org = ouIt.next().getOrganization();
+        	selfDept += "," + org.getOrgId();
+        	// 获取该部门的兄弟部门
+        	if (org.getOrganization() != null) {
+        		Iterator<Organization> orgIt = org.getOrganization().getOrganizations().iterator();
+        		while (orgIt.hasNext()) {
+        			Organization o = orgIt.next();
+        			depts += "," + o.getOrgId();
+        		}
+        	}
+        	
+        	// 获取该部门的子部门
+        	List<Organization> orgLst = new ArrayList<Organization>();
+        	recursionChildren(org, orgLst);
+        	if (!CollectionUtils.isEmpty(orgLst)) {
+        		for (Organization o : orgLst) {
+        			depts += "," + o.getOrgId();
+        		}
+        	}
+        }
+		
+		// 查询OrgAndClassify，限制IndexClassify
+		String ocHql = " from OrgAndClassify oc where oc.isDelete = 0";
+		if (StringUtil.isNotBlank(selfDept)) {
+			ocHql += " and oc.org.orgId not in (" + selfDept.substring(1) + ")";
+		}
+		
+		if (StringUtil.isNotBlank(depts)) {
+			ocHql += " and oc.org.orgId in (" + depts.substring(1) + ")";
+		}
+		
+		if (StringUtil.isNotBlank(selfDept) || StringUtil.isNotBlank(depts)) {
+			List<OrgAndClassify> ocLst = (List<OrgAndClassify>)baseDao.queryEntitys(ocHql);
+			if (!CollectionUtils.isEmpty(ocLst)) {
+				String cfIds = "";
+				for (OrgAndClassify oc : ocLst) {
+					cfIds += "," + oc.getClassify().getPkClassifyId();
+        		}
+				
+				cfHql += " and i.pkClassifyId in (" + cfIds.substring(1) + ")";
+			}
+		}
+		
+		cfHql += " order by i.name";
+		List<IndexClassify> cfLst = (List<IndexClassify>)baseDao.queryEntitys(cfHql);
+		
+		IndexClassifyVo icvo = null;
+		List<IndexClassifyVo> voLst = new ArrayList<IndexClassifyVo>();
+		
+		if (!CollectionUtils.isEmpty(cfLst)) {
+			for (IndexClassify cf : cfLst) {
+				icvo = new IndexClassifyVo();
+				
+				icvo.setClassifyId(cf.getPkClassifyId());
+				icvo.setNumber(cf.getNumber());
+				icvo.setName(cf.getName());
+				
+				String orgNames = "";
+				String orgIds = "";
+				if (cf.getOrgCfs() != null && cf.getOrgCfs().size() > 0) {
+					Iterator<OrgAndClassify> ocIt = cf.getOrgCfs().iterator();
+	                while (ocIt.hasNext()) {
+	                	OrgAndClassify oc = ocIt.next();
+	                	if (oc.getIsDelete() == Constant.STATUS_NOT_DELETE && 
+	                            oc.getOrg().getStatus() == Constant.STATUS_NOT_DELETE) {
+	                		orgNames += "," + oc.getOrg().getOrgName();
+	                		orgIds += "," + oc.getOrg().getOrgId();
+	                	}
+	                }
+				}
+				
+				if (StringUtil.isNotBlank(orgIds)) {
+					icvo.setOrgIds(orgIds.substring(1));
+					icvo.setOrgNames(orgNames.substring(1));
+				}
+				
+				icvo.setElectYear(cf.getElectYear());
+				
+				// 查询ClassifyUser，判断该用户对应的指标分类是否已经提交
+				String cuHql = " from ClassifyUser cu where cu.isDelete = 0"
+						+ " and cu.hasSubmit = 1 and cu.user.userId = " + currUsr.getUserId()
+						+ " and cu.classify.pkClassifyId = " + cf.getPkClassifyId();
+				
+				int count = baseDao.queryTotalCount(cuHql, new HashMap<String, Object>());
+				if (count > 0) {
+					icvo.setHasSubmit(1);
+				}
+				else {
+					icvo.setHasSubmit(0);
+				}
+				
+				icvo.setEnable(cf.getEnable());
+				
+				voLst.add(icvo);
+			}
+		}
+		
+		return voLst;
+	}
+
+	@Override
+	public List<OrgVo> getOrgListForGrade(IndexClassifyVo vo, User currUsr) throws Exception {
+		// 查询指标分类关联的所有部门
+		List<OrgVo> voLst = new ArrayList<OrgVo>();
+		if (vo != null) {
+			IndexClassify ic = (IndexClassify)baseDao.queryEntityById(IndexClassify.class, vo.getClassifyId());
+			if (ic != null && ic.getOrgCfs() != null && ic.getOrgCfs().size() > 0) {
+				// 获取当前登陆用户所在部门，进而获取该用户可评分的部门
+				Iterator<OrgUser> ouIt = currUsr.getOrgUsers().iterator();
+				Map<Integer, Organization> orgMap = new HashMap<Integer, Organization>();
+				while (ouIt.hasNext()) {
+					Organization usrOrg = ouIt.next().getOrganization();
+					orgMap.put(usrOrg.getOrgId(), usrOrg);
+				}
+				
+				Iterator<OrgAndClassify> ocIt = ic.getOrgCfs().iterator();
+				List<Organization> orgLst = new ArrayList<Organization>();
+				OrgVo o = null;
+				while (ocIt.hasNext()) {
+                	OrgAndClassify oc = ocIt.next();
+                	if (oc.getIsDelete() == Constant.STATUS_NOT_DELETE && 
+                        oc.getOrg().getStatus() == Constant.STATUS_NOT_DELETE &&
+                        !orgMap.containsKey(oc.getOrg().getOrgId())) {
+                		
+                		orgLst.add(oc.getOrg());
+                	}
+                }
+				
+				// 排序
+				orderOrg(orgLst);
+				
+				for (Organization org : orgLst) {
+					o = new OrgVo();
+            		
+            		o.setOrgId(org.getOrgId());
+            		o.setOrgName(org.getOrgName());
+            		
+            		voLst.add(o);
+				}
+			}
+		}
+		return voLst;
+	}
+
+	@Override
+	public List<GradeIndexVo> getIndexListForGrade(Integer cfId, User currUsr) throws Exception {
+		List<GradeIndexVo> voLst = new ArrayList<GradeIndexVo>();
+		
+		String indexHql = " from GradeIndex g where g.isDelete = 0";
+		if (cfId != null && cfId != 0) {
+			indexHql += " and g.classify.pkClassifyId = " + cfId;
+			indexHql += " order by g.name";
+			
+			List<GradeIndex> indexLst = (List<GradeIndex>)baseDao.queryEntitys(indexHql);
+			GradeIndexVo vo = null;
+			if (!CollectionUtils.isEmpty(indexLst)) {
+				for (GradeIndex index : indexLst) {
+					// 查询得分：GradeRecord
+					String grHql = " from GradeRecord gr where gr.isDelete = 0"
+							+ " and gr.classify.isDelete = 0 and gr.classify.enable = 0"
+							+ " and gr.classify.pkClassifyId = " + index.getClassify().getPkClassifyId()
+							+ " and gr.index1.pkIndexId = " + index.getPkIndexId()
+							+ " and gr.user.userId = " + currUsr.getUserId();
+					// 得分字符串
+					String scores = "";
+					
+					if (index.getIndexs() != null && index.getIndexs().size() > 0) {
+						Iterator<GradeIndex> giIt = index.getIndexs().iterator();
+						List<GradeIndex> giLst = new ArrayList<GradeIndex>();
+						while (giIt.hasNext()) {
+							giLst.add(giIt.next());
+						}
+						
+						// 排序
+						orderIndex(giLst);
+						
+						for (GradeIndex gi : giLst) {
+							scores = "";
+							
+							vo = new GradeIndexVo();
+							
+							vo.setGradeIndex1Id(index.getPkIndexId());
+							vo.setName(index.getName() + (StringUtil.isNotBlank(index.getRemark()) ? 
+									"<br>说明：<br>" + index.getRemark() : ""));
+							vo.setGrade(index.getGrade());
+							
+							vo.setIndexId(gi.getPkIndexId());
+							vo.setNumber(gi.getNumber());
+							vo.setGradeIndex2Name(gi.getName() + (StringUtil.isNotBlank(gi.getRemark()) ? 
+									"<br>说明：<br>" + gi.getRemark() : ""));
+							vo.setGrade2(gi.getGrade());
+							
+							// 查询得分：GradeRecord
+							String grHql2 = grHql + " and gr.index2.pkIndexId = " + gi.getPkIndexId();
+							
+							List<GradeRecord> grLst = (List<GradeRecord>)baseDao.queryEntitys(grHql2);
+							if (!CollectionUtils.isEmpty(grLst)) {
+								for (GradeRecord rec : grLst) {
+									scores += "|" + rec.getOrg().getOrgId() + ":" + rec.getScore();
+								}
+								
+								vo.setGradeRecs(scores.substring(1));
+							}
+							
+							voLst.add(vo);
+						}
+					}
+					else{
+						vo = new GradeIndexVo();
+						
+						vo.setIndexId(index.getPkIndexId());
+						vo.setNumber(index.getNumber());
+						vo.setName(index.getName() + (StringUtil.isNotBlank(index.getRemark()) ? 
+								"<br>说明：<br>" + index.getRemark() : ""));
+						vo.setClassifyName(index.getClassify().getName());
+						vo.setClassifyId(index.getClassify().getPkClassifyId());
+						vo.setGrade(index.getGrade());
+						vo.setRemark(index.getRemark());
+						
+						List<GradeRecord> grLst = (List<GradeRecord>)baseDao.queryEntitys(grHql);
+						if (!CollectionUtils.isEmpty(grLst)) {
+							for (GradeRecord rec : grLst) {
+								scores += "|" + rec.getOrg().getOrgId() + ":" + rec.getScore();
+							}
+							
+							vo.setGradeRecs(scores.substring(1));
+						}
+						voLst.add(vo);
+					}
+				}
+			}
+		}
+		
+		return voLst;
+	}
+
+	@Override
+	public void saveDeptGrade(String defen, User currUsr) throws Exception {
+		if (StringUtil.isNotBlank(defen)) {
+			// 将json字符串转换成对象集合
+			JSONArray json = JSONArray.fromObject(defen);
+			List<GradeIndexVo> vos = (List<GradeIndexVo>)JSONArray.toCollection(json, GradeIndexVo.class);
+			if (!CollectionUtils.isEmpty(vos)) {
+				// 先删除后添加，实现修改功能
+				String delHql = " delete from GradeRecord gr where "
+						+ " gr.classify.pkClassifyId = " + vos.get(0).getClassifyId()
+						+ " and gr.user.userId = " + currUsr.getUserId();
+				baseDao.executeHql(delHql);
+				
+				List<GradeRecord> grLst = new ArrayList<GradeRecord>();
+				GradeRecord gr = null;
+				GradeRecord rec = null;
+				for (GradeIndexVo vo : vos) {
+					gr = new GradeRecord();
+					
+					// 查询指标分类
+					if (vo.getClassifyId() != null && vo.getClassifyId() != 0) {
+						IndexClassify cf = (IndexClassify)baseDao.queryEntityById(IndexClassify.class, vo.getClassifyId());
+						if (cf != null) {
+							gr.setClassify(cf);
+						}
+					}
+					
+					// 查询一级指标
+					if (vo.getIndexId() != null && vo.getIndexId() != 0) {
+						GradeIndex gi1 = (GradeIndex)baseDao.queryEntityById(GradeIndex.class, vo.getIndexId());
+						
+						// 查询二级指标对应的一级指标
+						if (vo.getGradeIndex1Id() != null && vo.getGradeIndex1Id() != 0) {
+							GradeIndex gi = (GradeIndex)baseDao.queryEntityById(GradeIndex.class, vo.getGradeIndex1Id());
+							if (gi != null) {
+								gr.setIndex1(gi);
+							}
+							
+							if (gi1 != null) {
+								gr.setIndex2(gi1);
+							}
+						}
+						else {
+							if (gi1 != null) {
+								gr.setIndex1(gi1);
+							}
+						}
+					}
+					
+					// 从评分字符串解析部门和对应的得分
+					if (StringUtil.isNotBlank(vo.getGradeRecs())) {
+						String[] scores = vo.getGradeRecs().split("\\|");
+						for (String score : scores) {
+							rec = new GradeRecord();
+							
+							rec.setClassify(gr.getClassify());
+							rec.setIndex1(gr.getIndex1());
+							rec.setIndex2(gr.getIndex2());
+							rec.setUser(currUsr);
+							
+							Organization org = (Organization)baseDao.queryEntityById(Organization.class, NumberUtils.toInt(score.split(":")[0]));
+							rec.setOrg(org);
+							
+							rec.setScore(score.split(":")[1]);
+							
+							grLst.add(rec);
+						}
+					}
+				}
+				
+				baseDao.saveAll(grLst);
+			}
+		}
 	}
 }

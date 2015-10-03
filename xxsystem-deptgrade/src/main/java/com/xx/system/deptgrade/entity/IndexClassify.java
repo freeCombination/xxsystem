@@ -130,7 +130,7 @@ public class IndexClassify implements java.io.Serializable {
 		this.electYear = electYear;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "classify")
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "classify")
     @BatchSize(size = 50)
 	public Set<OrgAndClassify> getOrgCfs() {
 		return orgCfs;

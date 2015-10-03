@@ -195,7 +195,7 @@ public class Organization implements java.io.Serializable {
      * @date 2013-12-6
      * @return 上级组织
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "PARENT_ID")
     public Organization getOrganization() {
         return this.organization;
@@ -318,7 +318,7 @@ public class Organization implements java.io.Serializable {
      * @date 2013-12-6
      * @return
      */
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "organization")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "organization")
     public Set<Organization> getOrganizations() {
         return this.organizations;
     }

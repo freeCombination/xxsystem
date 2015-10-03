@@ -15,7 +15,7 @@ import com.xx.system.deptgrade.service.IIndexManageService;
 import com.xx.system.deptgrade.vo.GradeIndexVo;
 import com.xx.system.deptgrade.vo.IndexClassifyVo;
 import com.xx.system.deptgrade.vo.PercentageVo;
-import com.xx.system.org.action.RespAction;
+import com.xx.system.org.vo.OrgVo;
 
 /**
  * 考核指标管理Action
@@ -85,7 +85,7 @@ public class IndexManageAction extends BaseAction {
 			ListVo<IndexClassifyVo> lv = indexManageService.getClassifyList(getStart(), getLimit(), classifyVo);
 			JsonUtil.outJson(lv);
 		} catch (BusinessException e) {
-			this.excepAndLogHandle(RespAction.class, "分页查询指标分类", e, false);
+			this.excepAndLogHandle(IndexManageAction.class, "分页查询指标分类", e, false);
 		}
 		
 		return null;
@@ -100,7 +100,7 @@ public class IndexManageAction extends BaseAction {
 			indexManageService.addClassify(classifyVo);
 			msg = "{success:'true',msg:'指标分类添加成功'}";
 		} catch (Exception e) {
-			this.excepAndLogHandle(RespAction.class, "指标分类添加", e, false);
+			this.excepAndLogHandle(IndexManageAction.class, "指标分类添加", e, false);
 		}
 		JsonUtil.outJson(msg);
 		return null;
@@ -115,7 +115,7 @@ public class IndexManageAction extends BaseAction {
 			indexManageService.updateClassify(classifyVo);
 			msg = "{success:'true',msg:'指标分类修改成功'}";
 		} catch (Exception e) {
-			this.excepAndLogHandle(RespAction.class, "修改指标分类", e, false);
+			this.excepAndLogHandle(IndexManageAction.class, "修改指标分类", e, false);
 		}
 		JsonUtil.outJson(msg);
 		return null;
@@ -130,7 +130,7 @@ public class IndexManageAction extends BaseAction {
 			Map<String, Object> vaildator = indexManageService.checkNumber(number);
             JsonUtil.outJson(vaildator);
 		} catch (Exception e) {
-			this.excepAndLogHandle(RespAction.class, "检查指标分类编号的唯一性", e, false);
+			this.excepAndLogHandle(IndexManageAction.class, "检查指标分类编号的唯一性", e, false);
 		}
 		return null;
 	}
@@ -145,7 +145,7 @@ public class IndexManageAction extends BaseAction {
 			indexManageService.delClassifies(ids);
 			msg = "{success:'true',msg:'删除指标分类成功'}";
 		} catch (Exception e) {
-			this.excepAndLogHandle(RespAction.class, "删除指标分类", e, false);
+			this.excepAndLogHandle(IndexManageAction.class, "删除指标分类", e, false);
 		}
 		JsonUtil.outJson(msg);
 		return null;
@@ -168,7 +168,7 @@ public class IndexManageAction extends BaseAction {
 			msg = "{success:'true',msg:'锁定指标分类成功'}";
 			msg1 = "{success:'true',msg:'解锁指标分类成功'}";
 		} catch (Exception e) {
-			this.excepAndLogHandle(RespAction.class, "锁定和解锁指标分类", e, false);
+			this.excepAndLogHandle(IndexManageAction.class, "锁定和解锁指标分类", e, false);
 		}
 		
 		if (en == 1) {
@@ -187,7 +187,7 @@ public class IndexManageAction extends BaseAction {
 		try {
 			JsonUtil.outJsonArray(indexManageService.getAllClassifies());
 		} catch (Exception e) {
-			this.excepAndLogHandle(RespAction.class, "查询所有指标分类", e, false);
+			this.excepAndLogHandle(IndexManageAction.class, "查询所有指标分类", e, false);
 		}
 		return null;
 	}
@@ -211,7 +211,7 @@ public class IndexManageAction extends BaseAction {
 			Map<String, Object> vaildator = indexManageService.checkIndexNumber(number);
             JsonUtil.outJson(vaildator);
 		} catch (Exception e) {
-			this.excepAndLogHandle(RespAction.class, "检查指标编号的唯一性", e, false);
+			this.excepAndLogHandle(IndexManageAction.class, "检查指标编号的唯一性", e, false);
 		}
 		return null;
     }
@@ -224,7 +224,7 @@ public class IndexManageAction extends BaseAction {
 			ListVo<GradeIndexVo> lv = indexManageService.getIndexList(getStart(), getLimit(), indexVo);
 			JsonUtil.outJson(lv);
 		} catch (BusinessException e) {
-			this.excepAndLogHandle(RespAction.class, "分页查询指标", e, false);
+			this.excepAndLogHandle(IndexManageAction.class, "分页查询指标", e, false);
 		}
 		return null;
     }
@@ -238,7 +238,7 @@ public class IndexManageAction extends BaseAction {
 			indexManageService.addIndex(indexVo, index2Lst);
 			msg = "{success:'true',msg:'指标添加成功'}";
 		} catch (Exception e) {
-			this.excepAndLogHandle(RespAction.class, "指标添加", e, false);
+			this.excepAndLogHandle(IndexManageAction.class, "指标添加", e, false);
 		}
 		JsonUtil.outJson(msg);
 		return null;
@@ -253,7 +253,7 @@ public class IndexManageAction extends BaseAction {
 			indexManageService.updateIndex(indexVo, index2Lst);
 			msg = "{success:'true',msg:'指标修改成功'}";
 		} catch (Exception e) {
-			this.excepAndLogHandle(RespAction.class, "修改指标", e, false);
+			this.excepAndLogHandle(IndexManageAction.class, "修改指标", e, false);
 		}
 		JsonUtil.outJson(msg);
 		return null;
@@ -269,7 +269,7 @@ public class IndexManageAction extends BaseAction {
 			indexManageService.delIndexes(ids);
 			msg = "{success:'true',msg:'删除指标成功'}";
 		} catch (Exception e) {
-			this.excepAndLogHandle(RespAction.class, "删除指标", e, false);
+			this.excepAndLogHandle(IndexManageAction.class, "删除指标", e, false);
 		}
 		JsonUtil.outJson(msg);
 		return null;
@@ -284,7 +284,7 @@ public class IndexManageAction extends BaseAction {
 			Integer index1Id = StringUtil.isNotBlank(id) ? Integer.valueOf(id) : 0;
 			JsonUtil.outJsonArray(indexManageService.getIndex2ListByIndex1Id(index1Id));
 		} catch (Exception e) {
-			this.excepAndLogHandle(RespAction.class, "根据一级指标id查询二级指标", e, false);
+			this.excepAndLogHandle(IndexManageAction.class, "根据一级指标id查询二级指标", e, false);
 		}
 		return null;
     }
@@ -300,7 +300,7 @@ public class IndexManageAction extends BaseAction {
 			Map<String, Object> vaildator = indexManageService.checkreceiptsNum(number);
             JsonUtil.outJson(vaildator);
 		} catch (Exception e) {
-			this.excepAndLogHandle(RespAction.class, "检查单据编号的唯一性", e, false);
+			this.excepAndLogHandle(IndexManageAction.class, "检查单据编号的唯一性", e, false);
 		}
 		return null;
     }
@@ -314,7 +314,7 @@ public class IndexManageAction extends BaseAction {
 			Integer cfId = StringUtil.isNotBlank(id) ? Integer.valueOf(id) : 0;
 			JsonUtil.outJsonArray(indexManageService.getBaseListByCfId(cfId));
 		} catch (Exception e) {
-			this.excepAndLogHandle(RespAction.class, "根据指标分类id查询权重管理所需基础数据", e, false);
+			this.excepAndLogHandle(IndexManageAction.class, "根据指标分类id查询权重管理所需基础数据", e, false);
 		}
 		return null;
     }
@@ -328,7 +328,7 @@ public class IndexManageAction extends BaseAction {
 			indexManageService.savePercentage(perLst);
 			msg = "{success:'true',msg:'保存权重设置成功'}";
 		} catch (Exception e) {
-			this.excepAndLogHandle(RespAction.class, "保存权重设置", e, false);
+			this.excepAndLogHandle(IndexManageAction.class, "保存权重设置", e, false);
 		}
 		JsonUtil.outJson(msg);
 		return null;
@@ -341,8 +341,69 @@ public class IndexManageAction extends BaseAction {
 		try {
 			JsonUtil.outJsonArray(indexManageService.getAllRole());
 		} catch (Exception e) {
-			this.excepAndLogHandle(RespAction.class, "获取所有角色", e, false);
+			this.excepAndLogHandle(IndexManageAction.class, "获取所有角色", e, false);
 		}
+		return null;
+    }
+    
+    /************部门评分*************/
+    
+    /**
+	 * 查询指标分类用于部门评分
+	 */
+	public String getClassifyListForGrade() {
+		try {
+			List<IndexClassifyVo> lst = indexManageService.getClassifyListForGrade(classifyVo, getCurrentUser());
+			JsonUtil.outJsonArray(lst);
+		} catch (Exception e) {
+			this.excepAndLogHandle(IndexManageAction.class, "查询指标分类用于部门评分", e, false);
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * 查询用于评分部门
+	 */
+	public String getOrgListForGrade() {
+		try {
+			List<OrgVo> lst = indexManageService.getOrgListForGrade(classifyVo, getCurrentUser());
+			JsonUtil.outJsonArray(lst);
+		} catch (Exception e) {
+			this.excepAndLogHandle(IndexManageAction.class, "查询用于评分部门", e, false);
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	/**
+     * 根据指标分类id查询指标
+     */
+    public String getIndexListForGrade() {
+    	try {
+			String id = getRequest().getParameter("cfId");
+			Integer cfId = StringUtil.isNotBlank(id) ? Integer.valueOf(id) : 0;
+			JsonUtil.outJsonArray(indexManageService.getIndexListForGrade(cfId, getCurrentUser()));
+		} catch (Exception e) {
+			this.excepAndLogHandle(IndexManageAction.class, "根据指标分类id查询指标", e, false);
+		}
+		return null;
+    }
+    
+    /**
+     * 保存部门评分
+     */
+    public String saveDeptGrade() {
+    	String msg = "{success:'false',msg:'保存部门评分失败'}";
+		try {
+			String defen = getRequest().getParameter("defen");
+			indexManageService.saveDeptGrade(defen, getCurrentUser());
+			msg = "{success:'true',msg:'保存部门评分成功'}";
+		} catch (Exception e) {
+			this.excepAndLogHandle(IndexManageAction.class, "保存部门评分", e, false);
+		}
+		JsonUtil.outJson(msg);
 		return null;
     }
 }

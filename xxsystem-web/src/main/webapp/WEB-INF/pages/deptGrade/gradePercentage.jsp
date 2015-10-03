@@ -78,7 +78,7 @@
             model: 'Classify',
             proxy: {
                type: 'ajax',
-               url: basePath+'/deptgrade/getAllClassifies.action',
+               url: '${ctx}/deptgrade/getAllClassifies.action',
                reader: {
                   type: 'json'
                }
@@ -90,7 +90,7 @@
             model: 'Role',
             proxy: {
                type: 'ajax',
-               url: basePath+'/deptgrade/getAllRole.action',
+               url: '${ctx}/deptgrade/getAllRole.action',
                reader: {
                   type: 'json'
                }
