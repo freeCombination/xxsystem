@@ -111,11 +111,9 @@
                 {header: "操作",width: 200,dataIndex: "hasSubmit",
                     renderer: function(value, cellmeta, record, rowIndex, columnIndex, store){
                         //cellmeta.tdAttr = 'data-qtip="' + orgTypeArr[i].name + '"';
-                        if(value == 0){
+                        //if(value == 0){
                             return '<img title="进行部门评分" src="${ctx}/images/icons/table_edit.png" style="cursor: pointer;padding:0;margin:0;heigth:16px;" onclick="deptGradeFun()"/>';
-                        }else{
-                            return '<img title="查看部门评分" src="${ctx}/images/icons/magnifier.png" style="cursor: pointer;padding:0;margin:0;heigth:16px;" onclick="deptGradeFun()"/>';
-                        }
+                        //}
                     }
                 }
              ];
@@ -165,77 +163,52 @@
 				text:'提交',
 				iconCls:'add-button',
 				handler:function(){
-					if (Ext.getCmp("classifyId").isValid() && Ext.getCmp("receiptsNum").isValid()) {
-						var data = '';
-                        var c = deptGrageStore.getCount();
-                        if (c > 0) {
-                        	Ext.MessageBox.wait("", "保存中", 
-                                {
-                                    text:"请稍后..."
-                                }
-                            );
-                        	
-                        	var receiptsNum = Ext.getCmp("receiptsNum").getValue();
-                        	var classifyId = Ext.getCmp("classifyId").getValue();
-                        	
-                            for(var i=0; i<c; i++){
-                                var re = deptGrageStore.getAt(i);
-                                var perId = re.get('perId');
-                                var roleName = re.get('roleName');
-                                var roleId = orgStore.findRecord('roleName', roleName).get('roleId');
-                                var percentage = re.get('percentage');
-                                var remark = re.get('remark');
-                                
-                                if (!percentage || !roleName) {
-                                	Ext.MessageBox.hide();
-                                    Ext.MessageBox.show({
-                                        title:'提示信息',
-                                        msg:"权重、权重不能为空",
-                                        buttons: Ext.Msg.YES,
-                                        modal : true,
-                                        icon: Ext.Msg.INFO
-                                    });
-                                    return false;
-                                }
-                                
-                                data += '&perLst[' + i + '].roleId=' + roleId
-                                            + '&perLst[' + i + '].classifyId=' + classifyId
-                                            + '&perLst[' + i + '].receiptsNum=' + receiptsNum
-                                            + '&perLst[' + i + '].percentage=' + percentage
-                                            + '&perLst[' + i + '].remark=' + remark;
-                            }
-                            
-                            data = data.substring(1)
-                            
-                            $.ajax({
-                                url : '${ctx}/deptgrade/savePercentage.action',
-                                data: data,
-                                cache : false,
-                                async : false,
-                                type : "POST",
-                                dataType : 'json',
-                                success : function (responseText){
-                                	var result = responseText; // Ext.decode(responseText);
-                                    if(result.success){
-                                        new Ext.ux.TipsWindow({
-                                            title:SystemConstant.alertTitle,
-                                            html: result.msg
-                                        }).show();
-                                        Ext.MessageBox.hide();
-                                        deptGrageStore.reload();
-                                    }else{
-                                        Ext.MessageBox.hide();
-                                        Ext.MessageBox.show({
-                                            title: SystemConstant.alertTitle,
-                                            msg: result.msg,
-                                            buttons: Ext.MessageBox.OK,
-                                            icon: Ext.MessageBox.INFO
-                                        });
-                                    }
-                                }
-                            });
+					Ext.Msg.confirm(SystemConstant.alertTitle,"提交后不能修改评分，确定提交最后评分吗？",function(btn) {
+                        if (btn == 'yes') {
+	                        var c = classifyStore.getCount();
+	                        if (c > 0) {
+	                        	Ext.MessageBox.wait("", "提交中", 
+	                                {
+	                                    text:"请稍后..."
+	                                }
+	                            );
+	                        	
+	                        	var cfIds = '';
+	                            for(var i=0; i<c; i++){
+	                                var re = classifyStore.getAt(i);
+	                                cfIds += ',' + re.get('classifyId');
+	                            }
+	                            
+	                            $.ajax({
+	                                url : '${ctx}/deptgrade/submitDeptGrade.action',
+	                                data: {cfIds : cfIds.substring(1)},
+	                                cache : false,
+	                                async : false,
+	                                type : "POST",
+	                                dataType : 'json',
+	                                success : function (responseText){
+	                                	var result = responseText; // Ext.decode(responseText);
+	                                    if(result.success == "true"){
+	                                        new Ext.ux.TipsWindow({
+	                                            title:SystemConstant.alertTitle,
+	                                            html: result.msg
+	                                        }).show();
+	                                        Ext.MessageBox.hide();
+	                                        classifyStore.reload();
+	                                    }else{
+	                                        Ext.MessageBox.hide();
+	                                        Ext.MessageBox.show({
+	                                            title: SystemConstant.alertTitle,
+	                                            msg: result.msg,
+	                                            buttons: Ext.MessageBox.OK,
+	                                            icon: Ext.MessageBox.INFO
+	                                        });
+	                                    }
+	                                }
+	                            });
+	                        }
                         }
-					}
+                    });
 				}
 			}]
 		});
@@ -378,7 +351,8 @@
 	            layout: 'fit',
 	            items: [deptGrageGrid],
 	            buttons:[{
-                    text: SystemConstant.saveBtnText,
+                    text: '保存',
+                    id: 'saveGradeBtn',
                     handler: function(){
                         var scores = '';
                         var c = deptGrageStore.getCount();
@@ -458,6 +432,11 @@
                     }
 	            }]
 	         }).show();
+	        
+	        var hasSubmit = record.get('hasSubmit');
+	        if (1 == hasSubmit) {
+	        	Ext.getCmp('saveGradeBtn').setVisible(false);
+	        }
 	         
 	         deptGrageStore.load({
 	             params:{

@@ -21,6 +21,7 @@ import com.xx.system.common.dao.IBaseDao;
 import com.xx.system.common.exception.BusinessException;
 import com.xx.system.common.util.StringUtil;
 import com.xx.system.common.vo.ListVo;
+import com.xx.system.deptgrade.entity.ClassifyUser;
 import com.xx.system.deptgrade.entity.GradeIndex;
 import com.xx.system.deptgrade.entity.GradePercentage;
 import com.xx.system.deptgrade.entity.GradeRecord;
@@ -971,5 +972,49 @@ public class IndexManageServiceImpl implements IIndexManageService {
 				baseDao.saveAll(grLst);
 			}
 		}
+	}
+
+	@Override
+	public Map<String, String> submitDeptGrade(String cfIds, User currUsr) throws Exception {
+		Map<String, String> msg = new HashMap<String, String>();
+		
+		if (StringUtil.isNotBlank(cfIds)) {
+			ClassifyUser cu = null;
+			List<ClassifyUser> cuLst = new ArrayList<ClassifyUser>();
+			
+			String[] ids = cfIds.split(",");
+			for (String id : ids) {
+				// 查询指标分类
+				IndexClassify cf = (IndexClassify)baseDao.queryEntityById(IndexClassify.class, NumberUtils.toInt(id));
+				
+				// 查询该指标分类是否有评分记录
+				String cfHql = " from GradeRecord gr where "
+						+ " gr.classify.pkClassifyId = " + id
+						+ " and gr.user.userId = " + currUsr.getUserId();
+				int count = baseDao.queryTotalCount(cfHql, new HashMap<String, Object>());
+				if (count <= 0) {
+					
+					msg.put("flag", "notGrade");
+					msg.put("msg", "指标：" + cf.getName() + " 还未进行评分！");
+					return msg;
+				}
+				
+				cu = new ClassifyUser();
+				cu.setUser(currUsr);
+				cu.setIsDelete(0);
+				cu.setHasSubmit(1);
+				
+				if (cf != null) {
+					cu.setClassify(cf);
+				}
+				
+				cuLst.add(cu);
+			}
+			
+			baseDao.saveAll(cuLst);
+		}
+		
+		msg.put("flag", "success");
+		return msg;
 	}
 }

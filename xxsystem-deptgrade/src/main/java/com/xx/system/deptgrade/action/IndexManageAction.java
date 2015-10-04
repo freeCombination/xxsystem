@@ -406,4 +406,25 @@ public class IndexManageAction extends BaseAction {
 		JsonUtil.outJson(msg);
 		return null;
     }
+    
+    /**
+     * 提交部门评分
+     */
+    public String submitDeptGrade() {
+    	String msg = "{success:'false',msg:'提交部门评分失败'}";
+		try {
+			String cfIds = getRequest().getParameter("cfIds");
+			Map<String, String> rtn = indexManageService.submitDeptGrade(cfIds, getCurrentUser());
+			if ("notGrade".equals(rtn.get("flag"))) {
+				msg = "{success:'false',msg:'" + rtn.get("msg") + "'}";
+			}
+			else {
+				msg = "{success:'true',msg:'提交部门评分成功'}";
+			}
+		} catch (Exception e) {
+			this.excepAndLogHandle(IndexManageAction.class, "提交部门评分", e, false);
+		}
+		JsonUtil.outJson(msg);
+		return null;
+    }
 }

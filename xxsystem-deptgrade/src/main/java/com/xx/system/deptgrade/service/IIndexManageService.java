@@ -246,4 +246,13 @@ public interface IIndexManageService {
      * @throws Exception
      */
     public void saveDeptGrade(String defen, User currUsr) throws Exception;
+    
+    /**
+     * 提交部门评分
+     * 
+     * @param cfIds
+     * @return
+     * @throws Exception
+     */
+    public Map<String, String> submitDeptGrade(String cfIds, User currUsr) throws Exception;
 }
