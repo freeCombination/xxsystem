@@ -60,6 +60,11 @@ public class GradeRecord implements java.io.Serializable {
     private User user;
     
     /**
+     * 评分部门
+     */
+    private Organization usrOrg;
+    
+    /**
      * @Fields score : 得分
      */
     private String score;
@@ -152,6 +157,16 @@ public class GradeRecord implements java.io.Serializable {
 
 	public void setOrg(Organization org) {
 		this.org = org;
+	}
+
+	@ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "FK_USRORG_ID", nullable = true)
+	public Organization getUsrOrg() {
+		return usrOrg;
+	}
+
+	public void setUsrOrg(Organization usrOrg) {
+		this.usrOrg = usrOrg;
 	}
 	
 }

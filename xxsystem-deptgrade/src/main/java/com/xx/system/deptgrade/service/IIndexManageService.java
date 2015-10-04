@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.xx.system.common.exception.BusinessException;
 import com.xx.system.common.vo.ListVo;
+import com.xx.system.deptgrade.vo.DeptGradeDetailVo;
 import com.xx.system.deptgrade.vo.GradeIndexVo;
 import com.xx.system.deptgrade.vo.IndexClassifyVo;
 import com.xx.system.deptgrade.vo.PercentageVo;
@@ -255,4 +256,19 @@ public interface IIndexManageService {
      * @throws Exception
      */
     public Map<String, String> submitDeptGrade(String cfIds, User currUsr) throws Exception;
+    
+    
+    /******************部门评分明细数据查询********************/
+    
+    /**
+     * 查询部门评分明细
+     * 
+     * @param electYear 参评年份
+     * @param canpDeptId 参评部门
+     * @param gradeDeptId 评分部门
+     * @return
+     * @throws Exception
+     */
+    public ListVo<DeptGradeDetailVo> queryDeptGradeDetail(Integer start, Integer limit, 
+    		String electYear, String canpDeptId, String gradeDeptId, String cfId) throws Exception;
 }

@@ -20,6 +20,10 @@
             <result name="success">/WEB-INF/pages/deptGrade/deptGrade.jsp</result>
         </action>
         
+        <action name="toDeptGradeDetail" class="com.xx.system.deptgrade.action.IndexManageAction">
+            <result name="success">/WEB-INF/pages/deptGrade/deptGradeDetail.jsp</result>
+        </action>
+        
         <action name="*" class="com.xx.system.deptgrade.action.IndexManageAction" method="{1}"></action>
 	</package>
 </struts>

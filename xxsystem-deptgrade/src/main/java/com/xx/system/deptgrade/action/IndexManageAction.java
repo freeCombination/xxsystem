@@ -12,6 +12,7 @@ import com.xx.system.common.util.JsonUtil;
 import com.xx.system.common.util.StringUtil;
 import com.xx.system.common.vo.ListVo;
 import com.xx.system.deptgrade.service.IIndexManageService;
+import com.xx.system.deptgrade.vo.DeptGradeDetailVo;
 import com.xx.system.deptgrade.vo.GradeIndexVo;
 import com.xx.system.deptgrade.vo.IndexClassifyVo;
 import com.xx.system.deptgrade.vo.PercentageVo;
@@ -427,4 +428,26 @@ public class IndexManageAction extends BaseAction {
 		JsonUtil.outJson(msg);
 		return null;
     }
+    
+    /******************部门评分明细数据查询********************/
+    
+    /**
+	 * 查询部门评分明细
+	 */
+	public String queryDeptGradeDetail() {
+		try {
+			String electYear = getRequest().getParameter("electYear");
+			String canpDeptId = getRequest().getParameter("canpDeptId");
+			String gradeUsrDeptId = getRequest().getParameter("gradeUsrDeptId");
+			String cfId = getRequest().getParameter("cfId");
+			
+			ListVo<DeptGradeDetailVo> lv = indexManageService.queryDeptGradeDetail(getStart(), getLimit(), electYear, 
+					canpDeptId, gradeUsrDeptId, cfId);
+			JsonUtil.outJson(lv);
+		} catch (Exception e) {
+			this.excepAndLogHandle(IndexManageAction.class, "查询部门评分明细", e, false);
+		}
+		
+		return null;
+	}
 }

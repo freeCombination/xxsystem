@@ -28,6 +28,7 @@ import com.xx.system.deptgrade.entity.GradeRecord;
 import com.xx.system.deptgrade.entity.IndexClassify;
 import com.xx.system.deptgrade.entity.OrgAndClassify;
 import com.xx.system.deptgrade.service.IIndexManageService;
+import com.xx.system.deptgrade.vo.DeptGradeDetailVo;
 import com.xx.system.deptgrade.vo.GradeIndexVo;
 import com.xx.system.deptgrade.vo.IndexClassifyVo;
 import com.xx.system.deptgrade.vo.PercentageVo;
@@ -959,6 +960,12 @@ public class IndexManageServiceImpl implements IIndexManageService {
 							rec.setIndex2(gr.getIndex2());
 							rec.setUser(currUsr);
 							
+							// 评分人部门
+							Iterator<OrgUser> ouIt = currUsr.getOrgUsers().iterator();
+							if (ouIt.hasNext()) {
+					        	rec.setUsrOrg(ouIt.next().getOrganization());
+							}
+							
 							Organization org = (Organization)baseDao.queryEntityById(Organization.class, NumberUtils.toInt(score.split(":")[0]));
 							rec.setOrg(org);
 							
@@ -979,6 +986,18 @@ public class IndexManageServiceImpl implements IIndexManageService {
 		Map<String, String> msg = new HashMap<String, String>();
 		
 		if (StringUtil.isNotBlank(cfIds)) {
+			// 判断是否已经提交
+			String checkHql = " from ClassifyUser cu where "
+					+ " cu.classify.pkClassifyId in (" + cfIds + ")"
+					+ " and cu.user.userId = " + currUsr.getUserId()
+					+ " and cu.hasSubmit = 1 and cu.isDelete = 0";
+			int hasSubmit = baseDao.queryTotalCount(checkHql, new HashMap<String, Object>());
+			if (hasSubmit > 0) {
+				msg.put("flag", "notGrade");
+				msg.put("msg", "该年度指标已经提交，不能重复提交！");
+				return msg;
+			}
+			
 			ClassifyUser cu = null;
 			List<ClassifyUser> cuLst = new ArrayList<ClassifyUser>();
 			
@@ -993,7 +1012,6 @@ public class IndexManageServiceImpl implements IIndexManageService {
 						+ " and gr.user.userId = " + currUsr.getUserId();
 				int count = baseDao.queryTotalCount(cfHql, new HashMap<String, Object>());
 				if (count <= 0) {
-					
 					msg.put("flag", "notGrade");
 					msg.put("msg", "指标：" + cf.getName() + " 还未进行评分！");
 					return msg;
@@ -1016,5 +1034,62 @@ public class IndexManageServiceImpl implements IIndexManageService {
 		
 		msg.put("flag", "success");
 		return msg;
+	}
+
+	/******************部门评分明细数据查询********************/
+	
+	@Override
+	public ListVo<DeptGradeDetailVo> queryDeptGradeDetail(Integer start, Integer limit, String electYear,
+			String canpDeptId, String gradeDeptId, String cfId) throws Exception {
+		
+		ListVo<DeptGradeDetailVo> listVo = new ListVo<DeptGradeDetailVo>();
+		
+		String dgdHql = " from GradeRecord gr where gr.isDelete = 0";
+		if (StringUtil.isNotBlank(electYear)) {
+			dgdHql += " and gr.classify.electYear = '" + electYear + "'";
+		}
+		
+		if (StringUtil.isNotBlank(canpDeptId) && !"0".equals(canpDeptId)) {
+			dgdHql += " and gr.org.orgId = " + canpDeptId;
+		}
+		
+		if (StringUtil.isNotBlank(gradeDeptId) && !"0".equals(gradeDeptId)) {
+			dgdHql += " and gr.usrOrg.orgId = " + gradeDeptId;
+		}
+		
+		if (StringUtil.isNotBlank(cfId) && !"0".equals(cfId)) {
+			dgdHql += " and gr.classify.pkClassifyId = " + cfId;
+		}
+		
+		int count = baseDao.queryTotalCount(dgdHql, new HashMap<String, Object>());
+		
+		dgdHql += " order by gr.pkGradeRecId";
+		List<GradeRecord> grLst = (List<GradeRecord>)baseDao.queryEntitysByPage(start, limit, dgdHql, new HashMap<String, Object>());
+		if (!CollectionUtils.isEmpty(grLst)) {
+			DeptGradeDetailVo vo = null;
+			List<DeptGradeDetailVo> voLst = new ArrayList<DeptGradeDetailVo>();
+			for (GradeRecord gr : grLst) {
+				vo = new DeptGradeDetailVo();
+				
+				vo.setGradeDetailId(gr.getPkGradeRecId());
+				vo.setClassifyName(gr.getClassify().getName());
+				vo.setName(gr.getIndex1().getName());
+				if (gr.getIndex2() != null) {
+					vo.setGradeIndex2Name(gr.getIndex2().getName());
+				}
+				
+				vo.setCanpDept(gr.getOrg().getOrgName());
+				vo.setScore(gr.getScore());
+				vo.setGradeUsr(gr.getUser().getRealname());
+				vo.setGradeUsrDept(gr.getUsrOrg().getOrgName());
+				
+				voLst.add(vo);
+			}
+			
+			listVo.setList(voLst);
+			listVo.setTotalSize(count);
+		}
+		
+		return listVo;
 	}
 }
