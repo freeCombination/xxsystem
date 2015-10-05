@@ -3,7 +3,7 @@
 <%@ include file="../common/taglibs.jsp"%>
 <html>
 <head>
-<title>公司架构系统</title>
+<title>绩效评分系统</title>
 <script type="text/javascript">
 function logout(){
 	Ext.Ajax.request({ 

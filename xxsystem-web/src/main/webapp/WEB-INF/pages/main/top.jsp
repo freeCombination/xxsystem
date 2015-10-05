@@ -7,7 +7,7 @@
 <script type="text/javascript" src="${ctx}/scripts/extjs/bootstrap.js"></script>
 <script type="text/javascript" src="${ctx}/scripts/extjs/locale/ext-lang-zh_CN.js"></script>
 <head>
-<title>公司架构系统</title>
+<title>绩效评分系统</title>
 </head>
 <script language="javascript">
 	function getBg(num) {

@@ -450,4 +450,26 @@ public class IndexManageAction extends BaseAction {
 		
 		return null;
 	}
+	
+    /******************部门评分汇总数据查询********************/
+    
+    /**
+	 * 查询部门评分汇总
+	 */
+	public String queryDeptGradeSummarizing() {
+		try {
+			String electYear = getRequest().getParameter("electYear");
+			String canpDeptId = getRequest().getParameter("canpDeptId");
+			String cfId = getRequest().getParameter("cfId");
+			
+			ListVo<DeptGradeDetailVo> lv = indexManageService.queryDeptGradeSummarizing(getStart(), getLimit(), electYear, 
+					canpDeptId, cfId);
+			JsonUtil.outJson(lv);
+		} catch (Exception e) {
+			this.excepAndLogHandle(IndexManageAction.class, "查询部门评分汇总", e, false);
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
 }

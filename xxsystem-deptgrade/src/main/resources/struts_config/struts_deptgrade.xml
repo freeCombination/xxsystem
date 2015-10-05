@@ -24,6 +24,10 @@
             <result name="success">/WEB-INF/pages/deptGrade/deptGradeDetail.jsp</result>
         </action>
         
+        <action name="toDeptGradeSummarizing" class="com.xx.system.deptgrade.action.IndexManageAction">
+            <result name="success">/WEB-INF/pages/deptGrade/deptGradeSummarizing.jsp</result>
+        </action>
+        
         <action name="*" class="com.xx.system.deptgrade.action.IndexManageAction" method="{1}"></action>
 	</package>
 </struts>

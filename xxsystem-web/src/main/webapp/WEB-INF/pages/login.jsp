@@ -8,7 +8,7 @@
 <script type="text/javascript" src="${ctx}/scripts/login/jcookie.js"></script>
 <script type="text/javascript" src="${ctx}/scripts/login/login.js"></script>
 <script type="text/javascript" src="${ctx}/scripts/login/isLogin.js"></script>
-<title>公司架构系统</title>
+<title>绩效评分系统</title>
 <script language="javascript" type="text/javascript">
 	$(document).ready(function(){
 		// document.onkeydown = showKeyDown;
@@ -105,7 +105,7 @@
 <body class="login2" onload="setFocus()">
 	<div class="login2_bg">
 		<div class="login2_title">
-			公司开发架构系统&nbsp;<span class="span_SUB">V 1.6</span>
+			绩效评分系统&nbsp;<span class="span_SUB">V 1.0</span>
 		</div>
 		<table border="0" cellpadding="0" cellspacing="2" class="login_2">
 			<tr>

@@ -271,4 +271,17 @@ public interface IIndexManageService {
      */
     public ListVo<DeptGradeDetailVo> queryDeptGradeDetail(Integer start, Integer limit, 
     		String electYear, String canpDeptId, String gradeDeptId, String cfId) throws Exception;
+    
+    /******************部门评分汇总数据查询********************/
+    
+    /**
+     * 查询部门评分汇总
+     * 
+     * @param electYear 参评年份
+     * @param canpDeptId 参评部门
+     * @return
+     * @throws Exception
+     */
+    public ListVo<DeptGradeDetailVo> queryDeptGradeSummarizing(Integer start, Integer limit, 
+    		String electYear, String canpDeptId, String cfId) throws Exception;
 }

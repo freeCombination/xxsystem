@@ -10,7 +10,7 @@
 <!-- <meta http-equiv="x-ua-compatible" content="ie=7" /> -->
 <html class="overflow_hidden">
 <head>
-<title>公司架构系统</title>
+<title>绩效评分系统</title>
 </head>
 <script>
 function getIE() {
@@ -256,7 +256,7 @@ function getIE() {
 </script>
 <body class="overflow_hidden" onload="getIE();">
 	<div class="frame2_top">
-		<div class="top_logo">公司开发架构系统</div>
+		<div class="top_logo">绩效评分系统</div>
 		<div class="top_img">
 			<span class="top_right"> <input name="" type="button" value=""
 				class="top_help" onclick="toHelp();" /> <input name="" type="button" value=""
@@ -294,8 +294,7 @@ function getIE() {
 	</div>
 	<div class="frame2_bottom">
 		<div class="frame2_bottom_txt">
-			Copyright&nbsp;&nbsp;2015&nbsp;&nbsp;&nbsp;版权所有：大庆金桥信息技术工程有限公司&nbsp;&nbsp;&nbsp;技术支持：<a
-				href="#" target="content">大庆金桥信息技术工程有限公司成都分公司</a>
+			Copyright&nbsp;&nbsp;2015&nbsp;&nbsp;&nbsp;版权所有：中储粮成都粮食储藏所&nbsp;&nbsp;&nbsp;
 		</div>
 	</div>
 </body>

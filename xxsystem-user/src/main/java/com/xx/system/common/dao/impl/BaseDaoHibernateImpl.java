@@ -2,6 +2,7 @@ package com.xx.system.common.dao.impl;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.Date;
@@ -805,7 +806,7 @@ public class BaseDaoHibernateImpl extends HibernateDaoSupport implements
             }
         }
         if (q.uniqueResult() != null) {
-            BigDecimal b = (BigDecimal)q.uniqueResult();
+        	BigInteger b = (BigInteger)q.uniqueResult();
             count = b.intValue();
         }
         return count;
