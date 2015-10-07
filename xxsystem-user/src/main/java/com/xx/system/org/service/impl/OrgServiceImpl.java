@@ -30,6 +30,7 @@ import com.xx.system.common.util.StringUtil;
 import com.xx.system.common.vo.ListVo;
 import com.xx.system.common.vo.PagerVo;
 import com.xx.system.common.vo.TreeNode;
+import com.xx.system.deptgrade.entity.IndexClassify;
 import com.xx.system.dict.entity.Dictionary;
 import com.xx.system.dict.service.IDictService;
 import com.xx.system.org.entity.OrgUser;
@@ -1480,5 +1481,23 @@ public class OrgServiceImpl implements IOrgService {
         }
         return result;
     }
+
+	@Override
+	public void lockupOrg(Integer orgId) throws BusinessException {
+		if (orgId != null && orgId != 0) {
+			Organization org = (Organization)baseDao.queryEntityById(Organization.class, orgId);
+			
+			if (org != null) {
+				if (org.getEnable() == 1) {
+					org.setEnable(0);
+				}
+				else {
+					org.setEnable(1);
+				}
+				
+				baseDao.update(org);
+			}
+		}
+	}
     
 }

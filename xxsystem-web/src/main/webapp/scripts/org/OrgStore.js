@@ -19,11 +19,11 @@ var orgTypeStore = Ext.create('Ext.data.Store', {
   		root: 'list'
 	}
 	},
-	autoLoad: false,
+	autoLoad: true,
 	listeners:{
 		load:function(storeObj,records){
             if(records.length>0){
-            	Ext.getCmp("addOrgSelectionId").setValue(records[0].get("dictionaryId"));
+            	//Ext.getCmp("addOrgSelectionId").setValue(records[0].get("dictionaryId"));
             }
 		}
 	}

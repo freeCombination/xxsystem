@@ -111,6 +111,9 @@
 		<action name="uploadExcelToBacthImportOrg" class="com.xx.system.org.action.OrgAction" method="uploadExcelToBacthImportOrg">
 		</action>
 		
+		<action name="lockupOrg" class="com.xx.system.org.action.OrgAction" method="lockupOrg">
+        </action>
+		
 		<!-- 岗位管理 -->
 		<action name="toResponsibilities" class="com.xx.system.org.action.RespAction">
             <result>/WEB-INF/pages/org/responsibilitiesManage.jsp</result>

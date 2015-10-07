@@ -198,7 +198,7 @@ sshframe.user.userGrid =  Ext.create("Ext.grid.Panel",{
 			iconCls: "resetPwd",
 			hidden:false,
 			disabled:true,
-			disabledExpr : "$selectedRows != 1 && $enable == 0",
+			disabledExpr : "$selectedRows != 1 || $enable == 1",
 			handler: function(){
 				sshframe.user.resetPwd();
 			}
@@ -260,7 +260,7 @@ sshframe.user.userGrid =  Ext.create("Ext.grid.Panel",{
 			text:SystemConstant.modifyBtnText,
 			id:"updateUser",
 			disabled: true,
-			disabledExpr : "$selectedRows != 1 && $enable == 0",
+			disabledExpr : "$selectedRows != 1 || $enable == 1",
 			iconCls: "edit-button",
 			hidden:true,
 			handler:function(){
@@ -272,7 +272,7 @@ sshframe.user.userGrid =  Ext.create("Ext.grid.Panel",{
 			text:SystemConstant.deleteBtnText,
 			id:"deleteUser",
 			disabled:true,
-			disabledExpr : "$selectedRows == 0 && $enable == 0",
+			disabledExpr : "$selectedRows == 0 || $enable == 1",
 			hidden:true,
 			iconCls: "delete-button",
 			handler:function(){

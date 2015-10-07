@@ -411,4 +411,12 @@ public interface IOrgService {
      */
     public String isCandelOrgIds(String orgIds)
         throws BusinessException;
+    
+    /**
+     * 锁定和解锁组织
+     * 
+     * @param orgId
+     * @throws BusinessException
+     */
+    public void lockupOrg(Integer orgId) throws BusinessException;
 }

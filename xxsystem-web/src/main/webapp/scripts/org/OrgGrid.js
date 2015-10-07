@@ -64,7 +64,7 @@ var orgGrid = Ext.create("Ext.grid.Panel", {
 		xtype : 'button',
 		id : 'updateOrg',
 		text : SystemConstant.modifyBtnText,
-		disabledExpr : "$selectedRows != 1 && $enable == 0",// $selected 表示选中的记录数不等于1
+		disabledExpr : "$selectedRows != 1 || $enable == 0",// $selected 表示选中的记录数不等于1
 		disabled : true,
 		iconCls : 'edit-button',
 		handler : function() {
@@ -75,7 +75,7 @@ var orgGrid = Ext.create("Ext.grid.Panel", {
 		text : SystemConstant.deleteBtnText,
 		id:'deleteOrg',
 		disabled : true,
-		disabledExpr : "$selectedRows == 0 && $enable == 0",
+		disabledExpr : "$selectedRows == 0 || $enable == 0",
 		iconCls : 'delete-button',
 		handler : function() {
 			deleteOrg();
@@ -143,4 +143,44 @@ var deleteOrg = function(){
 			});
 		}
 	});
+};
+
+lockupOrg = function(orgId, enable){
+	var title = '确认锁定所选组织数据吗？';
+	if (enable == 0) {
+		title = '确认解锁所选组织据吗？';
+	}
+	
+	Ext.Msg.confirm(SystemConstant.alertTitle, title, function(btn) {
+        if (btn == 'yes') {
+        	Ext.Ajax.request({
+                url: basePath + '/org/lockupOrg.action',
+                async:false,
+                params: {
+                	orgId: orgId,
+                    enable: enable
+                },
+                success : function(res, options) {
+                    var result = Ext.decode(res.responseText);
+                    if(result.success == 'true'){
+                        new Ext.ux.TipsWindow(
+                                {
+                                    title: SystemConstant.alertTitle,
+                                    autoHide: 3,
+                                    html:result.msg
+                                }
+                        ).show();
+                    }else{
+                        Ext.MessageBox.show({
+                            title: SystemConstant.alertTitle,
+                            msg: result.msg,
+                            buttons: Ext.MessageBox.OK,
+                            icon: Ext.MessageBox.INFO
+                        });
+                    }
+                    orgStore.load();
+                }
+            });
+        }
+    });
 };

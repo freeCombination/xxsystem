@@ -22,8 +22,10 @@ import com.xx.system.common.util.JsonUtil;
 import com.xx.system.common.util.RequestUtil;
 import com.xx.system.common.util.StringUtil;
 import com.xx.system.common.vo.ListVo;
+import com.xx.system.common.vo.ResponseVo;
 import com.xx.system.common.vo.TreeNode;
 import com.xx.system.common.vo.ZTreeNodeVo;
+import com.xx.system.deptgrade.action.IndexManageAction;
 import com.xx.system.dict.entity.Dictionary;
 import com.xx.system.dict.service.IDictService;
 import com.xx.system.org.entity.Organization;
@@ -162,17 +164,20 @@ public class OrgAction extends BaseAction {
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put("success", true);
                 map.put("msg", "获取组织成功");
-                map.put("orgId", org.getOrgId());
-                map.put("orgName", org.getOrgName());
-                map.put("orgTypeId", org.getOrgType().getPkDictionaryId());
-                map.put("orgTypeName", org.getOrgType().getDictionaryName());
-                map.put("orgCode", org.getOrgCode());
-                map.put("disOrder", org.getDisOrder());
+                map.put("org.orgId", org.getOrgId());
+                map.put("org.orgName", org.getOrgName());
+                map.put("org.orgType.pkDictionaryId", org.getOrgType().getPkDictionaryId());
+                map.put("org.orgTypeName", org.getOrgType().getDictionaryName());
+                map.put("org.orgCode", org.getOrgCode());
+                map.put("org.disOrder", org.getDisOrder());
                 if (org.getOrganization() != null) {
-                    map.put("parentOrgId", org.getOrganization().getOrgId());
-                    map.put("parentOrgName", org.getOrganization().getOrgName());
+                    map.put("org.organization.orgId", org.getOrganization().getOrgId());
+                    map.put("org.organization.orgName", org.getOrganization().getOrgName());
                 }
-                JsonUtil.outJson(map);
+                
+                ResponseVo vo = new ResponseVo();
+                vo.setData(map);
+                JsonUtil.outJson(vo);
             }
         }
         catch (Exception e) {
@@ -734,6 +739,35 @@ public class OrgAction extends BaseAction {
         }
         return null;
     }
+    
+    /**
+	 * 锁定和解锁组织
+	 * @return
+	 */
+	public String lockupOrg() {
+		String msg = "{success:'false',msg:'锁定组织失败'}";
+		String msg1 = "{success:'false',msg:'解锁组织失败'}";
+		
+		String id = getRequest().getParameter("orgId");
+		String enable = getRequest().getParameter("enable");
+		Integer orgId = StringUtil.isNotBlank(id) ? Integer.valueOf(id) : 0;
+		Integer en = StringUtil.isNotBlank(enable) ? Integer.valueOf(enable) : 0;
+		try {
+			organizationService.lockupOrg(orgId);
+			msg = "{success:'true',msg:'锁定组织成功'}";
+			msg1 = "{success:'true',msg:'解锁组织成功'}";
+		} catch (Exception e) {
+			this.excepAndLogHandle(IndexManageAction.class, "锁定和解锁组织", e, false);
+		}
+		
+		if (en == 1) {
+			JsonUtil.outJson(msg);
+		}
+		else {
+			JsonUtil.outJson(msg1);
+		}
+		return null;
+	}
     
     /**
      * <p>
