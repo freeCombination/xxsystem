@@ -6,6 +6,12 @@
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/resources"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/resources-user"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/resource-grade"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/java-grade"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/java_user"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/resources-deptgrade"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/java-deptgrade"/>
         <property name="java-output-path" value="/sshframe-web/src/main/webapp/WEB-INF/classes"/>
         <property name="context-root" value="xxsystem"/>
     </wb-module>

@@ -35,7 +35,6 @@ Ext.onReady(function(){
 			renderTo: Ext.getBody(),
 			items: [grade.personalGrade.PersonalGradeGrid]
 		});
-		
 		grade.personalGrade.PersonalGradeStore.load();
 });
 

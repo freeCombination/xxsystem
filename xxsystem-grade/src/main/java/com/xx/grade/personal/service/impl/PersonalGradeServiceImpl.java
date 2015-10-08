@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -17,13 +18,20 @@ import org.springframework.stereotype.Service;
 
 import com.xx.grade.personal.entity.PersonalDuty;
 import com.xx.grade.personal.entity.PersonalGrade;
+import com.xx.grade.personal.entity.PersonalGradeResult;
 import com.xx.grade.personal.service.IPersonalGradeService;
 import com.xx.grade.personal.vo.PersonalDutyVo;
+import com.xx.grade.personal.vo.PersonalGradeResultVo;
 import com.xx.grade.personal.vo.PersonalGradeVo;
 import com.xx.system.common.dao.IBaseDao;
 import com.xx.system.common.exception.BusinessException;
+import com.xx.system.common.util.DateUtil;
 import com.xx.system.common.util.StringUtil;
 import com.xx.system.common.vo.ListVo;
+import com.xx.system.org.entity.OrgUser;
+import com.xx.system.org.entity.Organization;
+import com.xx.system.org.service.impl.OrgUserServiceImpl;
+import com.xx.system.user.entity.User;
 import com.xx.system.user.util.HSSFUtils;
 
 
@@ -42,7 +50,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 
 	@Override
 	public ListVo<PersonalGradeVo> getPersonalGradeList(Map<String, String> paramMap) throws BusinessException {
-		ListVo<PersonalGradeVo> result = new ListVo();
+		ListVo<PersonalGradeVo> result = new ListVo<PersonalGradeVo>();
 		List<PersonalGradeVo> list = new ArrayList<PersonalGradeVo>(); 
 		int totalSize = 0 ;
         int start = NumberUtils.toInt(paramMap.get("start"));
@@ -112,7 +120,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 
 	@Override
 	public ListVo<PersonalDutyVo> getPersonalDutyList(Map<String, String> paramMap) {
-		ListVo<PersonalDutyVo> result = new ListVo();
+		ListVo<PersonalDutyVo> result = new ListVo<PersonalDutyVo>();
 		List<PersonalDutyVo> list = new ArrayList<PersonalDutyVo>(); 
 		//用户ID 用户自评只能看自己的数据 
 		String personalGradeId = paramMap.get("personalGradeId");
@@ -247,5 +255,119 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
             this.baseDao.saveOrUpdate(duties);
         }
         return message ;
+	}
+
+	@Override
+	public void generatePersonalGradeResult(String ids, User curUser) {
+		if (StringUtil.isNotEmpty(ids) && curUser != null) {
+			StringBuffer hql = new StringBuffer();
+			hql.append(" From PersonalGrade pg where pg.status = 1 ");
+			hql.append(" and pg.id in ('"+ids+"')");
+			List<PersonalGrade> grades = baseDao.queryEntitys(hql.toString());
+			
+			//获取该人员组织下所有人员及所有上级组织人员
+			List<User> resultUser = getResultUserByCurrentOrg(curUser);
+			List<PersonalGradeResult> gradeResults = new ArrayList<PersonalGradeResult>();
+			for (PersonalGrade grade : grades) {
+				//遍历所有需要评分的人员 生成评分结果数据
+				for (User user : resultUser) {
+					PersonalGradeResult result = new PersonalGradeResult();
+					result.setPersonalGrade(grade);
+					result.setGradeUser(user);
+					result.setState(0);
+					gradeResults.add(result);
+				}
+			}
+			//如果有数据 批量保存
+			if (gradeResults != null && gradeResults.size()>0) {
+				baseDao.saveOrUpdate(gradeResults);
+			}
+		}
+	}
+
+	/**
+	 * 获取当前组织下所有人员及所有上级组织领导
+	 * 
+	 * @param currentOrg
+	 * @param curUser
+	 * @return
+	 */
+	private List<User> getResultUserByCurrentOrg(User curUser) {
+		String userId = "" ;
+		//获取当前组织下所有人员
+		
+		Set<OrgUser> currentOrgs = curUser.getOrgUsers();
+		Organization currentOrg = null ;
+		for (OrgUser orgUser : currentOrgs) {
+			if (orgUser.getOrganization() != null) {
+				currentOrg = orgUser.getOrganization();
+				break;
+			}
+		}
+		Set<OrgUser> orgUsers = currentOrg.getOrgUsers();
+		for (OrgUser orgUser : orgUsers) {
+			if (orgUser.getUser() !=null 
+					&& orgUser.getUser().getEnable() == 0
+					&& orgUser.getUser().getUserId() != curUser.getUserId()) {
+				userId += ","+orgUser.getUser().getUserId();
+			}
+		}
+		if (StringUtil.isNotEmpty(userId)) {
+			userId = userId.substring(1, userId.length());
+		}
+		//获取所有上级组织领导 TODO
+		StringBuffer hql = new StringBuffer();
+		hql.append(" From User u where u.userId in ('"+userId+"')");
+		List<User> users = baseDao.queryEntitys(hql.toString());
+		return users;
+	}
+
+	@Override
+	public ListVo<PersonalGradeResultVo> getPersonalGradeResultList(
+			Map<String, String> paramMap) {
+		ListVo<PersonalGradeResultVo> result = new ListVo<PersonalGradeResultVo>();
+		List<PersonalGradeResultVo> list = new ArrayList<PersonalGradeResultVo>(); 
+		int totalSize = 0 ;
+        int start = NumberUtils.toInt(paramMap.get("start"));
+        int limit = NumberUtils.toInt(paramMap.get("limit"));
+		//用户ID 用户自评只能看自己的数据 
+		String userId = paramMap.get("userId");
+		StringBuffer hql = new StringBuffer();
+		StringBuffer counthql = new StringBuffer();
+		hql.append(" From PersonalGradeResult pgr where 1=1");
+		counthql.append(" select count(*) From PersonalGradeResult pgr where 1=1 ");
+		if (StringUtil.isNotEmpty(userId)) {
+			hql.append(" and pgr.gradeUser.userId = " + Integer.parseInt(userId));
+			counthql.append(" and pgr.gradeUser.userId = " + Integer.parseInt(userId));
+		}
+		totalSize =  baseDao.getTotalCount(counthql.toString(), new HashMap<String, Object>());
+		List<PersonalGradeResult> personalGradeResults =  (List<PersonalGradeResult>)baseDao.queryEntitysByPage(start, limit, hql.toString(),new HashMap<String, Object>());
+		for (PersonalGradeResult gradeResult : personalGradeResults) {
+			PersonalGradeResultVo vo = new PersonalGradeResultVo();
+			buildResultEntityToVo(gradeResult,vo);
+			list.add(vo);
+		}
+		result.setList(list);
+		result.setTotalSize(totalSize);
+		return result;
+	}
+
+	private void buildResultEntityToVo(PersonalGradeResult gradeResult,
+			PersonalGradeResultVo vo) {
+		vo.setId(gradeResult.getId());
+		vo.setUserName(gradeResult.getGradeUser().getRealname());
+		vo.setScore(gradeResult.getScore());
+		if (gradeResult.getGradeDate() != null) {
+			vo.setGradeDate(DateUtil.dateToString(gradeResult.getGradeDate(), "yyyy-MM-dd HH:mm:ss"));
+		}
+		
+		if (gradeResult.getPersonalGrade() != null) {
+			PersonalGrade grade = gradeResult.getPersonalGrade();
+			vo.setGradeYear(grade.getGradeYear());
+			vo.setGradeUser(grade.getUser().getRealname());
+			vo.setTitle(grade.getTitle());
+			vo.setProblem(grade.getProblem());
+			vo.setWorkPlan(grade.getWorkPlan());
+		}
 	}
 }

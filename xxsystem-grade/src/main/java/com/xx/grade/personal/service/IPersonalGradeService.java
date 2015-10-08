@@ -7,9 +7,11 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import com.xx.grade.personal.entity.PersonalDuty;
 import com.xx.grade.personal.entity.PersonalGrade;
 import com.xx.grade.personal.vo.PersonalDutyVo;
+import com.xx.grade.personal.vo.PersonalGradeResultVo;
 import com.xx.grade.personal.vo.PersonalGradeVo;
 import com.xx.system.common.exception.BusinessException;
 import com.xx.system.common.vo.ListVo;
+import com.xx.system.user.entity.User;
 
 /**
  * 个人评分服务
@@ -92,6 +94,14 @@ public interface IPersonalGradeService {
 	 * @return
 	 */
 	public String submitPersonalGrade(String ids);
+	
+	/**
+	 * 生成评分结果
+	 * 
+	 * @param ids
+	 * @param curUser
+	 */
+	public void generatePersonalGradeResult(String ids,User curUser);
 
 	/**
 	 * 导出工作职责
@@ -110,5 +120,8 @@ public interface IPersonalGradeService {
 	 */
 	public String uploadPersonalDutyExcel(String fileUrl,
 			Map<String, String> paramsMap);
+
+	public ListVo<PersonalGradeResultVo> getPersonalGradeResultList(
+			Map<String, String> paramMap);
 	
 }

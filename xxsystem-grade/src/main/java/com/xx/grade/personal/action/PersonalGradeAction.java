@@ -16,6 +16,7 @@ import com.xx.grade.personal.entity.PersonalDuty;
 import com.xx.grade.personal.entity.PersonalGrade;
 import com.xx.grade.personal.service.IPersonalGradeService;
 import com.xx.grade.personal.vo.PersonalDutyVo;
+import com.xx.grade.personal.vo.PersonalGradeResultVo;
 import com.xx.grade.personal.vo.PersonalGradeVo;
 import com.xx.system.common.action.BaseAction;
 import com.xx.system.common.util.DateUtil;
@@ -111,6 +112,31 @@ public class PersonalGradeAction extends BaseAction {
 		}
 		return null;
 	}
+	
+	/**
+	 * 获取评分结果列表
+	 * 
+	 * @return
+	 */
+	public String getPersonalGradeResultList() {
+		try {
+			Map<String, String> paramMap = RequestUtil
+					.getParameterMap(getRequest());
+			User user = getCurrentUser();
+			if (user != null) {
+				paramMap.put("userId", user.getUserId().toString());
+			}
+			ListVo<PersonalGradeResultVo> resultList = this.personalGradeService
+					.getPersonalGradeResultList(paramMap);
+			JsonUtil.outJson(resultList);
+		} catch (Exception e) {
+			this.excepAndLogHandle(PersonalGradeAction.class, "获取评分结果列表失败", e,
+					false);
+		}
+		return null;
+	}
+	
+	
 
 	/**
 	 * 获取用户自评职责明细
@@ -327,6 +353,8 @@ public class PersonalGradeAction extends BaseAction {
 			String ids = this.getRequest().getParameter("ids");
 			String result = personalGradeService.submitPersonalGrade(ids);
 			JsonUtil.outJson(result);
+			//生成个人评分结果表
+			personalGradeService.generatePersonalGradeResult(ids, getCurrentUser());
 			this.excepAndLogHandle(PersonalGradeAction.class, "提交个人评分", null,
 					true);
 		} catch (Exception e) {
