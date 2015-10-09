@@ -2023,6 +2023,7 @@ public class UserServiceImpl implements IUserService {
         data.put("user.employmentInfo", user.getEmploymentInfo() == null ? "" : user.getEmploymentInfo());
         data.put("user.postWage", user.getPostWage() == null ? "" : user.getPostWage());
         data.put("user.trainInfo", user.getTrainInfo() == null ? "" : user.getTrainInfo());
+        data.put("user.politicsStatus", user.getPoliticsStatus() == null ? "" : user.getPoliticsStatus());
         
         // 组织
         String orgId = "";
@@ -2103,6 +2104,7 @@ public class UserServiceImpl implements IUserService {
         vo.setEmploymentInfo(user.getEmploymentInfo() == null ? "" : user.getEmploymentInfo());
         vo.setPostWage(user.getPostWage() == null ? "" : user.getPostWage());
         vo.setTrainInfo(user.getTrainInfo() == null ? "" : user.getTrainInfo());
+        vo.setPoliticsStatus(user.getPoliticsStatus() == null ? "" : user.getPoliticsStatus());
         
         // 属于多部门的情况，进行部门名称的拼接
         Set<OrgUser> ouSet = user.getOrgUsers();

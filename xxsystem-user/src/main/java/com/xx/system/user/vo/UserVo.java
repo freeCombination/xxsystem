@@ -185,6 +185,11 @@ public class UserVo {
     private String trainInfo;
     
     /**
+     * 政治面貌
+     */
+    private String politicsStatus;
+    
+    /**
      * @return userId
      */
     public int getUserId() {
@@ -588,5 +593,13 @@ public class UserVo {
 
 	public void setTrainInfo(String trainInfo) {
 		this.trainInfo = trainInfo;
+	}
+
+	public String getPoliticsStatus() {
+		return politicsStatus;
+	}
+
+	public void setPoliticsStatus(String politicsStatus) {
+		this.politicsStatus = politicsStatus;
 	}
 }

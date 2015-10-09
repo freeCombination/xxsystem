@@ -207,8 +207,15 @@ sshframe.user.UserForm = Ext.create("Ext.form.Panel", {
 							items : [
 								{
 									regex : new RegExp('^([^<^>])*$'),
+								    regexText : '不能包含特殊字符！',
+								    fieldLabel: '政治面貌',
+								    name: 'user.politicsStatus',
+								    maxLength:10
+								},
+								{
+									regex : new RegExp('^([^<^>])*$'),
 				                    regexText : '不能包含特殊字符！',
-								    fieldLabel: '入党团时间', 
+								    fieldLabel: '入党团时间',
 								    name: 'user.partyDate',
 								    maxLength:100
 								},

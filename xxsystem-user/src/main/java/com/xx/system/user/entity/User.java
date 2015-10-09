@@ -202,6 +202,11 @@ public class User implements java.io.Serializable {
      */
     private String trainInfo;
     
+    /**
+     * 政治面貌
+     */
+    private String politicsStatus;
+    
 	/**
      * <p>
      * Title: 用户构造方法
@@ -713,5 +718,14 @@ public class User implements java.io.Serializable {
 
 	public void setTrainInfo(String trainInfo) {
 		this.trainInfo = trainInfo;
+	}
+
+	@Column(name = "POLITICS_STATUS")
+	public String getPoliticsStatus() {
+		return politicsStatus;
+	}
+
+	public void setPoliticsStatus(String politicsStatus) {
+		this.politicsStatus = politicsStatus;
 	}
 }

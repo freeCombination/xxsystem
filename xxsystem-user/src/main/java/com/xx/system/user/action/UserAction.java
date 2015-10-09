@@ -438,6 +438,7 @@ public class UserAction extends BaseAction {
             oldUser.setEmploymentInfo(user.getEmploymentInfo());
             oldUser.setPostWage(user.getPostWage());
             oldUser.setTrainInfo(user.getTrainInfo());
+            oldUser.setPoliticsStatus(user.getPoliticsStatus());
             
             userService.addUpdateUser(oldUser);
             

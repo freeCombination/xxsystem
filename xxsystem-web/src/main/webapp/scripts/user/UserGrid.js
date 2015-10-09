@@ -64,7 +64,8 @@ Ext.define("sshframe.user.userModel",{
 		{name: "performance"},
 		{name: "employmentInfo"},
 		{name: "postWage"},
-		{name: "trainInfo"}
+		{name: "trainInfo"},
+		{name: "politicsStatus"}
 	]
 });
 
