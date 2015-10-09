@@ -526,8 +526,10 @@ public class IndexManageServiceImpl implements IIndexManageService {
 					vo = new PercentageVo();
 					vo.setPerId(gp.getPkPerId());
 					vo.setReceiptsNum(gp.getReceiptsNum());
-					vo.setRoleId(gp.getRole().getRoleId());
-					vo.setRoleName(gp.getRole().getRoleName());
+					if (gp.getRole() != null) {
+						vo.setRoleId(gp.getRole().getRoleId());
+						vo.setRoleName(gp.getRole().getRoleName());
+					}
 					vo.setPercentage(gp.getPercentage());
 					vo.setRemark(gp.getRemark());
 					voLst.add(vo);
