@@ -6,6 +6,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.xx.grade.personal.entity.PersonalDuty;
 import com.xx.grade.personal.entity.PersonalGrade;
+import com.xx.grade.personal.entity.PersonalGradeResult;
 import com.xx.grade.personal.vo.PersonalDutyVo;
 import com.xx.grade.personal.vo.PersonalGradeResultVo;
 import com.xx.grade.personal.vo.PersonalGradeVo;
@@ -121,7 +122,44 @@ public interface IPersonalGradeService {
 	public String uploadPersonalDutyExcel(String fileUrl,
 			Map<String, String> paramsMap);
 
+	/**
+	 * 获取个人评分结果列表
+	 * 
+	 * @param paramMap
+	 * @return
+	 */
 	public ListVo<PersonalGradeResultVo> getPersonalGradeResultList(
 			Map<String, String> paramMap);
+
+	/**
+	 * 根据id获取个人评分结果
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public PersonalGradeResultVo getPersonalGradeResultById(int id);
+	
+	/**
+	 * 根据id获取个人评分结果实体
+	 * 
+	 * @param parseInt
+	 * @return
+	 */
+	public PersonalGradeResult getPersonalGradeResultEntityById(int parseInt);
+
+	/**
+	 * 编辑个人评分结果
+	 * 
+	 * @param result
+	 */
+	public void editPersonalGradeResult(PersonalGradeResult result);
+
+	/**
+	 * 提交个人评分结果
+	 * 
+	 * @param ids
+	 * @return
+	 */
+	public String submitPersonalGradeResult(String ids);
 	
 }

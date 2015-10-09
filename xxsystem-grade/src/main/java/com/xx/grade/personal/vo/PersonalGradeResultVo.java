@@ -15,6 +15,11 @@ public class PersonalGradeResultVo {
 	private Integer id;
 	
 	/**
+	 * 个人评分id
+	 */
+	private Integer personalGradeId;
+	
+	/**
 	 * 被评分人
 	 */
 	private String gradeUser ;
@@ -88,6 +93,11 @@ public class PersonalGradeResultVo {
      * 学历（专业、毕业时间、学校）
      */
     private String educationBackground;
+    
+    /**
+     * 政治面貌
+     */
+    private String politicsStatus ;
 
 	public Integer getId() {
 		return id;
@@ -215,5 +225,21 @@ public class PersonalGradeResultVo {
 
 	public void setEducationBackground(String educationBackground) {
 		this.educationBackground = educationBackground;
+	}
+
+	public String getPoliticsStatus() {
+		return politicsStatus;
+	}
+
+	public void setPoliticsStatus(String politicsStatus) {
+		this.politicsStatus = politicsStatus;
+	}
+
+	public Integer getPersonalGradeId() {
+		return personalGradeId;
+	}
+
+	public void setPersonalGradeId(Integer personalGradeId) {
+		this.personalGradeId = personalGradeId;
 	}
 }

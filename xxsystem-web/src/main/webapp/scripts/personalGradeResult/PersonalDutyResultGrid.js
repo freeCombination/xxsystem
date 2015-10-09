@@ -48,10 +48,10 @@ var cm = [
 		},
 		{
 			header : "完成情况",
-			dataIndex : "completion",
+			dataIndex : "completion"/*,
 			renderer:function(value,p,record){
 				return '<div style="white-space:normal">'+value+"</div>";
-			}
+			}*/
 		}
           ];
 
@@ -59,6 +59,7 @@ var cm = [
  * 定义Grid
  */
 grade.personalDutyResult.PersonalDutyResultGrid = Ext.create("Ext.grid.Panel", {
+	title:'职责完成情况',
 	region : "center",
 	store : grade.personalDutyResult.PersonalDutyResultStore,
 	columns : cm

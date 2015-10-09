@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.xx.grade.personal.entity.PersonalDuty;
 import com.xx.grade.personal.entity.PersonalGrade;
+import com.xx.grade.personal.entity.PersonalGradeResult;
 import com.xx.grade.personal.service.IPersonalGradeService;
 import com.xx.grade.personal.vo.PersonalDutyVo;
 import com.xx.grade.personal.vo.PersonalGradeResultVo;
@@ -53,6 +54,8 @@ public class PersonalGradeAction extends BaseAction {
 	 * 评分实体
 	 */
 	private PersonalGrade grade;
+	
+	private PersonalGradeResult result ;
 	
 	/**
      * @Fields uploadAttach :
@@ -175,6 +178,26 @@ public class PersonalGradeAction extends BaseAction {
 		}
 		return null;
 	}
+	
+	/**
+	 * 根据id获取个人评分结果
+	 * @return
+	 */
+	public String getPersonalGradeResultById() {
+		try {
+			ResponseVo rv = new ResponseVo();
+			PersonalGradeResultVo vo = this.personalGradeService
+					.getPersonalGradeResultById(id);
+			rv.setData(vo);
+			JsonUtil.outJson(rv);
+		} catch (Exception e) {
+			this.excepAndLogHandle(PersonalGradeAction.class, "根据id获取个人评分结果", e,
+					false);
+		}
+		return null;
+	}
+	
+	
 
 	/**
 	 * 编辑个人评分
@@ -196,6 +219,28 @@ public class PersonalGradeAction extends BaseAction {
 		}
 		return null;
 	}
+	
+	/**
+	 * 编辑个人评分结果
+	 * 
+	 * @return
+	 */
+	public String editPersonalGradeResult() {
+		try {
+			result = parseGradeResultFormRequest();
+			this.personalGradeService.editPersonalGradeResult(result);
+			JsonUtil.outJson("{success:true,msg:'编辑个人评分结果！'}");
+			this.excepAndLogHandle(PersonalGradeAction.class, "编辑个人评分结果", null,
+					true);
+		} catch (Exception e) {
+			JsonUtil.outJson("{success:false,msg:'编辑个人评分结果！'}");
+			this.excepAndLogHandle(PersonalGradeAction.class, "编辑个人评分结果", e,
+					false);
+			return null;
+		}
+		return null;
+	}
+	
 
 	/**
 	 * 更改职责明细
@@ -342,6 +387,37 @@ public class PersonalGradeAction extends BaseAction {
 		}
 		return grade;
 	}
+	
+	/**
+	 * 组装个人评分结果实体
+	 * 
+	 * @return
+	 */
+	private PersonalGradeResult parseGradeResultFormRequest() {
+		PersonalGradeResult result = null;
+		try {
+			Map<String, String> gradeMap = RequestUtil.getParameterMap(super
+					.getRequest());
+			if (gradeMap.get("id") != null
+					&& StringUtil.isNotBlank(gradeMap.get("id"))) {
+				result = this.personalGradeService
+						.getPersonalGradeResultEntityById(Integer.parseInt(gradeMap
+								.get("id")));
+			}
+			if (null != result) {
+				result.setScore(Double.valueOf(gradeMap.get("score")));
+			} else {
+				JsonUtil.outJson("{success:'false',msg:'编辑个人评分结果失败，未找到该数据！'}");
+			}
+		} catch (Exception e) {
+			JsonUtil.outJson("{success:'false',msg:'编辑个人评分结果失败！'}");
+			this.excepAndLogHandle(PersonalGradeAction.class, "编辑个人评分结果失败", e,
+					false);
+		}
+		return result;
+	}
+	
+	
 
 	/**
 	 * 提交个人评分数据
@@ -364,6 +440,27 @@ public class PersonalGradeAction extends BaseAction {
 		}
 		return null;
 	}
+	
+	/**
+	 * 提交个人评分结果
+	 * 
+	 * @return
+	 */
+	public String submitPersonalGradeResult() {
+		try {
+			String ids = this.getRequest().getParameter("ids");
+			String result = personalGradeService.submitPersonalGradeResult(ids);
+			JsonUtil.outJson(result);
+			this.excepAndLogHandle(PersonalGradeAction.class, "提交个人评分结果", null,
+					true);
+		} catch (Exception e) {
+			JsonUtil.outJson("{success:false,msg:'提交个人评分失败！'}");
+			this.excepAndLogHandle(PersonalGradeAction.class, "提交个人评分结果", e,
+					false);
+		}
+		return null;
+	}
+	
 
 	/**
 	 * get && set
@@ -384,5 +481,15 @@ public class PersonalGradeAction extends BaseAction {
 	public void setGrade(PersonalGrade grade) {
 		this.grade = grade;
 	}
+
+	public PersonalGradeResult getResult() {
+		return result;
+	}
+
+	public void setResult(PersonalGradeResult result) {
+		this.result = result;
+	}
+	
+	
 
 }

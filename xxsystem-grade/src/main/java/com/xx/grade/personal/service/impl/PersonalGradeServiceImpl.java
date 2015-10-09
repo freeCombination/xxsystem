@@ -1,7 +1,9 @@
 package com.xx.grade.personal.service.impl;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +32,6 @@ import com.xx.system.common.util.StringUtil;
 import com.xx.system.common.vo.ListVo;
 import com.xx.system.org.entity.OrgUser;
 import com.xx.system.org.entity.Organization;
-import com.xx.system.org.service.impl.OrgUserServiceImpl;
 import com.xx.system.user.entity.User;
 import com.xx.system.user.util.HSSFUtils;
 
@@ -304,11 +305,14 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 				break;
 			}
 		}
-		Set<OrgUser> orgUsers = currentOrg.getOrgUsers();
-		for (OrgUser orgUser : orgUsers) {
+		
+		StringBuffer OrgUserhql = new StringBuffer();
+		OrgUserhql.append(" From OrgUser ou where ou.isDelete = 0 and ou.organization.orgId ="+currentOrg.getOrgId());
+		OrgUserhql.append(" and ou.user.userId <> "+curUser.getUserId());
+		List<OrgUser> orgUsers2 = baseDao.queryEntitys(OrgUserhql.toString());
+		for (OrgUser orgUser : orgUsers2) {
 			if (orgUser.getUser() !=null 
-					&& orgUser.getUser().getEnable() == 0
-					&& orgUser.getUser().getUserId() != curUser.getUserId()) {
+					&& orgUser.getUser().getEnable() == 1) {
 				userId += ","+orgUser.getUser().getUserId();
 			}
 		}
@@ -317,7 +321,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		}
 		//获取所有上级组织领导 TODO
 		StringBuffer hql = new StringBuffer();
-		hql.append(" From User u where u.userId in ('"+userId+"')");
+		hql.append(" From User u where u.userId in ("+userId+")");
 		List<User> users = baseDao.queryEntitys(hql.toString());
 		return users;
 	}
@@ -360,14 +364,116 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		if (gradeResult.getGradeDate() != null) {
 			vo.setGradeDate(DateUtil.dateToString(gradeResult.getGradeDate(), "yyyy-MM-dd HH:mm:ss"));
 		}
+		vo.setState(gradeResult.getState());
 		
 		if (gradeResult.getPersonalGrade() != null) {
 			PersonalGrade grade = gradeResult.getPersonalGrade();
 			vo.setGradeYear(grade.getGradeYear());
-			vo.setGradeUser(grade.getUser().getRealname());
+			vo.setPersonalGradeId(grade.getId());
+			if (grade.getUser() != null) {
+				User user = grade.getUser();
+				vo.setGradeUser(user.getRealname());
+				if (user.getResponsibilities() != null) {
+					vo.setResponsibilities(user.getResponsibilities().getName());
+				}
+				vo.setBirthDay(user.getBirthDay());
+				vo.setGender(user.getGender());
+				vo.setPoliticsStatus(user.getPoliticsStatus());
+				vo.setEducationBackground(user.getEducationBackground());
+			}
 			vo.setTitle(grade.getTitle());
 			vo.setProblem(grade.getProblem());
 			vo.setWorkPlan(grade.getWorkPlan());
+		}
+	}
+
+	@Override
+	public PersonalGradeResultVo getPersonalGradeResultById(int id) {
+		PersonalGradeResult result = (PersonalGradeResult)baseDao.queryEntityById(PersonalGradeResult.class, id);
+		PersonalGradeResultVo vo = new PersonalGradeResultVo();
+		buildResultEntityToVo(result, vo);
+		return vo;
+	}
+
+	@Override
+	public PersonalGradeResult getPersonalGradeResultEntityById(int id) {
+		PersonalGradeResult result = (PersonalGradeResult)baseDao.queryEntityById(PersonalGradeResult.class, id);
+		return result ;
+	}
+
+	@Override
+	public void editPersonalGradeResult(PersonalGradeResult result) {
+		baseDao.updateEntity(result);
+	}
+
+	@Override
+	public String submitPersonalGradeResult(String ids) {
+		try {
+			if (StringUtil.isNotEmpty(ids)) {
+//				StringBuffer sql = new StringBuffer();
+//				sql.append(" update T_PERSONAL_GRADE_RESULT t set t.state = 1 ");
+//				sql.append(" where t.id in ('").append(ids).append("')");
+//				this.baseDao.executeNativeSQL(sql.toString());
+				String[] idsArr = ids.split(",");
+				for (String id : idsArr) {
+					PersonalGradeResult result = (PersonalGradeResult)baseDao.queryEntityById(PersonalGradeResult.class, Integer.parseInt(id));
+					if (result != null) {
+						result.setState(1);
+						result.setGradeDate(new Date());
+						baseDao.saveOrUpdate(result);
+						generateCompositeScores(result);
+					}
+				}
+			}
+			return "{success:true,msg:'提交成功！'}";
+		} catch (Exception e) {
+			return "{success:false,msg:'提交失败！'}";
+		}
+	}
+
+	/**
+	 * 生成个人评分综合评分，如果该职工已被所有人评完，则生成总得分；
+	 * 生成规则：评分人大于3人时，去掉最高最低，然后取平均分
+	 * 
+	 * @param result
+	 */
+	private void generateCompositeScores(PersonalGradeResult result) {
+		PersonalGrade grade = result.getPersonalGrade();
+		if (grade != null) {
+			StringBuffer hql = new StringBuffer();
+			StringBuffer hqlCount = new StringBuffer();
+			hql.append(" From PersonalGradeResult r where r.state=1 and r.personalGrade.id="+grade.getId());
+			hql.append(" order by r.score");
+			hqlCount.append(" select count(*) from PersonalGradeResult r where r.personalGrade.id= "+grade.getId());
+			int totalSize = baseDao.getTotalCount(hqlCount.toString(), new HashMap<String, Object>());
+			List<PersonalGradeResult> results = baseDao.queryEntitys(hql.toString());
+			//判断是否已经提交完成
+			if (results != null && results.size() == totalSize) {
+				//如果小于3，直接求平均分
+				double totalScore = 0 ;
+				int userCount = 0 ;
+				if (totalSize < 3) {
+					for (int i = 0; i < results.size(); i++) {
+						PersonalGradeResult gradeResult = results.get(i);
+						totalScore += gradeResult.getScore();
+					}
+					userCount = totalSize ;
+				}
+				//如果大于等于3，则需去掉两头
+				else{
+					for (int i = 1; i < results.size()-1; i++) {
+						PersonalGradeResult gradeResult = results.get(i);
+						totalScore += gradeResult.getScore();
+					}
+					userCount = totalSize - 2 ;
+				}
+				int scale = 2; //小数点精度
+				BigDecimal a = new BigDecimal(String.valueOf(totalScore));
+				BigDecimal b = new BigDecimal(String.valueOf(userCount));
+				BigDecimal r = a.divide(b, scale, BigDecimal.ROUND_HALF_UP);
+				grade.setCompositeScores(r.doubleValue());
+				baseDao.saveOrUpdate(grade);
+			}
 		}
 	}
 }

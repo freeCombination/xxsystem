@@ -8,6 +8,7 @@
  * 定义个人评分基础信息form
  */
 grade.personalGradeResult.PersonalGradeResultForm = Ext.create("Ext.form.Panel", {
+	//title:'基本信息',
 	layout : 'form',
 	region: "north",
 	bodyStyle : 'padding:15px 10px 0 0',
@@ -24,23 +25,30 @@ grade.personalGradeResult.PersonalGradeResultForm = Ext.create("Ext.form.Panel",
 	defaultType : 'textfield',
     items: [
             {
-            	id:'personalGradeId',
+            	id:'id',
         		name : 'id',
         		hidden : true
+        	},
+            {
+            	id:'personalGradeId',
+        		name : 'personalGradeId',
+        		hidden : true
+        	},
+        	{
+        		fieldLabel : '得分',
+        		name : 'score',
+        		id:'score',
+        		xtype : 'numberfield'
         	},
         	{
         		fieldLabel : '存在问题',
         		name : 'problem',
-        		vtype:'filterHtml',
-        		maxLength : 500,
-        		xtype : 'textareafield'
+        		xtype : 'displayfield'
         	},
         	{
         		fieldLabel : '工作计划',
         		name : 'workPlan',
-        		vtype:'filterHtml',
-        		maxLength : 500,
-        		xtype : 'textareafield'
+        		xtype : 'displayfield'
         	}
             ]
 });
@@ -55,6 +63,7 @@ grade.personalGradeResult.PersonalGradeResultWin = Ext.create("Ext.window.Window
 	items : [ grade.personalGradeResult.PersonalGradeResultForm , grade.personalDutyResult.PersonalDutyResultGrid],
 	buttons : [ {
 		text : '确定',
+		id:'result_submit',
 		handler : function() {
 			if (grade.personalGradeResult.PersonalGradeResultForm.form.isValid()) {
 				grade.personalGradeResult.PersonalGradeResultForm.form.submit({

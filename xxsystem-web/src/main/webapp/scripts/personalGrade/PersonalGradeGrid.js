@@ -31,6 +31,12 @@ grade.personalGrade.PersonalGradeStore = Ext.create('Ext.data.Store', {
 	}
 });
 
+grade.personalGrade.PersonalGradeStore.addListener('load', function(st, rds, opts) {
+	if (rds.length > 0) {
+		Ext.getCmp('generate_btn').hide();
+	}
+});
+
 /**
  * 列表字段
  */
@@ -104,6 +110,15 @@ grade.personalGrade.PersonalGradeGrid = Ext.create("Ext.grid.Panel", {
 		}
 	}, '->', {
 		xtype : 'button',
+		id:'generate_btn',
+		text : '生成个人评分',
+		iconCls : 'edit-button',
+		handler : function() {
+			grade.personalGrade.generatePersonalGrade();
+		}
+		},
+	{
+		xtype : 'button',
 		text : '编辑',
 		disabledExpr : "$selectedRows != 1 || $status!='0'",// $selected 表示选中的记录数不等于1
 		disabled : true,
@@ -114,7 +129,7 @@ grade.personalGrade.PersonalGradeGrid = Ext.create("Ext.grid.Panel", {
 	},{
 		xtype : 'button',
 		text : '提交',
-		disabledExpr : "$selectedRows != 1 && $status=='0'",// $selected 表示选中的记录数不等于1
+		disabledExpr : "$selectedRows == 0 || $status=='1'",// $selected 表示选中的记录数不等于1
 		disabled : true,
 		iconCls : 'edit-button',
 		handler : function() {

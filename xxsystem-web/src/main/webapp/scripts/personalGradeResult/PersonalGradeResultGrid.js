@@ -11,6 +11,7 @@ Ext.define("grade.personalGradeResult.PersonalGradeResultModel",{
 					extend:"Ext.data.Model",
 					fields:[
 						{name:'id'},
+						{name:'personalGradeId'},
 						{name:'gradeUser'},
 						{name:'gradeOrg'},
 						{name:'userName'},
@@ -24,7 +25,9 @@ Ext.define("grade.personalGradeResult.PersonalGradeResultModel",{
 						{name:'responsibilities'},
 						{name:'birthDay'},
 						{name:'gender'},
-						{name:'educationBackground'}
+						{name:'educationBackground'},
+						{name:'politicsStatus'},
+						{name:'state'}
 					]
 	});
 
@@ -58,7 +61,7 @@ var cm = [
 		},
 		{
 			header : "姓名",
-			dataIndex : "title"
+			dataIndex : "gradeUser"
 		},
 		{
 			header : "性别",
@@ -70,7 +73,7 @@ var cm = [
 		},
 		{
 			header : "政治面貌",
-			dataIndex : "educationBackground"
+			dataIndex : "politicsStatus"
 		},
 		{
 			header : "学历",
@@ -93,12 +96,16 @@ var cm = [
 			dataIndex : "workPlan"
 		},
 		{
+			header : "得分",
+			dataIndex : "score"
+		},
+		{
 			header : "状态",
 			dataIndex : "state",
 			renderer:function(value, cellmeta, record, rowIndex, columnIndex, store){
-				if(value == '0'){
+			if(value == 0){
 					return '未处理';
-				}else if(value == '1'){
+				}else if(value == 1){
 					return '已提交';
 				}
 			}
@@ -109,7 +116,7 @@ var cm = [
  * 定义Grid
  */
 grade.personalGradeResult.PersonalGradeResultGrid = Ext.create("Ext.grid.Panel", {
-	title : '个人评分',
+	title : '个人评分-他评',
 	region : "center",
 	bbar : Ext.create("Ext.PagingToolbar", {
 		store : grade.personalGradeResult.PersonalGradeResultStore
@@ -131,16 +138,27 @@ grade.personalGradeResult.PersonalGradeResultGrid = Ext.create("Ext.grid.Panel",
 	}, '->', {
 		xtype : 'button',
 		text : '编辑',
-		disabledExpr : "$selectedRows != 1 || $status!='0'",// $selected 表示选中的记录数不等于1
+		disabledExpr : "$selectedRows != 1 || $state!=0",// $selected 表示选中的记录数不等于1
 		disabled : true,
 		iconCls : 'edit-button',
 		handler : function() {
 			grade.personalGradeResult.EditPersonalGradeResult();
 		}
-	},{
+	},
+	 {
+		xtype : 'button',
+		text : '查看',
+		disabledExpr : "$selectedRows != 1",// $selected 表示选中的记录数不等于1
+		disabled : true,
+		iconCls : 'edit-button',
+		handler : function() {
+			grade.personalGradeResult.ViewPersonalGradeResult();
+		}
+	}
+	,{
 		xtype : 'button',
 		text : '提交',
-		disabledExpr : "$selectedRows != 1 && $status=='0'",// $selected 表示选中的记录数不等于1
+		disabledExpr : "$selectedRows == 0 || $state==1",// $selected 表示选中的记录数不等于1
 		disabled : true,
 		iconCls : 'edit-button',
 		handler : function() {
@@ -153,13 +171,15 @@ grade.personalGradeResult.PersonalGradeResultGrid = Ext.create("Ext.grid.Panel",
  * 编辑个人评分
  */
 grade.personalGradeResult.EditPersonalGradeResult = function() {
-	grade.personalGrade.PersonalGradeWin.setTitle('编辑');
+	grade.personalGradeResult.PersonalGradeResultWin.setTitle('编辑');
 	var row = grade.personalGradeResult.PersonalGradeResultGrid.getSelectionModel().getSelection()
 	var id = row[0].data.id;
+	var personalGradeId = row[0].data.personalGradeId;
 	var basicForm = grade.personalGradeResult.PersonalGradeResultWin.down('form').getForm();
 	basicForm.reset();
 	basicForm.url = basePath + '/personalGrade/editPersonalGradeResult.action';
 	basicForm.findField('id').setValue(id);
+	basicForm.findField('personalGradeId').setValue(personalGradeId);
 	basicForm.load({
 		url : basePath + '/personalGrade/getPersonalGradeResultById.action',
 		params : {
@@ -167,7 +187,31 @@ grade.personalGradeResult.EditPersonalGradeResult = function() {
 		}
 	});
 	grade.personalGradeResult.PersonalGradeResultWin.show();
-}
+};
+
+/**
+ * 查看个人评分结果
+ */
+grade.personalGradeResult.ViewPersonalGradeResult = function() {
+	grade.personalGradeResult.PersonalGradeResultWin.setTitle('详情');
+	var row = grade.personalGradeResult.PersonalGradeResultGrid.getSelectionModel().getSelection()
+	var id = row[0].data.id;
+	var personalGradeId = row[0].data.personalGradeId;
+	var basicForm = grade.personalGradeResult.PersonalGradeResultWin.down('form').getForm();
+	basicForm.reset();
+	basicForm.url = basePath + '/personalGrade/editPersonalGradeResult.action';
+	basicForm.findField('id').setValue(id);
+	basicForm.findField('personalGradeId').setValue(personalGradeId);
+	Ext.getCmp('result_submit').hide();
+	Ext.getCmp('score').hide();
+	basicForm.load({
+		url : basePath + '/personalGrade/getPersonalGradeResultById.action',
+		params : {
+			id : id
+		}
+	});
+	grade.personalGradeResult.PersonalGradeResultWin.show();
+};
 
 /**
  * 提交个人评分 预留可选多个提交

@@ -119,7 +119,7 @@ public class PersonalGradeResult implements Serializable{
 	}
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "GRADE_DATE", nullable = false)
+	@Column(name = "GRADE_DATE")
 	public Date getGradeDate() {
 		return gradeDate;
 	}

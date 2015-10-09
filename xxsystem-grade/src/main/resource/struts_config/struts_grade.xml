@@ -4,10 +4,14 @@
         "http://struts.apache.org/dtds/struts-2.0.dtd">
 <struts>
 	<package name="personalGrade" extends="st" namespace="/personalGrade">
+		<!-- 个人评分 -->
 		<action name="toPersonalGradeIndex" >
 			<result>/WEB-INF/pages/personalGrade/personalGradeManage.jsp</result>
 		</action>
+		<!-- 个人评分结果 -->
+		<action name="toPersonalGradeResultIndex" >
+			<result>/WEB-INF/pages/personalGrade/personalGradeResultManage.jsp</result>
+		</action>
 		<action name="*" class="com.xx.grade.personal.action.PersonalGradeAction" method="{1}"></action>
-								
 	</package>
 </struts>
