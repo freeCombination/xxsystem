@@ -107,7 +107,7 @@ public class OrgUser implements java.io.Serializable {
      * @date 2013-12-6
      * @return 组织对象
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "FK_ORG_ID", nullable = false)
     public Organization getOrganization() {
         return this.organization;
@@ -123,7 +123,7 @@ public class OrgUser implements java.io.Serializable {
      * @date 2013-12-6
      * @return 用户对象
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "FK_USER_ID", nullable = false)
     public User getUser() {
         return this.user;
