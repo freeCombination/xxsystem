@@ -19,6 +19,16 @@ public class PersonalGradeVo {
 	private String userName ;
 	
 	/**
+     * 部门
+     */
+	private String orgName ;
+	
+	/**
+     * 岗位
+     */
+    private String responsibilities;
+	
+	/**
 	 * 用户ID
 	 */
 	private Integer userId ;
@@ -124,4 +134,21 @@ public class PersonalGradeVo {
 	public void setStatus(Integer status) {
 		this.status = status;
 	}
+
+	public String getOrgName() {
+		return orgName;
+	}
+
+	public void setOrgName(String orgName) {
+		this.orgName = orgName;
+	}
+
+	public String getResponsibilities() {
+		return responsibilities;
+	}
+
+	public void setResponsibilities(String responsibilities) {
+		this.responsibilities = responsibilities;
+	}
+	
 }

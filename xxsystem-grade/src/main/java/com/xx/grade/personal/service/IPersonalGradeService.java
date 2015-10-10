@@ -161,5 +161,14 @@ public interface IPersonalGradeService {
 	 * @return
 	 */
 	public String submitPersonalGradeResult(String ids);
+
+	/**
+	 * 生成个人评分
+	 * 
+	 * @param gradeYear
+	 * @param currentUser
+	 * @return
+	 */
+	public String generatePersonalGrade(String gradeYear, User currentUser);
 	
 }

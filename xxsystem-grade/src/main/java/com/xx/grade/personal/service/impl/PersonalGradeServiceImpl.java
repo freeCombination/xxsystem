@@ -30,6 +30,7 @@ import com.xx.system.common.exception.BusinessException;
 import com.xx.system.common.util.DateUtil;
 import com.xx.system.common.util.StringUtil;
 import com.xx.system.common.vo.ListVo;
+import com.xx.system.org.entity.Duty;
 import com.xx.system.org.entity.OrgUser;
 import com.xx.system.org.entity.Organization;
 import com.xx.system.user.entity.User;
@@ -58,6 +59,10 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
         int limit = NumberUtils.toInt(paramMap.get("limit"));
 		//用户ID 用户自评只能看自己的数据 
 		String userId = paramMap.get("userId");
+		//年份
+		String gradeYear = paramMap.get("gradeYear");
+		//状态
+		String status = paramMap.get("status");
 		StringBuffer hql = new StringBuffer();
 		StringBuffer counthql = new StringBuffer();
 		hql.append(" From PersonalGrade pg where 1=1 and pg.isDelete = 0 ");
@@ -65,6 +70,14 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		if (StringUtil.isNotEmpty(userId)) {
 			hql.append(" and pg.user.userId = " + Integer.parseInt(userId));
 			counthql.append(" and pg.user.userId = " + Integer.parseInt(userId));
+		}
+		if (StringUtil.isNotEmpty(gradeYear)) {
+			hql.append(" and pg.gradeYear = '" + gradeYear+"'");
+			counthql.append(" and pg.gradeYear = " + gradeYear+"'");
+		}
+		if (StringUtil.isNotEmpty(status)) {
+			hql.append(" and pg.status = " + status);
+			counthql.append(" and pg.status = " + status);
 		}
 		totalSize =  baseDao.getTotalCount(counthql.toString(), new HashMap<String, Object>());
 		List<PersonalGrade> personalGradeLists =  (List<PersonalGrade>)baseDao.queryEntitysByPage(start, limit, hql.toString(),new HashMap<String, Object>());
@@ -96,6 +109,15 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		if (grade.getUser() != null) {
 			vo.setUserId(grade.getUser().getUserId());
 			vo.setUserName(grade.getUser().getRealname());
+			if (grade.getUser().getResponsibilities() != null) {
+				vo.setResponsibilities(grade.getUser().getResponsibilities().getName());
+			}
+			if (grade.getUser().getOrgUsers() != null) {
+				for (OrgUser orguser : grade.getUser().getOrgUsers()) {
+					vo.setOrgName(orguser.getOrganization().getOrgName());
+					break;
+				}
+			}
 		}
 		vo.setWorkPlan(grade.getWorkPlan());
 	}
@@ -336,6 +358,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
         int limit = NumberUtils.toInt(paramMap.get("limit"));
 		//用户ID 用户自评只能看自己的数据 
 		String userId = paramMap.get("userId");
+		String state = paramMap.get("state");
 		StringBuffer hql = new StringBuffer();
 		StringBuffer counthql = new StringBuffer();
 		hql.append(" From PersonalGradeResult pgr where 1=1");
@@ -343,6 +366,11 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		if (StringUtil.isNotEmpty(userId)) {
 			hql.append(" and pgr.gradeUser.userId = " + Integer.parseInt(userId));
 			counthql.append(" and pgr.gradeUser.userId = " + Integer.parseInt(userId));
+		}
+		
+		if (StringUtil.isNotEmpty(state)) {
+			hql.append(" and pgr.state = " + Integer.parseInt(state));
+			counthql.append(" and pgr.state = " + Integer.parseInt(state));
 		}
 		totalSize =  baseDao.getTotalCount(counthql.toString(), new HashMap<String, Object>());
 		List<PersonalGradeResult> personalGradeResults =  (List<PersonalGradeResult>)baseDao.queryEntitysByPage(start, limit, hql.toString(),new HashMap<String, Object>());
@@ -380,6 +408,12 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 				vo.setGender(user.getGender());
 				vo.setPoliticsStatus(user.getPoliticsStatus());
 				vo.setEducationBackground(user.getEducationBackground());
+				if (user.getOrgUsers() != null) {
+					for (OrgUser orguser : user.getOrgUsers()) {
+						vo.setGradeOrg(orguser.getOrganization().getOrgName());
+						break;
+					}
+				}
 			}
 			vo.setTitle(grade.getTitle());
 			vo.setProblem(grade.getProblem());
@@ -472,8 +506,46 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 				BigDecimal b = new BigDecimal(String.valueOf(userCount));
 				BigDecimal r = a.divide(b, scale, BigDecimal.ROUND_HALF_UP);
 				grade.setCompositeScores(r.doubleValue());
+				grade.setStatus(2);
 				baseDao.saveOrUpdate(grade);
 			}
 		}
+	}
+
+	@Override
+	public String generatePersonalGrade(String gradeYear, User currentUser) {
+		String result = "{success:true,msg:'生成个人评分成功！'}";
+		try {
+			StringBuffer hql = new StringBuffer();
+			hql.append(" From PersonalGrade where gradeYear = '"+gradeYear+"'");
+			hql.append(" and user.userId="+currentUser.getUserId());
+			List<PersonalGrade> grades = baseDao.queryEntitys(hql.toString());
+			if (grades != null && grades.size()>0) {
+				result = "{success:false,msg:'生成个人评分失败，已存在数据！'}";
+			}else{
+				PersonalGrade grade = new PersonalGrade();
+				grade.setTitle(currentUser.getRealname()+gradeYear+"年个人评分表");
+				grade.setUser(currentUser);
+				grade.setIsDelete(0);
+				grade.setStatus(0);
+				grade.setGradeYear(gradeYear);
+				baseDao.save(grade);
+				//生成职责表
+				if (currentUser.getResponsibilities() != null) {
+					StringBuffer hqlDuty = new StringBuffer();
+					hqlDuty.append(" From Duty where responsibilities.pkRespId = "+currentUser.getResponsibilities().getPkRespId());
+					List<Duty> duties = baseDao.queryEntitys(hqlDuty.toString());
+					for (Duty duty : duties) {
+						PersonalDuty personalDuty = new PersonalDuty();
+						personalDuty.setWorkDuty(duty.getDutyContent());
+						personalDuty.setPersonalGrade(grade);
+						baseDao.save(personalDuty);
+					}
+				}
+			}
+		} catch (Exception e) {
+			result = "{success:true,msg:'生成个人评分失败！'}";
+		}
+		return result;
 	}
 }

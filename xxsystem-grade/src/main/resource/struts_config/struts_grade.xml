@@ -12,6 +12,18 @@
 		<action name="toPersonalGradeResultIndex" >
 			<result>/WEB-INF/pages/personalGrade/personalGradeResultManage.jsp</result>
 		</action>
+		
+		<!-- 个人评分汇总统计 -->
+		<action name="toPersonalGradeAllIndex" >
+			<result>/WEB-INF/pages/personalGrade/personalGradeAllManage.jsp</result>
+		</action>
+		
+		
+				<!-- 个人评分明细 -->
+		<action name="toPersonalGradeDetailsIndex" >
+			<result>/WEB-INF/pages/personalGrade/personalGradeResultDetailsManage.jsp</result>
+		</action>
+		
 		<action name="*" class="com.xx.grade.personal.action.PersonalGradeAction" method="{1}"></action>
 	</package>
 </struts>

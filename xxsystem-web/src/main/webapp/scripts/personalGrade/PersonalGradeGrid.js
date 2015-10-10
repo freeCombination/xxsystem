@@ -33,7 +33,9 @@ grade.personalGrade.PersonalGradeStore = Ext.create('Ext.data.Store', {
 
 grade.personalGrade.PersonalGradeStore.addListener('load', function(st, rds, opts) {
 	if (rds.length > 0) {
-		Ext.getCmp('generate_btn').hide();
+		//Ext.getCmp('generate_btn').hide();
+	}else{
+		//Ext.getCmp('generate_btn').show();
 	}
 });
 
@@ -97,20 +99,31 @@ grade.personalGrade.PersonalGradeGrid = Ext.create("Ext.grid.Panel", {
 	selModel : Ext.create("Ext.selection.CheckboxModel"),
 	store : grade.personalGrade.PersonalGradeStore,
 	columns : cm,
-	tbar : [ '标题', {
-		xtype : 'textfield',
-		stripCharsRe : /^\s+|\s+$/g, // 禁止输入空格
-		id : 'inputTitle'
+	tbar : [ '&nbsp;年份',
+	{
+		id:'gradeYear',
+		name:'gradeYear',
+		width:80,
+		xtype:"textfield",
+		value:Ext.Date.format(new Date(),"Y"),
+		listeners :{
+				'render' : function(p){
+					p.getEl().on('click',function(){
+						WdatePicker({readOnly:true,dateFmt:'yyyy',maxDate:Ext.Date.format(new Date(),"Y"),onpicked:function(){$dp.$('reportDate-inputEl').focus();}});
+					});
+				}
+		}
 	}, {
 		text : "查询",
 		iconCls : "search-button",
 		handler : function(button) {
-			grade.personalGrade.PersonalGradeStore.getProxy().setExtraParam("inputTitle", button.prev().getValue());
+			grade.personalGrade.PersonalGradeStore.getProxy().setExtraParam("gradeYear", button.prev().getValue());
 			grade.personalGrade.PersonalGradeStore.loadPage(1);
 		}
 	}, '->', {
 		xtype : 'button',
 		id:'generate_btn',
+		//hidden:true,
 		text : '生成个人评分',
 		iconCls : 'edit-button',
 		handler : function() {
@@ -156,7 +169,34 @@ grade.personalGrade.EditPersonalGrade = function() {
 		}
 	});
 	grade.personalGrade.PersonalGradeWin.show();
-}
+};
+
+/**
+ * 生成个人总结评分
+ */
+grade.personalGrade.generatePersonalGrade = function(){
+	var gradeYear = Ext.getCmp('gradeYear').getValue();
+	Ext.Msg.confirm(SystemConstant.alertTitle, "确认要生成" + gradeYear + "年个人评分吗？", function(btn) {
+		if (btn == 'yes') {
+			Ext.Ajax.request({
+				url : basePath + '/personalGrade/generatePersonalGrade.action',
+				params : {
+					gradeYear : gradeYear
+				},
+				success : function(res, options) {
+					var data = Ext.decode(res.responseText);
+					if (data.success) {
+						Ext.Msg.showTip(data.msg);
+						grade.personalGrade.PersonalGradeStore.loadPage(1);
+					} else {
+						Ext.Msg.showInfo(data.msg);
+					}
+				},
+				failure : sshframe.FailureProcess.Ajax
+			});
+		}
+	});
+};
 
 /**
  * 提交个人评分 预留可选多个提交
@@ -190,7 +230,7 @@ grade.personalGrade.SubmitPersonalGrade = function() {
 		}
 	});
 	
-}
+};
 
 
 
