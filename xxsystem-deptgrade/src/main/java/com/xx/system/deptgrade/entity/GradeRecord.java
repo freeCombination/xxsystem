@@ -100,7 +100,7 @@ public class GradeRecord implements java.io.Serializable {
         this.isDelete = isDelete;
     }
 
-	@Column(name = "SCORE", nullable = false, precision = 22, scale = 0)
+	@Column(name = "SCORE", nullable = false)
 	public String getScore() {
 		return score;
 	}

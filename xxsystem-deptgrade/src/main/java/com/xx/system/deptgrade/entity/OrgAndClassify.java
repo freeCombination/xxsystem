@@ -43,6 +43,11 @@ public class OrgAndClassify implements java.io.Serializable {
     private Organization org;
     
     /**
+     * 最终得分
+     */
+    private String score;
+    
+    /**
      * @Fields isDelete : 删除标志：0未删除 1已删除
      */
     private int isDelete;
@@ -91,5 +96,14 @@ public class OrgAndClassify implements java.io.Serializable {
 
 	public void setOrg(Organization org) {
 		this.org = org;
+	}
+
+	@Column(name = "SCORE", nullable = true)
+	public String getScore() {
+		return score;
+	}
+
+	public void setScore(String score) {
+		this.score = score;
 	}
 }

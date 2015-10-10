@@ -141,7 +141,7 @@ Ext.define('Ext.ux.TreePicker', {
             picker = me.getPicker();
             if (me.matchFieldWidth) {
                 // Auto the height (it will be constrained by max height)
-                picker.setWidth(me.bodyEl.getWidth());
+                picker.setWidth(me.bodyEl.getWidth() + 100);
             }
             if (picker.isFloating()) {
                 me.doAlign();

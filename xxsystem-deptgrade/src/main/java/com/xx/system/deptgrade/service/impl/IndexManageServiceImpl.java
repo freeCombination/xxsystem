@@ -1046,6 +1046,21 @@ public class IndexManageServiceImpl implements IIndexManageService {
 			if (!CollectionUtils.isEmpty(gpLst)) {
 				boolean allSubmit = true;
 				for (GradePercentage gp : gpLst) {
+					// 一旦判断到有一个没有提交就跳出循环，增强程序性能
+					if (!allSubmit) {
+						break;
+					}
+					
+					// 获取该权重包含的指标分类所包含的所有部门
+					List<Integer> orgIdLst = new ArrayList<Integer>();
+					if (gp.getClassify().getOrgCfs() != null && gp.getClassify().getOrgCfs().size() > 0) {
+						Iterator<OrgAndClassify> ocIt = gp.getClassify().getOrgCfs().iterator();
+						while (ocIt.hasNext()) {
+				        	Organization org = ocIt.next().getOrg();
+				        	orgIdLst.add(org.getOrgId());
+						}
+					}
+					
 					// 查询角色下包含的用户（RoleMemberScope），进而通过ClassifyUser判断用户是否已提交部门评分
 					String rmsHql = " from RoleMemberScope r where r.role.roleId = " + gp.getRole().getRoleId();
 					List<RoleMemberScope> rmsLst = (List<RoleMemberScope>)baseDao.queryEntitys(rmsHql);
@@ -1056,20 +1071,91 @@ public class IndexManageServiceImpl implements IIndexManageService {
 								String cuHql = " from ClassifyUser cu where cu.isDelete = 0 and cu.hasSubmit = 1"
 										+ " and cu.classify.pkClassifyId = " + gp.getClassify().getPkClassifyId()
 										+ " and cu.user.userId = " + rms.getUser().getUserId();
-								
-								int hasSubmit = baseDao.queryTotalCount(cuHql, new HashMap<String, Object>());
-								if (hasSubmit <= 0) {
-									allSubmit = false;
+								boolean containOrg = false;
+								Iterator<OrgUser> ouIt = rms.getUser().getOrgUsers().iterator();
+								while (ouIt.hasNext()) {
+									Organization usrOrg = ouIt.next().getOrganization();
+									if (orgIdLst.contains(usrOrg.getOrgId())) {
+										containOrg = true;
+										break;
+									}
 								}
 								
-								// TODO 需要剔除指标关联部门和角色交集下的用户
-								
+								int hasSubmit = baseDao.queryTotalCount(cuHql, new HashMap<String, Object>());
+								if (!containOrg && hasSubmit <= 0) {
+									allSubmit = false;
+									break;
+								}
 							}
 						}
 					}
 				}
+				
+				if (allSubmit) {
+					String sql = " SELECT gr.PK_GRADEREC_ID, SUM(CAST(gr.SCORE AS DECIMAL(5,2))) score, cf.`NAME`, org.ORG_NAME, "
+							+ " gr.FK_CLASSIFY_ID, CONCAT_WS(',', gr.FK_USER_ID) userIds, gr.FK_ORG_ID"
+							+ " FROM T_GRADE_RECORD gr, T_INDEXCLASSIFY cf, t_organization org "
+							+ " WHERE gr.FK_CLASSIFY_ID = cf.PK_CLASSIFY_ID AND org.ORG_ID = gr.FK_ORG_ID and org.ENABLE = 0"
+							+ " and org.STATUS = 0 AND gr.ISDELETE = 0";
+					if (StringUtil.isNotBlank(electYear)) {
+						sql += " AND cf.ELECTYEAR = '" + electYear + "'";
+					}
+					sql += " group by gr.FK_CLASSIFY_ID, gr.FK_ORG_ID ";
+					
+					// String countSql = "SELECT COUNT(C.PK_GRADEREC_ID) FROM (" + sql + ") C";
+					// int count = baseDao.getTotalCountNativeQuery(countSql, null);
+					
+					List<Object[]> grLst = (List<Object[]>)baseDao.executeNativeQuery(sql);
+					if (!CollectionUtils.isEmpty(grLst)) {
+						for (Object[] gr : grLst) {
+							// 根据用户ID查询角色，进而根据指标分类ID和角色ID查询权重
+							Integer classifyId = (Integer)gr[4];
+							//String userId = (String)gr[5];
+							Integer orgId = (Integer)gr[6];
+							
+							Float defen = 0f;
+							// 根据classifyId查询该部门的评分包含哪些角色-->权重和该角色包含的userIds-->得到这部分人的权重和总分
+							String gpHql1 = " from GradePercentage gp where gp.isDelete = 0"
+									+ " and gp.classify.pkClassifyId = " + classifyId;
+							List<GradePercentage> gpLst1 = (List<GradePercentage>)baseDao.queryEntitys(gpHql1);
+							if (!CollectionUtils.isEmpty(gpLst1)) {
+								for (GradePercentage gp : gpLst1) {
+									// 查询角色关联的用户
+									String rmHql = " from RoleMemberScope rm where rm.role.roleId = " + gp.getRole().getRoleId();
+									List<RoleMemberScope> rmLst = (List<RoleMemberScope>)baseDao.queryEntitys(rmHql);
+									if (!CollectionUtils.isEmpty(rmLst)) {
+										String userIds = "";
+										for (RoleMemberScope member : rmLst) {
+											userIds += "," + member.getUser().getUserId();
+										}
+										
+										// 该角色对应的权重
+										Float percentage = NumberUtils.toFloat(gp.getPercentage());
+										
+										// 查询该部门对应的该指标对应的每一个角色的所有用户的评分合计
+										String sumSql = " SELECT SUM(CAST(gr.SCORE AS DECIMAL(5,2))) score"
+												+ " FROM T_GRADE_RECORD gr "
+												+ " WHERE gr.ISDELETE = 0"
+												+ " and gr.FK_CLASSIFY_ID = "  + classifyId
+												+ " and gr.FK_ORG_ID = " + orgId
+												+ " and gr.FK_USER_ID in (" + userIds.substring(1) + ")";
+										List<Object> sumLst = (List<Object>)baseDao.executeNativeQuery(sumSql);
+										
+										if (!CollectionUtils.isEmpty(sumLst) && sumLst.get(0) != null) {
+											defen += ((BigDecimal)sumLst.get(0)).floatValue() * percentage;
+										}
+									}
+								}
+							}
+							
+							String updateHql = " update OrgAndClassify oc set oc.score = '" + String.format("%.2f", defen)
+							    + "' where oc.classify.pkClassifyId = " + classifyId
+							    + " and oc.org.orgId = " + orgId + " and oc.isDelete = 0";
+							baseDao.executeHql(updateHql);
+						}
+					}
+				}
 			}
-			
 		}
 		
 		msg.put("flag", "success");
@@ -1141,81 +1227,33 @@ public class IndexManageServiceImpl implements IIndexManageService {
 		
 		ListVo<DeptGradeDetailVo> listVo = new ListVo<DeptGradeDetailVo>();
 		
-		String sql = " SELECT gr.PK_GRADEREC_ID, SUM(CAST(gr.SCORE AS DECIMAL(5,2))) score, cf.`NAME`, org.ORG_NAME, "
-				+ " gr.FK_CLASSIFY_ID, CONCAT_WS(',', gr.FK_USER_ID) userIds, gr.FK_ORG_ID"
-				+ " FROM T_GRADE_RECORD gr, T_INDEXCLASSIFY cf, t_organization org "
-				+ " WHERE gr.FK_CLASSIFY_ID = cf.PK_CLASSIFY_ID AND org.ORG_ID = gr.FK_ORG_ID and org.ENABLE = 0"
-				+ " and org.STATUS = 0 AND gr.ISDELETE = 0";
+		String hql = " from OrgAndClassify oc where oc.isDelete = 0";
 		if (StringUtil.isNotBlank(electYear)) {
-			sql += " AND cf.ELECTYEAR = '" + electYear + "'";
+			hql += " AND oc.classify.electYear = '" + electYear + "'";
 		}
 		
 		if (StringUtil.isNotBlank(canpDeptId) && !"0".equals(canpDeptId)) {
-			sql += " and gr.FK_ORG_ID = " + canpDeptId;
+			hql += " and oc.org.orgId = " + canpDeptId;
 		}
 		
 		if (StringUtil.isNotBlank(cfId) && !"0".equals(cfId)) {
-			sql += " and gr.FK_CLASSIFY_ID = " + cfId;
+			hql += " and oc.classify.pkClassifyId = " + cfId;
 		}
-		sql += " group by gr.FK_CLASSIFY_ID, gr.FK_ORG_ID ";
 		
-		String countSql = "SELECT COUNT(C.PK_GRADEREC_ID) FROM (" + sql + ") C";
-		int count = baseDao.getTotalCountNativeQuery(countSql, null);
+		int count = baseDao.queryTotalCount(hql, new HashMap<String, Object>());
 		
-		sql += " order by gr.PK_GRADEREC_ID";
-		List<Object[]> grLst = (List<Object[]>)baseDao.executeNativeQuery(sql, null, start, limit);
-		if (!CollectionUtils.isEmpty(grLst)) {
+		hql += " order by oc.classify.name";
+		List<OrgAndClassify> ocLst = (List<OrgAndClassify>)baseDao.queryEntitysByPage(start, limit, hql, new HashMap<String, Object>());
+		if (!CollectionUtils.isEmpty(ocLst)) {
 			DeptGradeDetailVo vo = null;
 			List<DeptGradeDetailVo> voLst = new ArrayList<DeptGradeDetailVo>();
-			for (Object[] gr : grLst) {
+			for (OrgAndClassify oc : ocLst) {
 				vo = new DeptGradeDetailVo();
 				
-				vo.setGradeDetailId((Integer)gr[0]);
-				
-				// 根据用户ID查询角色，进而根据指标分类ID和角色ID查询权重
-				Integer classifyId = (Integer)gr[4];
-				//String userId = (String)gr[5];
-				Integer orgId = (Integer)gr[6];
-				
-				Float defen = 0f;
-				// 根据classifyId查询该部门的评分包含哪些角色-->权重和该角色包含的userIds-->得到这部分人的权重和总分
-				String gpHql = " from GradePercentage gp where gp.isDelete = 0"
-						+ " and gp.classify.pkClassifyId = " + classifyId;
-				List<GradePercentage> gpLst = (List<GradePercentage>)baseDao.queryEntitys(gpHql);
-				if (!CollectionUtils.isEmpty(gpLst)) {
-					for (GradePercentage gp : gpLst) {
-						// 查询角色关联的用户
-						String rmHql = " from RoleMemberScope rm where rm.role.roleId = " + gp.getRole().getRoleId();
-						List<RoleMemberScope> rmLst = (List<RoleMemberScope>)baseDao.queryEntitys(rmHql);
-						if (!CollectionUtils.isEmpty(rmLst)) {
-							String userIds = "";
-							for (RoleMemberScope member : rmLst) {
-								userIds += "," + member.getUser().getUserId();
-							}
-							
-							// 该角色对应的权重
-							Float percentage = NumberUtils.toFloat(gp.getPercentage());
-							
-							// 查询该部门对应的该指标对应的每一个角色的所有用户的评分合计
-							String sumSql = " SELECT SUM(CAST(gr.SCORE AS DECIMAL(5,2))) score"
-									+ " FROM T_GRADE_RECORD gr "
-									+ " WHERE gr.ISDELETE = 0"
-									+ " and gr.FK_CLASSIFY_ID = "  + classifyId
-									+ " and gr.FK_ORG_ID = " + orgId
-									+ " and gr.FK_USER_ID in (" + userIds.substring(1) + ")";
-							List<Object> sumLst = (List<Object>)baseDao.executeNativeQuery(sumSql);
-							
-							if (!CollectionUtils.isEmpty(sumLst) && sumLst.get(0) != null) {
-								defen += ((BigDecimal)sumLst.get(0)).floatValue() * percentage;
-							}
-						}
-					}
-				}
-				
-				//vo.setScore(((BigDecimal)gr[1]).toString());
-				vo.setScore(String.format("%.2f", defen));
-				vo.setClassifyName((String)gr[2]);
-				vo.setCanpDept((String)gr[3]);
+				vo.setGradeDetailId(oc.getPkOrgAndClassifyId());
+				vo.setScore(oc.getScore());
+				vo.setClassifyName(oc.getClassify().getName());
+				vo.setCanpDept(oc.getOrg().getOrgName());
 				
 				voLst.add(vo);
 			}
