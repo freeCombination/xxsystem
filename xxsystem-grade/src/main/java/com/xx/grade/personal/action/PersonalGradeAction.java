@@ -117,6 +117,25 @@ public class PersonalGradeAction extends BaseAction {
 	}
 	
 	/**
+	 * 查询全部统计数据
+	 * 
+	 * @return
+	 */
+	public String getAllPersonalGradeList() {
+		try {
+			Map<String, String> paramMap = RequestUtil
+					.getParameterMap(getRequest());
+			ListVo<PersonalGradeVo> personalGradeList = this.personalGradeService
+					.getPersonalGradeList(paramMap);
+			JsonUtil.outJson(personalGradeList);
+		} catch (Exception e) {
+			this.excepAndLogHandle(PersonalGradeAction.class, "查询全部统计数据", e,
+					false);
+		}
+		return null;
+	}
+	
+	/**
 	 * 获取评分结果列表
 	 * 
 	 * @return
@@ -129,6 +148,25 @@ public class PersonalGradeAction extends BaseAction {
 			if (user != null) {
 				paramMap.put("userId", user.getUserId().toString());
 			}
+			ListVo<PersonalGradeResultVo> resultList = this.personalGradeService
+					.getPersonalGradeResultList(paramMap);
+			JsonUtil.outJson(resultList);
+		} catch (Exception e) {
+			this.excepAndLogHandle(PersonalGradeAction.class, "获取评分结果列表失败", e,
+					false);
+		}
+		return null;
+	}
+	
+	/**
+	 * 查询员工评分明细
+	 * 
+	 * @return
+	 */
+	public String getPersonalGradeResultDetailsList() {
+		try {
+			Map<String, String> paramMap = RequestUtil
+					.getParameterMap(getRequest());
 			ListVo<PersonalGradeResultVo> resultList = this.personalGradeService
 					.getPersonalGradeResultList(paramMap);
 			JsonUtil.outJson(resultList);
@@ -436,6 +474,27 @@ public class PersonalGradeAction extends BaseAction {
 		} catch (Exception e) {
 			JsonUtil.outJson("{success:false,msg:'提交个人评分失败！'}");
 			this.excepAndLogHandle(PersonalGradeAction.class, "提交个人评分", e,
+					false);
+		}
+		return null;
+	}
+	
+	/**
+	 * 生成个人评分
+	 * 
+	 * @return
+	 */
+	public String generatePersonalGrade() {
+		try {
+			String gradeYear = this.getRequest().getParameter("gradeYear");
+			//生成个人评分
+			String result = personalGradeService.generatePersonalGrade(gradeYear, getCurrentUser());
+			JsonUtil.outJson(result);
+			this.excepAndLogHandle(PersonalGradeAction.class, "提交个人评分", null,
+					true);
+		} catch (Exception e) {
+			JsonUtil.outJson("{success:false,msg:'生成个人评分失败！'}");
+			this.excepAndLogHandle(PersonalGradeAction.class, "生成个人评分", e,
 					false);
 		}
 		return null;
