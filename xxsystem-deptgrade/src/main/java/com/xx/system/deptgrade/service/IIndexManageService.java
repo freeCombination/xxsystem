@@ -252,10 +252,11 @@ public interface IIndexManageService {
      * 提交部门评分
      * 
      * @param cfIds
+     * @param electYear 参评年份
      * @return
      * @throws Exception
      */
-    public Map<String, String> submitDeptGrade(String cfIds, User currUsr) throws Exception;
+    public Map<String, String> submitDeptGrade(String cfIds, String electYear, User currUsr) throws Exception;
     
     
     /******************部门评分明细数据查询********************/

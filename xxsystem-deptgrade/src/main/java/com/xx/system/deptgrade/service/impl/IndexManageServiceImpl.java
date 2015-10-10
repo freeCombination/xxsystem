@@ -11,6 +11,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import net.sf.json.JSONArray;
+
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,8 +43,6 @@ import com.xx.system.role.entity.Role;
 import com.xx.system.role.entity.RoleMemberScope;
 import com.xx.system.role.vo.RoleVo;
 import com.xx.system.user.entity.User;
-
-import net.sf.json.JSONArray;
 
 /**
  * 指标逻辑接口实现
@@ -986,9 +986,10 @@ public class IndexManageServiceImpl implements IIndexManageService {
 	}
 
 	@Override
-	public Map<String, String> submitDeptGrade(String cfIds, User currUsr) throws Exception {
+	public Map<String, String> submitDeptGrade(String cfIds, String electYear, User currUsr) throws Exception {
 		Map<String, String> msg = new HashMap<String, String>();
 		
+		// 提交部门评分
 		if (StringUtil.isNotBlank(cfIds)) {
 			// 判断是否已经提交
 			String checkHql = " from ClassifyUser cu where "
@@ -1034,6 +1035,41 @@ public class IndexManageServiceImpl implements IIndexManageService {
 			}
 			
 			baseDao.saveAll(cuLst);
+		}
+		
+		// 判断是否所有人都提交部门评分，如果都提交了则生成部门评分汇总
+		if (StringUtil.isNotBlank(electYear)) {
+			String gpHql = " from GradePercentage gp where gp.isDelete = 0"
+					+ " and gp.classify.isDelete = 0 and gp.classify.enable = 0"
+					+ " and gp.classify.electYear = '" + electYear + "'";
+			List<GradePercentage> gpLst = (List<GradePercentage>)baseDao.queryEntitys(gpHql);
+			if (!CollectionUtils.isEmpty(gpLst)) {
+				boolean allSubmit = true;
+				for (GradePercentage gp : gpLst) {
+					// 查询角色下包含的用户（RoleMemberScope），进而通过ClassifyUser判断用户是否已提交部门评分
+					String rmsHql = " from RoleMemberScope r where r.role.roleId = " + gp.getRole().getRoleId();
+					List<RoleMemberScope> rmsLst = (List<RoleMemberScope>)baseDao.queryEntitys(rmsHql);
+					if (!CollectionUtils.isEmpty(rmsLst)) {
+						for (RoleMemberScope rms : rmsLst) {
+							if (rms.getUser() != null) {
+								// 查询ClassifyUser，判断是否提交
+								String cuHql = " from ClassifyUser cu where cu.isDelete = 0 and cu.hasSubmit = 1"
+										+ " and cu.classify.pkClassifyId = " + gp.getClassify().getPkClassifyId()
+										+ " and cu.user.userId = " + rms.getUser().getUserId();
+								
+								int hasSubmit = baseDao.queryTotalCount(cuHql, new HashMap<String, Object>());
+								if (hasSubmit <= 0) {
+									allSubmit = false;
+								}
+								
+								// TODO 需要剔除指标关联部门和角色交集下的用户
+								
+							}
+						}
+					}
+				}
+			}
+			
 		}
 		
 		msg.put("flag", "success");
@@ -1097,6 +1133,8 @@ public class IndexManageServiceImpl implements IIndexManageService {
 		return listVo;
 	}
 
+	/******************部门评分汇总数据查询********************/
+	
 	@Override
 	public ListVo<DeptGradeDetailVo> queryDeptGradeSummarizing(Integer start, Integer limit, String electYear,
 			String canpDeptId, String cfId) throws Exception {

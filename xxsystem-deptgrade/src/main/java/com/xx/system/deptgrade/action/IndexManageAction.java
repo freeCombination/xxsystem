@@ -415,7 +415,8 @@ public class IndexManageAction extends BaseAction {
     	String msg = "{success:'false',msg:'提交部门评分失败'}";
 		try {
 			String cfIds = getRequest().getParameter("cfIds");
-			Map<String, String> rtn = indexManageService.submitDeptGrade(cfIds, getCurrentUser());
+			String electYear = getRequest().getParameter("electYear");
+			Map<String, String> rtn = indexManageService.submitDeptGrade(cfIds, electYear, getCurrentUser());
 			if ("notGrade".equals(rtn.get("flag"))) {
 				msg = "{success:'false',msg:'" + rtn.get("msg") + "'}";
 			}

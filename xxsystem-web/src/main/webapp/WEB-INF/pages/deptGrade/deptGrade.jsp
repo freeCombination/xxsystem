@@ -133,7 +133,7 @@
 			store: classifyStore,
 			autoScroll: true,
 			stripeRows: true,
-			tbar: ['指标分类',
+			tbar: ['参评年份',
             {
                 id: 'electYearQuery',
                 width: 160,
@@ -181,7 +181,7 @@
 	                            
 	                            $.ajax({
 	                                url : '${ctx}/deptgrade/submitDeptGrade.action',
-	                                data: {cfIds : cfIds.substring(1)},
+	                                data: {cfIds : cfIds.substring(1), electYear : Ext.getCmp('electYearQuery').getValue()},
 	                                cache : false,
 	                                async : false,
 	                                type : "POST",
