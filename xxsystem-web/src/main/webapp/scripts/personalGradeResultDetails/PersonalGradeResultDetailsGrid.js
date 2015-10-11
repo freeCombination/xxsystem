@@ -155,17 +155,6 @@ grade.personalGradeResult.PersonalGradeResultGrid = Ext.create("Ext.grid.Panel",
 	columns : cm,
 	tbar : [
 	'&nbsp;部门',canpDeptQuery,
-	{
-		text : "查询",
-		iconCls : "search-button",
-		handler : function(button) {
-			var proxy = grade.personalGradeResult.PersonalGradeResultStore.getProxy();
-			proxy.setExtraParam("inputGradeUser", Ext.getCmp('inputGradeUser').getValue());
-			proxy.setExtraParam("inputUserName", Ext.getCmp('inputUserName').getValue());
-			proxy.setExtraParam("canpDeptQuery", Ext.getCmp('canpDeptQuery').getValue());
-			grade.personalGradeResult.PersonalGradeResultStore.loadPage(1);
-		}
-	},
 	'职工姓名', {
 		xtype : 'textfield',
 		stripCharsRe : /^\s+|\s+$/g, // 禁止输入空格
@@ -175,6 +164,18 @@ grade.personalGradeResult.PersonalGradeResultGrid = Ext.create("Ext.grid.Panel",
 		xtype : 'textfield',
 		stripCharsRe : /^\s+|\s+$/g, // 禁止输入空格
 		id : 'inputUserName'
+	},
+	{
+		text : "查询",
+		iconCls : "search-button",
+		handler : function(button) {
+			var proxy = grade.personalGradeResult.PersonalGradeResultStore.getProxy();
+			proxy.setExtraParam("inputGradeUser", Ext.getCmp('inputGradeUser').getValue());
+			proxy.setExtraParam("inputUserName", Ext.getCmp('inputUserName').getValue());
+			proxy.setExtraParam("canpDeptQuery", Ext.getCmp('canpDeptQuery').getValue());
+			proxy.setExtraParam("state", 1);
+			grade.personalGradeResult.PersonalGradeResultStore.loadPage(1);
+		}
 	}
 	  ]
 });

@@ -91,7 +91,7 @@ var cm = [
  * 定义Grid
  */
 grade.personalGrade.PersonalGradeGrid = Ext.create("Ext.grid.Panel", {
-	title : '个人评分',
+	title : '个人自评',
 	region : "center",
 	bbar : Ext.create("Ext.PagingToolbar", {
 		store : grade.personalGrade.PersonalGradeStore

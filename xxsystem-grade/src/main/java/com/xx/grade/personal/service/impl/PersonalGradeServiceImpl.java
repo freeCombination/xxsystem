@@ -359,6 +359,9 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		//用户ID 用户自评只能看自己的数据 
 		String userId = paramMap.get("userId");
 		String state = paramMap.get("state");
+		String inputGradeUser = paramMap.get("inputGradeUser");
+		String inputUserName = paramMap.get("inputUserName");
+		String canpDeptQuery = paramMap.get("canpDeptQuery");
 		StringBuffer hql = new StringBuffer();
 		StringBuffer counthql = new StringBuffer();
 		hql.append(" From PersonalGradeResult pgr where 1=1");
@@ -372,6 +375,17 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			hql.append(" and pgr.state = " + Integer.parseInt(state));
 			counthql.append(" and pgr.state = " + Integer.parseInt(state));
 		}
+		
+		if (StringUtil.isNotEmpty(inputGradeUser)) {
+			hql.append(" and pgr.personalGrade.user.realname like '%"+inputGradeUser+"%'");
+			counthql.append(" and pgr.personalGrade.user.realname like '%"+inputGradeUser+"%'");
+		}
+		
+		if (StringUtil.isNotEmpty(inputUserName)) {
+			hql.append(" and pgr.gradeUser.realname like '%"+inputUserName+"%'");
+			counthql.append(" and pgr.gradeUser.realname like '%"+inputUserName+"%'");
+		}
+		
 		totalSize =  baseDao.getTotalCount(counthql.toString(), new HashMap<String, Object>());
 		List<PersonalGradeResult> personalGradeResults =  (List<PersonalGradeResult>)baseDao.queryEntitysByPage(start, limit, hql.toString(),new HashMap<String, Object>());
 		for (PersonalGradeResult gradeResult : personalGradeResults) {
