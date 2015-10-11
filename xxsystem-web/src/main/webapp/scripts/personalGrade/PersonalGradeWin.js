@@ -30,6 +30,7 @@ grade.personalGrade.PersonalGradeForm = Ext.create("Ext.form.Panel", {
         	},
         	{
         		fieldLabel : '存在问题',
+        		allowBlank:false, 
         		name : 'problem',
         		vtype:'filterHtml',
         		maxLength : 500,
@@ -37,6 +38,7 @@ grade.personalGrade.PersonalGradeForm = Ext.create("Ext.form.Panel", {
         	},
         	{
         		fieldLabel : '工作计划',
+        		allowBlank:false, 
         		name : 'workPlan',
         		vtype:'filterHtml',
         		maxLength : 500,

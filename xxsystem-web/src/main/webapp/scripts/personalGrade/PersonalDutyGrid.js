@@ -58,7 +58,7 @@ var cm = [
 			field: {
             	xtype:'textarea',
             	style: {
-                    marginTop: '38px'
+                    marginTop: '30px'
                 },
             	height:60,
             	maxLength:1000,
