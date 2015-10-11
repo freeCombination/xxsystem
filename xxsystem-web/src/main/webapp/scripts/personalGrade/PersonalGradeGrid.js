@@ -142,7 +142,7 @@ grade.personalGrade.PersonalGradeGrid = Ext.create("Ext.grid.Panel", {
 	},{
 		xtype : 'button',
 		text : '提交',
-		disabledExpr : "$selectedRows == 0 || $status=='1'",// $selected 表示选中的记录数不等于1
+		disabledExpr : "$selectedRows == 0 || $status=='1' || $status == '2'",// $selected 表示选中的记录数不等于1
 		disabled : true,
 		iconCls : 'edit-button',
 		handler : function() {
