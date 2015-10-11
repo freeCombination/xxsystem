@@ -81,7 +81,7 @@ grade.personalGradeResult.PersonalGradeResultWin = Ext.create("Ext.window.Window
 	}, {
 		text : '关闭',
 		handler : function() {
-			grade.personalGradeResult.PersonalGradeResultWin.hide();
+			grade.personalGradeResult.PersonalGradeResultWin.close();
 		}
 	} ],
 	listeners: {

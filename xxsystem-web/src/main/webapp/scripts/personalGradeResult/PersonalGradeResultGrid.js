@@ -180,6 +180,8 @@ grade.personalGradeResult.EditPersonalGradeResult = function() {
 	basicForm.url = basePath + '/personalGrade/editPersonalGradeResult.action';
 	basicForm.findField('id').setValue(id);
 	basicForm.findField('personalGradeId').setValue(personalGradeId);
+	Ext.getCmp('result_submit').show();
+	Ext.getCmp('score').show();
 	basicForm.load({
 		url : basePath + '/personalGrade/getPersonalGradeResultById.action',
 		params : {
