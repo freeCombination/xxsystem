@@ -16,6 +16,8 @@ Ext.define("grade.personalGrade.PersonalGradeModel",{
 						{name:'workPlan'},
 						{name:'compositeScores'},
 						{name:'status'},
+						{name:'totalPersonCount'},
+						{name:'commitPersonCount'},
 						{name:'title'}
 					]
 	});
@@ -60,14 +62,14 @@ var cm = [
 			header : "年份",
 			dataIndex : "gradeYear"
 		},
-		{
+/*		{
 			header : "存在问题",
 			dataIndex : "problem"
 		},
 		{
 			header : "工作计划",
 			dataIndex : "workPlan"
-		},
+		},*/
 		{
 			header : "综合得分",
 			dataIndex : "compositeScores"
@@ -77,15 +79,43 @@ var cm = [
 			dataIndex : "status",
 			renderer:function(value, cellmeta, record, rowIndex, columnIndex, store){
 				if(value == '0'){
+					cellmeta.attr = 'ext:qtip="' + '草稿' + '<br/>"';
 					return '草稿';
 				}else if(value == '1'){
+					cellmeta.attr = 'ext:qtip="' + '已提交' + '<br/>"';
 					return '已提交';
 				}else if(value == '2'){
+					cellmeta.attr = 'ext:qtip="' + '已归档' + '<br/>"';
 					return '已归档';
 				}
 			}
+		},
+		{
+			header : "已提交人数/总人数",
+			renderer:function(value, cellmeta, record, rowIndex, columnIndex, store){
+				var totalPersonCount = record.get('totalPersonCount');
+				var commitPersonCount = record.get('commitPersonCount');
+				var status = record.get('status');
+				var personalGradeId = record.get('id');
+				if (status == '0') {
+					return "" ;
+				} else {
+					return "<span><a style='ext-decoration:underline;color:#5555FF;cursor:pointer' title='查看未评分人员列表' onclick='getResultPersonList("+personalGradeId+");'>"+commitPersonCount + "/" + totalPersonCount+"</a></span>";
+				}
+			}
 		}
-          ]
+          ];
+
+/**
+ * 查看未评分人员列表
+ */
+var getResultPersonList = function(personalGradeId){
+	var proxy = grade.personalUser.PersonalUserStore.getProxy();
+	proxy.setExtraParam("personalGradeId", personalGradeId);
+	proxy.setExtraParam("state", 0);
+	grade.personalUser.PersonalUserStore.load();
+	grade.personalUser.PersonalUserWin.show();
+};
 
 /**
  * 定义Grid

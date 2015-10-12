@@ -119,7 +119,27 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 				}
 			}
 		}
+		vo.setTotalPersonCount(getResultCounts(null, grade.getId()));
+		vo.setCommitPersonCount(getResultCounts(1, grade.getId()));
 		vo.setWorkPlan(grade.getWorkPlan());
+	}
+	
+	/**
+	 * 通过个人评分获取该评分总数(status传null获取全部，传1获取提交人数，传0获取未提交reshuffle)
+	 * 
+	 * @param status
+	 * @param personalGradeId
+	 * @return
+	 */
+	private int getResultCounts(Integer status,int personalGradeId){
+		int count = 0 ;
+		StringBuffer hql = new StringBuffer();
+		hql.append(" select count(*) from PersonalGradeResult r where r.personalGrade.id = "+personalGradeId);
+		if (status != null) {
+			hql.append(" and r.state = "+status);
+		}
+		count = baseDao.getTotalCount(hql.toString(), new HashMap<String, Object>());
+		return count ;
 	}
 
 	@Override
@@ -359,6 +379,8 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		//用户ID 用户自评只能看自己的数据 
 		String userId = paramMap.get("userId");
 		String state = paramMap.get("state");
+		//个人评分 对应的
+		String personalGradeId = paramMap.get("personalGradeId");
 		String inputGradeUser = paramMap.get("inputGradeUser");
 		String inputUserName = paramMap.get("inputUserName");
 		String canpDeptQuery = paramMap.get("canpDeptQuery");
@@ -384,6 +406,11 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		if (StringUtil.isNotEmpty(inputUserName)) {
 			hql.append(" and pgr.gradeUser.realname like '%"+inputUserName+"%'");
 			counthql.append(" and pgr.gradeUser.realname like '%"+inputUserName+"%'");
+		}
+		
+		if (StringUtil.isNotEmpty(personalGradeId)) {
+			hql.append(" and pgr.personalGrade.id = '"+personalGradeId+"'");
+			counthql.append(" and pgr.personalGrade.id = '"+personalGradeId+"'");
 		}
 		
 		totalSize =  baseDao.getTotalCount(counthql.toString(), new HashMap<String, Object>());

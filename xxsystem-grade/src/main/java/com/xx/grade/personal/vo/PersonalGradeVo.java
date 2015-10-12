@@ -62,6 +62,16 @@ public class PersonalGradeVo {
 	 * 状态（0:创建（可修改），1:提交（不可修改，他人进行评分），2:归档（评分完毕，不可修改））
 	 */
 	private Integer status ;
+	
+	/**
+	 * 应该提交的人数
+	 */
+	private Integer totalPersonCount ;
+	
+	/**
+	 * 提交的人数
+	 */
+	private Integer commitPersonCount ;
 
 	public Integer getId() {
 		return id;
@@ -150,5 +160,20 @@ public class PersonalGradeVo {
 	public void setResponsibilities(String responsibilities) {
 		this.responsibilities = responsibilities;
 	}
-	
+
+	public Integer getTotalPersonCount() {
+		return totalPersonCount;
+	}
+
+	public void setTotalPersonCount(Integer totalPersonCount) {
+		this.totalPersonCount = totalPersonCount;
+	}
+
+	public Integer getCommitPersonCount() {
+		return commitPersonCount;
+	}
+
+	public void setCommitPersonCount(Integer commitPersonCount) {
+		this.commitPersonCount = commitPersonCount;
+	}
 }

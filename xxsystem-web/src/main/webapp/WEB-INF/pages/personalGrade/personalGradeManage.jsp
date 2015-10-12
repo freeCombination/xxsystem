@@ -11,6 +11,8 @@
 <script type="text/javascript" src="${ctx}/scripts/personalGrade/PersonalDutyGrid.js"></script>
 <script type="text/javascript" src="${ctx}/scripts/personalGrade/PersonalGradeGrid.js"></script>
 <script type="text/javascript" src="${ctx}/scripts/personalGrade/PersonalGradeWin.js"></script>
+<script type="text/javascript" src="${ctx}/scripts/personalGrade/PersonalUserGrid.js"></script>
+<script type="text/javascript" src="${ctx}/scripts/personalGrade/PersonalUserWin.js"></script>
 <script type="text/javascript" src="${ctx}/scripts/personalGrade/uploadWin.js"></script>
 
 <link href="" rel="SHORTCUT ICON" />

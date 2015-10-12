@@ -9,10 +9,11 @@
  */
 grade.personalGrade.PersonalGradeForm = Ext.create("Ext.form.Panel", {
 	layout : 'form',
-	region: "north",
+	region: "south",
 	bodyStyle : 'padding:15px 10px 0 0',
 	border : false,
 	labelAlign : 'right',
+	frame: true,
 	fieldDefaults : {
 		labelWidth : 60,
 		labelAlign : 'right'
@@ -32,7 +33,9 @@ grade.personalGrade.PersonalGradeForm = Ext.create("Ext.form.Panel", {
         		fieldLabel : '存在问题',
         		allowBlank:false, 
         		name : 'problem',
-        		vtype:'filterHtml',
+        		//vtype:'filterHtml',
+            	regex : new RegExp('^([^<^>])*$'),
+                regexText : '不能包含特殊字符！',
         		maxLength : 500,
         		xtype : 'textareafield'
         	},
@@ -40,7 +43,9 @@ grade.personalGrade.PersonalGradeForm = Ext.create("Ext.form.Panel", {
         		fieldLabel : '工作计划',
         		allowBlank:false, 
         		name : 'workPlan',
-        		vtype:'filterHtml',
+        		//vtype:'filterHtml',
+            	regex : new RegExp('^([^<^>])*$'),
+                regexText : '不能包含特殊字符！',
         		maxLength : 500,
         		xtype : 'textareafield'
         	}
@@ -54,7 +59,7 @@ grade.personalGrade.PersonalGradeWin = Ext.create("Ext.window.Window", {
 	height : 400,
 	width : 600,
 	layout: 'border',
-	items : [ grade.personalGrade.PersonalGradeForm , grade.personalDuty.PersonalDutyGrid],
+	items : [grade.personalDuty.PersonalDutyGrid, grade.personalGrade.PersonalGradeForm],
 	buttons : [ {
 		text : '确定',
 		handler : function() {
@@ -63,7 +68,7 @@ grade.personalGrade.PersonalGradeWin = Ext.create("Ext.window.Window", {
 					success : function(form, action) {
 						Ext.Msg.showTip(action.result.msg);
 						grade.personalGrade.PersonalGradeStore.loadPage(1);
-						grade.personalGrade.PersonalGradeWin.hide();
+						grade.personalGrade.PersonalGradeWin.close();
 					},
 					failure : function(form, action) {
 						Ext.Msg.showError(action.result.msg);

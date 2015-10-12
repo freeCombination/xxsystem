@@ -103,7 +103,7 @@ var cm = [
 			header : "状态",
 			dataIndex : "state",
 			renderer:function(value, cellmeta, record, rowIndex, columnIndex, store){
-			if(value == 0){
+				if(value == 0){
 					return '未处理';
 				}else if(value == 1){
 					return '已提交';

@@ -52,9 +52,9 @@ var cm = [
 		{
 			header : "完成情况",
 			dataIndex : "completion",
-			renderer:function(value,p,record){
+/*			renderer:function(value,p,record){
 				return '<div style="white-space:normal">'+value+"</div>";
-			},
+			},*/
 			field: {
             	xtype:'textarea',
             	style: {
@@ -97,7 +97,8 @@ grade.personalDuty.PersonalDutyGrid = Ext.create("Ext.grid.Panel", {
 	columns : cm,
 	plugins: [cellEditing],
 	tbar : [
-	        "  岗位职责",
+	        //"<div style='font-weight:bold;'>岗位职责</div>",
+	        "岗位职责完成情况",
             "->",
             {
                 xtype:'button',
