@@ -52,6 +52,11 @@ public class GradeIndexVo implements java.io.Serializable {
     private String remark;
     
     /**
+     * 考核说明2
+     */
+    private String remark2;
+    
+    /**
      * @Fields 评分年份
      */
     private String electYear;
@@ -178,5 +183,13 @@ public class GradeIndexVo implements java.io.Serializable {
 
 	public void setGradeRecs(String gradeRecs) {
 		this.gradeRecs = gradeRecs;
+	}
+
+	public String getRemark2() {
+		return remark2;
+	}
+
+	public void setRemark2(String remark2) {
+		this.remark2 = remark2;
 	}
 }

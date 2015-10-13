@@ -7,7 +7,7 @@
 <%@include file="../common/taglibs.jsp"%>
 <%@include file="../common/css.jsp"%>
 <%@include file="../common/ext.jsp"%>
-<title>权重管理</title>
+<title>部门评分</title>
 <link href="" rel="SHORTCUT ICON" />
 <style type="text/css">
   .x-form-layout-table{
@@ -234,15 +234,18 @@
             headers.push({name:'grade',type:'string'});
             headers.push({name:'grade2',type:'string'});
             headers.push({name:'remark',type:'string'});
+            headers.push({name:'remark2',type:'string'});
             headers.push({name:'electYear',type:'string'});
             headers.push({name:'gradeIndex1Id'});
             headers.push({name:'gradeRecs'});
 	        
             columns.push({header:"序号",xtype: "rownumberer",width:60,align:"center",menuDisabled: true,sortable :false});
             columns.push({header: "ID",width: 50,dataIndex: "indexId",hidden: true,menuDisabled: true,sortable :false});
-	        columns.push({header:'一级指标',width: 280, dataIndex:'name',menuDisabled: true,sortable :false});
+	        columns.push({header:'一级指标',width: 100, dataIndex:'name',menuDisabled: true,sortable :false});
+	        columns.push({header:'说明',width: 180, dataIndex:'remark',menuDisabled: true,sortable :false});
 	        columns.push({header:'分值',width: 40, dataIndex:'grade',menuDisabled: true,sortable :false});
-	        columns.push({header:'二级指标',width: 280, dataIndex:'gradeIndex2Name',menuDisabled: true,sortable :false});
+	        columns.push({header:'二级指标',width: 100, dataIndex:'gradeIndex2Name',menuDisabled: true,sortable :false});
+	        columns.push({header:'说明',width: 180, dataIndex:'remark2',menuDisabled: true,sortable :false});
 	        columns.push({header:'分值',width: 40, dataIndex:'grade2',menuDisabled: true,sortable :false});
 	        
 	        // 参评部门：用户查询显示已评分列表
@@ -266,11 +269,22 @@
 	                    
 	                    columns.push({header:records[j].orgName,width: 50, dataIndex:"orgId_"+orgId,menuDisabled: true,sortable :false,
 	                        field:{
-	                            xtype:'textfield',
+	                            xtype:'combo',
 	                            maxLength:10,
 	                            regex : new RegExp('^([^<^>])*$'),
 	                            regexText : '不能包含特殊字符！',
 	                            allowBlank: false,
+	                            editable: true,
+	                            displayField: 'score',
+	                            valueField: 'score',
+	                            store: Ext.create('Ext.data.Store', {
+	                                fields: ['score'],
+	                                data : [
+	                                    {"score":"3"},
+	                                    {"score":"2"},
+	                                    {"score":"1"}
+	                                ]
+	                            }),
 	                            listeners : {
 	                                /*
 	                                'change' : function(combo,newVaue,oldValue,eOpts){
@@ -306,11 +320,63 @@
 	                reader: {
 	                    type: 'json'
 	                }
+	            },
+	            listeners:{
+	                load:function(store, records){
+	                	if (records.length > 0) {
+	                        for(var i = 0; i < records.length; i++){
+	                            var grades = records[i].get('gradeRecs').split('|');
+	                            for(var j = 0; j < cpbm.length; j++){
+	                                // 解析后台返回的各部门分数字符串
+	                                var grade = '';
+	                                for(var k = 0; k < grades.length; k++){
+	                                    if (parseInt(grades[k].split(':')[0]) == cpbm[j].orgId) {
+	                                        grade = grades[k].split(':')[1]
+	                                        break;
+	                                    }
+	                                }
+	                                records[i].set('orgId_' + cpbm[j].orgId, grade);
+	                            }
+	                        }
+	                        
+	                        // 统计汇总
+	                        var obj = "{indexId:" + records.length + ", name:'汇总'";
+	                        for(var j = 0; j < cpbm.length; j++){
+	                        	var scoreSum = 0;
+	                        	for(var i = 0; i < records.length; i++){
+	                        		if (records[i].get('orgId_' + cpbm[j].orgId)) {
+		                        		scoreSum += parseFloat(records[i].get('orgId_' + cpbm[j].orgId));
+	                        		}
+	                        	}
+	                        	obj += ", orgId_" + cpbm[j].orgId + ":" + scoreSum;
+	                        }
+	                        
+	                        obj += "}";
+	                        store.add(Ext.decode(obj));
+	                     }
+	                }
 	            }
 	        });
 	        
 	        var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-	            clicksToEdit: 1
+	            clicksToEdit: 1,
+	            listeners : {
+	                beforeedit:function(editor, e, eOpts ){
+	                	var maxScore = e.record.data.grade;
+                        if (e.record.data.grade2) {
+                            maxScore = e.record.data.grade2;
+                        }
+                        
+                        var scoreData = [];
+                        for (var i = maxScore; i >= 0; i--) {
+                        	scoreData.push({'score' : i});
+                        }
+	                	
+	                    var scoreStore = e.column.field.store;
+	                    scoreStore.removeAll();
+	                    scoreStore.add(scoreData);
+	                }
+	            }
 	        });
 	        
 	        var deptGrageGrid = Ext.create("Ext.grid.Panel",{
@@ -328,11 +394,11 @@
 	            store: deptGrageStore,
 	            autoScroll: true,
 	            stripeRows: true,
-	            tbar: ['指标分类',
+	            tbar: ['指标分类：',
 	            {
 	            	xtype: 'label',
 	                text: record.get('name')
-	            },'&nbsp;&nbsp;参评年份',
+	            },'&nbsp;&nbsp;参评年份：',
 	            {
 	            	xtype: 'label',
                     text: record.get('electYear')
@@ -363,7 +429,7 @@
                                 }
                             );
                         	
-                            for(var i=0; i<deptGrageStore.getCount(); i++){
+                            for(var i=0; i<deptGrageStore.getCount() - 1; i++){
                                 var re = deptGrageStore.getAt(i);
                                 var index = re.get('indexId');
                                 var index1 = re.get('gradeIndex1Id');
@@ -443,7 +509,7 @@
 	            	 cfId:record.get('classifyId')
 	             },
                  callback: function(records, operation, success) {
-                     if (records.length > 0) {
+                     /* if (records.length > 0) {
                     	for(var i = 0; i < records.length; i++){
                     		var grades = records[i].get('gradeRecs').split('|');
                     		for(var j = 0; j < cpbm.length; j++){
@@ -458,7 +524,7 @@
                     			records[i].set('orgId_' + cpbm[j].orgId, grade);
                     		}
                     	}
-                     }
+                     } */
                  }
 	         });
 		}

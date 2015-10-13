@@ -50,6 +50,7 @@ import com.xx.system.user.entity.User;
  * @version V1.20,2013-11-25 下午4:02:53
  * @see [相关类/方法]
  */
+@SuppressWarnings("unchecked")
 @Service("indexManageService")
 public class IndexManageServiceImpl implements IIndexManageService {
     
@@ -296,7 +297,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 	
 	@Override
 	public List<GradeIndexVo> getAllIndex(Integer cfId) throws BusinessException {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -506,7 +507,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 	
 	@Override
 	public Map<String, Object> checkreceiptsNum(String number) throws BusinessException {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -664,6 +665,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 		}
 		
 		// 获取当前登陆用户所在部门，进而获取该用户可评分的部门
+		// 由于部门上也关联了部门主任、分管领导等用户信息，也可以把登录用户的id拿去匹配这些用户id，获取到的部门ids就可以限定指标分类的查询
 		Iterator<OrgUser> ouIt = currUsr.getOrgUsers().iterator();
 		String selfDept = "";
 		String depts = "";
@@ -691,6 +693,9 @@ public class IndexManageServiceImpl implements IIndexManageService {
 		
 		// 查询OrgAndClassify，限制IndexClassify
 		String ocHql = " from OrgAndClassify oc where oc.isDelete = 0";
+		/*
+		 * 自己不能查看自己所在部门关联的指标分类（当一个指标只关联了自己所在的部门，注释掉表示可以查看，但不能评分）
+		 */
 		if (StringUtil.isNotBlank(selfDept)) {
 			ocHql += " and oc.org.orgId not in (" + selfDept.substring(1) + ")";
 		}
@@ -775,12 +780,24 @@ public class IndexManageServiceImpl implements IIndexManageService {
 		if (vo != null) {
 			IndexClassify ic = (IndexClassify)baseDao.queryEntityById(IndexClassify.class, vo.getClassifyId());
 			if (ic != null && ic.getOrgCfs() != null && ic.getOrgCfs().size() > 0) {
-				// 获取当前登陆用户所在部门，进而获取该用户可评分的部门
+				// 获取当前登陆用户所在部门，进而获取该用户可评分的部门（排除自己所在部门）
 				Iterator<OrgUser> ouIt = currUsr.getOrgUsers().iterator();
 				Map<Integer, Organization> orgMap = new HashMap<Integer, Organization>();
 				while (ouIt.hasNext()) {
 					Organization usrOrg = ouIt.next().getOrganization();
 					orgMap.put(usrOrg.getOrgId(), usrOrg);
+				}
+				
+				// 由于分馆所领导可能管理多个部门，分馆所领导不能评分这些部门，也需要排除，可通过与部门关联的分馆所领导对比，对比上就排除该部门
+				String fenguanHql = " from Organization o where o.status = 0"
+						+ " and o.enable = 0"
+						+ " and o.otherSup is not null"
+						+ " and o.otherSup.userId = " + currUsr.getUserId();
+				List<Organization> fenguanOrg = (List<Organization>)baseDao.queryEntitys(fenguanHql);
+				if (!CollectionUtils.isEmpty(fenguanOrg)) {
+					for (Organization org : fenguanOrg) {
+						orgMap.put(org.getOrgId(), org);
+					}
 				}
 				
 				Iterator<OrgAndClassify> ocIt = ic.getOrgCfs().iterator();
@@ -850,15 +867,15 @@ public class IndexManageServiceImpl implements IIndexManageService {
 							vo = new GradeIndexVo();
 							
 							vo.setGradeIndex1Id(index.getPkIndexId());
-							vo.setName(index.getName() + (StringUtil.isNotBlank(index.getRemark()) ? 
-									"<br>说明：<br>" + index.getRemark() : ""));
+							vo.setName(index.getName());
 							vo.setGrade(index.getGrade());
+							vo.setRemark(index.getRemark());
 							
 							vo.setIndexId(gi.getPkIndexId());
 							vo.setNumber(gi.getNumber());
-							vo.setGradeIndex2Name(gi.getName() + (StringUtil.isNotBlank(gi.getRemark()) ? 
-									"<br>说明：<br>" + gi.getRemark() : ""));
+							vo.setGradeIndex2Name(gi.getName());
 							vo.setGrade2(gi.getGrade());
+							vo.setRemark2(gi.getRemark());
 							
 							// 查询得分：GradeRecord
 							String grHql2 = grHql + " and gr.index2.pkIndexId = " + gi.getPkIndexId();
@@ -880,8 +897,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 						
 						vo.setIndexId(index.getPkIndexId());
 						vo.setNumber(index.getNumber());
-						vo.setName(index.getName() + (StringUtil.isNotBlank(index.getRemark()) ? 
-								"<br>说明：<br>" + index.getRemark() : ""));
+						vo.setName(index.getName());
 						vo.setClassifyName(index.getClassify().getName());
 						vo.setClassifyId(index.getClassify().getPkClassifyId());
 						vo.setGrade(index.getGrade());
