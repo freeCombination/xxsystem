@@ -9,9 +9,9 @@ grade.personalUser.PersonalUserWin = Ext.create("Ext.window.Window", {
 	height : 400,
 	width : 600,
 	layout: 'border',
-	title:'未评分人员列表',
+	title:'评分人员列表',
 	items : [grade.personalUser.PersonalUserGrid],
-	buttons : [  {
+	buttons : [{
 		text : '关闭',
 		handler : function() {
 			grade.personalUser.PersonalUserWin.close();

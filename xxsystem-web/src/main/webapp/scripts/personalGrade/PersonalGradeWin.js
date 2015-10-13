@@ -56,8 +56,8 @@ grade.personalGrade.PersonalGradeForm = Ext.create("Ext.form.Panel", {
 
 
 grade.personalGrade.PersonalGradeWin = Ext.create("Ext.window.Window", {
-	height : 400,
-	width : 600,
+	height : 500,
+	width : 800,
 	layout: 'border',
 	items : [grade.personalDuty.PersonalDutyGrid, grade.personalGrade.PersonalGradeForm],
 	buttons : [ {
