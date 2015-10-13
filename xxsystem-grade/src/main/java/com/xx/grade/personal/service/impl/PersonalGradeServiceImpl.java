@@ -63,6 +63,11 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		String gradeYear = paramMap.get("gradeYear");
 		//状态
 		String status = paramMap.get("status");
+		//人员姓名
+		String inputGradeUser = paramMap.get("inputGradeUser");
+		//部门
+		String canpDeptQuery = paramMap.get("canpDeptQuery");
+		
 		StringBuffer hql = new StringBuffer();
 		StringBuffer counthql = new StringBuffer();
 		hql.append(" From PersonalGrade pg where 1=1 and pg.isDelete = 0 ");
@@ -79,6 +84,24 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			hql.append(" and pg.status = " + status);
 			counthql.append(" and pg.status = " + status);
 		}
+		
+		if (StringUtil.isNotEmpty(inputGradeUser)) {
+			hql.append(" and pg.user.realname like '%"+inputGradeUser+"%'");
+			counthql.append(" and pg.user.realname like '%"+inputGradeUser+"%'");
+		}
+		
+		if (StringUtil.isNotEmpty(canpDeptQuery) && !"0".equals(canpDeptQuery)) {
+			String userIds = getAllUserIdsByOrgId(canpDeptQuery);
+			//找到该部门下所有人员，如果人员为空，则没有数据
+			if (StringUtil.isNotEmpty(userIds)) {
+				hql.append(" and pg.user.userId in ("+userIds+")");
+				counthql.append(" and pg.user.userId in ("+userIds+")");
+			}else{
+				hql.append(" and 1=0 ");
+				counthql.append(" and 1=0 ");
+			}
+		}
+		
 		totalSize =  baseDao.getTotalCount(counthql.toString(), new HashMap<String, Object>());
 		List<PersonalGrade> personalGradeLists =  (List<PersonalGrade>)baseDao.queryEntitysByPage(start, limit, hql.toString(),new HashMap<String, Object>());
 		for (PersonalGrade grade : personalGradeLists) {
@@ -367,6 +390,29 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		List<User> users = baseDao.queryEntitys(hql.toString());
 		return users;
 	}
+	
+	/**
+	 * 获取部门下所有的人员id集合
+	 * 
+	 * @param orgId
+	 * @return
+	 */
+	private String getAllUserIdsByOrgId(String orgId){
+		String userId = "" ;
+		StringBuffer OrgUserhql = new StringBuffer();
+		OrgUserhql.append(" From OrgUser ou where ou.isDelete = 0 and ou.organization.orgId ='"+orgId+"'");
+		List<OrgUser> orgUsers2 = baseDao.queryEntitys(OrgUserhql.toString());
+		for (OrgUser orgUser : orgUsers2) {
+			if (orgUser.getUser() !=null 
+					&& orgUser.getUser().getEnable() == 1) {
+				userId += ","+orgUser.getUser().getUserId();
+			}
+		}
+		if (StringUtil.isNotEmpty(userId)) {
+			userId = userId.substring(1, userId.length());
+		}
+		return userId ;
+	}
 
 	@Override
 	public ListVo<PersonalGradeResultVo> getPersonalGradeResultList(
@@ -412,6 +458,20 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			hql.append(" and pgr.personalGrade.id = '"+personalGradeId+"'");
 			counthql.append(" and pgr.personalGrade.id = '"+personalGradeId+"'");
 		}
+		
+		if (StringUtil.isNotEmpty(canpDeptQuery) && !"0".equals(canpDeptQuery)) {
+			String userIds = getAllUserIdsByOrgId(canpDeptQuery);
+			//找到该部门下所有人员，如果人员为空，则没有数据
+			if (StringUtil.isNotEmpty(userIds)) {
+				hql.append(" and pgr.personalGrade.user.userId in ("+userIds+")");
+				counthql.append(" and pgr.personalGrade.user.userId in ("+userIds+")");
+			}else{
+				hql.append(" and 1=0 ");
+				counthql.append(" and 1=0 ");
+			}
+		}
+		//评分状态排序 满足点击评分人员列表需求
+		hql.append(" order by pgr.state");
 		
 		totalSize =  baseDao.getTotalCount(counthql.toString(), new HashMap<String, Object>());
 		List<PersonalGradeResult> personalGradeResults =  (List<PersonalGradeResult>)baseDao.queryEntitysByPage(start, limit, hql.toString(),new HashMap<String, Object>());

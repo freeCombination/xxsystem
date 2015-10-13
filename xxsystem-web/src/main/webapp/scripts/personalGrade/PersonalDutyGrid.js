@@ -104,7 +104,7 @@ grade.personalDuty.PersonalDutyGrid = Ext.create("Ext.grid.Panel", {
                 xtype:'button',
                 disabled:false,
                 text:'导出',
-                iconCls:'add-button',
+                iconCls:'export-button',
                 handler:function(){
                 	var personalGradeId = Ext.getCmp('personalGradeId').getValue();
                 	Ext.Ajax.request({ 
@@ -132,7 +132,7 @@ grade.personalDuty.PersonalDutyGrid = Ext.create("Ext.grid.Panel", {
                 xtype:'button',
                 disabled:false,
                 text:'导入',
-                iconCls:'add-button',
+                iconCls:'import-button',
                 handler:function(){
                 	importUserWin.show();
                 }

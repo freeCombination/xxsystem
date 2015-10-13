@@ -37,7 +37,8 @@ Ext.onReady(function(){
 			renderTo: Ext.getBody(),
 			items: [grade.personalGrade.PersonalGradeGrid]
 		});
-		grade.personalGrade.PersonalGradeStore.load();
+		grade.personalGrade.PersonalGradeStore.getProxy().setExtraParam("gradeYear", Ext.getCmp('gradeYear').getValue());
+		grade.personalGrade.PersonalGradeStore.loadPage(1);
 });
 
 </script>

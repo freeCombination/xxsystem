@@ -150,7 +150,7 @@ grade.personalGradeResult.PersonalGradeResultGrid = Ext.create("Ext.grid.Panel",
 		text : '查看',
 		disabledExpr : "$selectedRows != 1",// $selected 表示选中的记录数不等于1
 		disabled : true,
-		iconCls : 'edit-button',
+		iconCls : 'query-button',
 		handler : function() {
 			grade.personalGradeResult.ViewPersonalGradeResult();
 		}
@@ -160,7 +160,7 @@ grade.personalGradeResult.PersonalGradeResultGrid = Ext.create("Ext.grid.Panel",
 		text : '提交',
 		disabledExpr : "$selectedRows == 0 || $state==1",// $selected 表示选中的记录数不等于1
 		disabled : true,
-		iconCls : 'edit-button',
+		iconCls : 'icon-sendReview',
 		handler : function() {
 			grade.personalGradeResult.SubmitPersonalGradeResult();
 		}

@@ -75,6 +75,20 @@ var cm = [
 			dataIndex : "compositeScores"
 		},
 		{
+			header : "已提交人数/总人数",
+			renderer:function(value, cellmeta, record, rowIndex, columnIndex, store){
+				var totalPersonCount = record.get('totalPersonCount');
+				var commitPersonCount = record.get('commitPersonCount');
+				var status = record.get('status');
+				var personalGradeId = record.get('id');
+				if (status == '0') {
+					return "" ;
+				} else {
+					return "<span><a style='ext-decoration:underline;color:#5555FF;cursor:pointer' title='查看未评分人员列表' onclick='getResultPersonList("+personalGradeId+");'>"+commitPersonCount + "/" + totalPersonCount+"</a></span>";
+				}
+			}
+		},
+		{
 			header : "状态",
 			dataIndex : "status",
 			renderer:function(value, cellmeta, record, rowIndex, columnIndex, store){
@@ -89,20 +103,6 @@ var cm = [
 					return '已归档';
 				}
 			}
-		},
-		{
-			header : "已提交人数/总人数",
-			renderer:function(value, cellmeta, record, rowIndex, columnIndex, store){
-				var totalPersonCount = record.get('totalPersonCount');
-				var commitPersonCount = record.get('commitPersonCount');
-				var status = record.get('status');
-				var personalGradeId = record.get('id');
-				if (status == '0') {
-					return "" ;
-				} else {
-					return "<span><a style='ext-decoration:underline;color:#5555FF;cursor:pointer' title='查看未评分人员列表' onclick='getResultPersonList("+personalGradeId+");'>"+commitPersonCount + "/" + totalPersonCount+"</a></span>";
-				}
-			}
 		}
           ];
 
@@ -112,7 +112,7 @@ var cm = [
 var getResultPersonList = function(personalGradeId){
 	var proxy = grade.personalUser.PersonalUserStore.getProxy();
 	proxy.setExtraParam("personalGradeId", personalGradeId);
-	proxy.setExtraParam("state", 0);
+	//proxy.setExtraParam("state", 0);
 	grade.personalUser.PersonalUserStore.load();
 	grade.personalUser.PersonalUserWin.show();
 };
@@ -155,7 +155,7 @@ grade.personalGrade.PersonalGradeGrid = Ext.create("Ext.grid.Panel", {
 		id:'generate_btn',
 		//hidden:true,
 		text : '生成个人评分',
-		iconCls : 'edit-button',
+		iconCls : 'start-button',
 		handler : function() {
 			grade.personalGrade.generatePersonalGrade();
 		}
@@ -174,7 +174,7 @@ grade.personalGrade.PersonalGradeGrid = Ext.create("Ext.grid.Panel", {
 		text : '提交',
 		disabledExpr : "$selectedRows == 0 || $status=='1' || $status == '2'",// $selected 表示选中的记录数不等于1
 		disabled : true,
-		iconCls : 'edit-button',
+		iconCls : 'icon-sendReview',
 		handler : function() {
 			grade.personalGrade.SubmitPersonalGrade();
 		}
