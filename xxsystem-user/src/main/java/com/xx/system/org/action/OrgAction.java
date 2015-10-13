@@ -32,6 +32,8 @@ import com.xx.system.org.entity.Organization;
 import com.xx.system.org.service.IOrgService;
 import com.xx.system.org.service.IOrgUserService;
 import com.xx.system.org.vo.OrgVo;
+import com.xx.system.user.entity.User;
+import com.xx.system.user.service.IUserService;
 
 /**
  * 定义组织部门Action
@@ -73,6 +75,12 @@ public class OrgAction extends BaseAction {
     /** @Fields orgUserService : */
     @Resource
     public IOrgUserService orgUserService;
+    
+    /**
+     * @Fields userService :
+     */
+    @Resource
+    private IUserService userService;
     
     /**
      * @Fields result : 返回数据
@@ -173,6 +181,26 @@ public class OrgAction extends BaseAction {
                 if (org.getOrganization() != null) {
                     map.put("org.organization.orgId", org.getOrganization().getOrgId());
                     map.put("org.organization.orgName", org.getOrganization().getOrgName());
+                }
+                
+                if (org.getDeptHead() != null) {
+                    map.put("org.deptHead.userId", org.getDeptHead().getUserId());
+                    map.put("org.deptHead.realname", org.getDeptHead().getRealname());
+                }
+                
+                if (org.getBranchedLeader() != null) {
+                    map.put("org.branchedLeader.userId", org.getBranchedLeader().getUserId());
+                    map.put("org.branchedLeader.realname", org.getBranchedLeader().getRealname());
+                }
+                
+                if (org.getOtherSup() != null) {
+                    map.put("org.otherSup.userId", org.getOtherSup().getUserId());
+                    map.put("org.otherSup.realname", org.getOtherSup().getRealname());
+                }
+                
+                if (org.getSuperintendent() != null) {
+                    map.put("org.superintendent.userId", org.getSuperintendent().getUserId());
+                    map.put("org.superintendent.realname", org.getSuperintendent().getRealname());
                 }
                 
                 ResponseVo vo = new ResponseVo();
@@ -471,10 +499,26 @@ public class OrgAction extends BaseAction {
     public String addOrg() {
         String msg = "{success:'false',msg:'组织添加失败'}";
         try {
-            if (org.getOrganization() == null
-                || org.getOrganization().getOrgId() == 0) {
+            if (org.getOrganization() == null || org.getOrganization().getOrgId() == 0) {
                 org.setOrganization(null);
             }
+            
+            if (org.getDeptHead() == null || org.getDeptHead().getUserId() == null || org.getDeptHead().getUserId() == 0) {
+            	org.setDeptHead(null);
+            }
+            
+            if (org.getBranchedLeader() == null || org.getBranchedLeader().getUserId() == null || org.getBranchedLeader().getUserId() == 0) {
+            	org.setBranchedLeader(null);
+            }
+            
+            if (org.getOtherSup() == null || org.getOtherSup().getUserId() == null || org.getOtherSup().getUserId() == 0) {
+            	org.setOtherSup(null);
+            }
+            
+            if (org.getSuperintendent() == null || org.getSuperintendent().getUserId() == null || org.getSuperintendent().getUserId() == 0) {
+            	org.setSuperintendent(null);
+            }
+            
             org.setEnable(1);
             
             organizationService.addOrg(org);
@@ -518,8 +562,25 @@ public class OrgAction extends BaseAction {
             // org.setOrgTypeUUID(dict.getDictUUID());
             if (org.getOrganization() != null)
             {
-                updateOrg.setOrganization(org.getOrganization());
+                updateOrg.setOrganization(this.organizationService.getOrgById(org.getOrganization().getOrgId()));
             }
+            
+            if (org.getDeptHead() != null && org.getDeptHead().getUserId() != null && org.getDeptHead().getUserId() != 0) {
+            	updateOrg.setDeptHead(userService.getUserById(org.getDeptHead().getUserId()));
+            }
+            
+            if (org.getBranchedLeader() != null && org.getBranchedLeader().getUserId() != null && org.getBranchedLeader().getUserId() != 0) {
+            	updateOrg.setBranchedLeader(userService.getUserById(org.getBranchedLeader().getUserId()));
+            }
+            
+            if (org.getOtherSup() != null && org.getOtherSup().getUserId() != null && org.getOtherSup().getUserId() != 0) {
+            	updateOrg.setOtherSup(userService.getUserById(org.getOtherSup().getUserId()));
+            }
+            
+            if (org.getSuperintendent() != null && org.getSuperintendent().getUserId() != null && org.getSuperintendent().getUserId() != 0) {
+            	updateOrg.setSuperintendent(userService.getUserById(org.getSuperintendent().getUserId()));
+            }
+            
             updateOrg.setOrgType(dict);
             updateOrg.setOrgName(org.getOrgName());
             updateOrg.setDisOrder(org.getDisOrder());

@@ -182,8 +182,8 @@ public class OrgServiceImpl implements IOrgService {
         ArrayList<TreeNode> treeNodeList = new ArrayList<TreeNode>();
         // 新建查询的hql语句
         StringBuffer sb =
-            new StringBuffer("from Organization o where o.enable = ");
-        sb.append(Constant.ENABLE);
+            new StringBuffer("from Organization o where 1 = 1"); //o.enable = 
+        //sb.append(Constant.ENABLE);
         sb.append(" and o.status = ");
         sb.append(Constant.STATUS_NOT_DELETE);
         if (StringUtils.isNotBlank(permissionFlag)) {

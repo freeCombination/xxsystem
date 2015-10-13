@@ -18,6 +18,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.BatchSize;
 
 import com.xx.system.dict.entity.Dictionary;
+import com.xx.system.user.entity.User;
 
 /**
  * Organization实体定义
@@ -85,6 +86,26 @@ public class Organization implements java.io.Serializable {
      * @Fields organizations : 上级组织
      */
     private Set<Organization> organizations = new HashSet<Organization>(0);
+    
+    /**
+     * 部门领导
+     */
+    private User deptHead;
+    
+    /**
+     * 分管领导
+     */
+    private User branchedLeader;
+    
+    /**
+     * 所领导
+     */
+    private User otherSup;
+    
+    /**
+     * 所长
+     */
+    private User superintendent;
     
     /**
      * <p>
@@ -326,4 +347,44 @@ public class Organization implements java.io.Serializable {
     public void setOrganizations(Set<Organization> organizations) {
         this.organizations = organizations;
     }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "FK_DEPTHEAD")
+	public User getDeptHead() {
+		return deptHead;
+	}
+
+	public void setDeptHead(User deptHead) {
+		this.deptHead = deptHead;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "FK_BRANCHEDLEADER")
+	public User getBranchedLeader() {
+		return branchedLeader;
+	}
+
+	public void setBranchedLeader(User branchedLeader) {
+		this.branchedLeader = branchedLeader;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "FK_OTHERSUP")
+	public User getOtherSup() {
+		return otherSup;
+	}
+
+	public void setOtherSup(User otherSup) {
+		this.otherSup = otherSup;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "FK_SUPERINTENDENT")
+	public User getSuperintendent() {
+		return superintendent;
+	}
+
+	public void setSuperintendent(User superintendent) {
+		this.superintendent = superintendent;
+	}
 }

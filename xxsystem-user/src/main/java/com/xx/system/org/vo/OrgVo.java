@@ -44,6 +44,16 @@ public class OrgVo {
     private String superiorLeader;
     
     /**
+     * @Fields otherSup : 所领导
+     */
+    private String otherSup;
+    
+    /**
+     * @Fields superintendent : 所长
+     */
+    private String superintendent;
+    
+    /**
      * @Fields enable : 是否可用：0 是 1 否
      */
     private int enable;
@@ -80,6 +90,11 @@ public class OrgVo {
             o.getOrganization() == null ? "" : o.getOrganization().getOrgName();
         this.orgTypeValue = o.getOrgType().getDictionaryValue();
         this.orgTypeName = o.getOrgType().getDictionaryName();
+        
+        this.deptLeader = o.getDeptHead() == null ? "" : o.getDeptHead().getRealname();
+        this.superiorLeader = o.getBranchedLeader() == null ? "" : o.getBranchedLeader().getRealname();
+        this.otherSup = o.getOtherSup() == null ? "" : o.getOtherSup().getRealname();
+        this.superintendent = o.getSuperintendent() == null ? "" : o.getSuperintendent().getRealname();
         
         this.enable = o.getEnable();
     }
@@ -204,6 +219,22 @@ public class OrgVo {
 
 	public void setEnable(int enable) {
 		this.enable = enable;
+	}
+
+	public String getOtherSup() {
+		return otherSup;
+	}
+
+	public void setOtherSup(String otherSup) {
+		this.otherSup = otherSup;
+	}
+
+	public String getSuperintendent() {
+		return superintendent;
+	}
+
+	public void setSuperintendent(String superintendent) {
+		this.superintendent = superintendent;
 	}
     
 }
