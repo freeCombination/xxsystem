@@ -67,6 +67,16 @@ public class PersonalGradeResult implements Serializable{
 	 * 状态 0可修改 1提交（不可修改）
 	 */
 	private Integer state ;
+	
+	/**
+	 * 评分员工类型 0普通员工 1部门主任 2分管领导 3协管领导 4所长
+	 */
+	private Integer gradeUserType ;
+	
+	/**
+	 * 领导评价 只有员工类型不为普通员工 评分页面才显示评价
+	 */
+	private String evaluation ;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -136,4 +146,24 @@ public class PersonalGradeResult implements Serializable{
 	public void setState(Integer state) {
 		this.state = state;
 	}
+
+	@Column(name = "GRADEUSER_TYPE")
+	public Integer getGradeUserType() {
+		return gradeUserType;
+	}
+
+	public void setGradeUserType(Integer gradeUserType) {
+		this.gradeUserType = gradeUserType;
+	}
+
+	@Column(name = "evaluation")
+	public String getEvaluation() {
+		return evaluation;
+	}
+
+	public void setEvaluation(String evaluation) {
+		this.evaluation = evaluation;
+	}
+	
+	
 }

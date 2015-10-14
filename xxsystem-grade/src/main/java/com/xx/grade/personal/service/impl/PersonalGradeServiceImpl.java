@@ -331,16 +331,70 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			hql.append(" and pg.id in ('"+ids+"')");
 			List<PersonalGrade> grades = baseDao.queryEntitys(hql.toString());
 			
-			//获取该人员组织下所有人员及所有上级组织人员
+			//获取当前登录人部门
+			Set<OrgUser> currentOrgs = curUser.getOrgUsers();
+			Organization currentOrg = null ;
+			for (OrgUser orgUser : currentOrgs) {
+				if (orgUser.getOrganization() != null) {
+					currentOrg = orgUser.getOrganization();
+					break;
+				}
+			}
+			
+			//获取该人员组织下所有人员（排除领导和自己）
 			List<User> resultUser = getResultUserByCurrentOrg(curUser);
 			List<PersonalGradeResult> gradeResults = new ArrayList<PersonalGradeResult>();
 			for (PersonalGrade grade : grades) {
-				//遍历所有需要评分的人员 生成评分结果数据
-				for (User user : resultUser) {
+				//如果是部门领导（主任），则评分人为其他三位领导，否则为部门其他人和四位领导评分
+				if (currentOrg != null 
+						&& currentOrg.getDeptHead() != null
+						&& currentOrg.getDeptHead().getUserId() == curUser.getUserId()) {
+					
+				}else{
+					for (User user : resultUser) {
+						PersonalGradeResult result = new PersonalGradeResult();
+						result.setPersonalGrade(grade);
+						result.setGradeUser(user);
+						result.setState(0);
+						result.setGradeUserType(0);
+						gradeResults.add(result);
+					}
+					//添加部门领导 分管领导 协管领导 所长
+					//添加部门领导
+					if (currentOrg.getDeptHead() != null) {
+						PersonalGradeResult result = new PersonalGradeResult();
+						result.setPersonalGrade(grade);
+						result.setGradeUser(currentOrg.getDeptHead());
+						result.setState(0);
+						result.setGradeUserType(1);
+						gradeResults.add(result);
+					}
+				}
+				//分管领导
+				if (currentOrg.getBranchedLeader() != null) {
 					PersonalGradeResult result = new PersonalGradeResult();
 					result.setPersonalGrade(grade);
-					result.setGradeUser(user);
+					result.setGradeUser(currentOrg.getBranchedLeader());
 					result.setState(0);
+					result.setGradeUserType(2);
+					gradeResults.add(result);
+				}
+				//协管领导
+				if (currentOrg.getOtherSup() != null) {
+					PersonalGradeResult result = new PersonalGradeResult();
+					result.setPersonalGrade(grade);
+					result.setGradeUser(currentOrg.getOtherSup());
+					result.setState(0);
+					result.setGradeUserType(3);
+					gradeResults.add(result);
+				}
+				//所领导
+				if (currentOrg.getSuperintendent() != null) {
+					PersonalGradeResult result = new PersonalGradeResult();
+					result.setPersonalGrade(grade);
+					result.setGradeUser(currentOrg.getSuperintendent());
+					result.setState(0);
+					result.setGradeUserType(4);
 					gradeResults.add(result);
 				}
 			}
@@ -374,23 +428,24 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		StringBuffer OrgUserhql = new StringBuffer();
 		OrgUserhql.append(" From OrgUser ou where ou.isDelete = 0 and ou.organization.orgId ="+currentOrg.getOrgId());
 		OrgUserhql.append(" and ou.user.userId <> "+curUser.getUserId());
+		//排除领导
+		if (currentOrg.getDeptHead() != null) {
+			OrgUserhql.append(" and ou.user.userId <> "+currentOrg.getDeptHead().getUserId());
+		}
+		if (currentOrg.getBranchedLeader() != null) {
+			OrgUserhql.append(" and ou.user.userId <> "+currentOrg.getBranchedLeader().getUserId());
+		}
+		if (currentOrg.getOtherSup() != null) {
+			OrgUserhql.append(" and ou.user.userId <> "+currentOrg.getOtherSup().getUserId());
+		}
+		if (currentOrg.getSuperintendent() != null) {
+			OrgUserhql.append(" and ou.user.userId <> "+currentOrg.getSuperintendent().getUserId());
+		}
 		List<OrgUser> orgUsers2 = baseDao.queryEntitys(OrgUserhql.toString());
 		for (OrgUser orgUser : orgUsers2) {
 			if (orgUser.getUser() !=null 
 					&& orgUser.getUser().getEnable() == 1) {
 				userId += ","+orgUser.getUser().getUserId();
-			}
-		}
-		//添加部门领导
-		if (currentOrg.getDeptHead() != null) {
-			if (!userId.contains(","+currentOrg.getDeptHead().getUserId())) {
-				userId += ","+currentOrg.getDeptHead().getUserId() ;
-			}
-		}
-		//分管领导
-		if (currentOrg.getBranchedLeader() != null) {
-			if (!userId.contains(","+currentOrg.getBranchedLeader().getUserId())) {
-				userId += ","+currentOrg.getBranchedLeader().getUserId() ;
 			}
 		}
 		if (StringUtil.isNotEmpty(userId)) {
@@ -514,7 +569,8 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			vo.setGradeDate(DateUtil.dateToString(gradeResult.getGradeDate(), "yyyy-MM-dd HH:mm:ss"));
 		}
 		vo.setState(gradeResult.getState());
-		
+		vo.setGradeUserType(gradeResult.getGradeUserType());
+		vo.setEvaluation(gradeResult.getEvaluation());
 		if (gradeResult.getPersonalGrade() != null) {
 			PersonalGrade grade = gradeResult.getPersonalGrade();
 			vo.setGradeYear(grade.getGradeYear());

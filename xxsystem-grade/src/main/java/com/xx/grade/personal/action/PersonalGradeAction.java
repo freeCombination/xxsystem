@@ -444,6 +444,7 @@ public class PersonalGradeAction extends BaseAction {
 			}
 			if (null != result) {
 				result.setScore(Double.valueOf(gradeMap.get("score")));
+				result.setEvaluation(gradeMap.get("evaluation"));
 			} else {
 				JsonUtil.outJson("{success:'false',msg:'编辑个人评分结果失败，未找到该数据！'}");
 			}

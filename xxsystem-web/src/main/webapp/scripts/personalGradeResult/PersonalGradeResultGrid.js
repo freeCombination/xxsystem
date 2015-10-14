@@ -66,40 +66,12 @@ var cm = [
 			dataIndex : "title"
 		},
 		{
-			header : "姓名",
-			dataIndex : "gradeUser"
-		},
-		{
-			header : "性别",
-			dataIndex : "gender"
-		},
-		{
-			header : "出生年月",
-			dataIndex : "birthDay"
-		},
-		{
-			header : "政治面貌",
-			dataIndex : "politicsStatus"
-		},
-		{
-			header : "学历",
-			dataIndex : "educationBackground"
-		},
-		{
-			header : "现任岗位",
-			dataIndex : "responsibilities"
-		},
-		{
 			header : "年份",
 			dataIndex : "gradeYear"
 		},
 		{
-			header : "存在问题",
-			dataIndex : "problem"
-		},
-		{
-			header : "工作计划",
-			dataIndex : "workPlan"
+			header : "员工姓名",
+			dataIndex : "gradeUser"
 		},
 		{
 			header : "得分",
@@ -183,13 +155,14 @@ grade.personalGradeResult.EditPersonalGradeResult = function() {
 	var row = grade.personalGradeResult.PersonalGradeResultGrid.getSelectionModel().getSelection()
 	var id = row[0].data.id;
 	var personalGradeId = row[0].data.personalGradeId;
-	var basicForm = grade.personalGradeResult.PersonalGradeResultWin.down('form').getForm();
+	var basicForm = grade.personalGradeResult.PersonalGradeResultForm.getForm();
 	basicForm.reset();
 	basicForm.url = basePath + '/personalGrade/editPersonalGradeResult.action';
 	basicForm.findField('id').setValue(id);
 	basicForm.findField('personalGradeId').setValue(personalGradeId);
 	Ext.getCmp('result_submit').show();
-	Ext.getCmp('score').show();
+	Ext.getCmp('score').setReadOnly(false);
+	Ext.getCmp('evaluation').setReadOnly(false);
 	basicForm.load({
 		url : basePath + '/personalGrade/getPersonalGradeResultById.action',
 		params : {
@@ -197,6 +170,12 @@ grade.personalGradeResult.EditPersonalGradeResult = function() {
 		}
 	});
 	grade.personalGradeResult.PersonalGradeResultWin.show();
+/*	Ext.create("Ext.window.Window", {
+		height : 500,
+		width : 800,
+		layout: 'border',
+		items : [grade.personalGradeResult.PersonalGradeResultForm],
+	}).show();*/
 };
 
 /**
@@ -213,7 +192,8 @@ grade.personalGradeResult.ViewPersonalGradeResult = function() {
 	basicForm.findField('id').setValue(id);
 	basicForm.findField('personalGradeId').setValue(personalGradeId);
 	Ext.getCmp('result_submit').hide();
-	Ext.getCmp('score').hide();
+	Ext.getCmp('score').setReadOnly(true);
+	Ext.getCmp('evaluation').setReadOnly(true);
 	basicForm.load({
 		url : basePath + '/personalGrade/getPersonalGradeResultById.action',
 		params : {

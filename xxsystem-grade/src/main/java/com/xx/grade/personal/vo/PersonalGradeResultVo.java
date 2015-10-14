@@ -99,25 +99,15 @@ public class PersonalGradeResultVo {
      */
     private String politicsStatus ;
     
-    /**
-     * 是否为部门领导
-     */
-    private Boolean isDeptHead ;
+	/**
+	 * 评分员工类型 0普通员工 1部门主任 2分管领导 3协管领导 4所长
+	 */
+	private Integer gradeUserType ;
     
-    /**
-     * 部门领导评价
-     */
-    private String DeptHeadDes ;
-    
-    /**
-     * 是否为分管领导
-     */
-    private Boolean isBranchedLeader ;
-    
-    /**
-     * 分管领导评价
-     */
-    private String BranchedLeaderDes ;
+	/**
+	 * 领导评价 只有员工类型不为普通员工 评分页面才显示评价
+	 */
+	private String evaluation ;
 
 	public Integer getId() {
 		return id;
@@ -261,5 +251,21 @@ public class PersonalGradeResultVo {
 
 	public void setPersonalGradeId(Integer personalGradeId) {
 		this.personalGradeId = personalGradeId;
+	}
+
+	public Integer getGradeUserType() {
+		return gradeUserType;
+	}
+
+	public void setGradeUserType(Integer gradeUserType) {
+		this.gradeUserType = gradeUserType;
+	}
+
+	public String getEvaluation() {
+		return evaluation;
+	}
+
+	public void setEvaluation(String evaluation) {
+		this.evaluation = evaluation;
 	}
 }

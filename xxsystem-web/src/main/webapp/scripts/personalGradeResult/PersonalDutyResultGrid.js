@@ -59,7 +59,7 @@ var cm = [
  * 定义Grid
  */
 grade.personalDutyResult.PersonalDutyResultGrid = Ext.create("Ext.grid.Panel", {
-	title:'职责完成情况',
+	title:'岗位职责完成情况',
 	region : "center",
 	store : grade.personalDutyResult.PersonalDutyResultStore,
 	columns : cm
