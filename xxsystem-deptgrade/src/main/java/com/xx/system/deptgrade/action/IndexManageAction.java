@@ -372,7 +372,6 @@ public class IndexManageAction extends BaseAction {
 			JsonUtil.outJsonArray(lst);
 		} catch (Exception e) {
 			this.excepAndLogHandle(IndexManageAction.class, "查询用于评分部门", e, false);
-			e.printStackTrace();
 		}
 		
 		return null;
@@ -468,7 +467,20 @@ public class IndexManageAction extends BaseAction {
 			JsonUtil.outJson(lv);
 		} catch (Exception e) {
 			this.excepAndLogHandle(IndexManageAction.class, "查询部门评分汇总", e, false);
-			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * 显示评分用户
+	 */
+	public String showGradeUser() {
+		try {
+			String electYear = getRequest().getParameter("electYear");
+			JsonUtil.outJsonArray(indexManageService.showGradeUser(electYear));
+		} catch (Exception e) {
+			this.excepAndLogHandle(IndexManageAction.class, "显示评分用户", e, false);
 		}
 		
 		return null;

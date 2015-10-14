@@ -66,14 +66,14 @@
 .top_logo {
 	color: #013442;
 	float: left;
-	font-size: 20px;
+	font-size: 18px;
 	font-weight: bold;
 	margin-top: 5px;
 	margin-left:10px;
 	height: 42px;
 	background: url(../images/frame/top_logo.png) no-repeat;
-	background-size:400px 42px;
-	padding-left: 420px;
+	background-size:392px 42px;
+	padding-left: 400px;
 	padding-top:7px;
 	line-height: 42px;
 }

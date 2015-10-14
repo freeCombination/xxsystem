@@ -146,7 +146,15 @@
                 regex : new RegExp('^([^<^>])*$'),
                 regexText : '不能包含特殊字符！',
                 value: Ext.Date.format(new Date(),"Y"),
-                allowBlank: false
+                allowBlank: false,
+                listeners :{
+                    'render' : function(p){
+                        p.getEl().on('click',function(){
+                            WdatePicker({readOnly:true,dateFmt:'yyyy',maxDate:Ext.Date.format(new Date(),"Y")});
+                            //,onpicked:function(){$dp.$('electYearQuery-inputEl').focus();}
+                        });
+                    }
+                }
             },'&nbsp;',
             {
                 id:'searchClassifyBtn',
@@ -342,7 +350,7 @@
 	                        }
 	                        
 	                        // 统计汇总
-	                        var obj = "{indexId:-1, name:'汇总'";
+	                        var obj = "{indexId:-1, name:'合计'";
 	                        for(var j = 0; j < cpbm.length; j++){
 	                        	var scoreSum = 0;
 	                        	for(var i = 0; i < records.length; i++){

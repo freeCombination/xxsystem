@@ -12,6 +12,7 @@ import com.xx.system.deptgrade.vo.PercentageVo;
 import com.xx.system.org.vo.OrgVo;
 import com.xx.system.role.vo.RoleVo;
 import com.xx.system.user.entity.User;
+import com.xx.system.user.vo.UserVo;
 
 /**
  * 指标管理逻辑接口
@@ -285,4 +286,13 @@ public interface IIndexManageService {
      */
     public ListVo<DeptGradeDetailVo> queryDeptGradeSummarizing(Integer start, Integer limit, 
     		String electYear, String canpDeptId, String cfId) throws Exception;
+    
+    /**
+     * 显示评分用户
+     * 
+     * @param electYear 参评年份
+     * @return
+     * @throws Exception
+     */
+    public List<UserVo> showGradeUser(String electYear) throws Exception;
 }

@@ -211,7 +211,15 @@
                 width: 100,   
                 labelWidth: 70,
                 value: Ext.Date.format(new Date(),"Y"),
-                xtype: 'textfield'
+                xtype: 'textfield',
+                listeners :{
+                    'render' : function(p){
+                        p.getEl().on('click',function(){
+                            WdatePicker({readOnly:true,dateFmt:'yyyy',maxDate:Ext.Date.format(new Date(),"Y")});
+                            //,onpicked:function(){$dp.$('electYearQuery-inputEl').focus();}
+                        });
+                    }
+                }
             },'&nbsp;指标分类',
             {
                 xtype: 'combobox',
@@ -238,6 +246,15 @@
 					proxy.setExtraParam("cfId",Ext.getCmp("classifyIdQuery").getValue());
 					recordStore.loadPage(1);
 				}
+			},'->',
+			{
+				xtype:'button',
+                disabled:false,
+                text:'查看评分人',
+                iconCls:'details-button',
+                handler:function(){
+                	showGradeUser();
+                }
 			}]
 		});
 		
@@ -252,6 +269,94 @@
                 'electYear':Ext.getCmp('electYearQuery').getValue()
             }
         });
+		
+		function showGradeUser(){
+
+		    //建立用户Model
+		    Ext.define("userModel",{
+		        extend:"Ext.data.Model",
+		        fields:[
+		            {name:"userId",mapping:"userId"},
+		            {name:"orgName"},
+		            {name:"realname"},
+		            {name: "flag"}
+		         ]
+		    });
+		    
+		    var userCm1=[
+		        {xtype: "rownumberer",text:"序号",width:60,align:"center"},
+		        {header: "ID",width: 70,align:'left',dataIndex: "userId",hidden: true,menuDisabled: true,sortable:false},
+		        {header: "部门",width: 200,align:'left',dataIndex: "orgName",width:90,menuDisabled: true,sortable:false},
+		        {header: "姓名",width: 200,align:'center',dataIndex: "realname",width:90,menuDisabled: true,sortable:false},
+		        {header: "状态",width: 200,align:'center',dataIndex: "flag",width:90,menuDisabled: true,sortable:false,
+		        	renderer: function(value, cellmeta, record, rowIndex, columnIndex, store){
+                        //cellmeta.tdAttr = 'data-qtip="' + orgTypeArr[i].name + '"';
+                        var status = '<span style="color:red;">未评分</span>';
+                        if(value == 1){
+                        	status = '<span style="color:green;">已评分</span>';
+                        }
+                        return status;
+                    }
+		        }
+		    ];
+
+		    userRoleStore1 = Ext.create('Ext.data.Store', {
+		        pageSize: SystemConstant.commonSize,
+		        model: 'userModel',
+		        proxy: {
+		            type: 'ajax',
+		            actionMethods: {
+		                read: 'POST'
+		            },
+		            url: '${ctx}/deptgrade/showGradeUser.action',
+		            reader:{
+		                type: 'json'
+		            },
+		            autoLoad: true
+		        },
+	            listeners:{
+	                load:function(store, records){
+	                    if (records.length > 0) {
+	                        mergeCells(userPanel1, [1]);
+	                    }
+	                }
+	            }
+		    });
+
+		   userPanel1 = Ext.create(Ext.grid.Panel,{
+		        id: "userPanel1",
+		        stripeRows: true,
+		        border:false,
+		        forceFit:true,
+		        columnLines: true,
+		        autoScroll: true,
+		        store : userRoleStore1,
+		        columns:userCm1
+		    });
+		    
+		    userRoleStore1.load({
+	            params:{
+	                'electYear':Ext.getCmp('electYearQuery').getValue()
+	            }
+	        });
+		                    
+		    //用户分配角色窗口
+		    var userWin1 = Ext.create(Ext.window.Window,{
+		        title:"评分人员列表",
+		        width:600,
+		        height:400,
+		        modal:true,
+		        resizable:true,
+		        closeAction:'destroy',
+		        items:[userPanel1],
+		        buttonAlign : 'center',
+		        buttons:[{
+		            text:'关闭',handler:function(){
+		            userWin1.close();
+		        }}
+		        ]
+		    }).show();
+		}
 		
 		Ext.create("Ext.container.Viewport", {
 		    layout: "border",

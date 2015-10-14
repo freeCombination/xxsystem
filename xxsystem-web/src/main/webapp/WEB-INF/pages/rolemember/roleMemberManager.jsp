@@ -795,7 +795,7 @@ var roleMemberIds;
 	            items:[
 	            	userPanel
 	            ]
-	        },
+	        }/* ,
 	        {
 	        	id:'group',
 	            title: '群组',
@@ -803,7 +803,7 @@ var roleMemberIds;
 	            items:[
 					groupPanel	
 		        ]
-	        }
+	        } */
 	    ],
 	    tabBar : { 
 	    	height : 25,  
@@ -992,7 +992,7 @@ var roleMemberIds;
 		layout: "border",
 		renderTo: Ext.getBody(),
 		items: [ 
-			roleGrid,scopeTab,panelTab
+			roleGrid,panelTab//scopeTab,
 		]
 	});
 }); 

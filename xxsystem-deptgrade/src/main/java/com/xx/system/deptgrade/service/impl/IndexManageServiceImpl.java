@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
@@ -43,6 +44,7 @@ import com.xx.system.role.entity.Role;
 import com.xx.system.role.entity.RoleMemberScope;
 import com.xx.system.role.vo.RoleVo;
 import com.xx.system.user.entity.User;
+import com.xx.system.user.vo.UserVo;
 
 /**
  * 指标逻辑接口实现
@@ -1291,5 +1293,87 @@ public class IndexManageServiceImpl implements IIndexManageService {
 		}
 		
 		return listVo;
+	}
+
+	/**
+     * 对评分用户进行排序
+     * 
+     * @Title orderGradeUser
+     * @author dong.he
+     * @date 2014年12月25日
+     * @param inxLst
+     */
+    private void orderGradeUser(List<UserVo> guLst){
+        Collections.sort(guLst, new Comparator<UserVo>() {
+            public int compare(UserVo gu1, UserVo gu2) {
+                return NumberUtils.toInt(gu1.getFlag()) - NumberUtils.toInt(gu2.getFlag());
+            }
+        });
+    }
+	
+	@Override
+	public List<UserVo> showGradeUser(String electYear) throws Exception {
+		List<UserVo> uvLst = new ArrayList<UserVo>();
+		
+		// 获取所有评分人
+		if (StringUtil.isNotBlank(electYear)) {
+			String gpHql = " from GradePercentage gp where gp.isDelete = 0"
+					+ " and gp.classify.isDelete = 0 and gp.classify.enable = 0"
+					+ " and gp.classify.electYear = '" + electYear + "'";
+			List<GradePercentage> gpLst = (List<GradePercentage>)baseDao.queryEntitys(gpHql);
+			if (!CollectionUtils.isEmpty(gpLst)) {
+				Map<Integer, UserVo> allUser = new HashMap<Integer, UserVo>();
+				UserVo vo = null;
+				for (GradePercentage gp : gpLst) {
+					// 查询角色下包含的用户（RoleMemberScope），进而通过ClassifyUser判断用户是否已提交部门评分
+					String rmsHql = " from RoleMemberScope r where r.role.roleId = " + gp.getRole().getRoleId();
+					List<RoleMemberScope> rmsLst = (List<RoleMemberScope>)baseDao.queryEntitys(rmsHql);
+					if (!CollectionUtils.isEmpty(rmsLst)) {
+						for (RoleMemberScope rms : rmsLst) {
+							if (rms.getUser() != null) {
+								vo = new UserVo();
+								
+								vo.setUserId(rms.getUser().getUserId());
+								vo.setRealname(rms.getUser().getRealname());
+								
+								Iterator<OrgUser> ouIt = rms.getUser().getOrgUsers().iterator();
+								String orgName = "";
+								while (ouIt.hasNext()) {
+									Organization usrOrg = ouIt.next().getOrganization();
+									orgName += "," + usrOrg.getOrgName();
+								}
+								if (StringUtil.isNotBlank(orgName)) {
+									vo.setOrgName(orgName.substring(1));
+								}
+								vo.setFlag("0");
+								
+								// 查询ClassifyUser，判断是否提交
+								String cuHql = " from ClassifyUser cu where cu.isDelete = 0 and cu.hasSubmit = 1"
+										+ " and cu.classify.pkClassifyId = " + gp.getClassify().getPkClassifyId()
+										+ " and cu.user.userId = " + rms.getUser().getUserId();
+								
+								int hasSubmit = baseDao.queryTotalCount(cuHql, new HashMap<String, Object>());
+								if (hasSubmit > 0) {
+									vo.setFlag("1");
+								}
+								
+								allUser.put(rms.getUser().getUserId(), vo);
+							}
+						}
+					}
+				}
+				
+				if (allUser.size() > 0) {
+					for (Entry<Integer, UserVo> entry : allUser.entrySet()) {
+						uvLst.add(entry.getValue());
+					}
+					
+					// 根据flag排序
+					orderGradeUser(uvLst);
+				}
+			}
+		}
+		
+		return uvLst;
 	}
 }

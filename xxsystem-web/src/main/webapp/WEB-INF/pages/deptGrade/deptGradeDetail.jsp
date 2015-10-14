@@ -273,7 +273,15 @@
                 width: 100,   
                 labelWidth: 70,
                 value: Ext.Date.format(new Date(),"Y"),
-                xtype: 'textfield'
+                xtype: 'textfield',
+                listeners :{
+                    'render' : function(p){
+                        p.getEl().on('click',function(){
+                            WdatePicker({readOnly:true,dateFmt:'yyyy',maxDate:Ext.Date.format(new Date(),"Y")});
+                            //,onpicked:function(){$dp.$('electYearQuery-inputEl').focus();}
+                        });
+                    }
+                }
             },'&nbsp;指标分类',
             {
                 xtype: 'combobox',
