@@ -13,6 +13,10 @@
   .x-form-layout-table{
 	table-layout: fixed;
   }
+  
+  .x-grid-td {
+    vertical-align: middle !important;
+  }
 </style>
 </head>
 <body>
@@ -161,7 +165,7 @@
 				id:'addPercentageBtn',
 				xtype:'button',
 				text:'提交',
-				iconCls:'add-button',
+				iconCls:'save-button',
 				handler:function(){
 					Ext.Msg.confirm(SystemConstant.alertTitle,"提交后不能修改评分，确定提交最后评分吗？",function(btn) {
                         if (btn == 'yes') {
@@ -274,15 +278,13 @@
 	                            regex : new RegExp('^([^<^>])*$'),
 	                            regexText : '不能包含特殊字符！',
 	                            allowBlank: false,
-	                            editable: true,
+	                            //editable: true,
 	                            displayField: 'score',
 	                            valueField: 'score',
 	                            store: Ext.create('Ext.data.Store', {
 	                                fields: ['score'],
 	                                data : [
-	                                    {"score":"3"},
-	                                    {"score":"2"},
-	                                    {"score":"1"}
+	                                    {"score":"0"}
 	                                ]
 	                            }),
 	                            listeners : {
@@ -331,7 +333,7 @@
 	                                var grade = '';
 	                                for(var k = 0; k < grades.length; k++){
 	                                    if (parseInt(grades[k].split(':')[0]) == cpbm[j].orgId) {
-	                                        grade = grades[k].split(':')[1]
+	                                        grade = grades[k].split(':')[1];
 	                                        break;
 	                                    }
 	                                }
@@ -340,7 +342,7 @@
 	                        }
 	                        
 	                        // 统计汇总
-	                        var obj = "{indexId:" + records.length + ", name:'汇总'";
+	                        var obj = "{indexId:-1, name:'汇总'";
 	                        for(var j = 0; j < cpbm.length; j++){
 	                        	var scoreSum = 0;
 	                        	for(var i = 0; i < records.length; i++){
@@ -353,7 +355,9 @@
 	                        
 	                        obj += "}";
 	                        store.add(Ext.decode(obj));
-	                     }
+	                        
+	                        mergeCells(deptGrageGrid, [1, 2, 3]);
+	                    }
 	                }
 	            }
 	        });
@@ -362,24 +366,47 @@
 	            clicksToEdit: 1,
 	            listeners : {
 	                beforeedit:function(editor, e, eOpts ){
-	                	var maxScore = e.record.data.grade;
-                        if (e.record.data.grade2) {
-                            maxScore = e.record.data.grade2;
-                        }
-                        
-                        var scoreData = [];
-                        for (var i = maxScore; i >= 0; i--) {
-                        	scoreData.push({'score' : i});
-                        }
+	                	var scoreStore = e.column.field.store;
 	                	
-	                    var scoreStore = e.column.field.store;
-	                    scoreStore.removeAll();
-	                    scoreStore.add(scoreData);
+	                	if (e.record.data.indexId == -1) {
+	                		scoreStore.removeAll();
+	                		//e.column.field.editable = false;
+	                		//e.column.field.readOnly = true;
+	                		//e.column.field = null;
+	                	}else{
+	                		var maxScore = e.record.data.grade;
+	                        if (e.record.data.grade2) {
+	                            maxScore = e.record.data.grade2;
+	                        }
+	                        
+	                        var scoreData = [];
+	                        for (var i = maxScore; i >= 0; i--) {
+	                            scoreData.push({'score' : i});
+	                        }
+	                        
+	                        scoreStore.removeAll();
+	                        scoreStore.add(scoreData);
+	                	}
+	                },
+	                edit:function(editor, e, eOpts ){
+	                	for(var j = 0; j < cpbm.length; j++){
+                            var scoreSum = 0;
+                            for(var i=0; i<deptGrageStore.getCount() - 1; i++){
+                            	var re = deptGrageStore.getAt(i);
+                            	
+                                if (re.get('orgId_' + cpbm[j].orgId)) {
+                                    scoreSum += parseFloat(re.get('orgId_' + cpbm[j].orgId));
+                                }
+                            }
+                            
+                            
+                            deptGrageStore.getAt(deptGrageStore.getCount() - 1).set('orgId_' + cpbm[j].orgId, scoreSum);
+                        }
 	                }
 	            }
 	        });
 	        
-	        var deptGrageGrid = Ext.create("Ext.grid.Panel",{
+	        deptGrageGrid = Ext.create("Ext.grid.Panel",{
 	            //title:'部门评分',
 	            border:false,
 	            columnLines: true,
@@ -517,7 +544,7 @@
                     			var grade = '';
                     			for(var k = 0; k < grades.length; k++){
                     				if (parseInt(grades[k].split(':')[0]) == cpbm[j].orgId) {
-                    					grade = grades[k].split(':')[1]
+                    					grade = grades[k].split(':')[1];
                     					break;
                     				}
                     			}
@@ -527,7 +554,7 @@
                      } */
                  }
 	         });
-		}
+		};
 		
 		Ext.create("Ext.container.Viewport", {
 		    layout: "border",

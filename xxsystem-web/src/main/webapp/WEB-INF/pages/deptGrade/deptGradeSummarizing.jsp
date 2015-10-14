@@ -13,6 +13,10 @@
   .x-form-layout-table{
 	table-layout: fixed;
   }
+  
+  .x-grid-td {
+    vertical-align: middle !important;
+  }
 </style>
 </head>
 <body>
@@ -110,7 +114,14 @@
 				     totalProperty: "totalSize",
 				     root: "list"
 			    }
-	        }
+	        },
+            listeners:{
+                load:function(store, records){
+                    if (records.length > 0) {
+                        mergeCells(recordGrid, [1]);
+                    }
+                }
+            }
 		});
 		
 		var cm=[
@@ -174,7 +185,7 @@
         });
 		
 		//grid组件
-		var recordGrid =  Ext.create("Ext.grid.Panel",{
+		recordGrid =  Ext.create("Ext.grid.Panel",{
 			title:'部门评分汇总',
 			border:false,
 			columnLines: true,

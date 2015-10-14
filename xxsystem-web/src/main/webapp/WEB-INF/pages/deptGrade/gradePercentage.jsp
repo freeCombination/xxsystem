@@ -285,7 +285,7 @@
 				id:'addPercentageBtn',
 				xtype:'button',
 				text:'保存',
-				iconCls:'add-button',
+				iconCls:'save-button',
 				handler:function(){
 					if (Ext.getCmp("classifyId").isValid() && Ext.getCmp("receiptsNum").isValid()) {
 						var data = '';

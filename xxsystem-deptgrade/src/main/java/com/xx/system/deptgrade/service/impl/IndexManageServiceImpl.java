@@ -691,6 +691,18 @@ public class IndexManageServiceImpl implements IIndexManageService {
         	}
         }
 		
+		// 由于分馆所领导可能管理多个部门，分馆所领导不能评分这些部门，也需要排除，可通过与部门关联的分馆所领导对比，对比上就排除该部门
+		String fenguanHql = " from Organization o where o.status = 0"
+				+ " and o.enable = 0"
+				+ " and o.otherSup is not null"
+				+ " and o.otherSup.userId = " + currUsr.getUserId();
+		List<Organization> fenguanOrg = (List<Organization>)baseDao.queryEntitys(fenguanHql);
+		if (!CollectionUtils.isEmpty(fenguanOrg)) {
+			for (Organization org : fenguanOrg) {
+				depts += "," + org.getOrgId();
+			}
+		}
+		
 		// 查询OrgAndClassify，限制IndexClassify
 		String ocHql = " from OrgAndClassify oc where oc.isDelete = 0";
 		/*

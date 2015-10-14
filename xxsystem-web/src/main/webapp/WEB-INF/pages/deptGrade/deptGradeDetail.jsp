@@ -13,6 +13,10 @@
   .x-form-layout-table{
 	table-layout: fixed;
   }
+  
+  .x-grid-td {
+    vertical-align: middle !important;
+  }
 </style>
 </head>
 <body>
@@ -110,13 +114,21 @@
 				     totalProperty: "totalSize",
 				     root: "list"
 			    }
-	        }
+	        },
+	        listeners:{
+                load:function(store, records){
+                    if (records.length > 0) {
+                        mergeCells(recordGrid, [1, 2, 3]);
+                        mergeCells(recordGrid, [6, 7]);
+                    }
+                }
+            }
 		});
 		
 		var cm=[
 				{header:"序号",xtype: "rownumberer",width:60,align:"center",menuDisabled: true,sortable :false},
 	            {header: "ID",width: 70,dataIndex: "gradeDetailId",hidden: true,menuDisabled: true,sortable :false},
-	            {header: "指标分类",width: 200,dataIndex: "classifyName",menuDisabled: true,sortable :false,
+	            {header: "指标分类",width: 100,dataIndex: "classifyName",menuDisabled: true,sortable :false,
 					renderer : function(value, cellmeta, record, rowIndex,
 							columnIndex, store) {
 						cellmeta.tdAttr = 'data-qtip="' + value + '"';
@@ -134,28 +146,28 @@
 						cellmeta.tdAttr = 'data-qtip="' + value + '"';
 						return value;
 					}},
-	            {header: "参评部门",width: 200,dataIndex: "canpDept",menuDisabled: true,sortable :false,
+	            {header: "参评部门",width: 100,dataIndex: "canpDept",menuDisabled: true,sortable :false,
 					renderer : function(value, cellmeta, record, rowIndex,
 							columnIndex, store) {
 						cellmeta.tdAttr = 'data-qtip="' + value + '"';
 						return value;
 					}
 				},
-                {header: "得分",width: 200,dataIndex: "score",menuDisabled: true,sortable :false,
+                {header: "得分",width: 100,dataIndex: "score",menuDisabled: true,sortable :false,
                     renderer : function(value, cellmeta, record, rowIndex,
                             columnIndex, store) {
                         cellmeta.tdAttr = 'data-qtip="' + value + '"';
                         return value;
                     }
                 },
-                {header: "评分人",width: 200,dataIndex: "gradeUsr",menuDisabled: true,sortable :false,
+                {header: "评分人",width: 100,dataIndex: "gradeUsr",menuDisabled: true,sortable :false,
                     renderer : function(value, cellmeta, record, rowIndex,
                             columnIndex, store) {
                         cellmeta.tdAttr = 'data-qtip="' + value + '"';
                         return value;
                     }
                 },
-                {header: "评分人部门",width: 200,dataIndex: "gradeUsrDept",menuDisabled: true,sortable :false,
+                {header: "评分人部门",width: 100,dataIndex: "gradeUsrDept",menuDisabled: true,sortable :false,
                     renderer : function(value, cellmeta, record, rowIndex,
                             columnIndex, store) {
                         cellmeta.tdAttr = 'data-qtip="' + value + '"';
@@ -235,7 +247,7 @@
         });
 		
 		//grid组件
-		var recordGrid =  Ext.create("Ext.grid.Panel",{
+		recordGrid =  Ext.create("Ext.grid.Panel",{
 			title:'部门评分明细',
 			border:false,
 			columnLines: true,

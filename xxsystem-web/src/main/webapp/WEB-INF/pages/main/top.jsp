@@ -38,13 +38,14 @@
 }
 </script>
 <body class="top">
-	<div class="top_logo">公司架构系统</div>
+	<div class="top_logo">绩效评分系统</div>
 	<div class="top_img">
-		<span class="top_right"> <input name="" type="button" value=""
-			class="top_help" /> <input name="" type="button" value="" onclick="logout();"
-			class="top_quit" />
-		</span> <span class="top_bot bot2"> <s:if
-				test="#session.currentUserName!=null">
+		<span class="top_right"> 
+		  <!-- <input name="" type="button" value="" class="top_help" />  -->
+		  <input name="" type="button" value="" onclick="logout();" class="top_quit" />
+		</span>
+		<span class="top_bot bot2"> 
+		  <s:if test="#session.currentUserName!=null">
     			欢迎您！<s:property value="#session.currentUserName" />！
     		</s:if> <s:if test="#session.currentUserName==null">
     			未登录

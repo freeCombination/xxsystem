@@ -258,9 +258,11 @@ function getIE() {
 	<div class="frame2_top">
 		<div class="top_logo">绩效评分系统</div>
 		<div class="top_img">
-			<span class="top_right"> <input name="" type="button" value=""
-				class="top_help" onclick="toHelp();" /> <input name="" type="button" value=""
-				class="top_quit" onclick="logout();" /></span> <span class="top_bot bot2"> <s:if
+			<span class="top_right">
+                <!-- <input name="" type="button" value="" class="top_help" onclick="toHelp();" /> -->
+                <input name="" type="button" value="" class="top_quit" onclick="logout();" />
+			</span>
+			<span class="top_bot bot2"> <s:if
 					test="#session.currentUserName!=null || #request.currentUserName!=null">
 					欢迎您 <s:if test="#session.CurrentUser.type.dictCode=='LOCALUSER'"><a href="#" onclick="updatePassWord();">${currentUserName }</a></s:if>
     			<s:else>${currentUserName }</s:else>！

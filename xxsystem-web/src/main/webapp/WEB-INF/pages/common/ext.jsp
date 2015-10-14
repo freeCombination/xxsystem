@@ -11,3 +11,4 @@
 <script type="text/javascript" src="${ctx}/scripts/my97DatePicker/WdatePicker.js"></script>
 <script type="text/javascript" src="${ctx}/scripts/common/validSession.js"></script>
 <script type="text/javascript" src="${ctx}/scripts/extjs/ux/TreePicker.js"></script>
+<script type="text/javascript" src="${ctx}/scripts/common/mergeCells.js"></script>
