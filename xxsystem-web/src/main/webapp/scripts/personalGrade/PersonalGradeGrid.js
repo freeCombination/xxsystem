@@ -33,12 +33,15 @@ grade.personalGrade.PersonalGradeStore = Ext.create('Ext.data.Store', {
 	}
 });
 
-grade.personalGrade.PersonalGradeStore.addListener('load', function(st, rds, opts) {
+grade.personalGrade.PersonalGradeStore.addListener('beforeload', function(st, rds, opts) {
 	if (rds.length > 0) {
 		//Ext.getCmp('generate_btn').hide();
 	}else{
 		//Ext.getCmp('generate_btn').show();
 	}
+	grade.personalGrade.PersonalGradeGrid.getSelectionModel().clearSelections();
+	Ext.getCmp('edit-button').setDisabled(true);
+	Ext.getCmp('submit-button').setDisabled(true);
 });
 
 /**
@@ -162,6 +165,7 @@ grade.personalGrade.PersonalGradeGrid = Ext.create("Ext.grid.Panel", {
 		},
 	{
 		xtype : 'button',
+		id:'edit-button',
 		text : '编辑',
 		disabledExpr : "$selectedRows != 1 || $status!='0'",// $selected 表示选中的记录数不等于1
 		disabled : true,
@@ -172,6 +176,7 @@ grade.personalGrade.PersonalGradeGrid = Ext.create("Ext.grid.Panel", {
 	},{
 		xtype : 'button',
 		text : '提交',
+		id:'submit-button',
 		disabledExpr : "$selectedRows == 0 || $status=='1' || $status == '2'",// $selected 表示选中的记录数不等于1
 		disabled : true,
 		iconCls : 'icon-sendReview',

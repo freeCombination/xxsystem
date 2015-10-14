@@ -381,6 +381,18 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 				userId += ","+orgUser.getUser().getUserId();
 			}
 		}
+		//添加部门领导
+		if (currentOrg.getDeptHead() != null) {
+			if (!userId.contains(","+currentOrg.getDeptHead().getUserId())) {
+				userId += ","+currentOrg.getDeptHead().getUserId() ;
+			}
+		}
+		//分管领导
+		if (currentOrg.getBranchedLeader() != null) {
+			if (!userId.contains(","+currentOrg.getBranchedLeader().getUserId())) {
+				userId += ","+currentOrg.getBranchedLeader().getUserId() ;
+			}
+		}
 		if (StringUtil.isNotEmpty(userId)) {
 			userId = userId.substring(1, userId.length());
 		}
@@ -430,6 +442,8 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		String inputGradeUser = paramMap.get("inputGradeUser");
 		String inputUserName = paramMap.get("inputUserName");
 		String canpDeptQuery = paramMap.get("canpDeptQuery");
+		//标题
+		String inputTitle = paramMap.get("inputTitle");
 		StringBuffer hql = new StringBuffer();
 		StringBuffer counthql = new StringBuffer();
 		hql.append(" From PersonalGradeResult pgr where 1=1");
@@ -447,6 +461,12 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		if (StringUtil.isNotEmpty(inputGradeUser)) {
 			hql.append(" and pgr.personalGrade.user.realname like '%"+inputGradeUser+"%'");
 			counthql.append(" and pgr.personalGrade.user.realname like '%"+inputGradeUser+"%'");
+		}
+		
+		//标题
+		if (StringUtil.isNotEmpty(inputTitle)) {
+			hql.append(" and pgr.personalGrade.title like '%"+inputTitle+"%'");
+			counthql.append(" and pgr.personalGrade.title like '%"+inputTitle+"%'");
 		}
 		
 		if (StringUtil.isNotEmpty(inputUserName)) {
