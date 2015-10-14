@@ -140,7 +140,7 @@ var orgForm=Ext.create("Ext.form.Panel", {
 	    	id : 'otherSupId',
 	    	hidden:true
 	    }, {
-	    	fieldLabel: '所领导',
+	    	fieldLabel: '协管领导',
 	        name: 'org.otherSup.realname',
 	        id : 'otherSupName',
 	        //allowBlank: false,
