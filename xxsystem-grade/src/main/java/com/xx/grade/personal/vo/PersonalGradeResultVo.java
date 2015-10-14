@@ -98,6 +98,26 @@ public class PersonalGradeResultVo {
      * 政治面貌
      */
     private String politicsStatus ;
+    
+    /**
+     * 是否为部门领导
+     */
+    private Boolean isDeptHead ;
+    
+    /**
+     * 部门领导评价
+     */
+    private String DeptHeadDes ;
+    
+    /**
+     * 是否为分管领导
+     */
+    private Boolean isBranchedLeader ;
+    
+    /**
+     * 分管领导评价
+     */
+    private String BranchedLeaderDes ;
 
 	public Integer getId() {
 		return id;

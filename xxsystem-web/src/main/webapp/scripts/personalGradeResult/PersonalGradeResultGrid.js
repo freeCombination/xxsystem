@@ -42,6 +42,12 @@ grade.personalGradeResult.PersonalGradeResultStore = Ext.create('Ext.data.Store'
 	}
 });
 
+grade.personalGradeResult.PersonalGradeResultStore.addListener('beforeload', function(st, rds, opts) {
+	grade.personalGradeResult.PersonalGradeResultGrid.getSelectionModel().clearSelections();
+	Ext.getCmp('edit-button').setDisabled(true);
+	Ext.getCmp('submit-button').setDisabled(true);
+});
+
 /**
  * 列表字段
  */
@@ -137,6 +143,7 @@ grade.personalGradeResult.PersonalGradeResultGrid = Ext.create("Ext.grid.Panel",
 		}
 	}, '->', {
 		xtype : 'button',
+		id:'edit-button',
 		text : '编辑',
 		disabledExpr : "$selectedRows != 1 || $state!=0",// $selected 表示选中的记录数不等于1
 		disabled : true,
@@ -157,6 +164,7 @@ grade.personalGradeResult.PersonalGradeResultGrid = Ext.create("Ext.grid.Panel",
 	}
 	,{
 		xtype : 'button',
+		id:'submit-button',
 		text : '提交',
 		disabledExpr : "$selectedRows == 0 || $state==1",// $selected 表示选中的记录数不等于1
 		disabled : true,
