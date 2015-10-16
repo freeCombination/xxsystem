@@ -79,6 +79,9 @@
             proxy: {
                type: 'ajax',
                url: '${ctx}/deptgrade/getAllClassifies.action',
+               extraParams:{
+            	   electYear:Ext.getCmp('electYearQuery') ? Ext.getCmp('electYearQuery').getValue() : Ext.Date.format(new Date(),"Y")
+               },
                reader: {
                   type: 'json'
                }
@@ -136,16 +139,16 @@
                     }
 	            },
 	            {header: "权重",width: 200,dataIndex: "percentage",menuDisabled: true,sortable :false,
-					renderer : function(value, cellmeta, record, rowIndex,
-							columnIndex, store) {
-						cellmeta.tdAttr = 'data-qtip="' + value + '"';
-						return value;
+					renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
+						var showStr = Math.round(value * 100) + "%";
+						cellmeta.tdAttr = 'data-qtip="' + showStr + '"';
+						return showStr;
 					},
                     field: {
                         xtype:'textfield',
                         maxLength:10,
-                        regex : new RegExp('^([^<^>])*$'),
-                        regexText : '不能包含特殊字符！',
+                        regex : new RegExp('^[0-9]+(.[0-9]{1,2})?$'),
+                        regexText : '保留两位小数！',
                         allowBlank: false
                     }
 				},
@@ -428,7 +431,7 @@
 					oldNumber = '';
 					cfStore.load({
 			            params:{
-			                'electYear':Ext.getCmp('electYearQuery').getValue()
+			                'electYear':Ext.Date.format(new Date(),"Y")
 			            },
 			            callback:function(records){
 	                        var selectedId = records[0].get('classifyId');
