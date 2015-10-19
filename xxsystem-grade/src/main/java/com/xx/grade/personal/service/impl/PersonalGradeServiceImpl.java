@@ -1,6 +1,9 @@
 package com.xx.grade.personal.service.impl;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,6 +17,7 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -727,41 +731,15 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 	}
 
 	@Override
-	public HSSFWorkbook exportPersonalGradeAll(Map<String, String> paramMap) {
-		ListVo<PersonalDutyVo> result =	getPersonalDutyList(paramMap);
+	public HSSFWorkbook exportPersonalGradeAll(Map<String, String> paramMap,File file) {
 		HSSFWorkbook wb = null;
-		if (result.getTotalSize() > 0) {
-			wb = new HSSFWorkbook();
-			HSSFSheet sheet = wb.createSheet("个人职责明细");
-			HSSFRow row = sheet.createRow(0);
-			HSSFCell cell = null;
-			//创建头部
-			cell = row.createCell(0);
-			cell.setCellValue("主键");
-			
-			cell = row.createCell(1);
-			cell.setCellValue("工作职责");
-			
-			cell = row.createCell(2);
-			cell.setCellValue("完成情况");
-			
-			List<PersonalDutyVo> list = result.getList();
-			for (int i = 0; i < list.size(); i++) {
-				PersonalDutyVo vo = list.get(i);
-				row = sheet.createRow(i + 1);
-				//id
-				cell = row.createCell(0);
-				cell.setCellValue(String.valueOf(vo.getId()));
-				
-				//工作职责
-				cell = row.createCell(1);
-				cell.setCellValue(String.valueOf(vo.getWorkDuty()));
-				
-				//完成情况
-				cell = row.createCell(2);
-				cell.setCellValue(String.valueOf(vo.getCompletion()));
-			}
-		}
+		try {
+			POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(file));
+	        //读取excel模板  
+	        wb = new HSSFWorkbook(fs);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
 		return wb;
 	}
 }

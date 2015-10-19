@@ -381,17 +381,20 @@ public class PersonalGradeAction extends BaseAction {
 		try {
 			Map<String, String> paramMap = RequestUtil.getParameterMap(super
 					.getRequest());
+			HttpServletRequest request = this.getRequest();
+			ServletContext servletContext = request.getSession().getServletContext();
+			File file=new File(servletContext.getRealPath("/template/resultTemplate.xls"));  
 			HSSFWorkbook workBook = this.personalGradeService
-					.exportPersonalGradeAll(paramMap);
+					.exportPersonalGradeAll(paramMap,file);
 			if (workBook != null) {
 				this.getRequest().getSession()
 						.setAttribute("personalGradeAllWorkBook", workBook);
-				JsonUtil.outJson("{success:true,msg:'导出个人职责明细成功！'}");
-				this.excepAndLogHandle(PersonalGradeAction.class, "导出个人职责明细信息",
+				JsonUtil.outJson("{success:true,msg:'导出个人评分汇总成功！'}");
+				this.excepAndLogHandle(PersonalGradeAction.class, "导出个人评分汇总信息",
 						null, true);
 			} else {
-				JsonUtil.outJson("{success:false,msg:'导出个人职责明细失败！'}");
-				this.excepAndLogHandle(PersonalGradeAction.class, "导出个人职责明细信息",
+				JsonUtil.outJson("{success:false,msg:'导出个人评分汇总失败！'}");
+				this.excepAndLogHandle(PersonalGradeAction.class, "导出个人评分汇总信息",
 						null, false);
 			}
 		} catch (Exception e) {

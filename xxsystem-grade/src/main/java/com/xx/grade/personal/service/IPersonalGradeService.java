@@ -1,5 +1,6 @@
 package com.xx.grade.personal.service;
 
+import java.io.File;
 import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -175,8 +176,9 @@ public interface IPersonalGradeService {
 	 * 生成个人评分汇总表
 	 * 
 	 * @param paramMap
+	 * @param file 
 	 * @return
 	 */
-	public HSSFWorkbook exportPersonalGradeAll(Map<String, String> paramMap);
+	public HSSFWorkbook exportPersonalGradeAll(Map<String, String> paramMap, File file);
 	
 }
