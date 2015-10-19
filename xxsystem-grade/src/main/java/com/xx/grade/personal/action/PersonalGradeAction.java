@@ -370,6 +370,71 @@ public class PersonalGradeAction extends BaseAction {
 		request.getSession().removeAttribute("personalDutyWorkBook");
 		return null;
 	}
+	
+	
+	/**
+	 * 导出个人评分汇总
+	 * 
+	 * @return
+	 */
+	public String exportPersonalGradeAll() {
+		try {
+			Map<String, String> paramMap = RequestUtil.getParameterMap(super
+					.getRequest());
+			HSSFWorkbook workBook = this.personalGradeService
+					.exportPersonalGradeAll(paramMap);
+			if (workBook != null) {
+				this.getRequest().getSession()
+						.setAttribute("personalGradeAllWorkBook", workBook);
+				JsonUtil.outJson("{success:true,msg:'导出个人职责明细成功！'}");
+				this.excepAndLogHandle(PersonalGradeAction.class, "导出个人职责明细信息",
+						null, true);
+			} else {
+				JsonUtil.outJson("{success:false,msg:'导出个人职责明细失败！'}");
+				this.excepAndLogHandle(PersonalGradeAction.class, "导出个人职责明细信息",
+						null, false);
+			}
+		} catch (Exception e) {
+			JsonUtil.outJson("{success:false,msg:'导出个人职责明细信息失败！'}");
+			this.excepAndLogHandle(PersonalGradeAction.class, "导出个人职责明细信息", e,
+					false);
+			return null;
+		}
+		return null;
+	}
+
+	/**
+	 * 导出个人评分汇总excel
+	 * 
+	 * @return
+	 */
+	public String exportPersonalGradeAllFile() {
+		HttpServletRequest request = this.getRequest();
+		try {
+			HSSFWorkbook workBook = (HSSFWorkbook) request.getSession()
+					.getAttribute("personalGradeAllWorkBook");
+			this.getResponse().reset();
+			this.getResponse().setContentType(
+					"application/msexcel;charset=UTF-8");
+			try {
+				this.getResponse().addHeader(
+						"Content-Disposition",
+						"attachment;filename=\""
+								+ new String(("个人评分汇总表" + ".xls")
+										.getBytes("GBK"), "ISO8859_1") + "\"");
+				OutputStream out = this.getResponse().getOutputStream();
+				workBook.write(out);
+				out.flush();
+				out.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		request.getSession().removeAttribute("personalGradeAllWorkBook");
+		return null;
+	}
 
 	public String uploadPersonalDutyExcel() {
 		try {

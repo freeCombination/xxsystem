@@ -725,4 +725,43 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		}
 		return result;
 	}
+
+	@Override
+	public HSSFWorkbook exportPersonalGradeAll(Map<String, String> paramMap) {
+		ListVo<PersonalDutyVo> result =	getPersonalDutyList(paramMap);
+		HSSFWorkbook wb = null;
+		if (result.getTotalSize() > 0) {
+			wb = new HSSFWorkbook();
+			HSSFSheet sheet = wb.createSheet("个人职责明细");
+			HSSFRow row = sheet.createRow(0);
+			HSSFCell cell = null;
+			//创建头部
+			cell = row.createCell(0);
+			cell.setCellValue("主键");
+			
+			cell = row.createCell(1);
+			cell.setCellValue("工作职责");
+			
+			cell = row.createCell(2);
+			cell.setCellValue("完成情况");
+			
+			List<PersonalDutyVo> list = result.getList();
+			for (int i = 0; i < list.size(); i++) {
+				PersonalDutyVo vo = list.get(i);
+				row = sheet.createRow(i + 1);
+				//id
+				cell = row.createCell(0);
+				cell.setCellValue(String.valueOf(vo.getId()));
+				
+				//工作职责
+				cell = row.createCell(1);
+				cell.setCellValue(String.valueOf(vo.getWorkDuty()));
+				
+				//完成情况
+				cell = row.createCell(2);
+				cell.setCellValue(String.valueOf(vo.getCompletion()));
+			}
+		}
+		return wb;
+	}
 }

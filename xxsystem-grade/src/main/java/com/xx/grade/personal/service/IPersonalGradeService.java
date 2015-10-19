@@ -170,5 +170,13 @@ public interface IPersonalGradeService {
 	 * @return
 	 */
 	public String generatePersonalGrade(String gradeYear, User currentUser);
+
+	/**
+	 * 生成个人评分汇总表
+	 * 
+	 * @param paramMap
+	 * @return
+	 */
+	public HSSFWorkbook exportPersonalGradeAll(Map<String, String> paramMap);
 	
 }

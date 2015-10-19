@@ -213,7 +213,38 @@ grade.personalGrade.PersonalGradeGrid = Ext.create("Ext.grid.Panel", {
 			proxy.setExtraParam("canpDeptQuery", Ext.getCmp('canpDeptQuery').getValue());
 			grade.personalGrade.PersonalGradeStore.loadPage(1);
 		}
-	} ]
+	},
+	"->",
+    {
+        xtype:'button',
+        disabled:false,
+        text:'导出',
+        iconCls:'export-button',
+        handler:function(){
+        	var row = grade.personalGrade.PersonalGradeGrid.getSelectionModel().getSelection()
+        	var personalGradeId = row[0].data.id;
+        	Ext.Ajax.request({ 
+		 		url: basePath+'/personalGrade/exportPersonalGradeAll.action',
+			    method: "post",
+			    params:{
+			    			personalGradeId:personalGradeId
+			    		}, 
+			    success: function(response, config){ 
+			    	var result = Ext.decode(response.responseText);
+			    	if(result.success==false){
+                        Ext.Msg.alert('系统提示', "导出失败!");
+                    }else{
+                        var url = basePath+"/personalGrade/exportPersonalGradeAllFile.action";
+                        window.location.href = url;
+                    }
+			    }, 
+			    failure: function(){ 
+			       
+			    }
+			});
+        }
+    }
+	]
 });
 
 
