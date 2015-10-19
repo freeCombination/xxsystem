@@ -150,7 +150,16 @@
                 listeners :{
                     'render' : function(p){
                         p.getEl().on('click',function(){
-                            WdatePicker({readOnly:true,dateFmt:'yyyy',maxDate:Ext.Date.format(new Date(),"Y")});
+                            WdatePicker({readOnly:true,dateFmt:'yyyy',maxDate:Ext.Date.format(new Date(),"Y"),
+                            	onpicked:function(){
+                                    if ($dp.cal.getP('y') == Ext.Date.format(new Date(),"Y")) {
+                                        Ext.getCmp("submitPercentageBtn").setDisabled(false);
+                                    }
+                                    else {
+                                        Ext.getCmp("submitPercentageBtn").setDisabled(true);
+                                    }
+                                }
+                            });
                             //,onpicked:function(){$dp.$('electYearQuery-inputEl').focus();}
                         });
                     }
@@ -170,7 +179,7 @@
             },
             '->',
 			{
-				id:'addPercentageBtn',
+				id:'submitPercentageBtn',
 				xtype:'button',
 				text:'提交',
 				iconCls:'save-button',
@@ -534,10 +543,17 @@
 	            }]
 	         }).show();
 	        
-	        var hasSubmit = record.get('hasSubmit');
-	        if (1 == hasSubmit) {
+	        
+	        if (Ext.getCmp("electYearQuery").getValue() == Ext.Date.format(new Date(),"Y")) {
+	        	var hasSubmit = record.get('hasSubmit');
+	            if (1 == hasSubmit) {
+	                Ext.getCmp('saveGradeBtn').setVisible(false);
+	            }
+	        }
+	        else {
 	        	Ext.getCmp('saveGradeBtn').setVisible(false);
 	        }
+	        
 	         
 	         deptGrageStore.load({
 	             params:{

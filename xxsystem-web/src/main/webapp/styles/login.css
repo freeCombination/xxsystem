@@ -5,9 +5,9 @@
 .login2_bg {
 	background: #FFF url(../images/login/login2_bg.jpg) no-repeat;
 	position: absolute;
-	top: 25%;
+	top: 15%;
 	left: 50%;
-	height: 350px;
+	height: 450px;
 	width: 930px;
 	z-index: 1;
 	margin-left: -460px;
@@ -18,13 +18,13 @@
 	height: 80px;
 	line-height: 30px;
 	position: absolute;
-	top: 60px;
-	left: 400px;
+	top: 120px;
+	left: 450px;
 }
 
 .login1_title {
 	color: #227EB1;
-	font-family: "Arial", "Î¢ÈíÑÅºÚ", "ËÎÌå";
+	font-family: "Arial", "Î¢ï¿½ï¿½ï¿½Åºï¿½", "ï¿½ï¿½ï¿½ï¿½";
 	font-size: 24px;
 	position: absolute;
 	width: 300px;
@@ -43,13 +43,13 @@
 
 .login2_title {
 	color: #227EB1;
-	font-family: "Arial", "Î¢ÈíÑÅºÚ", "ËÎÌå";
-	font-size: 24px;
+	font-family: "Arial", "Î¢ï¿½ï¿½ï¿½Åºï¿½", "ï¿½ï¿½ï¿½ï¿½";
+	font-size: 22px;
 	position: absolute;
 	width: 400px;
 	height: 40px;
-	top: 10px;
-	left: 400px;
+	top: 60px;
+	left: 450px;
 	font-weight: bold;
 	letter-spacing: 2px;
 }

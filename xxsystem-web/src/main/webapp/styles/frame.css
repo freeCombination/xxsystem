@@ -38,7 +38,7 @@
 	overflow: hidden !important; /*FF*/
 	height: 25px;
 	line-height: 25px;
-	background: #93C3FD;
+	background: #ffffff; /*#93C3FD*/
 	border-top: 1px solid #7DA8E1;
 	text-align: right;
 	color: #2969A9
@@ -80,7 +80,7 @@
 
 .top_img {
 	float: right;
-	background: url(../images/frame/top_img.jpg) right no-repeat;
+	/* background: url(../images/frame/top_img.jpg) right no-repeat; */
 	width: auto;
 	height: 50px;
 	text-align: right;

@@ -2,6 +2,7 @@ package com.xx.system.deptgrade.service.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -11,8 +12,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
-
-import net.sf.json.JSONArray;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +25,7 @@ import com.xx.system.common.exception.BusinessException;
 import com.xx.system.common.util.StringUtil;
 import com.xx.system.common.vo.ListVo;
 import com.xx.system.deptgrade.entity.ClassifyUser;
+import com.xx.system.deptgrade.entity.CopyRecord;
 import com.xx.system.deptgrade.entity.GradeIndex;
 import com.xx.system.deptgrade.entity.GradePercentage;
 import com.xx.system.deptgrade.entity.GradeRecord;
@@ -45,6 +45,8 @@ import com.xx.system.role.entity.RoleMemberScope;
 import com.xx.system.role.vo.RoleVo;
 import com.xx.system.user.entity.User;
 import com.xx.system.user.vo.UserVo;
+
+import net.sf.json.JSONArray;
 
 /**
  * 指标逻辑接口实现
@@ -68,8 +70,13 @@ public class IndexManageServiceImpl implements IIndexManageService {
     public IOrgService organizationService;
 
 	@Override
-	public List<IndexClassifyVo> getAllClassifies() throws BusinessException {
-		String cfHql = " from IndexClassify i where i.isDelete = 0 and i.enable = 0 order by i.name";
+	public List<IndexClassifyVo> getAllClassifies(String electYear) throws BusinessException {
+		String cfHql = " from IndexClassify i where i.isDelete = 0 and i.enable = 0 ";
+		if (StringUtil.isNotBlank(electYear)) {
+			cfHql += " and i.electYear = '" + electYear + "'";
+		}
+		cfHql += " order by i.name";
+		
 		List<IndexClassify> cfLst = (List<IndexClassify>)baseDao.queryEntitys(cfHql);
 		
 		IndexClassifyVo icvo = null;
@@ -293,6 +300,129 @@ public class IndexManageServiceImpl implements IIndexManageService {
 			}
 		}
 		
+	}
+	
+	@Override
+	public Map<String, String> copyBaseData() throws Exception {
+		Map<String, String> message = new HashMap<String, String>();
+		message.put("flag", "success");
+		
+		Calendar c = Calendar.getInstance();
+		// 判断是否已经复制了
+		String crHql = " from CopyRecord cr where cr.electYear = '" + c.get(Calendar.YEAR) + "'"
+				+ " and cr.hasCopied = 1";
+		int hasCopied = baseDao.queryTotalCount(crHql, new HashMap<String, Object>());
+		if (hasCopied > 0) {
+			message.put("flag", "hasCopied");
+			message.put("msg", "本年度评分基础数据已复制，不能重复操作！");
+			return message;
+		}
+		
+		// 查询上一年基础数据
+		c.add(Calendar.YEAR, -1);
+		
+		String cfHql = " from IndexClassify i where i.isDelete = 0 and i.enable = 0 "
+			+ " and i.electYear = '" + c.get(Calendar.YEAR) + "'"
+			+ " order by i.name";
+		
+		List<IndexClassify> cfLst = (List<IndexClassify>)baseDao.queryEntitys(cfHql);
+		if (!CollectionUtils.isEmpty(cfLst)) {
+			c.add(Calendar.YEAR, 1);
+			
+			IndexClassify classify = null;
+			OrgAndClassify oc = null;
+			for (IndexClassify cf : cfLst) {
+				classify = new IndexClassify();
+				// 复制指标分类
+				classify.setNumber(cf.getNumber());
+				classify.setName(cf.getName());
+				classify.setElectYear(String.valueOf(c.get(Calendar.YEAR)));
+				classify.setHasSubmit(0);
+				classify.setEnable(0);
+				classify.setIsDelete(0);
+				
+				baseDao.save(classify);
+				
+				// 复制指标关联的部门
+				if (cf.getOrgCfs() != null && cf.getOrgCfs().size() > 0) {
+					Iterator<OrgAndClassify> ocIt = cf.getOrgCfs().iterator();
+	                while (ocIt.hasNext()) {
+	                	oc = new OrgAndClassify();
+	                	oc.setClassify(classify);
+	                	oc.setOrg(ocIt.next().getOrg());
+	                	oc.setIsDelete(0);
+	                	
+	                	baseDao.save(oc);
+	                }
+				}
+				
+				// 复制一级、二级指标
+				String indexHql = " from GradeIndex g where g.isDelete = 0"
+						+ " and g.classify.pkClassifyId =" + cf.getPkClassifyId()
+						+ " and g.gradeIndex is null";
+				
+				List<GradeIndex> indexLst = (List<GradeIndex>)baseDao.queryEntitys(indexHql);
+				
+				if (!CollectionUtils.isEmpty(indexLst)) {
+					GradeIndex index1 = null;
+					GradeIndex index2 = null;
+					for (GradeIndex index : indexLst) {
+						index1 = new GradeIndex();
+						index1.setNumber(index.getNumber());
+						index1.setName(index.getName());
+						index1.setClassify(classify);
+						index1.setGrade(index.getGrade());
+						index1.setRemark(index.getRemark());
+						index1.setIsDelete(0);
+						baseDao.save(index1);
+						
+						// 复制二级指标
+						if (index.getIndexs() != null && index.getIndexs().size() > 0) {
+							Iterator<GradeIndex> inxIt = index.getIndexs().iterator();
+			                while (inxIt.hasNext()) {
+			                	index2 = new GradeIndex();
+			                	GradeIndex gi = inxIt.next();
+			                	index2.setNumber(gi.getNumber());
+			                	index2.setName(gi.getName());
+			                	index2.setGrade(gi.getGrade());
+			                	index2.setRemark(gi.getRemark());
+			                	index2.setIsDelete(0);
+			                	index2.setGradeIndex(index1);
+			                	
+			                	baseDao.save(index2);
+			                }
+						}
+					}
+				}
+				
+				// 复制权重
+				String gpHql = " from GradePercentage g where isDelete = 0 "
+						+ " and g.classify.pkClassifyId = " + cf.getPkClassifyId();
+				List<GradePercentage> perLst = (List<GradePercentage>)baseDao.queryEntitys(gpHql);
+				if (!CollectionUtils.isEmpty(perLst)) {
+					GradePercentage percent = null;
+					for (GradePercentage gp : perLst) {
+						percent = new GradePercentage();
+						percent.setClassify(classify);
+						percent.setReceiptsNum(gp.getReceiptsNum());
+						percent.setRole(gp.getRole());
+						percent.setRemark(gp.getRemark());
+						percent.setPercentage(gp.getPercentage());
+						percent.setIsDelete(0);
+						
+						baseDao.save(percent);
+					}
+				}
+			}
+			
+			// 保存本年度已经复制
+			CopyRecord cr = new CopyRecord();
+			cr.setElectYear(String.valueOf(c.get(Calendar.YEAR)));
+			cr.setHasCopied(1);
+			baseDao.save(cr);
+		}
+		
+		return message;
 	}
 
 	/************指标管理*************/

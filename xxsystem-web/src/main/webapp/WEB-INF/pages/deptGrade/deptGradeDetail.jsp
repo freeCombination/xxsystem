@@ -86,6 +86,9 @@
             proxy: {
                type: 'ajax',
                url: '${ctx}/deptgrade/getAllClassifies.action',
+               extraParams:{
+                   electYear:Ext.getCmp('electYearQuery') ? Ext.getCmp('electYearQuery').getValue() : Ext.Date.format(new Date(),"Y")
+               },
                reader: {
                   type: 'json'
                }
@@ -277,7 +280,19 @@
                 listeners :{
                     'render' : function(p){
                         p.getEl().on('click',function(){
-                            WdatePicker({readOnly:true,dateFmt:'yyyy',maxDate:Ext.Date.format(new Date(),"Y")});
+                            WdatePicker({readOnly:true,dateFmt:'yyyy',maxDate:Ext.Date.format(new Date(),"Y"),
+                            	onpicked:function(){
+                                    Ext.getCmp("classifyIdQuery").reset();
+                                    cfStore.load({
+                                        params:{
+                                            'electYear':$dp.cal.getP('y')
+                                        },
+                                        callback:function(records){
+                                            Ext.getCmp("classifyIdQuery").setValue('0');
+                                        }
+                                    });
+                                }
+                            });
                             //,onpicked:function(){$dp.$('electYearQuery-inputEl').focus();}
                         });
                     }

@@ -186,12 +186,33 @@ public class IndexManageAction extends BaseAction {
 	 */
 	public String getAllClassifies() {
 		try {
-			JsonUtil.outJsonArray(indexManageService.getAllClassifies());
+			String electYear = getRequest().getParameter("electYear");
+			JsonUtil.outJsonArray(indexManageService.getAllClassifies(electYear));
 		} catch (Exception e) {
 			this.excepAndLogHandle(IndexManageAction.class, "查询所有指标分类", e, false);
 		}
 		return null;
 	}
+	
+	/**
+     * 复制评分基础数据
+     */
+    public String copyBaseData() {
+    	String msg = "{success:'false',msg:'复制评分基础数据失败'}";
+		try {
+			Map<String, String> rtn = indexManageService.copyBaseData();
+			if ("hasCopied".equals(rtn.get("flag"))) {
+				msg = "{success:'false',msg:'" + rtn.get("msg") + "'}";
+			}
+			else {
+				msg = "{success:'true',msg:'复制评分基础数据成功'}";
+			}
+		} catch (Exception e) {
+			this.excepAndLogHandle(IndexManageAction.class, "复制评分基础数据", e, false);
+		}
+		JsonUtil.outJson(msg);
+		return null;
+    }
 	
     /************指标管理*************/
     

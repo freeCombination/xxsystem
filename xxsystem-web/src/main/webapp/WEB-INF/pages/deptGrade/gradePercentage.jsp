@@ -79,11 +79,14 @@
             proxy: {
                type: 'ajax',
                url: '${ctx}/deptgrade/getAllClassifies.action',
+               extraParams:{
+            	   electYear:Ext.getCmp('electYearQuery') ? Ext.getCmp('electYearQuery').getValue() : Ext.Date.format(new Date(),"Y")
+               },
                reader: {
                   type: 'json'
                }
             },
-            autoLoad: true
+            autoLoad: false
         });
 		
 		var roleStore = Ext.create('Ext.data.Store', {
@@ -136,16 +139,16 @@
                     }
 	            },
 	            {header: "权重",width: 200,dataIndex: "percentage",menuDisabled: true,sortable :false,
-					renderer : function(value, cellmeta, record, rowIndex,
-							columnIndex, store) {
-						cellmeta.tdAttr = 'data-qtip="' + value + '"';
-						return value;
+					renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
+						var showStr = Math.round(value * 100) + "%";
+						cellmeta.tdAttr = 'data-qtip="' + showStr + '"';
+						return showStr;
 					},
                     field: {
                         xtype:'textfield',
                         maxLength:10,
-                        regex : new RegExp('^([^<^>])*$'),
-                        regexText : '不能包含特殊字符！',
+                        regex : new RegExp('^[0-9]+(.[0-9]{1,2})?$'),
+                        regexText : '保留两位小数！',
                         allowBlank: false
                     }
 				},
@@ -176,12 +179,17 @@
             injectCheckbox:0,
             listeners: {
                 selectionchange: function(){
-                    var c = perGrid.getSelectionModel().getSelection();
-                    if (c.length > 0) {
-                        Ext.getCmp('delPerBtn').setDisabled(false);
-                    } else {
-                        Ext.getCmp('delPerBtn').setDisabled(true);
-                    }
+                	if (Ext.getCmp("electYearQuery").getValue() == Ext.Date.format(new Date(),"Y")) {
+                		var c = perGrid.getSelectionModel().getSelection();
+                        if (c.length > 0) {
+                            Ext.getCmp('delPerBtn').setDisabled(false);
+                        } else {
+                            Ext.getCmp('delPerBtn').setDisabled(true);
+                        }
+                	}
+                	else {
+                		Ext.getCmp('delPerBtn').setDisabled(true);
+                	}
                 }
             }
         });
@@ -205,7 +213,47 @@
 			store: perStore,
 			autoScroll: true,
 			stripeRows: true,
-			tbar: ['指标分类',
+			tbar: ['参评年份',
+            {
+                id: 'electYearQuery',
+                width: 100,   
+                labelWidth: 70,
+                value: Ext.Date.format(new Date(),"Y"),
+                xtype: 'textfield',
+                listeners :{
+                    'render' : function(p){
+                        p.getEl().on('click',function(){
+                            WdatePicker({readOnly:true,dateFmt:'yyyy',maxDate:Ext.Date.format(new Date(),"Y"),
+                            	onpicked:function(){
+                            		if ($dp.cal.getP('y') == Ext.Date.format(new Date(),"Y")) {
+                                        Ext.getCmp("addPersBtn").setDisabled(false);
+                                        Ext.getCmp("addPercentageBtn").setDisabled(false);
+                                    }
+                                    else {
+                                        Ext.getCmp("addPersBtn").setDisabled(true);
+                                        Ext.getCmp("addPercentageBtn").setDisabled(true);
+                                    }
+                            		
+                            		Ext.getCmp("classifyId").reset();
+                            		cfStore.load({
+                                        params:{
+                                            'electYear':$dp.cal.getP('y')
+                                        },
+                                        callback:function(records){
+                                        	if (records.length > 0) {
+	                                            var selectedId = records[0].get('classifyId');
+	                                            Ext.getCmp("classifyId").setValue(selectedId);
+                                        	}
+                                            //perStore.load({params:{cfId:selectedId}});
+                                        }
+                                    });
+                            	}
+                            });
+                            //,onpicked:function(){$dp.$('electYearQuery-inputEl').focus();}
+                        });
+                    }
+                }
+            },'&nbsp;指标分类',
 			{
 				xtype: 'combobox',
                 id:'classifyId',
@@ -266,6 +314,7 @@
             '->',
             {
                 xtype:'button',
+                id:'addPersBtn',
                 disabled:false,
                 text:'添加',
                 iconCls:'add-button',
@@ -380,11 +429,16 @@
 			listeners:{
 				'render': function() {
 					oldNumber = '';
-					cfStore.load(function(records){
-						var selectedId = records[0].get('classifyId');
-						Ext.getCmp("classifyId").setValue(selectedId);
-						//perStore.load({params:{cfId:selectedId}});
-					});
+					cfStore.load({
+			            params:{
+			                'electYear':Ext.Date.format(new Date(),"Y")
+			            },
+			            callback:function(records){
+	                        var selectedId = records[0].get('classifyId');
+	                        Ext.getCmp("classifyId").setValue(selectedId);
+	                        //perStore.load({params:{cfId:selectedId}});
+	                    }
+			        });
 				}
 			}
 		});
