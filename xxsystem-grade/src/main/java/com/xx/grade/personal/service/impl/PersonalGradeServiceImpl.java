@@ -2,7 +2,6 @@ package com.xx.grade.personal.service.impl;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -14,9 +13,11 @@ import java.util.Set;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.Region;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -737,6 +738,31 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(file));
 	        //读取excel模板  
 	        wb = new HSSFWorkbook(fs);
+	        HSSFSheet aSheet = wb.getSheetAt(0);
+	        
+	        int newRow=6; 
+	        int rows = 3;//设定插入几行 
+	        aSheet.shiftRows(newRow, aSheet.getLastRowNum(), rows,true ,true); 
+	        HSSFRow sourceRow =aSheet.getRow(newRow); 
+	        
+	        sourceRow.setHeight((short)400);
+	        
+	        HSSFCellStyle cellStyle = wb.createCellStyle();     
+	        cellStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN); //下边框    
+	        cellStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);//左边框    
+	        cellStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);//上边框    
+	        cellStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);//右边框 
+	        
+	        aSheet.addMergedRegion(new Region(newRow,(short) 0, newRow,(short) 1)); // 
+	        HSSFCell cew2 =sourceRow.createCell((short) 0); 
+	        cew2.setCellValue("保证人名称"); 
+	        cew2.setCellStyle(cellStyle);
+
+	        aSheet.addMergedRegion(new Region(newRow,(short) 2, newRow,(short) 5)); // 
+	        HSSFCell cew3 =sourceRow.createCell((short) 2); 
+	        cew3.setCellValue("dd"); 
+	        cew2.setCellStyle(cellStyle);
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		} 
