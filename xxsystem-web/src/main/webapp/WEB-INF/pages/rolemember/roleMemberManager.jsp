@@ -992,7 +992,7 @@ var roleMemberIds;
 		layout: "border",
 		renderTo: Ext.getBody(),
 		items: [ 
-			roleGrid,panelTab//scopeTab,
+			roleGrid,panelTab,scopeTab,
 		]
 	});
 }); 

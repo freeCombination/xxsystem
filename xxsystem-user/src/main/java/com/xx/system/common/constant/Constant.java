@@ -189,4 +189,20 @@ public class Constant {
     
     /** @Fields RES_PAGE :部门 */
     public static final String RES_PAGE = "PAGE";
+    
+    /** @Fields GRADE_QZFL :个人评分权重分类 */
+    public static final String GRADE_QZFL = "GRADE_QZFL" ;
+    
+    /** @Fields QZFL_YBYG :个人评分权重分类-一般员工个人绩效评价 */
+    public static final String QZFL_YBYG = "QZFL_YBYG" ;
+    
+    /** @Fields QZFL_YBYG :个人评分权重分类-主任、副主任绩效评价 */
+    public static final String QZFL_BMLD = "QZFL_BMLD" ;
+    
+    /** @Fields QZFL_YBYG :个人评分权重分类-总工、副总工、质检中心总工绩效评价*/
+    public static final String QZFL_GSLD = "QZFL_GSLD" ;
+    
+    /** @Fields GRADE_ZBFL :个人评分指标分类 */
+    public static final String GRADE_ZBFL = "GRADE_ZBFL" ;
+    
 }
