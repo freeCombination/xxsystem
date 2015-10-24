@@ -36,6 +36,7 @@ import com.xx.system.deptgrade.vo.DeptGradeDetailVo;
 import com.xx.system.deptgrade.vo.GradeIndexVo;
 import com.xx.system.deptgrade.vo.IndexClassifyVo;
 import com.xx.system.deptgrade.vo.PercentageVo;
+import com.xx.system.dict.entity.Dictionary;
 import com.xx.system.org.entity.OrgUser;
 import com.xx.system.org.entity.Organization;
 import com.xx.system.org.service.IOrgService;
@@ -70,11 +71,16 @@ public class IndexManageServiceImpl implements IIndexManageService {
     public IOrgService organizationService;
 
 	@Override
-	public List<IndexClassifyVo> getAllClassifies(String electYear) throws BusinessException {
+	public List<IndexClassifyVo> getAllClassifies(String electYear, String participation) throws BusinessException {
 		String cfHql = " from IndexClassify i where i.isDelete = 0 and i.enable = 0 ";
 		if (StringUtil.isNotBlank(electYear)) {
 			cfHql += " and i.electYear = '" + electYear + "'";
 		}
+		
+		if (StringUtil.isNotBlank(participation) && "true".equals(participation)) {
+			cfHql += " and i.isParticipation = 1";
+		}
+		
 		cfHql += " order by i.name";
 		
 		List<IndexClassify> cfLst = (List<IndexClassify>)baseDao.queryEntitys(cfHql);
@@ -184,6 +190,17 @@ public class IndexManageServiceImpl implements IIndexManageService {
 				icvo.setHasSubmit(cf.getHasSubmit());
 				icvo.setEnable(cf.getEnable());
 				
+				if (cf.getScoreType() != null) {
+					icvo.setScoreTypeId(cf.getScoreType().getPkDictionaryId());
+					icvo.setScoreTypeName(cf.getScoreType().getDictionaryName());
+				}
+				if (cf.getIsParticipation() != null && cf.getIsParticipation() == 1) {
+					icvo.setParticipation("true");
+				}
+				else {
+					icvo.setParticipation("false");
+				}
+				
 				voLst.add(icvo);
 			}
 		}
@@ -203,6 +220,15 @@ public class IndexManageServiceImpl implements IIndexManageService {
 			cf.setHasSubmit(0);
 			cf.setEnable(1);
 			cf.setIsDelete(0);
+			cf.setIsParticipation("true".equals(vo.getParticipation()) ? 1 : 0);
+			
+			// 查询字典
+			if (vo.getScoreTypeId() != null && vo.getScoreTypeId() > 0) {
+				Dictionary dict = (Dictionary)baseDao.queryEntityById(Dictionary.class, vo.getScoreTypeId());
+				if (dict != null) {
+					cf.setScoreType(dict);
+				}
+			}
 			
 			baseDao.save(cf);
 			
@@ -241,6 +267,16 @@ public class IndexManageServiceImpl implements IIndexManageService {
 				cf.setHasSubmit(0);
 				cf.setEnable(1);
 				cf.setIsDelete(0);
+				
+				cf.setIsParticipation("true".equals(vo.getParticipation()) ? 1 : 0);
+				
+				// 查询字典
+				if (vo.getScoreTypeId() != null && vo.getScoreTypeId() > 0) {
+					Dictionary dict = (Dictionary)baseDao.queryEntityById(Dictionary.class, vo.getScoreTypeId());
+					if (dict != null) {
+						cf.setScoreType(dict);
+					}
+				}
 				
 				baseDao.update(cf);
 				
@@ -340,6 +376,9 @@ public class IndexManageServiceImpl implements IIndexManageService {
 				classify.setHasSubmit(0);
 				classify.setEnable(0);
 				classify.setIsDelete(0);
+				
+				classify.setIsParticipation(cf.getIsParticipation());
+				classify.setScoreType(cf.getScoreType());
 				
 				baseDao.save(classify);
 				
@@ -650,7 +689,8 @@ public class IndexManageServiceImpl implements IIndexManageService {
 		if (cfId != null && cfId != 0) {
 			// 查询指标类型对应的权重基础信息
 			String gpHql = " from GradePercentage g where isDelete = 0 "
-					+ " and g.classify.pkClassifyId = " + cfId;
+					+ " and g.classify.pkClassifyId = " + cfId
+					+ " and g.classify.isParticipation = 1";
 			List<GradePercentage> perLst = (List<GradePercentage>)baseDao.queryEntitys(gpHql);
 			if (!CollectionUtils.isEmpty(perLst)) {
 				PercentageVo vo = null;
@@ -789,7 +829,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
     
 	@Override
 	public List<IndexClassifyVo> getClassifyListForGrade(IndexClassifyVo vo, User currUsr) throws Exception {
-		String cfHql = " from IndexClassify i where i.isDelete = 0 and i.enable = 0";
+		String cfHql = " from IndexClassify i where i.isDelete = 0 and i.enable = 0 and i.isParticipation = 1";
 		if (vo != null) {
 			if (StringUtil.isNotBlank(vo.getElectYear())) {
 				cfHql += " and i.electYear = '" + vo.getElectYear() + "'";
@@ -836,7 +876,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 		}
 		
 		// 查询OrgAndClassify，限制IndexClassify
-		String ocHql = " from OrgAndClassify oc where oc.isDelete = 0";
+		String ocHql = " from OrgAndClassify oc where oc.isDelete = 0 and oc.classify.isParticipation = 1";
 		/*
 		 * 自己不能查看自己所在部门关联的指标分类（当一个指标只关联了自己所在的部门，注释掉表示可以查看，但不能评分）
 		 */
@@ -1201,6 +1241,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 		if (StringUtil.isNotBlank(electYear)) {
 			String gpHql = " from GradePercentage gp where gp.isDelete = 0"
 					+ " and gp.classify.isDelete = 0 and gp.classify.enable = 0"
+					+ " and gp.classify.isParticipation = 1"
 					+ " and gp.classify.electYear = '" + electYear + "'";
 			List<GradePercentage> gpLst = (List<GradePercentage>)baseDao.queryEntitys(gpHql);
 			if (!CollectionUtils.isEmpty(gpLst)) {
@@ -1256,7 +1297,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 							+ " gr.FK_CLASSIFY_ID, CONCAT_WS(',', gr.FK_USER_ID) userIds, gr.FK_ORG_ID"
 							+ " FROM T_GRADE_RECORD gr, T_INDEXCLASSIFY cf, t_organization org "
 							+ " WHERE gr.FK_CLASSIFY_ID = cf.PK_CLASSIFY_ID AND org.ORG_ID = gr.FK_ORG_ID and org.ENABLE = 0"
-							+ " and org.STATUS = 0 AND gr.ISDELETE = 0";
+							+ " and org.STATUS = 0 AND gr.ISDELETE = 0 and cf.IS_PARTICIPATION = 1";
 					if (StringUtil.isNotBlank(electYear)) {
 						sql += " AND cf.ELECTYEAR = '" + electYear + "'";
 					}
@@ -1330,7 +1371,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 		
 		ListVo<DeptGradeDetailVo> listVo = new ListVo<DeptGradeDetailVo>();
 		
-		String dgdHql = " from GradeRecord gr where gr.isDelete = 0";
+		String dgdHql = " from GradeRecord gr where gr.isDelete = 0 and gr.classify.isParticipation = 1";
 		if (StringUtil.isNotBlank(electYear)) {
 			dgdHql += " and gr.classify.electYear = '" + electYear + "'";
 		}
@@ -1387,7 +1428,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 		
 		ListVo<DeptGradeDetailVo> listVo = new ListVo<DeptGradeDetailVo>();
 		
-		String hql = " from OrgAndClassify oc where oc.isDelete = 0";
+		String hql = " from OrgAndClassify oc where oc.isDelete = 0 and oc.classify.isParticipation = 1";
 		if (StringUtil.isNotBlank(electYear)) {
 			hql += " AND oc.classify.electYear = '" + electYear + "'";
 		}
@@ -1448,7 +1489,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 		// 获取所有评分人
 		if (StringUtil.isNotBlank(electYear)) {
 			String gpHql = " from GradePercentage gp where gp.isDelete = 0"
-					+ " and gp.classify.isDelete = 0 and gp.classify.enable = 0"
+					+ " and gp.classify.isDelete = 0 and gp.classify.enable = 0 and gp.classify.isParticipation = 1"
 					+ " and gp.classify.electYear = '" + electYear + "'";
 			List<GradePercentage> gpLst = (List<GradePercentage>)baseDao.queryEntitys(gpHql);
 			if (!CollectionUtils.isEmpty(gpLst)) {

@@ -55,6 +55,21 @@ public class IndexClassifyVo implements java.io.Serializable {
      * @Fields isDelete : 删除标志：0未删除 1已删除
      */
     private int isDelete;
+    
+    /**
+     * @Fields scoreTypeId : 汇总得分分类ID
+     */
+    private Integer scoreTypeId;
+    
+    /**
+     * @Fields scoreTypeName : 汇总得分分类
+     */
+    private String scoreTypeName;
+    
+    /**
+     * 是否参与评分
+     */
+    private String participation;
 
 	public int getClassifyId() {
 		return classifyId;
@@ -127,4 +142,29 @@ public class IndexClassifyVo implements java.io.Serializable {
 	public void setHasSubmit(Integer hasSubmit) {
 		this.hasSubmit = hasSubmit;
 	}
+
+	public Integer getScoreTypeId() {
+		return scoreTypeId;
+	}
+
+	public void setScoreTypeId(Integer scoreTypeId) {
+		this.scoreTypeId = scoreTypeId;
+	}
+
+	public String getScoreTypeName() {
+		return scoreTypeName;
+	}
+
+	public void setScoreTypeName(String scoreTypeName) {
+		this.scoreTypeName = scoreTypeName;
+	}
+
+	public String getParticipation() {
+		return participation;
+	}
+
+	public void setParticipation(String participation) {
+		this.participation = participation;
+	}
+
 }

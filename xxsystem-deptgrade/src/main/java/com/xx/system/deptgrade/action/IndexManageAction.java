@@ -187,7 +187,8 @@ public class IndexManageAction extends BaseAction {
 	public String getAllClassifies() {
 		try {
 			String electYear = getRequest().getParameter("electYear");
-			JsonUtil.outJsonArray(indexManageService.getAllClassifies(electYear));
+			String participation = getRequest().getParameter("participation");
+			JsonUtil.outJsonArray(indexManageService.getAllClassifies(electYear, participation));
 		} catch (Exception e) {
 			this.excepAndLogHandle(IndexManageAction.class, "查询所有指标分类", e, false);
 		}

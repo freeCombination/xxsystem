@@ -80,7 +80,8 @@
                type: 'ajax',
                url: '${ctx}/deptgrade/getAllClassifies.action',
                extraParams:{
-            	   electYear:Ext.getCmp('electYearQuery') ? Ext.getCmp('electYearQuery').getValue() : Ext.Date.format(new Date(),"Y")
+            	   electYear:Ext.getCmp('electYearQuery') ? Ext.getCmp('electYearQuery').getValue() : Ext.Date.format(new Date(),"Y"),
+            	   participation: 'true'
                },
                reader: {
                   type: 'json'

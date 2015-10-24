@@ -10,10 +10,14 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.BatchSize;
+
+import com.xx.system.dict.entity.Dictionary;
 
 /**
  * 考核指标分类实体定义
@@ -67,6 +71,16 @@ public class IndexClassify implements java.io.Serializable {
      * @Fields isDelete : 删除标志：0未删除 1已删除
      */
     private int isDelete;
+    
+    /**
+     * @Fields scoreTypeId : 汇总得分分类ID
+     */
+    private Dictionary scoreType;
+    
+    /**
+     * 是否参与评分
+     */
+    private Integer isParticipation;
     
     /**
      * @Title getPkClassifyId
@@ -147,6 +161,25 @@ public class IndexClassify implements java.io.Serializable {
 
 	public void setHasSubmit(Integer hasSubmit) {
 		this.hasSubmit = hasSubmit;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "FK_SCORETYPE")
+	public Dictionary getScoreType() {
+		return scoreType;
+	}
+
+	public void setScoreType(Dictionary scoreType) {
+		this.scoreType = scoreType;
+	}
+
+	@Column(name = "IS_PARTICIPATION", nullable = false, precision = 22, scale = 0)
+	public Integer getIsParticipation() {
+		return isParticipation;
+	}
+
+	public void setIsParticipation(Integer isParticipation) {
+		this.isParticipation = isParticipation;
 	}
 	
 }

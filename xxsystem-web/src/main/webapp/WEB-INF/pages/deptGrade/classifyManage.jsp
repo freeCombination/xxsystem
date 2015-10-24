@@ -49,7 +49,10 @@
 				{name: "electYear"},
 				{name: "enable"},
 				{name: "isDelete"},
-                {name: "hasSubmit"}
+                {name: "hasSubmit"},
+                {name: "scoreTypeId"},
+                {name: "scoreTypeName"},
+                {name: "participation", type: 'boolean'}
 			]
 		});
 		
@@ -165,7 +168,7 @@
 						cellmeta.tdAttr = 'data-qtip="' + value + '"';
 						return value;
 					}},
-				/* {header: "是否提交评分",width: 200,dataIndex: "hasSubmit",menuDisabled: true,sortable :false,
+				{header: "汇总得分分类",width: 200,dataIndex: "scoreTypeName",menuDisabled: true,sortable :false,
                     renderer : function(value, cellmeta, record, rowIndex,
                             columnIndex, store) {
                     	var hasSub = '<span style="color:red;">否</span>';
@@ -173,10 +176,22 @@
                     		hasSub = '<span style="color:green;">是</span>';
                     	}
                     	
-                        //cellmeta.tdAttr = 'data-qtip="' + value + '"';
-                        return hasSub;
+                        cellmeta.tdAttr = 'data-qtip="' + value + '"';
+                        return value;
                     }
-				}, */
+				},
+				{header: "是否参与评分",width: 200,dataIndex: "participation",menuDisabled: true,sortable :false,
+                    renderer : function(value, cellmeta, record, rowIndex,
+                            columnIndex, store) {
+                        var participation = '<span style="color:red;">否</span>';
+                        if (value) {
+                        	participation = '<span style="color:green;">是</span>';
+                        }
+                        
+                        //cellmeta.tdAttr = 'data-qtip="' + value + '"';
+                        return participation;
+                    }
+                },
 				{header: "状态",width: 200,dataIndex: "enable",
 		            renderer: function(value, cellmeta, record, rowIndex, columnIndex, store){
 		                //cellmeta.tdAttr = 'data-qtip="' + orgTypeArr[i].name + '"';
@@ -423,6 +438,29 @@
 				oldNumber = row.get('number');
 			}
 			
+			Ext.define('scoreTypeModel', {
+			    extend: 'Ext.data.Model',
+			    fields: [
+			        {name: 'dictionaryId',type:"int"},
+			        {name: 'dictionaryName'},
+			        {name: 'dictionaryValue'}
+			    ]
+			}); 
+			
+			var scoreTypeStore = Ext.create('Ext.data.Store', {
+			    model: 'scoreTypeModel',
+			    proxy: {
+			       type: 'ajax',
+			       url: basePath + '/user/getSelectionsByType.action',
+			       extraParams:{dictTypeCode:"SCORETYPE"},
+			       reader: {
+			          type: 'json',
+			          root: 'list'
+			       }
+			    },
+			    autoLoad: false
+			});
+			
 			var classifyForm = Ext.create("Ext.form.Panel", {
                 layout: 'form',
                 bodyStyle :'padding:2px 30px 2px 0',
@@ -499,7 +537,20 @@
                                     }
                                 }
 			                },
-			                {id:'addOrgIds', name: 'classifyVo.orgIds',xtype:'hidden'}
+			                {id:'addOrgIds', name: 'classifyVo.orgIds',xtype:'hidden'},
+			                {
+			                	xtype: 'combobox',
+                                fieldLabel: '汇总得分分类',
+                                id:'scoreTypeId',
+                                name: 'indexVo.scoreTypeId',
+                                store: scoreTypeStore,
+                                valueField: 'dictionaryId',
+                                displayField: 'dictionaryName',
+                                typeAhead:false,
+                                allowBlank:false,
+                                editable:false,
+                                queryMode: 'remote'
+			                }
 					    ]
 					},
 					{
@@ -528,6 +579,7 @@
 			                    regex : new RegExp('^([^<^>])*$'),
 			                    regexText : '不能包含特殊字符！',
 			                    maxLength:50,
+			                    allowBlank: false,
 			                    listeners :{
 			                        'render' : function(p){
 			                            p.getEl().on('click',function(){
@@ -536,6 +588,14 @@
 			                            });
 			                        }
 			                    }
+			                },
+			                {
+			                	xtype: 'checkboxfield',
+			                	fieldLabel : '是否参与评分',
+			                    name : 'classifyVo.participation',
+			                    id : 'isParticipation',
+			                    inputValue:'true',
+			                    checked : true
 			                }
                         ]
 					}
@@ -568,10 +628,10 @@
                                     text:"请稍后..."
                                 }
                             );
-                            
+                            //alert(Ext.getCmp('isParticipation').getValue());
                             classifyForm.form.submit({
                                 url : formUrl,
-                                //params : dutyLst.substring(1),
+                                //params : {'classifyVo.participation' : true},
                                 success : function(form, action) {
                                     new Ext.ux.TipsWindow({
                                         title: SystemConstant.alertTitle,
@@ -621,7 +681,19 @@
                             Ext.getCmp('addOrgIds').setRawValue(row.get('orgIds'));
                             Ext.getCmp('classifyVoElectYear').setValue(row.get('electYear'));
                             Ext.getCmp('classifyVoName').setValue(row.get('name'));
+                            
+                            scoreTypeStore.load(function() {
+                            	Ext.getCmp('scoreTypeId').setValue(row.get('scoreTypeId'));
+                            });
+                            Ext.getCmp('isParticipation').setValue(row.get('participation'));
                         }
+                		else{
+                			scoreTypeStore.load(function(records){
+                                if(records.length>0){
+                                    Ext.getCmp("scoreTypeId").setValue(records[0].get("dictionaryId"));
+                                }
+                            });
+                		}
                 	}
                 }
              }).show();
@@ -744,7 +816,14 @@
                                     icon: Ext.MessageBox.INFO
                                 });
                             }
-                            classifyStore.loadPage(1);
+                            //classifyStore.loadPage(1);
+                            classifyStore.load({
+                                params:{
+                                    start:0,
+                                    limit:SystemConstant.commonSize,
+                                    'classifyVo.electYear':Ext.getCmp('electYearQuery').getValue()
+                                }
+                            });
                         }
                     });
                 }

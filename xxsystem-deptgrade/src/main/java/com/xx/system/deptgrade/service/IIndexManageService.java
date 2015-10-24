@@ -29,7 +29,7 @@ public interface IIndexManageService {
      * @date 2013-11-25
      * @return List<IndexClassifyVo>
      */
-    public List<IndexClassifyVo> getAllClassifies(String electYear)
+    public List<IndexClassifyVo> getAllClassifies(String electYear, String participation)
         throws BusinessException;
     
     /**
