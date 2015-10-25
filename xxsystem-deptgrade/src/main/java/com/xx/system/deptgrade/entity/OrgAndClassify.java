@@ -53,6 +53,11 @@ public class OrgAndClassify implements java.io.Serializable {
     private int isDelete;
     
     /**
+     * 权重
+     */
+    private String percentage;
+    
+    /**
      * @Title getPkClassifyId
      * @Description: 主键
      * @date 2013-12-6
@@ -105,5 +110,14 @@ public class OrgAndClassify implements java.io.Serializable {
 
 	public void setScore(String score) {
 		this.score = score;
+	}
+
+	@Column(name = "PERCENTAGE", nullable = true, length = 20)
+	public String getPercentage() {
+		return percentage;
+	}
+
+	public void setPercentage(String percentage) {
+		this.percentage = percentage;
 	}
 }

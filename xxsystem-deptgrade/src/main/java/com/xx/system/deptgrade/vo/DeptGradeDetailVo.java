@@ -46,6 +46,26 @@ public class DeptGradeDetailVo implements java.io.Serializable {
      */
     private String score;
     
+    /**
+     * 权重
+     */
+    private String percentage;
+    
+    /**
+     * 指标得分小计
+     */
+    private String sumScore;
+    
+    /**
+     * 部门建设得分
+     */
+    private String buildScore;
+    
+    /**
+     * 总分
+     */
+    private String finalScore;
+    
 	/**
 	 * 评分用户
 	 */
@@ -126,6 +146,38 @@ public class DeptGradeDetailVo implements java.io.Serializable {
 
 	public void setGradeUsrDept(String gradeUsrDept) {
 		this.gradeUsrDept = gradeUsrDept;
+	}
+
+	public String getPercentage() {
+		return percentage;
+	}
+
+	public void setPercentage(String percentage) {
+		this.percentage = percentage;
+	}
+
+	public String getSumScore() {
+		return sumScore;
+	}
+
+	public void setSumScore(String sumScore) {
+		this.sumScore = sumScore;
+	}
+
+	public String getBuildScore() {
+		return buildScore;
+	}
+
+	public void setBuildScore(String buildScore) {
+		this.buildScore = buildScore;
+	}
+
+	public String getFinalScore() {
+		return finalScore;
+	}
+
+	public void setFinalScore(String finalScore) {
+		this.finalScore = finalScore;
 	}
     
 }

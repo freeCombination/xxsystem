@@ -4,28 +4,32 @@
         "http://struts.apache.org/dtds/struts-2.0.dtd">
 <struts>
 	<package name="deptgrade" extends="st" namespace="/deptgrade">
-		<action name="toClassifyManage" class="com.xx.system.deptgrade.action.IndexManageAction">
+		<action name="toClassifyManage">
        		<result name="success">/WEB-INF/pages/deptGrade/classifyManage.jsp</result>
         </action>
         
-        <action name="toIndexManage" class="com.xx.system.deptgrade.action.IndexManageAction">
+        <action name="toIndexManage">
             <result name="success">/WEB-INF/pages/deptGrade/indexManage.jsp</result>
         </action>
         
-        <action name="toGradePercentage" class="com.xx.system.deptgrade.action.IndexManageAction">
+        <action name="toGradePercentage">
             <result name="success">/WEB-INF/pages/deptGrade/gradePercentage.jsp</result>
         </action>
         
-        <action name="toDeptGrade" class="com.xx.system.deptgrade.action.IndexManageAction">
+        <action name="toDeptGrade">
             <result name="success">/WEB-INF/pages/deptGrade/deptGrade.jsp</result>
         </action>
         
-        <action name="toDeptGradeDetail" class="com.xx.system.deptgrade.action.IndexManageAction">
+        <action name="toDeptGradeDetail">
             <result name="success">/WEB-INF/pages/deptGrade/deptGradeDetail.jsp</result>
         </action>
         
-        <action name="toDeptGradeSummarizing" class="com.xx.system.deptgrade.action.IndexManageAction">
+        <action name="toDeptGradeSummarizing">
             <result name="success">/WEB-INF/pages/deptGrade/deptGradeSummarizing.jsp</result>
+        </action>
+        
+        <action name="toDeptFinalScore">
+            <result name="success">/WEB-INF/pages/deptGrade/deptFinalScore.jsp</result>
         </action>
         
         <action name="*" class="com.xx.system.deptgrade.action.IndexManageAction" method="{1}"></action>

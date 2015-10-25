@@ -24,9 +24,9 @@ public class CopyRecord implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
-     * @Fields pkCopyRecordid : 主键
+     * @Fields pkCopyRecordId : 主键
      */
-    private int pkCopyRecordId;
+    private Integer pkCopyRecordId;
     
     /**
      * @Fields 评分年份
@@ -40,7 +40,7 @@ public class CopyRecord implements java.io.Serializable {
     
     
     /**
-     * @Title getPkClassifyId
+     * @Title getPkCopyRecordId
      * @Description: 主键
      * @date 2013-12-6
      * @return 主键
@@ -48,11 +48,11 @@ public class CopyRecord implements java.io.Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "PK_COPYRECORD_ID", nullable = false)
-    public int getPkCopyRecordId() {
+    public Integer getPkCopyRecordId() {
 		return pkCopyRecordId;
 	}
 
-	public void setPkCopyRecordId(int pkCopyRecordId) {
+	public void setPkCopyRecordId(Integer pkCopyRecordId) {
 		this.pkCopyRecordId = pkCopyRecordId;
 	}
 
