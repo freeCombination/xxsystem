@@ -87,14 +87,43 @@ public class PersonalWeightServiceImpl implements IPersonalWeightService {
 	@Override
 	public void updatePersonalWeigh(PersonalWeightVo vo) {
 		if (vo != null) {
-			
+			PersonalWeight weight = (PersonalWeight)baseDao.queryEntityById(PersonalWeight.class, vo.getId());
+			if (weight != null) {
+				buildVoToEntity(vo,weight);
+			}
+			baseDao.update(weight);
+			//角色与评分指标关系
+			//先删除所有数据
+			StringBuffer delSql = new StringBuffer();
+			delSql.append(" delete from T_INDEXTYPEROLE_WEIGHT where PERSONAL_WEIGHT_ID = "+vo.getId());
+			baseDao.executeNativeQuery(delSql.toString());
+			if (vo.getRwList() != null && vo.getRwList().size() > 0) {
+				List<IndexTypeRoleWeightVo> list = vo.getRwList();
+				for (IndexTypeRoleWeightVo indexTypeRoleWeightVo : list) {
+					IndexTypeRoleWeight roleWeight = new IndexTypeRoleWeight();
+					roleWeight.setPercentage(indexTypeRoleWeightVo.getPercentage());
+					roleWeight.setPersonalWeight(weight);
+					if (indexTypeRoleWeightVo.getRoleId() > 0) {
+						Role role = (Role)baseDao.queryEntityById(Role.class, indexTypeRoleWeightVo.getRoleId());
+						roleWeight.setRole(role);
+					}
+					baseDao.save(roleWeight);
+				}
+			}
 		}
 	}
 
 	@Override
 	public void deletePersonalWeigh(String ids) {
-		// TODO Auto-generated method stub
-
+		//先删除辅表 再删除主表
+        StringBuffer delHql =
+                new StringBuffer(" delete from IndexTypeRoleWeight ws where ws.personalWeight.id in ("
+                    + ids + ")");
+        StringBuffer delHql1 =
+                new StringBuffer(" delete from PersonalWeight ws where id in ("
+                    + ids + ")");
+        baseDao.executeHql(delHql.toString());
+        baseDao.executeHql(delHql1.toString());
 	}
 	
 	/**
