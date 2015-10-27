@@ -15,7 +15,7 @@ import org.hibernate.annotations.BatchSize;
 import com.xx.system.org.entity.Organization;
 
 /**
- * 考核指标分类实体定义
+ * 指标分类与部门对应实体定义
  * 
  * @version V1.20,2013-11-25 下午3:37:13
  * @see [相关类/方法]

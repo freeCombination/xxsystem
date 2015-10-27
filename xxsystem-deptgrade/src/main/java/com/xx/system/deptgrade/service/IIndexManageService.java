@@ -303,4 +303,15 @@ public interface IIndexManageService {
      * @throws Exception
      */
     public List<UserVo> showGradeUser(String electYear) throws Exception;
+    
+    /******************部门最终得分********************/
+    
+    /**
+     * 查询部门最终得分
+     * 
+     * @param electYear 参评年份
+     * @return
+     * @throws Exception
+     */
+    public List<DeptGradeDetailVo> queryDeptFinalScore(String electYear) throws Exception;
 }

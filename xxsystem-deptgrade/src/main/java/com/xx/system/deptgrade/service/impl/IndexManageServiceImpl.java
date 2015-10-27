@@ -26,6 +26,7 @@ import com.xx.system.common.util.StringUtil;
 import com.xx.system.common.vo.ListVo;
 import com.xx.system.deptgrade.entity.ClassifyUser;
 import com.xx.system.deptgrade.entity.CopyRecord;
+import com.xx.system.deptgrade.entity.FinalScore;
 import com.xx.system.deptgrade.entity.GradeIndex;
 import com.xx.system.deptgrade.entity.GradePercentage;
 import com.xx.system.deptgrade.entity.GradeRecord;
@@ -1546,5 +1547,75 @@ public class IndexManageServiceImpl implements IIndexManageService {
 		}
 		
 		return uvLst;
+	}
+
+    /******************部门最终得分********************/
+    
+    /**
+     * 查询部门最终得分
+     * 
+     * @param electYear 参评年份
+     * @return
+     * @throws Exception
+     */
+	@Override
+	public List<DeptGradeDetailVo> queryDeptFinalScore(String electYear) throws Exception {
+		List<DeptGradeDetailVo> voLst = new ArrayList<DeptGradeDetailVo>();
+		
+		// 首先查询所有部门
+		String orgHql = " from Organization o where o.enable = 0"
+				+ " and o.status = 0 and o.organization is null";
+		List<Organization> orgLst = (List<Organization>)baseDao.queryEntitys(orgHql);
+		if (!CollectionUtils.isEmpty(orgLst)) {
+			DeptGradeDetailVo vo = null;
+			for (Organization org : orgLst) {
+				// 查询指标分类与部门对应
+				String ocHql = " from OrgAndClassify oc where oc.isDelete = 0"
+						+ " and oc.org.orgId = " + org.getOrgId()
+						+ " and oc.classify.scoreType.dictCode = 'INXSCORE'";
+				
+				String bdHql = " from OrgAndClassify oc where oc.isDelete = 0"
+						+ " and oc.org.orgId = " + org.getOrgId()
+						+ " and oc.classify.scoreType.dictCode = 'BUILDSCORE'";
+				
+				if (StringUtil.isNotBlank(electYear)) {
+					ocHql += " and oc.classify.electYear = '" + electYear + "'";
+					bdHql += " and oc.classify.electYear = '" + electYear + "'";
+				}
+				
+				List<OrgAndClassify> ocLst = (List<OrgAndClassify>)baseDao.queryEntitys(ocHql);
+				List<OrgAndClassify> bdLst = (List<OrgAndClassify>)baseDao.queryEntitys(bdHql);
+				
+				if (!CollectionUtils.isEmpty(ocLst) && !CollectionUtils.isEmpty(bdLst)) {
+					OrgAndClassify ocbd = bdLst.get(0);
+					
+					for (OrgAndClassify oc : ocLst) {
+						vo = new DeptGradeDetailVo();
+						
+						vo.setGradeDetailId(oc.getPkOrgAndClassifyId());
+						vo.setCanpDept(oc.getOrg().getOrgName());
+						vo.setClassifyName(oc.getClassify().getName());
+						vo.setScore(oc.getScore());
+						vo.setPercentage(oc.getPercentage());
+						vo.setBuildScore(ocbd.getScore());
+						
+						// 查询部门最终得分
+						String fsHql = " from FinalScore fs where fs.org.orgId = " + org.getOrgId();
+						if (StringUtil.isNotBlank(electYear)) {
+							fsHql += " and fs.electYear = '" + electYear + "'";
+						}
+						List<FinalScore> fsLst = (List<FinalScore>)baseDao.queryEntitys(fsHql);
+						if (!CollectionUtils.isEmpty(fsLst)) {
+							vo.setSumScore(fsLst.get(0).getSumScore());
+							vo.setFinalScore(fsLst.get(0).getScore());
+						}
+						
+						voLst.add(vo);
+					}
+				}
+			}
+		}
+		
+		return voLst;
 	}
 }

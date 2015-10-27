@@ -197,6 +197,8 @@ public class UserAction extends BaseAction {
                     DictionaryVo dvo = new DictionaryVo();
                     dvo.setDictionaryId(list.get(i).getPkDictionaryId());
                     dvo.setDictionaryName(list.get(i).getDictionaryName());
+                    dvo.setDictCode(list.get(i).getDictCode());
+                    dvo.setDictionaryValue(list.get(i).getDictionaryValue());
                     /*if (list.get(i).getDictionaryType() != null) {
                         dvo.setDictionaryType(list.get(i)
                             .getDictionaryType()

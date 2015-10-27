@@ -60,6 +60,32 @@
 	        ]
 	    });
 		
+		var cfPer = 0;
+		var bdPer = 0;
+		// 获取总分计算所需权重
+		$.ajax({
+            type : "POST",
+            url : "${ctx}/user/getSelectionsByType.action",
+            data : {
+            	dictTypeCode:"SCORETYPE"
+            },
+            cache : false,
+            async : false,
+            dataType : 'json',
+            success : function(records) {
+            	if (records && records.list && records.list.length > 0) {
+	                for(var j=0;j<records.list.length;j++){
+	                    if ('INXSCORE' == records.list[j].dictCode) {
+	                    	cfPer = records.list[j].dictionaryValue;
+	                    }
+	                    else if ('BUILDSCORE' == records.list[j].dictCode) {
+                            bdPer = records.list[j].dictionaryValue;
+                        }
+	                }
+            	}
+            }
+        });
+		
 		//建立数据Store
 		var recordStore=Ext.create("Ext.data.Store", {
 	        pageSize: SystemConstant.commonSize,
@@ -70,17 +96,13 @@
 	            actionMethods: {
                 	read: 'POST'
            		},
-			    url: "${ctx}/deptgrade/queryDeptGradeSummarizing.action",
-			    reader: {
-				     totalProperty: "totalSize",
-				     root: "list"
-			    }
+			    url: "${ctx}/deptgrade/queryDeptFinalScore.action"
 	        },
             listeners:{
                 load:function(store, records){
-                    if (records.length > 0) {
+                    /* if (records.length > 0) {
                         mergeCells(recordGrid, [1]);
-                    }
+                    } */
                 }
             }
 		});
@@ -88,27 +110,75 @@
 		var cm=[
 				{header:"序号",xtype: "rownumberer",width:60,align:"center",menuDisabled: true,sortable :false},
 	            {header: "ID",width: 70,dataIndex: "gradeDetailId",hidden: true,menuDisabled: true,sortable :false},
-	            {header: "指标分类",width: 200,dataIndex: "classifyName",menuDisabled: true,sortable :false,
-					renderer : function(value, cellmeta, record, rowIndex,
-							columnIndex, store) {
-						cellmeta.tdAttr = 'data-qtip="' + value + '"';
-						return value;
-					}},
-	            {header: "参评部门",width: 200,dataIndex: "canpDept",menuDisabled: true,sortable :false,
-					renderer : function(value, cellmeta, record, rowIndex,
-							columnIndex, store) {
+	            {header: "部门",width: 100,dataIndex: "canpDept",menuDisabled: true,sortable :false,
+					renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
 						cellmeta.tdAttr = 'data-qtip="' + value + '"';
 						return value;
 					}
-				},
-                {header: "得分",width: 200,dataIndex: "score",menuDisabled: true,sortable :false,
-                    renderer : function(value, cellmeta, record, rowIndex,
-                            columnIndex, store) {
+	            },
+                {header: "部门指标年度得分（" + (cfPer * 100) + "%权重）" ,width: 600,menuDisabled: true,sortable :false,
+					columns:[
+						{header: "指标名称",width: 240,dataIndex: "classifyName",menuDisabled: true,sortable :false,
+						    renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
+						        cellmeta.tdAttr = 'data-qtip="' + value + '"';
+						        return value;
+						    }
+						},
+						{header: "得分（可编辑）",width: 120,dataIndex: "score",menuDisabled: true,sortable :false,
+		                    renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
+		                        cellmeta.tdAttr = 'data-qtip="' + value + '"';
+		                        return value;
+		                    },
+		                    field: {
+		                        xtype:'textfield',
+		                        maxLength:10,
+		                        regex : new RegExp('^[0-9]+(.[0-9]{1,2})?$'),
+		                        regexText : '保留两位小数！',
+		                        allowBlank: false
+		                    }
+		                },
+		                {header: "权重（可编辑）",width: 120,dataIndex: "percentage",menuDisabled: true,sortable :false,
+		                    renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
+		                        cellmeta.tdAttr = 'data-qtip="' + value + '"';
+		                        return value;
+		                    },
+		                    field: {
+		                        xtype:'textfield',
+		                        maxLength:10,
+		                        regex : new RegExp('^[0-9]+(.[0-9]{1,2})?$'),
+		                        regexText : '保留两位小数！',
+		                        allowBlank: false
+		                    }
+		                },
+		                {header: "得分",width: 120,dataIndex: "sumScore",menuDisabled: true,sortable :false,
+		                    renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
+		                        cellmeta.tdAttr = 'data-qtip="' + value + '"';
+		                        return value;
+		                    }
+		                }
+					]
+                },
+                {header: "部门 建设得分（" + (bdPer * 100) + "%权重）",width: 200,menuDisabled: true,sortable :false,
+                	columns:[
+						{header: "评价得分",width: 200,dataIndex: "buildScore",menuDisabled: true,sortable :false,
+						    renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
+						        cellmeta.tdAttr = 'data-qtip="' + value + '"';
+						        return value;
+						    }
+						}
+                	]
+                },
+                {header: "总分",width: 120,dataIndex: "finalScore",menuDisabled: true,sortable :false,
+                    renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
                         cellmeta.tdAttr = 'data-qtip="' + value + '"';
                         return value;
                     }
                 }
 	         ];
+		
+		var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+            clicksToEdit: 1
+        });
 		
 		//grid组件
 		recordGrid =  Ext.create("Ext.grid.Panel",{
@@ -121,6 +191,7 @@
 			height: document.body.clientHeight,
 			id: "recordGrid",
 			columns:cm,
+			plugins: [cellEditing],
 	     	forceFit : true,
 			store: recordStore,
 			autoScroll: true,

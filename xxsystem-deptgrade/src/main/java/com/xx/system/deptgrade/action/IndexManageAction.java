@@ -507,4 +507,22 @@ public class IndexManageAction extends BaseAction {
 		
 		return null;
 	}
+	
+	/******************部门最终得分********************/
+	
+	/**
+	 * 查询部门最终得分
+	 */
+	public String queryDeptFinalScore() {
+		try {
+			String electYear = getRequest().getParameter("electYear");
+			
+			List<DeptGradeDetailVo> lst = indexManageService.queryDeptFinalScore(electYear);
+			JsonUtil.outJsonArray(lst);
+		} catch (Exception e) {
+			this.excepAndLogHandle(IndexManageAction.class, "查询部门最终得分", e, false);
+		}
+		
+		return null;
+	}
 }

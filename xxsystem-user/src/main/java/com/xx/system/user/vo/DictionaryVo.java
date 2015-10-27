@@ -25,6 +25,16 @@ public class DictionaryVo {
      */
     private int dictionaryType;
     
+    /**
+     * 字典编码
+     */
+    private String dictCode;
+    
+    /**
+     * 字典值
+     */
+    private String dictionaryValue;
+    
     public int getDictionaryId() {
         return dictionaryId;
     }
@@ -48,5 +58,21 @@ public class DictionaryVo {
     public void setDictionaryType(int dictionaryType) {
         this.dictionaryType = dictionaryType;
     }
+
+	public String getDictCode() {
+		return dictCode;
+	}
+
+	public void setDictCode(String dictCode) {
+		this.dictCode = dictCode;
+	}
+
+	public String getDictionaryValue() {
+		return dictionaryValue;
+	}
+
+	public void setDictionaryValue(String dictionaryValue) {
+		this.dictionaryValue = dictionaryValue;
+	}
     
 }
