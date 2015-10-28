@@ -66,6 +66,11 @@ public class DeptGradeDetailVo implements java.io.Serializable {
      */
     private String finalScore;
     
+    /**
+     * 是否参与评分
+     */
+    private Integer isParticipation;
+    
 	/**
 	 * 评分用户
 	 */
@@ -179,5 +184,12 @@ public class DeptGradeDetailVo implements java.io.Serializable {
 	public void setFinalScore(String finalScore) {
 		this.finalScore = finalScore;
 	}
-    
+
+	public Integer getIsParticipation() {
+		return isParticipation;
+	}
+
+	public void setIsParticipation(Integer isParticipation) {
+		this.isParticipation = isParticipation;
+	}
 }

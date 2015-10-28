@@ -1294,26 +1294,20 @@ public class IndexManageServiceImpl implements IIndexManageService {
 				}
 				
 				if (allSubmit) {
-					String sql = " SELECT gr.PK_GRADEREC_ID, SUM(CAST(gr.SCORE AS DECIMAL(5,2))) score, cf.`NAME`, org.ORG_NAME, "
-							+ " gr.FK_CLASSIFY_ID, CONCAT_WS(',', gr.FK_USER_ID) userIds, gr.FK_ORG_ID"
-							+ " FROM T_GRADE_RECORD gr, T_INDEXCLASSIFY cf, t_organization org "
-							+ " WHERE gr.FK_CLASSIFY_ID = cf.PK_CLASSIFY_ID AND org.ORG_ID = gr.FK_ORG_ID and org.ENABLE = 0"
-							+ " and org.STATUS = 0 AND gr.ISDELETE = 0 and cf.IS_PARTICIPATION = 1";
+					String hql = " from OrgAndClassify oc where oc.isDelete = 0"
+							+ " and oc.classify.enable = 0"
+							+ " and oc.classify.isDelete = 0"
+							+ " and oc.classify.isParticipation = 1";
 					if (StringUtil.isNotBlank(electYear)) {
-						sql += " AND cf.ELECTYEAR = '" + electYear + "'";
+						hql += " and oc.classify.electYear = '" + electYear + "'";
 					}
-					sql += " group by gr.FK_CLASSIFY_ID, gr.FK_ORG_ID ";
 					
-					// String countSql = "SELECT COUNT(C.PK_GRADEREC_ID) FROM (" + sql + ") C";
-					// int count = baseDao.getTotalCountNativeQuery(countSql, null);
-					
-					List<Object[]> grLst = (List<Object[]>)baseDao.executeNativeQuery(sql);
-					if (!CollectionUtils.isEmpty(grLst)) {
-						for (Object[] gr : grLst) {
+					List<OrgAndClassify> ocLst = (List<OrgAndClassify>)baseDao.queryEntitys(hql);
+					if (!CollectionUtils.isEmpty(ocLst)) {
+						for (OrgAndClassify oc : ocLst) {
 							// 根据用户ID查询角色，进而根据指标分类ID和角色ID查询权重
-							Integer classifyId = (Integer)gr[4];
-							//String userId = (String)gr[5];
-							Integer orgId = (Integer)gr[6];
+							Integer classifyId = oc.getClassify().getPkClassifyId();
+							Integer orgId = oc.getOrg().getOrgId();
 							
 							Float defen = 0f;
 							// 根据classifyId查询该部门的评分包含哪些角色-->权重和该角色包含的userIds-->得到这部分人的权重和总分
@@ -1327,8 +1321,17 @@ public class IndexManageServiceImpl implements IIndexManageService {
 									List<RoleMemberScope> rmLst = (List<RoleMemberScope>)baseDao.queryEntitys(rmHql);
 									if (!CollectionUtils.isEmpty(rmLst)) {
 										String userIds = "";
+										int containUsr = 0;
 										for (RoleMemberScope member : rmLst) {
 											userIds += "," + member.getUser().getUserId();
+											
+											Iterator<OrgUser> ouIt = member.getUser().getOrgUsers().iterator();
+											while (ouIt.hasNext()) {
+												Organization usrOrg = ouIt.next().getOrganization();
+												if (usrOrg.getOrgId() == orgId) {
+													containUsr++;
+												}
+											}
 										}
 										
 										// 该角色对应的权重
@@ -1344,7 +1347,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 										List<Object> sumLst = (List<Object>)baseDao.executeNativeQuery(sumSql);
 										
 										if (!CollectionUtils.isEmpty(sumLst) && sumLst.get(0) != null) {
-											defen += ((BigDecimal)sumLst.get(0)).floatValue() * percentage;
+											defen += ((BigDecimal)sumLst.get(0)).floatValue() / (rmLst.size() - containUsr) * percentage;
 										}
 									}
 								}
@@ -1510,9 +1513,11 @@ public class IndexManageServiceImpl implements IIndexManageService {
 								
 								Iterator<OrgUser> ouIt = rms.getUser().getOrgUsers().iterator();
 								String orgName = "";
+								List<Integer> selfOrgIds = new ArrayList<Integer>();
 								while (ouIt.hasNext()) {
 									Organization usrOrg = ouIt.next().getOrganization();
 									orgName += "," + usrOrg.getOrgName();
+									selfOrgIds.add(usrOrg.getOrgId());
 								}
 								if (StringUtil.isNotBlank(orgName)) {
 									vo.setOrgName(orgName.substring(1));
@@ -1525,6 +1530,15 @@ public class IndexManageServiceImpl implements IIndexManageService {
 										+ " and cu.user.userId = " + rms.getUser().getUserId();
 								
 								int hasSubmit = baseDao.queryTotalCount(cuHql, new HashMap<String, Object>());
+								
+								// 获取该指标包含的所有部门（如果该指标只包含自己所在部门，默认已提交）
+								if (gp.getClassify().getOrgCfs() != null && gp.getClassify().getOrgCfs().size() == 1) {
+									Iterator<OrgAndClassify> ocIt = gp.getClassify().getOrgCfs().iterator();
+									if (selfOrgIds.contains(ocIt.next().getOrg().getOrgId())) {
+										vo.setFlag("1");
+									}
+								}
+								
 								if (hasSubmit > 0) {
 									vo.setFlag("1");
 								}
@@ -1564,7 +1578,8 @@ public class IndexManageServiceImpl implements IIndexManageService {
 		
 		// 首先查询所有部门
 		String orgHql = " from Organization o where o.enable = 0"
-				+ " and o.status = 0 and o.organization is null";
+				+ " and o.status = 0 and o.organization is not null"
+				+ " order by o.disOrder, o.orgId";
 		List<Organization> orgLst = (List<Organization>)baseDao.queryEntitys(orgHql);
 		if (!CollectionUtils.isEmpty(orgLst)) {
 			DeptGradeDetailVo vo = null;
@@ -1586,18 +1601,26 @@ public class IndexManageServiceImpl implements IIndexManageService {
 				List<OrgAndClassify> ocLst = (List<OrgAndClassify>)baseDao.queryEntitys(ocHql);
 				List<OrgAndClassify> bdLst = (List<OrgAndClassify>)baseDao.queryEntitys(bdHql);
 				
-				if (!CollectionUtils.isEmpty(ocLst) && !CollectionUtils.isEmpty(bdLst)) {
-					OrgAndClassify ocbd = bdLst.get(0);
-					
+				if (!CollectionUtils.isEmpty(ocLst)) {
 					for (OrgAndClassify oc : ocLst) {
 						vo = new DeptGradeDetailVo();
 						
-						vo.setGradeDetailId(oc.getPkOrgAndClassifyId());
+						//vo.setGradeDetailId(oc.getPkOrgAndClassifyId());
 						vo.setCanpDept(oc.getOrg().getOrgName());
 						vo.setClassifyName(oc.getClassify().getName());
 						vo.setScore(oc.getScore());
+						
+						if (StringUtil.isNotBlank(oc.getScore()) && !"0".equals(oc.getScore())) {
+							vo.setIsParticipation(1);
+						}
+						else {
+							vo.setIsParticipation(0);
+						}
+						
 						vo.setPercentage(oc.getPercentage());
-						vo.setBuildScore(ocbd.getScore());
+						if (!CollectionUtils.isEmpty(bdLst)) {
+							vo.setBuildScore(bdLst.get(0).getScore());
+						}
 						
 						// 查询部门最终得分
 						String fsHql = " from FinalScore fs where fs.org.orgId = " + org.getOrgId();
@@ -1610,6 +1633,15 @@ public class IndexManageServiceImpl implements IIndexManageService {
 							vo.setFinalScore(fsLst.get(0).getScore());
 						}
 						
+						voLst.add(vo);
+					}
+				}
+				else {
+					if (!CollectionUtils.isEmpty(bdLst)) {
+						vo = new DeptGradeDetailVo();
+						vo.setCanpDept(org.getOrgName());
+						vo.setBuildScore(bdLst.get(0).getScore());
+						vo.setIsParticipation(0);
 						voLst.add(vo);
 					}
 				}

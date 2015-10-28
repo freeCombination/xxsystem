@@ -56,7 +56,8 @@
                 {name: 'percentage', type: 'string'},
                 {name: 'sumScore', type: 'string'},
                 {name: 'buildScore', type: 'string'},
-                {name: 'finalScore', type: 'string'}
+                {name: 'finalScore', type: 'string'},
+                {name: 'isParticipation', type: 'int'}
 	        ]
 	    });
 		
@@ -100,9 +101,10 @@
 	        },
             listeners:{
                 load:function(store, records){
-                    /* if (records.length > 0) {
+                    if (records.length > 0) {
                         mergeCells(recordGrid, [1]);
-                    } */
+                        mergeCells(recordGrid, [5, 6, 7]);
+                    }
                 }
             }
 		});
