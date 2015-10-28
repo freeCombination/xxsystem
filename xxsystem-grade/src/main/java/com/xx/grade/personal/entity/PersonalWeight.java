@@ -63,6 +63,11 @@ public class PersonalWeight implements Serializable {
      * 备注
      */
 	private String remark ;
+	
+	/**
+	 * 是否参与评分（针对于部门指标不参与单独评分）
+	 */
+	private boolean isGrade ;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -122,4 +127,15 @@ public class PersonalWeight implements Serializable {
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
+
+	@Column(name = "IS_GRADE")
+	public boolean isGrade() {
+		return isGrade;
+	}
+
+	public void setGrade(boolean isGrade) {
+		this.isGrade = isGrade;
+	}
+	
+	
 }

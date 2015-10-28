@@ -189,4 +189,13 @@ public class PersonalWeightServiceImpl implements IPersonalWeightService {
 		}
 	}
 
+
+	@Override
+	public List<PersonalWeight> getPersonalWeightByClassification(int classificationId) {
+		StringBuffer hql = new StringBuffer();
+		hql.append(" From PersonalWeight pw where pw.classification.pkDictionaryId = "+classificationId);
+		List<PersonalWeight> results = baseDao.queryEntitys(hql.toString());
+		return results;
+	}
+
 }

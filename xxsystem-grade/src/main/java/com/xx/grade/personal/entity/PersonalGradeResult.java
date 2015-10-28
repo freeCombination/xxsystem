@@ -2,7 +2,9 @@ package com.xx.grade.personal.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,9 +13,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.OrderBy;
 
 import com.xx.system.org.entity.Organization;
 import com.xx.system.user.entity.User;
@@ -77,6 +82,11 @@ public class PersonalGradeResult implements Serializable{
 	 * 领导评价 只有员工类型不为普通员工 评分页面才显示评价
 	 */
 	private String evaluation ;
+	
+	/**
+	 * 个人评分结果详情
+	 */
+	private Set<PersonalGradeResultDetails> details ;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -164,6 +174,14 @@ public class PersonalGradeResult implements Serializable{
 	public void setEvaluation(String evaluation) {
 		this.evaluation = evaluation;
 	}
-	
-	
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "personalGradeResult")
+	@OrderBy(clause="ID desc")
+	public Set<PersonalGradeResultDetails> getDetails() {
+		return details;
+	}
+
+	public void setDetails(Set<PersonalGradeResultDetails> details) {
+		this.details = details;
+	}
 }

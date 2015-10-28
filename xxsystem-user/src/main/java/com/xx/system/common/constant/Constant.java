@@ -204,5 +204,8 @@ public class Constant {
     
     /** @Fields GRADE_ZBFL :个人评分指标分类 */
     public static final String GRADE_ZBFL = "GRADE_ZBFL" ;
+
+    /** @Fields GRADE_ZBFL :个人评分角色 */
+	public static final String ROLE_GRPF = "ROLE_GRPF";
     
 }

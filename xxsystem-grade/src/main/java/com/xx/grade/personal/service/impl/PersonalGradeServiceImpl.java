@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,21 +24,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.xx.grade.personal.entity.IndexTypeRoleWeight;
 import com.xx.grade.personal.entity.PersonalDuty;
 import com.xx.grade.personal.entity.PersonalGrade;
 import com.xx.grade.personal.entity.PersonalGradeResult;
+import com.xx.grade.personal.entity.PersonalGradeResultDetails;
+import com.xx.grade.personal.entity.PersonalWeight;
 import com.xx.grade.personal.service.IPersonalGradeService;
+import com.xx.grade.personal.service.IPersonalWeightService;
 import com.xx.grade.personal.vo.PersonalDutyVo;
 import com.xx.grade.personal.vo.PersonalGradeResultVo;
 import com.xx.grade.personal.vo.PersonalGradeVo;
+import com.xx.system.common.constant.Constant;
 import com.xx.system.common.dao.IBaseDao;
 import com.xx.system.common.exception.BusinessException;
 import com.xx.system.common.util.DateUtil;
 import com.xx.system.common.util.StringUtil;
 import com.xx.system.common.vo.ListVo;
+import com.xx.system.dict.entity.Dictionary;
+import com.xx.system.dict.service.IDictService;
 import com.xx.system.org.entity.Duty;
 import com.xx.system.org.entity.OrgUser;
 import com.xx.system.org.entity.Organization;
+import com.xx.system.role.entity.Role;
 import com.xx.system.user.entity.User;
 import com.xx.system.user.util.HSSFUtils;
 
@@ -54,6 +63,14 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 	@Autowired
 	@Qualifier("baseDao")
 	private IBaseDao baseDao ;
+	
+	@Autowired
+	@Qualifier("dictService")
+	private IDictService dictService ;
+	
+	@Autowired
+	@Qualifier("personalWeightService")
+	private IPersonalWeightService personalWeightService;
 
 	@Override
 	public ListVo<PersonalGradeVo> getPersonalGradeList(Map<String, String> paramMap) throws BusinessException {
@@ -328,8 +345,142 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
         return message ;
 	}
 
-	@Override
+	/**
+	 * 生成个人评分结果表 20151028改版
+	 */
 	public void generatePersonalGradeResult(String ids, User curUser) {
+		if (StringUtil.isNotEmpty(ids) && curUser != null) {
+			StringBuffer hql = new StringBuffer();
+			hql.append(" From PersonalGrade pg where pg.status = 1 ");
+			hql.append(" and pg.id in ('"+ids+"')");
+			List<PersonalGrade> grades = baseDao.queryEntitys(hql.toString());
+			
+			//获取当前登录人部门
+			Set<OrgUser> currentOrgs = curUser.getOrgUsers();
+			Organization currentOrg = null ;
+			for (OrgUser orgUser : currentOrgs) {
+				if (orgUser.getOrganization() != null) {
+					currentOrg = orgUser.getOrganization();
+					break;
+				}
+			}
+			
+			for (PersonalGrade grade : grades) {
+				Dictionary classification = grade.getClassification();
+				//获取该权重分类下的所有权重维护
+				List<PersonalWeight> pws = personalWeightService.getPersonalWeightByClassification(classification.getPkDictionaryId());
+				for (PersonalWeight pw : pws) {
+					//对于参与评分的指标
+					if (pw.isGrade()) {
+						//获取该指标下所有角色权重
+						Set<IndexTypeRoleWeight> rws = pw.getIndexTypeRoles();
+						Iterator<IndexTypeRoleWeight> it = rws.iterator();
+						while (it.hasNext()) {
+							IndexTypeRoleWeight rw  = it.next();
+							Role role = rw.getRole();
+							List<User> users = getUsersExcludeSelf(role,grade.getUser().getUserId(),currentOrg);
+							for (User user : users) {
+								PersonalGradeResult result = getResultByUserAndGrade(user,grade);
+								if (result == null) {
+									result = new PersonalGradeResult();
+									result.setPersonalGrade(grade);
+									result.setGradeUser(user);
+									result.setState(0);
+									result.setGradeUserType(0);
+									baseDao.save(result);
+								}
+								PersonalGradeResultDetails detail = getDetailsByRoleAndIndexAndResult(role,pw.getIndexType(),result);
+								if (detail == null) {
+									detail = new PersonalGradeResultDetails();
+									detail.setPersonalGradeResult(result);
+									detail.setIndexType(pw.getIndexType());
+									detail.setRole(role);
+									baseDao.save(detail);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 通过角色 指标 结果表查找详情明细表
+	 * 
+	 * @param role
+	 * @param indexType
+	 * @param result
+	 * @return
+	 */
+	private PersonalGradeResultDetails getDetailsByRoleAndIndexAndResult(Role role, Dictionary indexType,
+			PersonalGradeResult result) {
+		PersonalGradeResultDetails detail = null ;
+		StringBuffer hql = new StringBuffer();
+		hql.append(" From PersonalGradeResultDetails d where d.personalGradeResult.id ="+result.getId()
+			+" and d.IndexType.pkDictionaryId="+indexType.getPkDictionaryId()+" and d.role.roleId="+role.getRoleId());
+		List<PersonalGradeResultDetails> details = baseDao.queryEntitys(hql.toString());
+		if (details != null && details.size() >0) {
+			detail = details.get(0);
+		}
+		return detail;
+	}
+
+	/**
+	 * 通过个人得分与评分人找结果
+	 * 
+	 * @param user
+	 * @param grade
+	 * @return
+	 */
+	private PersonalGradeResult getResultByUserAndGrade(User user, PersonalGrade grade) {
+		PersonalGradeResult result = null ;
+		StringBuffer hql = new StringBuffer();
+		hql.append(" From PersonalGradeResult r where r.personalGrade.id ="+grade.getId()+" and r.gradeUser.userId="+user.getUserId());
+		List<PersonalGradeResult> results = baseDao.queryEntitys(hql.toString());
+		if (results != null && results.size() >0) {
+			result = results.get(0);
+		}
+		return result;
+	}
+
+	/**
+	 * 查找角色对应的人员，极为重要的方法，此方法决定了评分人
+	 * 
+	 * @param role
+	 * @param userId
+	 * @param currentOrg
+	 * @return
+	 */
+	private List<User> getUsersExcludeSelf(Role role, Integer userId, Organization currentOrg) {
+		List<User> users = null ;
+		StringBuffer hql = new StringBuffer();
+		//如果是一般员工角色，则需要排除自己
+		if (role.getRoleName().equals("一般员工")) {
+			hql.append(" select rs.user From RoleMemberScope rs where rs.role.roleId ="+role.getRoleId()+" and rs.user.userId <> " + userId);
+		}//如果是与部门挂钩的角色，则需要找到对应角色范围属于该部门的员工
+		else if(role.getRoleName().equals("部门主任")
+				|| role.getRoleName().equals("部门副主任")
+				|| role.getRoleName().equals("分管领导")
+				|| role.getRoleName().equals("分管副所长")
+				|| role.getRoleName().equals("部门负责人")){
+			hql.append(" select sm.roleMemberScope.user From ScopeMember sm where sm.org.orgId = "+currentOrg.getOrgId()+" and sm.roleMemberScope.role.roleId = "+role.getRoleId());
+		}//其他角色，直接取对于角色下的所有人
+		else
+		{
+			hql.append(" select rs.user From RoleMemberScope rs where rs.role.roleId ="+role.getRoleId());
+		}
+		users = baseDao.queryEntitys(hql.toString());
+		return users;
+	}
+
+	/**
+	 * 生成个人评分结果表（已停用）
+	 * 
+	 * @param ids
+	 * @param curUser
+	 */
+	public void generatePersonalGradeResultOld(String ids, User curUser) {
 		if (StringUtil.isNotEmpty(ids) && curUser != null) {
 			StringBuffer hql = new StringBuffer();
 			hql.append(" From PersonalGrade pg where pg.status = 1 ");
@@ -705,30 +856,111 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			if (grades != null && grades.size()>0) {
 				result = "{success:false,msg:'生成个人评分失败，已存在数据！'}";
 			}else{
-				PersonalGrade grade = new PersonalGrade();
-				grade.setTitle(currentUser.getRealname()+gradeYear+"年个人评分表");
-				grade.setUser(currentUser);
-				grade.setIsDelete(0);
-				grade.setStatus(0);
-				grade.setGradeYear(gradeYear);
-				baseDao.save(grade);
-				//生成职责表
-				if (currentUser.getResponsibilities() != null) {
-					StringBuffer hqlDuty = new StringBuffer();
-					hqlDuty.append(" From Duty where responsibilities.pkRespId = "+currentUser.getResponsibilities().getPkRespId());
-					List<Duty> duties = baseDao.queryEntitys(hqlDuty.toString());
-					for (Duty duty : duties) {
-						PersonalDuty personalDuty = new PersonalDuty();
-						personalDuty.setWorkDuty(duty.getDutyContent());
-						personalDuty.setPersonalGrade(grade);
-						baseDao.save(personalDuty);
+				//查找当前人个人评分角色
+				List<Role> roles = getRoleListByCurrentUser(currentUser);
+				if (roles != null) {
+					//获取个人评分人所属类型
+					Dictionary classification  = getClassification(roles);
+					if (classification != null) {
+						PersonalGrade grade = new PersonalGrade();
+						grade.setTitle(currentUser.getRealname()+gradeYear+"年个人评分表");
+						grade.setUser(currentUser);
+						grade.setIsDelete(0);
+						grade.setStatus(0);
+						grade.setGradeYear(gradeYear);
+						grade.setClassification(classification);
+						baseDao.save(grade);
+						//生成职责表
+						if (currentUser.getResponsibilities() != null) {
+							StringBuffer hqlDuty = new StringBuffer();
+							hqlDuty.append(" From Duty where responsibilities.pkRespId = "+currentUser.getResponsibilities().getPkRespId());
+							List<Duty> duties = baseDao.queryEntitys(hqlDuty.toString());
+							for (Duty duty : duties) {
+								PersonalDuty personalDuty = new PersonalDuty();
+								personalDuty.setWorkDuty(duty.getDutyContent());
+								personalDuty.setPersonalGrade(grade);
+								baseDao.save(personalDuty);
+							}
+						}
+					}else{
+						result = "{success:true,msg:'生成个人评分失败，未配置个人评分相关角色！'}";
 					}
+				}else{
+					result = "{success:true,msg:'该用户未配置个人评分角色，请联系管理员！'}";
 				}
 			}
 		} catch (Exception e) {
 			result = "{success:true,msg:'生成个人评分失败！'}";
 		}
 		return result;
+	}
+
+	/**
+	 * 
+	 * @param roles
+	 * @return
+	 */
+	private Dictionary getClassification(List<Role> roles) {
+		Dictionary classification = null ;
+		boolean isYbyg = false ;//一般人员
+		boolean isBmzr = false ;//部门主任
+		boolean isLd = false ;//领导
+		//此处先通过名称判断
+		for (Role role : roles) {
+			if (role.getRoleName().equals("一般员工")) {
+				isYbyg = true ;
+			}
+			if (role.getRoleName().equals("部门主任") || role.getRoleName().equals("部门副主任")) {
+				isBmzr = true ;
+			}
+			if (role.getRoleName().equals("总工") 
+					|| role.getRoleName().equals("副总工")
+					|| role.getRoleName().equals("质检中心总工")) {
+				isLd = true ;
+			}
+		}
+		if (isLd) {
+			classification = dictService.getDictByTypeAndValue(Constant.GRADE_QZFL,Constant.QZFL_GSLD);
+		}else if(isBmzr){
+			classification = dictService.getDictByTypeAndValue(Constant.GRADE_QZFL,Constant.QZFL_BMLD);
+		}else if(isYbyg){
+			classification = dictService.getDictByTypeAndValue(Constant.GRADE_QZFL,Constant.QZFL_YBYG);
+		}
+		return classification;
+	}
+
+	/**
+	 * 获取当前登录人个人评分角色列表
+	 * 
+	 * @param currentUser
+	 * @return
+	 */
+	private List<Role> getRoleListByCurrentUser(User currentUser) {
+		StringBuffer hql = new StringBuffer();
+		String roleIds = getRoleIdsByCurrentUser(currentUser);
+		hql.append(" From Role r where isDelete = 0 and r.roleType.dictCode ='"+Constant.ROLE_GRPF+"' and r.roleId in ("+roleIds+")");
+		List<Role> result = baseDao.queryEntitys(hql.toString());
+		return result;
+	}
+
+	/**
+	 * 获取用户所有角色id集合
+	 * 
+	 * @param currentUser
+	 * @return
+	 */
+	private String getRoleIdsByCurrentUser(User currentUser) {
+		String ids = "" ;
+		StringBuffer sql = new StringBuffer();
+		sql.append(" select DISTINCT t.ROLE_ID as ROLEID from T_ROLE_MEMBER_SCOPE t where t.USER_ID = "+currentUser.getUserId());
+		List<Map> roleIds = baseDao.querySQLForMap(sql.toString());
+		for (Map map : roleIds) {
+			ids += ",'" + map.get("ROLEID") + "'";
+		}
+		if (StringUtil.isNotEmpty(ids)) {
+			ids = ids.substring(1,ids.length());
+		}
+		return ids;
 	}
 
 	@Override

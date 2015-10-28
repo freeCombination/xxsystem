@@ -17,6 +17,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.OrderBy;
 
+import com.xx.system.dict.entity.Dictionary;
 import com.xx.system.org.entity.Organization;
 import com.xx.system.user.entity.User;
 
@@ -93,6 +94,12 @@ public class PersonalGrade implements Serializable {
 	 * 个人评分结果列表
 	 */
 	private Set<PersonalGradeResult> result ;
+	
+	/**
+	 * 权重分类 个人评权重，部门领导评分权重，领导评分权重
+	 */
+	private Dictionary classification ;
+	
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -206,5 +213,15 @@ public class PersonalGrade implements Serializable {
 
 	public void setTitle(String title) {
 		this.title = title;
+	}
+	
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "FK_CLASSIFICATION")
+	public Dictionary getClassification() {
+		return classification;
+	}
+
+	public void setClassification(Dictionary classification) {
+		this.classification = classification;
 	}
 }

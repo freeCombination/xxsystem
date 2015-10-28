@@ -1,9 +1,12 @@
 package com.xx.grade.personal.service;
 
+import java.util.List;
 import java.util.Map;
 
+import com.xx.grade.personal.entity.PersonalWeight;
 import com.xx.grade.personal.vo.PersonalWeightVo;
 import com.xx.system.common.vo.ListVo;
+import com.xx.system.dict.entity.Dictionary;
 
 /**
  * 个人评分权重维护接口服务
@@ -40,5 +43,13 @@ public interface IPersonalWeightService {
 	 * @param ids
 	 */
 	void deletePersonalWeigh(String ids);
+	
+	/**
+	 * 通过权重分类找到该权重下所有的指标集合
+	 * 
+	 * @param classification
+	 * @return
+	 */
+	List<PersonalWeight> getPersonalWeightByClassification(int classificationId);
 
 }
