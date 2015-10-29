@@ -57,7 +57,9 @@
                 {name: 'sumScore', type: 'string'},
                 {name: 'buildScore', type: 'string'},
                 {name: 'finalScore', type: 'string'},
-                {name: 'isParticipation', type: 'int'}
+                {name: 'isParticipation', type: 'int'},
+                {name: 'classifyId', type: 'int'},
+                {name: 'canpDeptId', type: 'int'}
 	        ]
 	    });
 		
@@ -141,8 +143,14 @@
 		                },
 		                {header: "权重（可编辑）",width: 120,dataIndex: "percentage",menuDisabled: true,sortable :false,
 		                    renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
-		                        cellmeta.tdAttr = 'data-qtip="' + value + '"';
-		                        return value;
+		                        if (value) {
+		                        	var showStr = Math.round(value * 100) + "%";
+	                                cellmeta.tdAttr = 'data-qtip="' + showStr + '"';
+	                                return showStr;
+		                        }
+		                        else {
+		                        	return value;
+		                        }
 		                    },
 		                    field: {
 		                        xtype:'textfield',
@@ -178,8 +186,116 @@
                 }
 	         ];
 		
+		var tempScore = '';
+		var tempPerc = '';
 		var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            clicksToEdit: 1
+            clicksToEdit: 1,
+            listeners : {
+                beforeedit:function(editor, e, eOpts ){
+                	tempScore = e.record.data.score;
+                	tempPerc = e.record.data.percentage;
+                },
+                edit:function(editor, e, eOpts ){
+                	var col = e.column.dataIndex;
+                    if ("score" == col) {
+                        if (!e.record.data.classifyName || e.record.data.isParticipation == 1 ||
+                        		Ext.getCmp('electYearQuery').getValue() != Ext.Date.format(new Date(),"Y")) {
+                            recordStore.getAt(e.rowIdx).set('score', tempScore);
+                        }
+                        else{
+                        	$.ajax({
+                                type : "POST",
+                                url : "${ctx}/deptgrade/saveEditScore.action",
+                                data : {
+                                    cfId:e.record.data.classifyId,
+                                    orgId:e.record.data.canpDeptId,
+                                    score:editor.context.value
+                                },
+                                cache : false,
+                                async : false,
+                                dataType : 'json',
+                                success : function(response) {
+                                    
+                                }
+                            });
+                        }
+                    }
+                    
+                    if ("percentage" == col) {
+                        if (!e.record.data.classifyName ||
+                        		Ext.getCmp('electYearQuery').getValue() != Ext.Date.format(new Date(),"Y")) {
+                            recordStore.getAt(e.rowIdx).set('percentage', tempPerc);
+                        }
+                        else{
+                        	$.ajax({
+                                type : "POST",
+                                url : "${ctx}/deptgrade/saveEditScore.action",
+                                data : {
+                                    cfId:e.record.data.classifyId,
+                                    orgId:e.record.data.canpDeptId,
+                                    percentage:editor.context.value,
+                                    flag:'percentage'
+                                },
+                                cache : false,
+                                async : false,
+                                dataType : 'json',
+                                success : function(response) {
+                                    
+                                }
+                            });
+                        	
+                            var sumScore = 0;
+                            var finalScore = 0;
+                            var bdScore = '0';
+                            var allFlag = true;
+                            for (var i = 0; i < recordStore.getCount(); i++) {
+                            	if (recordStore.getAt(i).get('canpDeptId') == e.record.data.canpDeptId) {
+                            		var s = recordStore.getAt(i).get('score');
+                                    var p = recordStore.getAt(i).get('percentage');
+                                    bdScore = recordStore.getAt(i).get('buildScore');
+                                    if (s && p) {
+                                        sumScore += parseFloat(s) * parseFloat(p);
+                                    }
+                                    else {
+                                    	allFlag = false;
+                                        break;
+                                    }
+                            	}
+                            }
+                            
+                            if (allFlag) {
+                            	finalScore = sumScore * cfPer + parseFloat(bdScore) * bdPer;
+                            	
+                            	for (var i = 0; i < recordStore.getCount(); i++) {
+	                                if (recordStore.getAt(i).get('canpDeptId') == e.record.data.canpDeptId) {
+	                                	recordStore.getAt(i).set('sumScore', sumScore.toFixed(2));
+	                                	recordStore.getAt(i).set('finalScore', finalScore.toFixed(2));
+	                                }
+	                            }
+                            	
+                            	recordGrid.getView().refresh();
+                            	
+                            	$.ajax({
+                                    type : "POST",
+                                    url : "${ctx}/deptgrade/saveFinalScore.action",
+                                    data : {
+                                        orgId:e.record.data.canpDeptId,
+                                        sumScore:sumScore.toFixed(2),
+                                        finalScore:finalScore.toFixed(2),
+                                        electYear:Ext.getCmp('electYearQuery').getValue()
+                                    },
+                                    cache : false,
+                                    async : false,
+                                    dataType : 'json',
+                                    success : function(response) {
+                                        
+                                    }
+                                });
+                            }
+                        }
+                    }
+                }
+            }
         });
 		
 		//grid组件

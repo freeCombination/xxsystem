@@ -1607,7 +1607,9 @@ public class IndexManageServiceImpl implements IIndexManageService {
 						
 						//vo.setGradeDetailId(oc.getPkOrgAndClassifyId());
 						vo.setCanpDept(oc.getOrg().getOrgName());
+						vo.setCanpDeptId(oc.getOrg().getOrgId());
 						vo.setClassifyName(oc.getClassify().getName());
+						vo.setClassifyId(oc.getClassify().getPkClassifyId());
 						vo.setScore(oc.getScore());
 						
 						if (StringUtil.isNotBlank(oc.getScore()) && !"0".equals(oc.getScore())) {
@@ -1649,5 +1651,51 @@ public class IndexManageServiceImpl implements IIndexManageService {
 		}
 		
 		return voLst;
+	}
+
+	@Override
+	public void saveEditScore(String cfId, String orgId, String score, String percentage, String flag) throws Exception {
+		if ("percentage".equals(flag)) {
+			if (StringUtil.isNotBlank(cfId) && StringUtil.isNotBlank(orgId) && StringUtil.isNotBlank(percentage)) {
+				String update = " update OrgAndClassify oc set oc.percentage = '" + percentage + "'"
+						+ " where oc.isDelete = 0 and oc.classify.pkClassifyId = " + cfId
+						+ " and oc.org.orgId = " + orgId;
+				
+				baseDao.executeHql(update);
+			}
+		}
+		else {
+			if (StringUtil.isNotBlank(cfId) && StringUtil.isNotBlank(orgId) && StringUtil.isNotBlank(score)) {
+				String update = " update OrgAndClassify oc set oc.score = '" + score + "'"
+						+ " where oc.isDelete = 0 and oc.classify.pkClassifyId = " + cfId
+						+ " and oc.org.orgId = " + orgId;
+				
+				baseDao.executeHql(update);
+			}
+		}
+	}
+
+	@Override
+	public void saveFinalScore(String orgId, String sumScore, String finalScore, String electYear) throws Exception {
+		if (StringUtil.isNotBlank(orgId) && StringUtil.isNotBlank(sumScore) && StringUtil.isNotBlank(finalScore) && StringUtil.isNotBlank(electYear)) {
+			String hql = " from FinalScore fs where fs.electYear = '" + electYear + "'"
+					+ " and fs.org.orgId = " + orgId;
+			List<FinalScore> fsLst = (List<FinalScore>)baseDao.queryEntitys(hql);
+			FinalScore fs = null;
+			if (!CollectionUtils.isEmpty(fsLst)) {
+				fs = fsLst.get(0);
+			}
+			else {
+				fs = new FinalScore();
+				fs.setElectYear(electYear);
+				Organization org = (Organization)baseDao.queryEntityById(Organization.class, NumberUtils.toInt(orgId));
+				fs.setOrg(org);
+			}
+			
+			fs.setSumScore(sumScore);
+			fs.setScore(finalScore);
+			
+			baseDao.saveOrUpdate(fs);
+		}
 	}
 }

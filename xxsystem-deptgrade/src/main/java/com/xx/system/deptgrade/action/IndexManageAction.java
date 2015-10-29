@@ -525,4 +525,43 @@ public class IndexManageAction extends BaseAction {
 		
 		return null;
 	}
+	
+	/**
+     * 保存未参加指标对应部门编辑得分
+     */
+    public String saveEditScore() {
+    	String msg = "{success:'false',msg:'保存未参加指标对应部门编辑得分失败'}";
+		try {
+			String cfId = getRequest().getParameter("cfId");
+			String orgId = getRequest().getParameter("orgId");
+			String score = getRequest().getParameter("score");
+			String percentage = getRequest().getParameter("percentage");
+			String flag = getRequest().getParameter("flag");
+			indexManageService.saveEditScore(cfId, orgId, score, percentage, flag);
+			msg = "{success:'true',msg:'保存未参加指标对应部门编辑得分成功'}";
+		} catch (Exception e) {
+			this.excepAndLogHandle(IndexManageAction.class, "保存未参加指标对应部门编辑得分", e, false);
+		}
+		JsonUtil.outJson(msg);
+		return null;
+    }
+    
+    /**
+     * 保存部门最终得分
+     */
+    public String saveFinalScore() {
+    	String msg = "{success:'false',msg:'保存部门最终得分失败'}";
+		try {
+			String orgId = getRequest().getParameter("orgId");
+			String sumScore = getRequest().getParameter("sumScore");
+			String finalScore = getRequest().getParameter("finalScore");
+			String electYear = getRequest().getParameter("electYear");
+			indexManageService.saveFinalScore(orgId, sumScore, finalScore, electYear);
+			msg = "{success:'true',msg:'保存部门最终得分成功'}";
+		} catch (Exception e) {
+			this.excepAndLogHandle(IndexManageAction.class, "保存部门最终得分", e, false);
+		}
+		JsonUtil.outJson(msg);
+		return null;
+    }
 }

@@ -22,6 +22,11 @@ public class DeptGradeDetailVo implements java.io.Serializable {
     private String classifyName;
     
     /**
+     * 考核分类ID
+     */
+    private Integer classifyId;
+    
+    /**
      * 一级指标名称
      */
     private String name;
@@ -40,6 +45,11 @@ public class DeptGradeDetailVo implements java.io.Serializable {
      * 被评分部门
      */
     private String canpDept;
+    
+    /**
+     * 被评分部门ID
+     */
+    private Integer canpDeptId;
     
     /**
      * 得分
@@ -191,5 +201,21 @@ public class DeptGradeDetailVo implements java.io.Serializable {
 
 	public void setIsParticipation(Integer isParticipation) {
 		this.isParticipation = isParticipation;
+	}
+
+	public Integer getClassifyId() {
+		return classifyId;
+	}
+
+	public void setClassifyId(Integer classifyId) {
+		this.classifyId = classifyId;
+	}
+
+	public Integer getCanpDeptId() {
+		return canpDeptId;
+	}
+
+	public void setCanpDeptId(Integer canpDeptId) {
+		this.canpDeptId = canpDeptId;
 	}
 }
