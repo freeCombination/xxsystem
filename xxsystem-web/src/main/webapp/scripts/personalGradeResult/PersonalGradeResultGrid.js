@@ -46,6 +46,7 @@ grade.personalGradeResult.PersonalGradeResultStore.addListener('beforeload', fun
 	grade.personalGradeResult.PersonalGradeResultGrid.getSelectionModel().clearSelections();
 	Ext.getCmp('edit-button').setDisabled(true);
 	Ext.getCmp('submit-button').setDisabled(true);
+	Ext.getCmp('query-button').setDisabled(true);
 });
 
 /**
@@ -116,7 +117,7 @@ grade.personalGradeResult.PersonalGradeResultGrid = Ext.create("Ext.grid.Panel",
 	}, '->', {
 		xtype : 'button',
 		id:'edit-button',
-		text : '编辑',
+		text : '评分',
 		disabledExpr : "$selectedRows != 1 || $state!=0",// $selected 表示选中的记录数不等于1
 		disabled : true,
 		iconCls : 'edit-button',
@@ -129,6 +130,7 @@ grade.personalGradeResult.PersonalGradeResultGrid = Ext.create("Ext.grid.Panel",
 		text : '查看',
 		disabledExpr : "$selectedRows != 1",// $selected 表示选中的记录数不等于1
 		disabled : true,
+		id:'query-button',
 		iconCls : 'query-button',
 		handler : function() {
 			grade.personalGradeResult.ViewPersonalGradeResult();
@@ -151,7 +153,7 @@ grade.personalGradeResult.PersonalGradeResultGrid = Ext.create("Ext.grid.Panel",
  * 编辑个人评分
  */
 grade.personalGradeResult.EditPersonalGradeResult = function() {
-	grade.personalGradeResult.PersonalGradeResultWin.setTitle('编辑');
+	grade.personalGradeResult.PersonalGradeResultWin.setTitle('评分');
 	var row = grade.personalGradeResult.PersonalGradeResultGrid.getSelectionModel().getSelection()
 	var id = row[0].data.id;
 	var personalGradeId = row[0].data.personalGradeId;
@@ -161,7 +163,6 @@ grade.personalGradeResult.EditPersonalGradeResult = function() {
 	basicForm.findField('id').setValue(id);
 	basicForm.findField('personalGradeId').setValue(personalGradeId);
 	Ext.getCmp('result_submit').show();
-	Ext.getCmp('score').setReadOnly(false);
 	Ext.getCmp('evaluation').setReadOnly(false);
 	basicForm.load({
 		url : basePath + '/personalGrade/getPersonalGradeResultById.action',
@@ -192,7 +193,6 @@ grade.personalGradeResult.ViewPersonalGradeResult = function() {
 	basicForm.findField('id').setValue(id);
 	basicForm.findField('personalGradeId').setValue(personalGradeId);
 	Ext.getCmp('result_submit').hide();
-	Ext.getCmp('score').setReadOnly(true);
 	Ext.getCmp('evaluation').setReadOnly(true);
 	basicForm.load({
 		url : basePath + '/personalGrade/getPersonalGradeResultById.action',

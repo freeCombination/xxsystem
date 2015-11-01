@@ -129,7 +129,7 @@ var row6 = {
         }]  
     }; 
 
-var row7 = {  
+/*var row7 = {  
         layout:'form', 
         border : false,
         items:[{  
@@ -140,7 +140,7 @@ var row7 = {
             minValue: 0,
             fieldLabel:'得分'
         }]  
-    }; 
+    }; */
 
 grade.personalGradeResult.PersonalGradeResultForm = Ext.create("Ext.form.Panel", {  
     //renderTo:Ext.getBody(),  
@@ -172,7 +172,7 @@ grade.personalGradeResult.PersonalGradeResultForm = Ext.create("Ext.form.Panel",
 				xtype:'textfield',
 				hidden : true
 			 },
-           row1,row2,row3,row4,row5,row6,row7]
+           row1,row2,row3,row4,row5,row6]
 });
 
 /**
@@ -182,7 +182,7 @@ grade.personalGradeResult.PersonalGradeResultWin = Ext.create("Ext.window.Window
 	height : 500,
 	width : 800,
 	layout: 'border',
-	items : [grade.personalGradeResult.PersonalGradeResultForm,grade.personalDutyResult.PersonalDutyResultGrid],
+	items : [grade.personalGradeResult.PersonalGradeResultForm,grade.personalDutyResult.PersonalDutyResultGrid,grade.personalDutyResultDetails.PersonalDutyResultDetailsGrid],
 	buttons : [ {
 		text : '确定',
 		id:'result_submit',
@@ -209,6 +209,7 @@ grade.personalGradeResult.PersonalGradeResultWin = Ext.create("Ext.window.Window
 	listeners: {
     	afterrender: function(){
     		var personalGradeId = Ext.getCmp('personalGradeId').getValue();
+    		var personalGradeResultId = Ext.getCmp('id').getValue();
     		var gradeUserType = Ext.getCmp('gradeUserType').getValue();
     		if (gradeUserType == 0) {
     			Ext.getCmp('evaluation').hide();
@@ -221,6 +222,15 @@ grade.personalGradeResult.PersonalGradeResultWin = Ext.create("Ext.window.Window
     					personalGradeId : personalGradeId
     				}
     			});
+    		
+    		grade.personalDutyResultDetails.PersonalDutyResultDetailsStore.load({
+    			params:
+				{
+    				personalGradeResultId : personalGradeResultId
+				}
+			});
+    		
+    		grade.personalDutyResultDetails.ScoreStore.load();
     	}
 	}
 });

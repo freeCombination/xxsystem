@@ -13,31 +13,25 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.xx.system.dict.entity.Dictionary;
-import com.xx.system.role.entity.Role;
 
 /**
- * 评分明细 关联评分指标类型和评分结果
+ * 指标评分分类与个人关联历史
  * 
  * @author wujialing
  */
 @Entity
-@Table(name = "T_PERSONAL_GRADE_RESULT_DETAILS")
-public class PersonalGradeResultDetails implements Serializable {
-	
+@Table(name = "T_PERSONAL_GRADE_DETAILS")
+public class PersonalGradeDetails implements Serializable {
+
 	/**
-	 * 序列化
+	 * 序列号
 	 */
 	private static final long serialVersionUID = 1L;
 	
 	/**
-	 * 主键ID
+	 * 主键 id
 	 */
 	private Integer id;
-	
-	/**
-	 * 个人评分结果
-	 */
-	private PersonalGradeResult personalGradeResult ;
 	
 	/**
 	 * 指标类型 部门绩效考核得分、工作计划完成情况、能力态度、领导能力、执行能力、工作业绩
@@ -45,9 +39,9 @@ public class PersonalGradeResultDetails implements Serializable {
 	private Dictionary indexType ;
 	
 	/**
-	 * 角色
+	 * 个人评分
 	 */
-	private Role role ;
+	private PersonalGrade personalGrade ;
 	
 	/**
 	 * 得分
@@ -70,16 +64,6 @@ public class PersonalGradeResultDetails implements Serializable {
 		this.id = id;
 	}
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PERSONAL_GRADE_RESULT_ID", nullable = true)
-	public PersonalGradeResult getPersonalGradeResult() {
-		return personalGradeResult;
-	}
-
-	public void setPersonalGradeResult(PersonalGradeResult personalGradeResult) {
-		this.personalGradeResult = personalGradeResult;
-	}
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "FK_INDEX_TYPE")
 	public Dictionary getIndexType() {
@@ -90,17 +74,17 @@ public class PersonalGradeResultDetails implements Serializable {
 		this.indexType = indexType;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "FK_ROLE_ID", nullable = true)
-	public Role getRole() {
-		return role;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PERSONAL_GRADE_ID", nullable = true)
+	public PersonalGrade getPersonalGrade() {
+		return personalGrade;
 	}
 
-	public void setRole(Role role) {
-		this.role = role;
+	public void setPersonalGrade(PersonalGrade personalGrade) {
+		this.personalGrade = personalGrade;
 	}
 
-	@Column(name = "score")
+	@Column(name = "SCORE")
 	public Double getScore() {
 		return score;
 	}
@@ -117,4 +101,5 @@ public class PersonalGradeResultDetails implements Serializable {
 	public void setPercentage(String percentage) {
 		this.percentage = percentage;
 	}
+	
 }

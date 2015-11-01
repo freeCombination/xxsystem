@@ -27,12 +27,14 @@ import org.springframework.stereotype.Service;
 import com.xx.grade.personal.entity.IndexTypeRoleWeight;
 import com.xx.grade.personal.entity.PersonalDuty;
 import com.xx.grade.personal.entity.PersonalGrade;
+import com.xx.grade.personal.entity.PersonalGradeDetails;
 import com.xx.grade.personal.entity.PersonalGradeResult;
 import com.xx.grade.personal.entity.PersonalGradeResultDetails;
 import com.xx.grade.personal.entity.PersonalWeight;
 import com.xx.grade.personal.service.IPersonalGradeService;
 import com.xx.grade.personal.service.IPersonalWeightService;
 import com.xx.grade.personal.vo.PersonalDutyVo;
+import com.xx.grade.personal.vo.PersonalGradeResultDetailsVo;
 import com.xx.grade.personal.vo.PersonalGradeResultVo;
 import com.xx.grade.personal.vo.PersonalGradeVo;
 import com.xx.system.common.constant.Constant;
@@ -369,6 +371,19 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 				Dictionary classification = grade.getClassification();
 				//获取该权重分类下的所有权重维护
 				List<PersonalWeight> pws = personalWeightService.getPersonalWeightByClassification(classification.getPkDictionaryId());
+				
+				//生成指标评分明细历史
+				for (PersonalWeight pw : pws) {
+					PersonalGradeDetails gradeDetail = getGradeDetailsByGrade(grade,pw.getIndexType());
+					if (gradeDetail == null) {
+						gradeDetail = new PersonalGradeDetails();
+						gradeDetail.setPersonalGrade(grade);
+						gradeDetail.setIndexType(pw.getIndexType());
+						gradeDetail.setPercentage(pw.getPercentage());
+						baseDao.save(gradeDetail);
+					}
+				}
+				
 				for (PersonalWeight pw : pws) {
 					//对于参与评分的指标
 					if (pw.isGrade()) {
@@ -395,6 +410,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 									detail.setPersonalGradeResult(result);
 									detail.setIndexType(pw.getIndexType());
 									detail.setRole(role);
+									detail.setPercentage(rw.getPercentage());
 									baseDao.save(detail);
 								}
 							}
@@ -405,6 +421,25 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		}
 	}
 	
+	/**
+	 * 获取个人评分指标历史
+	 * 
+	 * @param grade
+	 * @param indexType
+	 * @return
+	 */
+	private PersonalGradeDetails getGradeDetailsByGrade(PersonalGrade grade, Dictionary indexType) {
+		PersonalGradeDetails gradeDetail = null ;
+		StringBuffer hql = new StringBuffer();
+		hql.append(" From PersonalGradeDetails pd where pd.personalGrade.id="+grade.getId());
+		hql.append(" and pd.indexType.pkDictionaryId="+indexType.getPkDictionaryId());
+		List<PersonalGradeDetails> gradeDetails = baseDao.queryEntitys(hql.toString());
+		if (gradeDetails != null && gradeDetails.size()>0) {
+			gradeDetail = gradeDetails.get(0);
+		}
+		return gradeDetail;
+	}
+
 	/**
 	 * 通过角色 指标 结果表查找详情明细表
 	 * 
@@ -418,7 +453,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		PersonalGradeResultDetails detail = null ;
 		StringBuffer hql = new StringBuffer();
 		hql.append(" From PersonalGradeResultDetails d where d.personalGradeResult.id ="+result.getId()
-			+" and d.IndexType.pkDictionaryId="+indexType.getPkDictionaryId()+" and d.role.roleId="+role.getRoleId());
+			+" and d.indexType.pkDictionaryId="+indexType.getPkDictionaryId()+" and d.role.roleId="+role.getRoleId());
 		List<PersonalGradeResultDetails> details = baseDao.queryEntitys(hql.toString());
 		if (details != null && details.size() >0) {
 			detail = details.get(0);
@@ -883,14 +918,15 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 							}
 						}
 					}else{
-						result = "{success:true,msg:'生成个人评分失败，未配置个人评分相关角色！'}";
+						result = "{success:false,msg:'生成个人评分失败，未配置个人评分相关角色！'}";
 					}
 				}else{
-					result = "{success:true,msg:'该用户未配置个人评分角色，请联系管理员！'}";
+					result = "{success:false,msg:'该用户未配置个人评分角色，请联系管理员！'}";
 				}
 			}
 		} catch (Exception e) {
-			result = "{success:true,msg:'生成个人评分失败！'}";
+			e.printStackTrace();
+			result = "{success:false,msg:'生成个人评分失败！'}";
 		}
 		return result;
 	}
@@ -952,10 +988,10 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 	private String getRoleIdsByCurrentUser(User currentUser) {
 		String ids = "" ;
 		StringBuffer sql = new StringBuffer();
-		sql.append(" select DISTINCT t.ROLE_ID as ROLEID from T_ROLE_MEMBER_SCOPE t where t.USER_ID = "+currentUser.getUserId());
+		sql.append(" select DISTINCT t.ROLE_ID  from T_ROLE_MEMBER_SCOPE t where t.USER_ID = "+currentUser.getUserId());
 		List<Map> roleIds = baseDao.querySQLForMap(sql.toString());
 		for (Map map : roleIds) {
-			ids += ",'" + map.get("ROLEID") + "'";
+			ids += ",'" + map.get("ROLE_ID") + "'";
 		}
 		if (StringUtil.isNotEmpty(ids)) {
 			ids = ids.substring(1,ids.length());
@@ -999,5 +1035,58 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			e.printStackTrace();
 		} 
 		return wb;
+	}
+
+	@Override
+	public ListVo<PersonalGradeResultDetailsVo> getPersonalResultDetailsList(Map<String, String> paramMap) {
+		ListVo<PersonalGradeResultDetailsVo> result = new ListVo<PersonalGradeResultDetailsVo>();
+		List<PersonalGradeResultDetailsVo> list = new ArrayList<PersonalGradeResultDetailsVo>(); 
+		String personalGradeResultId = paramMap.get("personalGradeResultId");
+		StringBuffer hql = new StringBuffer();
+		hql.append(" From PersonalGradeResultDetails d where 1=1  ");
+		if (StringUtil.isNotEmpty(personalGradeResultId)) {
+			hql.append(" and d.personalGradeResult.id = " + Integer.parseInt(personalGradeResultId));
+		}else{
+			hql.append(" and 1= 0");
+		}
+		List<PersonalGradeResultDetails> detailsList =  (List<PersonalGradeResultDetails>)baseDao.queryEntitys(hql.toString());
+		for (PersonalGradeResultDetails detail : detailsList) {
+			PersonalGradeResultDetailsVo vo = new PersonalGradeResultDetailsVo();
+			buildDutyDetailsToVo(detail,vo);
+			list.add(vo);
+		}
+		result.setList(list);
+		result.setTotalSize(list.size());
+		return result;
+	}
+
+	/**
+	 * 转化个人评分结果明细与vo
+	 * 
+	 * @param detail
+	 * @param vo
+	 */
+	private void buildDutyDetailsToVo(PersonalGradeResultDetails detail, PersonalGradeResultDetailsVo vo) {
+		vo.setId(detail.getId());
+		vo.setScore(detail.getScore()==null ? "" : String.valueOf(detail.getScore()));
+		if (detail.getIndexType() != null) {
+			vo.setIndexTypeId(detail.getIndexType().getPkDictionaryId());
+			vo.setIndexTypeName(detail.getIndexType().getDictionaryName());
+		}
+		if (detail.getRole() != null) {
+			vo.setRoleId(detail.getRole().getRoleId());
+			vo.setRoleName(detail.getRole().getRoleName());
+		}
+	}
+
+	@Override
+	public PersonalGradeResultDetails getPersonalGradeResultDetailsById(int id) {
+		PersonalGradeResultDetails detail = (PersonalGradeResultDetails)baseDao.queryEntityById(PersonalGradeResultDetails.class, id);
+		return detail;
+	}
+
+	@Override
+	public void updatePersonalGradeResultDetails(PersonalGradeResultDetails detail) {
+		baseDao.update(detail);
 	}
 }

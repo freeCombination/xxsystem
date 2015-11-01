@@ -2,7 +2,9 @@ package com.xx.grade.personal.action;
 
 import java.io.File;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -15,10 +17,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import com.xx.grade.personal.entity.PersonalDuty;
 import com.xx.grade.personal.entity.PersonalGrade;
 import com.xx.grade.personal.entity.PersonalGradeResult;
+import com.xx.grade.personal.entity.PersonalGradeResultDetails;
 import com.xx.grade.personal.service.IPersonalGradeService;
 import com.xx.grade.personal.vo.PersonalDutyVo;
+import com.xx.grade.personal.vo.PersonalGradeResultDetailsVo;
 import com.xx.grade.personal.vo.PersonalGradeResultVo;
 import com.xx.grade.personal.vo.PersonalGradeVo;
+import com.xx.grade.personal.vo.ScoreVo;
 import com.xx.system.common.action.BaseAction;
 import com.xx.system.common.util.DateUtil;
 import com.xx.system.common.util.FileUtil;
@@ -27,6 +32,7 @@ import com.xx.system.common.util.RequestUtil;
 import com.xx.system.common.util.StringUtil;
 import com.xx.system.common.vo.ListVo;
 import com.xx.system.common.vo.ResponseVo;
+import com.xx.system.dict.action.DictAction;
 import com.xx.system.user.entity.User;
 
 /**
@@ -197,6 +203,26 @@ public class PersonalGradeAction extends BaseAction {
 		}
 		return null;
 	}
+	
+	/**
+	 * 获取个人评分结果明细
+	 * 
+	 * @return
+	 */
+	public String getPersonalResultDetailsList() {
+		try {
+			Map<String, String> paramMap = RequestUtil
+					.getParameterMap(getRequest());
+			ListVo<PersonalGradeResultDetailsVo> personalGradeResultDetails = this.personalGradeService
+					.getPersonalResultDetailsList(paramMap);
+			JsonUtil.outJson(personalGradeResultDetails);
+		} catch (Exception e) {
+			this.excepAndLogHandle(PersonalGradeAction.class, "获取个人评分结果明细列表失败",
+					e, false);
+		}
+		return null;
+	}
+	
 
 	/**
 	 * 获取个人评分实体
@@ -301,6 +327,35 @@ public class PersonalGradeAction extends BaseAction {
 		} catch (Exception e) {
 			JsonUtil.outJson("{success:false,msg:'修改个人评分职责明细信息失败！'}");
 			this.excepAndLogHandle(PersonalGradeAction.class, "修改个人评分职责明细信息",
+					e, false);
+			return null;
+		}
+		return null;
+	}
+	
+	/**
+	 * 修改个人评分结果明细
+	 * 
+	 * @return
+	 */
+	public String updatePersonalResultDetails() {
+		try {
+			Map<String, String> map = RequestUtil.getParameterMap(super
+					.getRequest());
+			String id = map.get("id");
+			String score = map.get("score");
+			PersonalGradeResultDetails detail = this.personalGradeService
+					.getPersonalGradeResultDetailsById(Integer.parseInt(id));
+			if (detail != null && StringUtil.isNotEmpty(score)) {
+				detail.setScore(Double.valueOf(score));
+				this.personalGradeService.updatePersonalGradeResultDetails(detail);
+			}
+			JsonUtil.outJson("{success:true,msg:'修改个人评分结果明细成功！'}");
+			this.excepAndLogHandle(PersonalGradeAction.class, "修改个人评分结果明细信息",
+					null, true);
+		} catch (Exception e) {
+			JsonUtil.outJson("{success:false,msg:'修改个人评分结果明细失败！'}");
+			this.excepAndLogHandle(PersonalGradeAction.class, "修改个人评分结果明细信息",
 					e, false);
 			return null;
 		}
@@ -559,12 +614,13 @@ public class PersonalGradeAction extends BaseAction {
 			//生成个人评分
 			String result = personalGradeService.generatePersonalGrade(gradeYear, getCurrentUser());
 			JsonUtil.outJson(result);
-			this.excepAndLogHandle(PersonalGradeAction.class, "提交个人评分", null,
+			this.excepAndLogHandle(PersonalGradeAction.class, "生成个人评分", null,
 					true);
 		} catch (Exception e) {
 			JsonUtil.outJson("{success:false,msg:'生成个人评分失败！'}");
 			this.excepAndLogHandle(PersonalGradeAction.class, "生成个人评分", e,
 					false);
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -588,6 +644,25 @@ public class PersonalGradeAction extends BaseAction {
 		}
 		return null;
 	}
+	
+	/**
+	 * 获取个人评分分数下拉列表
+	 */
+    public void getScoreList() {
+        try {
+            List<ScoreVo> scoreList = new ArrayList<ScoreVo>();
+            for (int i = 120; i >= 0; i--) {
+            	ScoreVo vo = new ScoreVo();
+            	vo.setScore(String.valueOf(i));
+            	scoreList.add(vo);
+			}
+            JsonUtil.outJsonArray(scoreList);
+        }
+        catch (Exception e) {
+            // 发生异常是，进行日志入库和生成日志文件
+            this.excepAndLogHandle(DictAction.class, "获取个人评分分数下拉列表", e, false);
+        }
+    }
 	
 
 	/**

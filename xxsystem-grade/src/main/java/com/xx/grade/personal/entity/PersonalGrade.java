@@ -95,6 +95,8 @@ public class PersonalGrade implements Serializable {
 	 */
 	private Set<PersonalGradeResult> result ;
 	
+	private Set<PersonalGradeDetails> details ;
+	
 	/**
 	 * 权重分类 个人评权重，部门领导评分权重，领导评分权重
 	 */
@@ -204,6 +206,16 @@ public class PersonalGrade implements Serializable {
 
 	public void setResult(Set<PersonalGradeResult> result) {
 		this.result = result;
+	}
+	
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "personalGrade")
+	@OrderBy(clause="ID desc")
+	public Set<PersonalGradeDetails> getDetails() {
+		return details;
+	}
+
+	public void setDetails(Set<PersonalGradeDetails> details) {
+		this.details = details;
 	}
 
 	@Column(name = "TITLE")

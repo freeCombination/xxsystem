@@ -70,7 +70,7 @@ public class IndexTypeRoleWeight implements Serializable {
 		this.personalWeight = personalWeight;
 	}
 
-	@Column(name = "COMPOSITE_SCORES")
+	@Column(name = "percentage")
 	public String getPercentage() {
 		return percentage;
 	}

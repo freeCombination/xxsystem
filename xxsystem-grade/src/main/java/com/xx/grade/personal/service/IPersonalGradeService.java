@@ -8,7 +8,9 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import com.xx.grade.personal.entity.PersonalDuty;
 import com.xx.grade.personal.entity.PersonalGrade;
 import com.xx.grade.personal.entity.PersonalGradeResult;
+import com.xx.grade.personal.entity.PersonalGradeResultDetails;
 import com.xx.grade.personal.vo.PersonalDutyVo;
+import com.xx.grade.personal.vo.PersonalGradeResultDetailsVo;
 import com.xx.grade.personal.vo.PersonalGradeResultVo;
 import com.xx.grade.personal.vo.PersonalGradeVo;
 import com.xx.system.common.exception.BusinessException;
@@ -180,5 +182,28 @@ public interface IPersonalGradeService {
 	 * @return
 	 */
 	public HSSFWorkbook exportPersonalGradeAll(Map<String, String> paramMap, File file);
+
+	/**
+	 * 获取个人评分结果明细
+	 * 
+	 * @param paramMap
+	 * @return
+	 */
+	public ListVo<PersonalGradeResultDetailsVo> getPersonalResultDetailsList(Map<String, String> paramMap);
+
+	/**
+	 * 通过id获取个人评分结果明细
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public PersonalGradeResultDetails getPersonalGradeResultDetailsById(int id);
+
+	/**
+	 * 修改个人评分结果明细
+	 * 
+	 * @param detail
+	 */
+	public void updatePersonalGradeResultDetails(PersonalGradeResultDetails detail);
 	
 }
