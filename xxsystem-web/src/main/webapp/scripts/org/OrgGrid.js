@@ -42,7 +42,7 @@ var orgGrid = Ext.create("Ext.grid.Panel", {
         {header: "部门编码",width: 200,dataIndex: "orgCode"},
         {header: "部门领导",width: 200,dataIndex: "deptLeader"},
 	    {header: "分管领导",width: 200,dataIndex: "superiorLeader"},
-	    {header: "协管领导",width: 200,dataIndex: "otherSup"},
+	    {header: "其他所领导",width: 200,dataIndex: "otherSup"},
 	    {header: "所长",width: 200,dataIndex: "superintendent"},
 	    {header: "状态",width: 200,dataIndex: "enable",
 	    	renderer: function(value, cellmeta, record, rowIndex, columnIndex, store){

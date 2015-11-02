@@ -949,6 +949,19 @@ public class IndexManageServiceImpl implements IIndexManageService {
 					icvo.setHasSubmit(0);
 				}
 				
+				// 查询GradeRecord，判断当前用户是否对该指标进行了评分
+				String grHql = " from GradeRecord gr where gr.isDelete = 0"
+						+ " and gr.classify.pkClassifyId = " + cf.getPkClassifyId()
+						+ " and gr.user.userId = " + currUsr.getUserId();
+				
+				int grCount = baseDao.queryTotalCount(grHql, new HashMap<String, Object>());
+				if (grCount > 0) {
+					icvo.setHasSaved(1);
+				}
+				else {
+					icvo.setHasSaved(0);
+				}
+				
 				icvo.setEnable(cf.getEnable());
 				
 				voLst.add(icvo);

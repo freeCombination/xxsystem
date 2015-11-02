@@ -517,7 +517,7 @@
 			                    }
 			                },
 			                {
-			                	fieldLabel:'组织部门',
+			                	fieldLabel:'参评部门',
                                 id:'orgNames',
                                 name:'classifyVo.orgNames',
                                 labelAlign:'right',
@@ -525,7 +525,7 @@
                                 readOnly:true,
                                 minWidth: 250,
                                 allowBlank:false,
-                                blankText : '组织部门不能为空',
+                                blankText : '参评部门不能为空',
                                 listeners:{
                                     'focus':function(){
                                         /* var userId = Ext.getCmp('userId').getValue();

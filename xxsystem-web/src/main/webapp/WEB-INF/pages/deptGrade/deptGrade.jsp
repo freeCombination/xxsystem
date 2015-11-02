@@ -17,6 +17,10 @@
   .x-grid-td {
     vertical-align: middle !important;
   }
+  
+  .custom-grid-row{
+    height:45px;
+  }
 </style>
 </head>
 <body>
@@ -53,7 +57,8 @@
                 {name: "electYear"},
                 {name: "enable"},
                 {name: "isDelete"},
-                {name: "hasSubmit"}
+                {name: "hasSubmit"},
+                {name: "hasSaved"}
             ]
         });
 		
@@ -101,6 +106,18 @@
                         return value;
                     }},
                 {header: "是否提交评分",width: 200,dataIndex: "hasSubmit",menuDisabled: true,sortable :false,
+                    renderer : function(value, cellmeta, record, rowIndex,
+                            columnIndex, store) {
+                        var hasSub = '<span style="color:red;">否</span>';
+                        if (1 == value) {
+                            hasSub = '<span style="color:green;">是</span>';
+                        }
+                        
+                        //cellmeta.tdAttr = 'data-qtip="' + value + '"';
+                        return hasSub;
+                    }
+                },
+                {header: "是否已评分",width: 200,dataIndex: "hasSaved",menuDisabled: true,sortable :false,
                     renderer : function(value, cellmeta, record, rowIndex,
                             columnIndex, store) {
                         var hasSub = '<span style="color:red;">否</span>';
@@ -260,13 +277,29 @@
             headers.push({name:'gradeIndex1Id'});
             headers.push({name:'gradeRecs'});
 	        
-            columns.push({header:"序号",xtype: "rownumberer",width:60,align:"center",menuDisabled: true,sortable :false});
-            columns.push({header: "ID",width: 50,dataIndex: "indexId",hidden: true,menuDisabled: true,sortable :false});
-	        columns.push({header:'一级指标',width: 100, dataIndex:'name',menuDisabled: true,sortable :false});
-	        columns.push({header:'说明',width: 180, dataIndex:'remark',menuDisabled: true,sortable :false});
+            columns.push({header:"序号",xtype: "rownumberer",width:60,height:36,align:"center",menuDisabled: true,sortable :false});
+            columns.push({header: "ID",width: 30,dataIndex: "indexId",hidden: true,menuDisabled: true,sortable :false});
+	        columns.push({header:'一级指标',width: 150, dataIndex:'name',menuDisabled: true,sortable :false,
+	        	renderer : function(value, p, record) {
+        		    return '<div style="white-space:normal;font-size:14px;line-height:18px;">' + value + '</div>';
+        		}
+	        });
+	        columns.push({header:'说明',width: 80, dataIndex:'remark',menuDisabled: true,sortable :false,
+	        	renderer : function(value, p, record) {
+                    return '<div style="white-space:normal;font-size:14px;line-height:18px;">' + value + '</div>';
+                }
+	        });
 	        columns.push({header:'分值',width: 40, dataIndex:'grade',menuDisabled: true,sortable :false});
-	        columns.push({header:'二级指标',width: 100, dataIndex:'gradeIndex2Name',menuDisabled: true,sortable :false});
-	        columns.push({header:'说明',width: 180, dataIndex:'remark2',menuDisabled: true,sortable :false});
+	        columns.push({header:'二级指标',width: 150, dataIndex:'gradeIndex2Name',menuDisabled: true,sortable :false,
+	        	renderer : function(value, p, record) {
+                    return '<div style="white-space:normal;font-size:14px;line-height:18px;">' + value + '</div>';
+                }
+	        });
+	        columns.push({header:'说明',width: 80, dataIndex:'remark2',menuDisabled: true,sortable :false,
+	        	renderer : function(value, p, record) {
+                    return '<div style="white-space:normal;font-size:14px;line-height:18px;">' + value + '</div>';
+                }
+	        });
 	        columns.push({header:'分值',width: 40, dataIndex:'grade2',menuDisabled: true,sortable :false});
 	        
 	        // 参评部门：用户查询显示已评分列表
@@ -288,7 +321,7 @@
 	                    var orgId=records[j].orgId;
 	                    headers.push({name:"orgId_"+orgId,type:'string'});
 	                    
-	                    columns.push({header:records[j].orgName,width: 50, dataIndex:"orgId_"+orgId,menuDisabled: true,sortable :false,
+	                    columns.push({header:records[j].orgName + "评分",width: 80, dataIndex:"orgId_"+orgId,menuDisabled: true,sortable :false,
 	                        field:{
 	                            xtype:'combo',
 	                            maxLength:10,
@@ -303,17 +336,7 @@
 	                                data : [
 	                                    {"score":"0"}
 	                                ]
-	                            }),
-	                            listeners : {
-	                                /*
-	                                'change' : function(combo,newVaue,oldValue,eOpts){
-	                                    var row = ruleTeamRoundMapGrid.getSelectionModel().getSelection()[0];
-	                                    var id=row.get("id&&"+roundId);
-	                                    var workTeamId=row.get("teamId&&"+roundId);
-	                                    var planDate=row.get('date');
-	                                    updateWorkRulePlan(id,workTeamId,roundId,planDate,ruleId);
-	                                }*/
-	                            }
+	                            })
 	                        }
 	                    });
 	                }
@@ -343,6 +366,7 @@
 	            listeners:{
 	                load:function(store, records){
 	                	if (records.length > 0) {
+	                		var has2 = false;
 	                        for(var i = 0; i < records.length; i++){
 	                            var grades = records[i].get('gradeRecs').split('|');
 	                            for(var j = 0; j < cpbm.length; j++){
@@ -356,6 +380,16 @@
 	                                }
 	                                records[i].set('orgId_' + cpbm[j].orgId, grade);
 	                            }
+	                            
+	                            if (records[i].get('gradeIndex2Name')) {
+	                            	has2 = true;
+	                            }
+	                        }
+	                        
+	                        if (!has2) {
+	                        	deptGrageGrid.columns[5].setVisible(false);
+	                        	deptGrageGrid.columns[6].setVisible(false);
+	                        	deptGrageGrid.columns[7].setVisible(false);
 	                        }
 	                        
 	                        // 统计汇总
@@ -416,7 +450,6 @@
                                 }
                             }
                             
-                            
                             deptGrageStore.getAt(deptGrageStore.getCount() - 1).set('orgId_' + cpbm[j].orgId, scoreSum);
                         }
 	                }
@@ -438,6 +471,12 @@
 	            store: deptGrageStore,
 	            autoScroll: true,
 	            stripeRows: true,
+	            viewConfig:{
+                    getRowClass:function(){
+                        // 在这里添加自定样式 改变这个表格的行高
+                        return 'x-grid-row custom-grid-row';
+                    }
+                },
 	            tbar: ['指标分类：',
 	            {
 	            	xtype: 'label',

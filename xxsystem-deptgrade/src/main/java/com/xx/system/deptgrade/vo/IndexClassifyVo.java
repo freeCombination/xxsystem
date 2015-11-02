@@ -42,7 +42,7 @@ public class IndexClassifyVo implements java.io.Serializable {
     private String electYear;
     
     /**
-     * @Fields hasSubmit : 是否已评分：0 否 1 是
+     * @Fields hasSubmit : 是否已提交：0 否 1 是
      */
     private Integer hasSubmit;
     
@@ -70,6 +70,11 @@ public class IndexClassifyVo implements java.io.Serializable {
      * 是否参与评分
      */
     private String participation;
+    
+    /**
+     * @Fields hasSaved : 是否已评分：0 否 1 是
+     */
+    private Integer hasSaved;
 
 	public int getClassifyId() {
 		return classifyId;
@@ -165,6 +170,14 @@ public class IndexClassifyVo implements java.io.Serializable {
 
 	public void setParticipation(String participation) {
 		this.participation = participation;
+	}
+
+	public Integer getHasSaved() {
+		return hasSaved;
+	}
+
+	public void setHasSaved(Integer hasSaved) {
+		this.hasSaved = hasSaved;
 	}
 
 }
