@@ -542,7 +542,7 @@
 			                	xtype: 'combobox',
                                 fieldLabel: '汇总得分分类',
                                 id:'scoreTypeId',
-                                name: 'indexVo.scoreTypeId',
+                                name: 'classifyVo.scoreTypeId',
                                 store: scoreTypeStore,
                                 valueField: 'dictionaryId',
                                 displayField: 'dictionaryName',
