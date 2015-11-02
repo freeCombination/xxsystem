@@ -74,10 +74,10 @@ var cm = [
 			header : "员工姓名",
 			dataIndex : "gradeUser"
 		},
-		{
+		/*{
 			header : "得分",
 			dataIndex : "score"
-		},
+		},*/
 		{
 			header : "状态",
 			dataIndex : "state",

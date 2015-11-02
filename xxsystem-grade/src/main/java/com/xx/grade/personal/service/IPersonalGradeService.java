@@ -205,5 +205,14 @@ public interface IPersonalGradeService {
 	 * @param detail
 	 */
 	public void updatePersonalGradeResultDetails(PersonalGradeResultDetails detail);
+
+	/**
+	 * 获取员工评分明细
+	 * 
+	 * @param paramMap
+	 * @return
+	 */
+	public ListVo<PersonalGradeResultVo> getPersonalGradeResultDetailsList(
+			Map<String, String> paramMap);
 	
 }

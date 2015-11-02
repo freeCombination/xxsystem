@@ -174,7 +174,7 @@ public class PersonalGradeAction extends BaseAction {
 			Map<String, String> paramMap = RequestUtil
 					.getParameterMap(getRequest());
 			ListVo<PersonalGradeResultVo> resultList = this.personalGradeService
-					.getPersonalGradeResultList(paramMap);
+					.getPersonalGradeResultDetailsList(paramMap);
 			JsonUtil.outJson(resultList);
 		} catch (Exception e) {
 			this.excepAndLogHandle(PersonalGradeAction.class, "获取评分结果列表失败", e,

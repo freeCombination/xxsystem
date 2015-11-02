@@ -108,6 +108,37 @@ public class PersonalGradeResultVo {
 	 * 领导评价 只有员工类型不为普通员工 评分页面才显示评价
 	 */
 	private String evaluation ;
+	
+	private String roleName ; //评分人角色
+	
+	private String indexTypeName ; //评分指标
+	
+	private String percentage ; //角色所占比例
+	
+
+	public String getRoleName() {
+		return roleName;
+	}
+
+	public void setRoleName(String roleName) {
+		this.roleName = roleName;
+	}
+
+	public String getIndexTypeName() {
+		return indexTypeName;
+	}
+
+	public void setIndexTypeName(String indexTypeName) {
+		this.indexTypeName = indexTypeName;
+	}
+
+	public String getPercentage() {
+		return percentage;
+	}
+
+	public void setPercentage(String percentage) {
+		this.percentage = percentage;
+	}
 
 	public Integer getId() {
 		return id;

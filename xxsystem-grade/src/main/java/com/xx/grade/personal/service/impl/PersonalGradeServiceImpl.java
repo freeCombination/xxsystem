@@ -755,7 +755,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			PersonalGradeResultVo vo) {
 		vo.setId(gradeResult.getId());
 		vo.setUserName(gradeResult.getGradeUser().getRealname());
-		vo.setScore(gradeResult.getScore());
+		//vo.setScore(gradeResult.getScore());
 		if (gradeResult.getGradeDate() != null) {
 			vo.setGradeDate(DateUtil.dateToString(gradeResult.getGradeDate(), "yyyy-MM-dd HH:mm:ss"));
 		}
@@ -812,10 +812,6 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 	public String submitPersonalGradeResult(String ids) {
 		try {
 			if (StringUtil.isNotEmpty(ids)) {
-//				StringBuffer sql = new StringBuffer();
-//				sql.append(" update T_PERSONAL_GRADE_RESULT t set t.state = 1 ");
-//				sql.append(" where t.id in ('").append(ids).append("')");
-//				this.baseDao.executeNativeSQL(sql.toString());
 				String[] idsArr = ids.split(",");
 				for (String id : idsArr) {
 					PersonalGradeResult result = (PersonalGradeResult)baseDao.queryEntityById(PersonalGradeResult.class, Integer.parseInt(id));
@@ -823,12 +819,13 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 						result.setState(1);
 						result.setGradeDate(new Date());
 						baseDao.saveOrUpdate(result);
-						generateCompositeScores(result);
+						generateCompositeScoresNew(result);
 					}
 				}
 			}
 			return "{success:true,msg:'提交成功！'}";
 		} catch (Exception e) {
+			e.printStackTrace();
 			return "{success:false,msg:'提交失败！'}";
 		}
 	}
@@ -878,6 +875,64 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 				baseDao.saveOrUpdate(grade);
 			}
 		}
+	}
+	
+	/**
+	 * 生成个人评分综合评分 新版
+	 * 
+	 * @param result
+	 */
+	private void generateCompositeScoresNew(PersonalGradeResult result) {
+		PersonalGrade grade = result.getPersonalGrade();
+		if (grade != null) {
+			StringBuffer hql = new StringBuffer();
+			StringBuffer hqlCount = new StringBuffer();
+			hql.append(" From PersonalGradeResult r where r.state=1 and r.personalGrade.id="+grade.getId());
+			hqlCount.append(" select count(*) from PersonalGradeResult r where r.personalGrade.id= "+grade.getId());
+			int totalSize = baseDao.getTotalCount(hqlCount.toString(), new HashMap<String, Object>());
+			List<PersonalGradeResult> results = baseDao.queryEntitys(hql.toString());
+			//判断是否已经提交完成
+			if (results != null && results.size() == totalSize) {
+				Double totalScore = 0d ;
+				Set<PersonalGradeDetails> gradeDetails = grade.getDetails();
+				Iterator<PersonalGradeDetails> it = gradeDetails.iterator();
+				while (it.hasNext()) {
+					PersonalGradeDetails gradeDetail = it.next();
+					Double indexTypeTotal = getIndexTypeTotal(grade,gradeDetail.getIndexType());
+					if (indexTypeTotal != null && StringUtil.isNotEmpty(gradeDetail.getPercentage())) {
+						totalScore += (new BigDecimal(indexTypeTotal).multiply(new BigDecimal(gradeDetail.getPercentage()))).divide(new BigDecimal(100),2,BigDecimal.ROUND_HALF_UP).doubleValue();
+					}
+					gradeDetail.setScore(indexTypeTotal);
+					baseDao.saveOrUpdate(gradeDetail);
+				}
+				grade.setCompositeScores(totalScore);
+				baseDao.saveOrUpdate(grade);
+			}
+		}
+	}
+
+	private Double getIndexTypeTotal(PersonalGrade grade, Dictionary indexType) {
+		StringBuffer sql = new StringBuffer();
+		Double result = 0d ;
+		sql.append(" select d.FK_ROLE_ID ,d.FK_INDEX_TYPE ,d.PERCENTAGE, ");
+		sql.append(" CASE count(d.ID) > 3 WHEN TRUE then (SUM(d.score)-MAX(d.score)-MIN(d.score))/(count(d.ID)-2) ELSE SUM(d.score)/count(d.ID) END as roleScore ");
+		sql.append(" from T_PERSONAL_GRADE_RESULT_DETAILS d ");
+		sql.append(" INNER JOIN T_PERSONAL_GRADE_RESULT r on r.ID = d.PERSONAL_GRADE_RESULT_ID ");
+		sql.append(" INNER JOIN T_PERSONAL_GRADE g on g.ID = r.PERSONAL_GRADE_ID ");
+		sql.append(" where 1=1  ");
+		//sql.append(" AND d.FK_INDEX_TYPE = "+indexType.getPkDictionaryId());
+		//sql.append(" and g.ID = "+grade.getId());
+		sql.append(" GROUP BY d.FK_ROLE_ID ,d.FK_INDEX_TYPE,d.PERCENTAGE ");
+		List<Map> maps = baseDao.querySQLForMap(sql.toString());
+		for (Map map : maps) {
+			String percentage = (String) map.get("PERCENTAGE");
+			Double roleScore = (Double) map.get("roleScore");
+			if (StringUtil.isNotEmpty(percentage) && roleScore != null) {
+				result += (new BigDecimal(percentage).multiply(new BigDecimal(roleScore))).divide(new BigDecimal(100),2,BigDecimal.ROUND_HALF_UP).doubleValue();
+			}
+		}
+		System.err.println(result);
+		return result;
 	}
 
 	@Override
@@ -1088,5 +1143,98 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 	@Override
 	public void updatePersonalGradeResultDetails(PersonalGradeResultDetails detail) {
 		baseDao.update(detail);
+	}
+
+	@Override
+	public ListVo<PersonalGradeResultVo> getPersonalGradeResultDetailsList(
+			Map<String, String> paramMap) {
+		ListVo<PersonalGradeResultVo> result = new ListVo<PersonalGradeResultVo>();
+		List<PersonalGradeResultVo> list = new ArrayList<PersonalGradeResultVo>(); 
+		int totalSize = 0 ;
+        int start = NumberUtils.toInt(paramMap.get("start"));
+        int limit = NumberUtils.toInt(paramMap.get("limit"));
+		//用户ID 用户自评只能看自己的数据 
+		String userId = paramMap.get("userId");
+		String state = paramMap.get("state");
+		//个人评分 对应的
+		String personalGradeId = paramMap.get("personalGradeId");
+		String inputGradeUser = paramMap.get("inputGradeUser");
+		String inputUserName = paramMap.get("inputUserName");
+		String canpDeptQuery = paramMap.get("canpDeptQuery");
+		//标题
+		String inputTitle = paramMap.get("inputTitle");
+		StringBuffer hql = new StringBuffer();
+		StringBuffer counthql = new StringBuffer();
+		hql.append(" From PersonalGradeResultDetails pgr where 1=1");
+		counthql.append(" select count(*) From PersonalGradeResultDetails pgr where 1=1 ");
+		if (StringUtil.isNotEmpty(userId)) {
+			hql.append(" and pgr.personalGradeResult.gradeUser.userId = " + Integer.parseInt(userId));
+			counthql.append(" and pgr.personalGradeResult.gradeUser.userId = " + Integer.parseInt(userId));
+		}
+		
+		if (StringUtil.isNotEmpty(state)) {
+			hql.append(" and pgr.personalGradeResult.state = " + Integer.parseInt(state));
+			counthql.append(" and pgr.personalGradeResult.state = " + Integer.parseInt(state));
+		}
+		
+		if (StringUtil.isNotEmpty(inputGradeUser)) {
+			hql.append(" and pgr.personalGradeResult.personalGrade.user.realname like '%"+inputGradeUser+"%'");
+			counthql.append(" and pgr.personalGradeResult.personalGrade.user.realname like '%"+inputGradeUser+"%'");
+		}
+		
+		//标题
+		if (StringUtil.isNotEmpty(inputTitle)) {
+			hql.append(" and pgr.personalGradeResult.personalGrade.title like '%"+inputTitle+"%'");
+			counthql.append(" and pgr.personalGradeResult.personalGrade.title like '%"+inputTitle+"%'");
+		}
+		
+		if (StringUtil.isNotEmpty(inputUserName)) {
+			hql.append(" and pgr.personalGradeResult.gradeUser.realname like '%"+inputUserName+"%'");
+			counthql.append(" and pgr.personalGradeResult.gradeUser.realname like '%"+inputUserName+"%'");
+		}
+		
+		if (StringUtil.isNotEmpty(personalGradeId)) {
+			hql.append(" and pgr.personalGradeResult.personalGrade.id = '"+personalGradeId+"'");
+			counthql.append(" and pgr.personalGradeResult.personalGrade.id = '"+personalGradeId+"'");
+		}
+		
+		if (StringUtil.isNotEmpty(canpDeptQuery) && !"0".equals(canpDeptQuery)) {
+			String userIds = getAllUserIdsByOrgId(canpDeptQuery);
+			//找到该部门下所有人员，如果人员为空，则没有数据
+			if (StringUtil.isNotEmpty(userIds)) {
+				hql.append(" and pgr.personalGradeResult.personalGrade.user.userId in ("+userIds+")");
+				counthql.append(" and pgr.personalGradeResult.personalGrade.user.userId in ("+userIds+")");
+			}else{
+				hql.append(" and 1=0 ");
+				counthql.append(" and 1=0 ");
+			}
+		}
+		//评分状态排序 满足点击评分人员列表需求
+		hql.append(" order by pgr.personalGradeResult.state");
+		
+		totalSize =  baseDao.getTotalCount(counthql.toString(), new HashMap<String, Object>());
+		List<PersonalGradeResultDetails> personalGradeResults =  (List<PersonalGradeResultDetails>)baseDao.queryEntitysByPage(start, limit, hql.toString(),new HashMap<String, Object>());
+		for (PersonalGradeResultDetails gradeResultDetail : personalGradeResults) {
+			PersonalGradeResultVo vo = new PersonalGradeResultVo();
+			buildResultDetailsEntityToVo(gradeResultDetail,vo);
+			list.add(vo);
+		}
+		result.setList(list);
+		result.setTotalSize(totalSize);
+		return result;
+	}
+
+	private void buildResultDetailsEntityToVo(
+			PersonalGradeResultDetails gradeResultDetail,
+			PersonalGradeResultVo vo) {
+		vo.setScore(gradeResultDetail.getScore());
+		vo.setPercentage(gradeResultDetail.getPercentage());
+		if (gradeResultDetail.getIndexType() != null) {
+			vo.setIndexTypeName(gradeResultDetail.getIndexType().getDictionaryName());
+		}
+		if (gradeResultDetail.getRole() != null) {
+			vo.setRoleName(gradeResultDetail.getRole().getRoleName());
+		}
+		buildResultEntityToVo(gradeResultDetail.getPersonalGradeResult(), vo);
 	}
 }

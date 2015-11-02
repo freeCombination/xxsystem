@@ -30,6 +30,8 @@ Ext.define("grade.personalGradeResult.PersonalGradeResultModel",{
 						{name:'gender'},
 						{name:'educationBackground'},
 						{name:'politicsStatus'},
+						{name:'roleName'},
+						{name:'indexTypeName'},
 						{name:'state'}
 					]
 	});
@@ -136,10 +138,18 @@ var cm = [
 			dataIndex : "userName"
 		},
 		{
+			header : "评分指标",
+			dataIndex : "indexTypeName"
+		},
+		{
+			header : "评分职员角色",
+			dataIndex : "roleName"
+		},
+		{
 			header : "得分",
 			dataIndex : "score"
 		}
-          ]
+          ];
 
 /**
  * 定义Grid
