@@ -79,9 +79,24 @@ public class PersonalGradeResult implements Serializable{
 	private Integer gradeUserType ;
 	
 	/**
-	 * 领导评价 只有员工类型不为普通员工 评分页面才显示评价
+	 * 领导评价 只有员工类型不为普通员工 评分页面才显示评价（部门意见）
 	 */
 	private String evaluation ;
+	
+	/**
+	 * 领导评价 只有员工类型不为普通员工 评分页面才显示评价（分管领导意见）
+	 */
+	private String evaluation1 ;
+	
+	/**
+	 * 领导评价 只有员工类型不为普通员工 评分页面才显示评价（其他所领导意见）
+	 */
+	private String evaluation2 ;
+	
+	/**
+	 * 领导评价 只有员工类型不为普通员工 评分页面才显示评价（所领导意见）
+	 */
+	private String evaluation3 ;
 	
 	/**
 	 * 个人评分结果详情
@@ -174,7 +189,34 @@ public class PersonalGradeResult implements Serializable{
 	public void setEvaluation(String evaluation) {
 		this.evaluation = evaluation;
 	}
+	
+	@Column(name = "evaluation1")
+	public String getEvaluation1() {
+		return evaluation1;
+	}
 
+	public void setEvaluation1(String evaluation1) {
+		this.evaluation1 = evaluation1;
+	}
+
+	@Column(name = "evaluation2")
+	public String getEvaluation2() {
+		return evaluation2;
+	}
+
+	public void setEvaluation2(String evaluation2) {
+		this.evaluation2 = evaluation2;
+	}
+
+	@Column(name = "evaluation3")
+	public String getEvaluation3() {
+		return evaluation3;
+	}
+
+	public void setEvaluation3(String evaluation3) {
+		this.evaluation3 = evaluation3;
+	}
+	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "personalGradeResult")
 	@OrderBy(clause="ID desc")
 	public Set<PersonalGradeResultDetails> getDetails() {

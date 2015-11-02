@@ -164,6 +164,20 @@ public class PersonalGradeAction extends BaseAction {
 		return null;
 	}
 	
+	public String getPersonalGradeResultDetailsCountsList() {
+		try {
+			Map<String, String> paramMap = RequestUtil
+					.getParameterMap(getRequest());
+			ListVo<PersonalGradeResultVo> resultList = this.personalGradeService
+					.getPersonalGradeResultList(paramMap);
+			JsonUtil.outJson(resultList);
+		} catch (Exception e) {
+			this.excepAndLogHandle(PersonalGradeAction.class, "获取评分结果剩余人数列表失败", e,
+					false);
+		}
+		return null;
+	}
+	
 	/**
 	 * 查询员工评分明细
 	 * 
@@ -293,12 +307,12 @@ public class PersonalGradeAction extends BaseAction {
 		try {
 			result = parseGradeResultFormRequest();
 			this.personalGradeService.editPersonalGradeResult(result);
-			JsonUtil.outJson("{success:true,msg:'编辑个人评分结果！'}");
-			this.excepAndLogHandle(PersonalGradeAction.class, "编辑个人评分结果", null,
+			JsonUtil.outJson("{success:true,msg:'编辑评分成功！'}");
+			this.excepAndLogHandle(PersonalGradeAction.class, "编辑评分", null,
 					true);
 		} catch (Exception e) {
-			JsonUtil.outJson("{success:false,msg:'编辑个人评分结果！'}");
-			this.excepAndLogHandle(PersonalGradeAction.class, "编辑个人评分结果", e,
+			JsonUtil.outJson("{success:false,msg:'编辑评分失败！'}");
+			this.excepAndLogHandle(PersonalGradeAction.class, "编辑评分", e,
 					false);
 			return null;
 		}
@@ -566,10 +580,12 @@ public class PersonalGradeAction extends BaseAction {
 								.get("id")));
 			}
 			if (null != result) {
-				result.setScore(Double.valueOf(gradeMap.get("score")));
 				result.setEvaluation(gradeMap.get("evaluation"));
+				result.setEvaluation1(gradeMap.get("evaluation1"));
+				result.setEvaluation2(gradeMap.get("evaluation2"));
+				result.setEvaluation3(gradeMap.get("evaluation3"));
 			} else {
-				JsonUtil.outJson("{success:'false',msg:'编辑个人评分结果失败，未找到该数据！'}");
+				JsonUtil.outJson("{success:'false',msg:'评分失败，未找到该数据！'}");
 			}
 		} catch (Exception e) {
 			JsonUtil.outJson("{success:'false',msg:'编辑个人评分结果失败！'}");

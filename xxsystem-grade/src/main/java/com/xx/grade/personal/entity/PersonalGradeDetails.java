@@ -52,6 +52,11 @@ public class PersonalGradeDetails implements Serializable {
      * 权重
      */
     private String percentage;
+    
+	/**
+	 * 是否参与评分（针对于部门指标不参与单独评分）
+	 */
+	private boolean isGrade ;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -101,5 +106,16 @@ public class PersonalGradeDetails implements Serializable {
 	public void setPercentage(String percentage) {
 		this.percentage = percentage;
 	}
+
+	@Column(name = "IS_GRADE")
+	public boolean isGrade() {
+		return isGrade;
+	}
+
+	public void setGrade(boolean isGrade) {
+		this.isGrade = isGrade;
+	}
+	
+	
 	
 }

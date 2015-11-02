@@ -24,7 +24,7 @@ grade.personalUser.PersonalUserStore = Ext.create('Ext.data.Store', {
 	model : 'grade.personalUser.PersonalUserModel',
 	proxy : {
 		type : "format",
-		url : basePath + "/personalGrade/getPersonalGradeResultDetailsList.action"
+		url : basePath + "/personalGrade/getPersonalGradeResultDetailsCountsList.action"
 	}
 });
 

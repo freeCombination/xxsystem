@@ -10,10 +10,11 @@
 /**
  * 定义Model
  */
-Ext.define("grade.personalGradeResult.PersonalGradeResultModel",{
+Ext.define("grade.personalGradeResult.PersonalGradeResultDetailsModel",{
 					extend:"Ext.data.Model",
 					fields:[
-						{name:'id'},
+					    {name:'id'},
+						{name:'detailsId'},
 						{name:'personalGradeId'},
 						{name:'gradeUser'},
 						{name:'gradeOrg'},
@@ -39,15 +40,15 @@ Ext.define("grade.personalGradeResult.PersonalGradeResultModel",{
 /**
  * 定义Store
  */
-grade.personalGradeResult.PersonalGradeResultStore = Ext.create('Ext.data.Store', {
-	model : 'grade.personalGradeResult.PersonalGradeResultModel',
+grade.personalGradeResult.PersonalGradeResultDetailsStore = Ext.create('Ext.data.Store', {
+	model : 'grade.personalGradeResult.PersonalGradeResultDetailsModel',
 	proxy : {
 		type : "format",
 		url : basePath + "/personalGrade/getPersonalGradeResultDetailsList.action"
 	}
 });
 
-grade.personalGradeResult.PersonalGradeResultStore.getProxy().setExtraParam("state", 1);
+grade.personalGradeResult.PersonalGradeResultDetailsStore.getProxy().setExtraParam("state", 1);
 
 /**
  * 树形模型
@@ -110,8 +111,8 @@ var cm = [
 			width : 60,
 			align : "center"
 		}, {
-			header : "id",
-			dataIndex : "id",
+			header : "detailsId",
+			dataIndex : "detailsId",
 			hidden : true
 		},{
 			header : "标题",
@@ -158,10 +159,10 @@ grade.personalGradeResult.PersonalGradeResultGrid = Ext.create("Ext.grid.Panel",
 	title : '个人评分明细',
 	region : "center",
 	bbar : Ext.create("Ext.PagingToolbar", {
-		store : grade.personalGradeResult.PersonalGradeResultStore
+		store : grade.personalGradeResult.PersonalGradeResultDetailsStore
 	}),
 	selModel : Ext.create("Ext.selection.CheckboxModel"),
-	store : grade.personalGradeResult.PersonalGradeResultStore,
+	store : grade.personalGradeResult.PersonalGradeResultDetailsStore,
 	columns : cm,
 	tbar : [
 	'&nbsp;部门',canpDeptQuery,
@@ -179,96 +180,16 @@ grade.personalGradeResult.PersonalGradeResultGrid = Ext.create("Ext.grid.Panel",
 		text : "查询",
 		iconCls : "search-button",
 		handler : function(button) {
-			var proxy = grade.personalGradeResult.PersonalGradeResultStore.getProxy();
+			var proxy = grade.personalGradeResult.PersonalGradeResultDetailsStore.getProxy();
 			proxy.setExtraParam("inputGradeUser", Ext.getCmp('inputGradeUser').getValue());
 			proxy.setExtraParam("inputUserName", Ext.getCmp('inputUserName').getValue());
 			proxy.setExtraParam("canpDeptQuery", Ext.getCmp('canpDeptQuery').getValue());
 			proxy.setExtraParam("state", 1);
-			grade.personalGradeResult.PersonalGradeResultStore.loadPage(1);
+			grade.personalGradeResult.PersonalGradeResultDetailsStore.loadPage(1);
 		}
 	}
 	  ]
 });
-
-/**
- * 编辑个人评分
- */
-grade.personalGradeResult.EditPersonalGradeResult = function() {
-	grade.personalGradeResult.PersonalGradeResultWin.setTitle('编辑');
-	var row = grade.personalGradeResult.PersonalGradeResultGrid.getSelectionModel().getSelection()
-	var id = row[0].data.id;
-	var personalGradeId = row[0].data.personalGradeId;
-	var basicForm = grade.personalGradeResult.PersonalGradeResultWin.down('form').getForm();
-	basicForm.reset();
-	basicForm.url = basePath + '/personalGrade/editPersonalGradeResult.action';
-	basicForm.findField('id').setValue(id);
-	basicForm.findField('personalGradeId').setValue(personalGradeId);
-	basicForm.load({
-		url : basePath + '/personalGrade/getPersonalGradeResultById.action',
-		params : {
-			id : id
-		}
-	});
-	grade.personalGradeResult.PersonalGradeResultWin.show();
-};
-
-/**
- * 查看个人评分结果
- */
-grade.personalGradeResult.ViewPersonalGradeResult = function() {
-	grade.personalGradeResult.PersonalGradeResultWin.setTitle('详情');
-	var row = grade.personalGradeResult.PersonalGradeResultGrid.getSelectionModel().getSelection()
-	var id = row[0].data.id;
-	var personalGradeId = row[0].data.personalGradeId;
-	var basicForm = grade.personalGradeResult.PersonalGradeResultWin.down('form').getForm();
-	basicForm.reset();
-	basicForm.url = basePath + '/personalGrade/editPersonalGradeResult.action';
-	basicForm.findField('id').setValue(id);
-	basicForm.findField('personalGradeId').setValue(personalGradeId);
-	Ext.getCmp('result_submit').hide();
-	Ext.getCmp('score').hide();
-	basicForm.load({
-		url : basePath + '/personalGrade/getPersonalGradeResultById.action',
-		params : {
-			id : id
-		}
-	});
-	grade.personalGradeResult.PersonalGradeResultWin.show();
-};
-
-/**
- * 提交个人评分 预留可选多个提交
- */
-grade.personalGradeResult.SubmitPersonalGradeResult = function() {
-	
-	var rows = grade.personalGradeResult.PersonalGradeResultGrid.getSelectionModel().getSelection();
-	var ids = "";
-	for (var i = 0; i < rows.length; i++) {
-		ids += (rows[i].data.id + ",");
-	}
-	ids = ids.substring(0, ids.length - 1);
-	Ext.Msg.confirm(SystemConstant.alertTitle, "确认提交这" + rows.length + "条数据吗?提交后不可修改!", function(btn) {
-		if (btn == 'yes') {
-			Ext.Ajax.request({
-				url : basePath + '/personalGrade/submitPersonalGradeResult.action',
-				params : {
-					ids : ids
-				},
-				success : function(res, options) {
-					var data = Ext.decode(res.responseText);
-					if (data.success) {
-						Ext.Msg.showTip(data.msg);
-						grade.personalGradeResult.PersonalGradeResultStore.loadPage(1);
-					} else {
-						Ext.Msg.showError(data.msg);
-					}
-				},
-				failure : sshframe.FailureProcess.Ajax
-			});
-		}
-	});
-	
-}
 
 
 

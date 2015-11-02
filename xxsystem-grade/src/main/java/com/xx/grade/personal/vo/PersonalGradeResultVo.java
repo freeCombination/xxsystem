@@ -14,6 +14,8 @@ public class PersonalGradeResultVo {
 	 */
 	private Integer id;
 	
+	private Integer detailsId;
+	
 	/**
 	 * 个人评分id
 	 */
@@ -102,12 +104,18 @@ public class PersonalGradeResultVo {
 	/**
 	 * 评分员工类型 0普通员工 1部门主任 2分管领导 3协管领导 4所长
 	 */
-	private Integer gradeUserType ;
+	private String gradeUserType ;
     
 	/**
 	 * 领导评价 只有员工类型不为普通员工 评分页面才显示评价
 	 */
 	private String evaluation ;
+	
+	private String evaluation1 ;
+	
+	private String evaluation2 ;
+	
+	private String evaluation3 ;
 	
 	private String roleName ; //评分人角色
 	
@@ -284,11 +292,11 @@ public class PersonalGradeResultVo {
 		this.personalGradeId = personalGradeId;
 	}
 
-	public Integer getGradeUserType() {
+	public String getGradeUserType() {
 		return gradeUserType;
 	}
 
-	public void setGradeUserType(Integer gradeUserType) {
+	public void setGradeUserType(String gradeUserType) {
 		this.gradeUserType = gradeUserType;
 	}
 
@@ -298,5 +306,37 @@ public class PersonalGradeResultVo {
 
 	public void setEvaluation(String evaluation) {
 		this.evaluation = evaluation;
+	}
+
+	public String getEvaluation1() {
+		return evaluation1;
+	}
+
+	public void setEvaluation1(String evaluation1) {
+		this.evaluation1 = evaluation1;
+	}
+
+	public String getEvaluation2() {
+		return evaluation2;
+	}
+
+	public void setEvaluation2(String evaluation2) {
+		this.evaluation2 = evaluation2;
+	}
+
+	public String getEvaluation3() {
+		return evaluation3;
+	}
+
+	public void setEvaluation3(String evaluation3) {
+		this.evaluation3 = evaluation3;
+	}
+
+	public Integer getDetailsId() {
+		return detailsId;
+	}
+
+	public void setDetailsId(Integer detailsId) {
+		this.detailsId = detailsId;
 	}
 }

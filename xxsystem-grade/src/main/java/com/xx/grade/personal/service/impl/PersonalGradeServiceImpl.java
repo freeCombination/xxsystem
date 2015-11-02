@@ -380,6 +380,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 						gradeDetail.setPersonalGrade(grade);
 						gradeDetail.setIndexType(pw.getIndexType());
 						gradeDetail.setPercentage(pw.getPercentage());
+						gradeDetail.setGrade(pw.isGrade());
 						baseDao.save(gradeDetail);
 					}
 				}
@@ -755,13 +756,15 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			PersonalGradeResultVo vo) {
 		vo.setId(gradeResult.getId());
 		vo.setUserName(gradeResult.getGradeUser().getRealname());
-		//vo.setScore(gradeResult.getScore());
 		if (gradeResult.getGradeDate() != null) {
 			vo.setGradeDate(DateUtil.dateToString(gradeResult.getGradeDate(), "yyyy-MM-dd HH:mm:ss"));
 		}
 		vo.setState(gradeResult.getState());
-		vo.setGradeUserType(gradeResult.getGradeUserType());
+		vo.setGradeUserType(getGradeUserTypeByResult(gradeResult));
 		vo.setEvaluation(gradeResult.getEvaluation());
+		vo.setEvaluation1(gradeResult.getEvaluation1());
+		vo.setEvaluation2(gradeResult.getEvaluation3());
+		vo.setEvaluation3(gradeResult.getEvaluation3());
 		if (gradeResult.getPersonalGrade() != null) {
 			PersonalGrade grade = gradeResult.getPersonalGrade();
 			vo.setGradeYear(grade.getGradeYear());
@@ -787,6 +790,36 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			vo.setProblem(grade.getProblem());
 			vo.setWorkPlan(grade.getWorkPlan());
 		}
+	}
+
+	/**
+	 * 获取当前评分人是否具有领导职位
+	 */
+	private String getGradeUserTypeByResult(PersonalGradeResult gradeResult) {
+		String result = "" ;
+		String isBmld = "false" ;
+		String isfgld = "false" ;
+		String isqtsld = "false" ;
+		String issld = "false" ;
+		Set<PersonalGradeResultDetails> details = gradeResult.getDetails();
+		Iterator<PersonalGradeResultDetails> it = details.iterator();
+		while (it.hasNext()) {
+			PersonalGradeResultDetails detail = it.next();
+			if ("部门主任".equals(detail.getRole().getRoleName())) {
+				isBmld = "true" ;
+			}
+			if ("分管领导".equals(detail.getRole().getRoleName())) {
+				isfgld = "true" ;
+			}
+			if ("分管副所长".equals(detail.getRole().getRoleName())) {
+				isqtsld = "true" ;
+			}
+			if ("所长".equals(detail.getRole().getRoleName())) {
+				issld = "true" ;
+			}
+		}
+		result = isBmld + "," + isfgld + "," + isqtsld + "," + issld ;
+		return result;
 	}
 
 	@Override
@@ -898,7 +931,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 				Iterator<PersonalGradeDetails> it = gradeDetails.iterator();
 				while (it.hasNext()) {
 					PersonalGradeDetails gradeDetail = it.next();
-					Double indexTypeTotal = getIndexTypeTotal(grade,gradeDetail.getIndexType());
+					Double indexTypeTotal = getIndexTypeTotal(grade,gradeDetail);
 					if (indexTypeTotal != null && StringUtil.isNotEmpty(gradeDetail.getPercentage())) {
 						totalScore += (new BigDecimal(indexTypeTotal).multiply(new BigDecimal(gradeDetail.getPercentage()))).divide(new BigDecimal(100),2,BigDecimal.ROUND_HALF_UP).doubleValue();
 					}
@@ -911,7 +944,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		}
 	}
 
-	private Double getIndexTypeTotal(PersonalGrade grade, Dictionary indexType) {
+	private Double getIndexTypeTotal(PersonalGrade grade, PersonalGradeDetails gradeDetail) {
 		StringBuffer sql = new StringBuffer();
 		Double result = 0d ;
 		sql.append(" select d.FK_ROLE_ID ,d.FK_INDEX_TYPE ,d.PERCENTAGE, ");
@@ -920,8 +953,8 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		sql.append(" INNER JOIN T_PERSONAL_GRADE_RESULT r on r.ID = d.PERSONAL_GRADE_RESULT_ID ");
 		sql.append(" INNER JOIN T_PERSONAL_GRADE g on g.ID = r.PERSONAL_GRADE_ID ");
 		sql.append(" where 1=1  ");
-		//sql.append(" AND d.FK_INDEX_TYPE = "+indexType.getPkDictionaryId());
-		//sql.append(" and g.ID = "+grade.getId());
+		sql.append(" AND d.FK_INDEX_TYPE = "+gradeDetail.getIndexType().getPkDictionaryId());
+		sql.append(" and g.ID = "+grade.getId());
 		sql.append(" GROUP BY d.FK_ROLE_ID ,d.FK_INDEX_TYPE,d.PERCENTAGE ");
 		List<Map> maps = baseDao.querySQLForMap(sql.toString());
 		for (Map map : maps) {
@@ -932,6 +965,10 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			}
 		}
 		System.err.println(result);
+		//如果是不参与个人评分的就是组织 TODO
+		if (!gradeDetail.isGrade()) {
+			result = 80d ;
+		}
 		return result;
 	}
 
@@ -1229,6 +1266,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			PersonalGradeResultVo vo) {
 		vo.setScore(gradeResultDetail.getScore());
 		vo.setPercentage(gradeResultDetail.getPercentage());
+		vo.setDetailsId(gradeResultDetail.getId());
 		if (gradeResultDetail.getIndexType() != null) {
 			vo.setIndexTypeName(gradeResultDetail.getIndexType().getDictionaryName());
 		}
@@ -1236,5 +1274,6 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			vo.setRoleName(gradeResultDetail.getRole().getRoleName());
 		}
 		buildResultEntityToVo(gradeResultDetail.getPersonalGradeResult(), vo);
+		vo.setId(gradeResultDetail.getId());
 	}
 }

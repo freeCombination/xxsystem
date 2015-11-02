@@ -95,6 +95,9 @@ public class PersonalGrade implements Serializable {
 	 */
 	private Set<PersonalGradeResult> result ;
 	
+	/**
+	 * 评分指标历史
+	 */
 	private Set<PersonalGradeDetails> details ;
 	
 	/**

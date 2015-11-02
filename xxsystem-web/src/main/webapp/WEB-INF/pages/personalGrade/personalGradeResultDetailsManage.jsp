@@ -32,7 +32,7 @@ Ext.onReady(function(){
 			renderTo: Ext.getBody(),
 			items: [grade.personalGradeResult.PersonalGradeResultGrid]
 		});
-		grade.personalGradeResult.PersonalGradeResultStore.load();
+		grade.personalGradeResult.PersonalGradeResultDetailsStore.loadPage(1);
 });
 
 </script>

@@ -13,6 +13,7 @@ var row1 = {
             border : false,
             items:[{  
                 xtype:'displayfield',
+                id:'gradeUser',
                 name:'gradeUser',
                 fieldLabel:'姓    名'
             }]  
@@ -125,9 +126,52 @@ var row6 = {
         	regex : new RegExp('^([^<^>])*$'),
             regexText : '不能包含特殊字符！',
     		maxLength : 500,
-            fieldLabel:'评价'
+            fieldLabel:'部门主任评价'
         }]  
     }; 
+
+var row7 = {  
+        layout:'form', 
+        border : false,
+        items:[{  
+            xtype:'textarea',  
+            name:'evaluation1',
+            id:'evaluation1',
+        	regex : new RegExp('^([^<^>])*$'),
+            regexText : '不能包含特殊字符！',
+    		maxLength : 500,
+            fieldLabel:'分管领导评价'
+        }]  
+    }; 
+
+var row8 = {  
+        layout:'form', 
+        border : false,
+        items:[{  
+            xtype:'textarea',  
+            name:'evaluation2',
+            id:'evaluation2',
+        	regex : new RegExp('^([^<^>])*$'),
+            regexText : '不能包含特殊字符！',
+    		maxLength : 500,
+            fieldLabel:'其他所领导评价'
+        }]  
+    }; 
+
+var row9 = {  
+        layout:'form', 
+        border : false,
+        items:[{  
+            xtype:'textarea',  
+            name:'evaluation3',
+            id:'evaluation3',
+        	regex : new RegExp('^([^<^>])*$'),
+            regexText : '不能包含特殊字符！',
+    		maxLength : 500,
+            fieldLabel:'所领导评价'
+        }]  
+    }; 
+
 
 /*var row7 = {  
         layout:'form', 
@@ -153,27 +197,41 @@ grade.personalGradeResult.PersonalGradeResultForm = Ext.create("Ext.form.Panel",
     labelWidth:65,  
     labelAlign:'right',  
     style:'padding:10px',  
-    items:[
-           {
-		   		id:'id',
-				name : 'id',
-				xtype:'textfield',
-				hidden : true
-				},
-		   {
-				id:'personalGradeId',
-				name : 'personalGradeId',
-				xtype:'textfield',
-				hidden : true
-			},
-			 {
-			   	id:'gradeUserType',
-				name : 'gradeUserType',
-				xtype:'textfield',
-				hidden : true
-			 },
-           row1,row2,row3,row4,row5,row6]
+    items:[row1,row2,row3]
 });
+
+grade.personalGradeResult.PersonalGradeResultForm1 = Ext.create("Ext.form.Panel", {  
+	layout : 'form',
+	region: "south",
+    width:780,  
+    autoHeight:true,  
+    frame:true,  
+    border : false,
+    labelWidth:65,  
+    labelAlign:'right',  
+    style:'padding:10px',  
+    items:[ {
+   		id:'id',
+		name : 'id',
+		xtype:'textfield',
+		hidden : true
+		},
+   {
+		id:'personalGradeId',
+		name : 'personalGradeId',
+		xtype:'textfield',
+		hidden : true
+	},
+	 {
+	   	id:'gradeUserType',
+		name : 'gradeUserType',
+		xtype:'textfield',
+		hidden : true
+	 },
+           row4,row5,row6,row7,row8,row9]
+});
+
+
 
 /**
  * 定义个人评分基础信息form
@@ -182,13 +240,15 @@ grade.personalGradeResult.PersonalGradeResultWin = Ext.create("Ext.window.Window
 	height : 500,
 	width : 800,
 	layout: 'border',
-	items : [grade.personalGradeResult.PersonalGradeResultForm,grade.personalDutyResult.PersonalDutyResultGrid,grade.personalDutyResultDetails.PersonalDutyResultDetailsGrid],
+	autoScroll:true,
+	bodyStyle :'overflow-x:hidden;overflow-y:scroll',
+	items : [grade.personalGradeResult.PersonalGradeResultForm,grade.personalDutyResult.PersonalDutyResultGrid,grade.personalDutyResultDetails.PersonalDutyResultDetailsGrid,grade.personalGradeResult.PersonalGradeResultForm1],
 	buttons : [ {
 		text : '确定',
 		id:'result_submit',
 		handler : function() {
-			if (grade.personalGradeResult.PersonalGradeResultForm.form.isValid()) {
-				grade.personalGradeResult.PersonalGradeResultForm.form.submit({
+			if (grade.personalGradeResult.PersonalGradeResultForm1.form.isValid()) {
+				grade.personalGradeResult.PersonalGradeResultForm1.form.submit({
 					success : function(form, action) {
 						Ext.Msg.showTip(action.result.msg);
 						grade.personalGradeResult.PersonalGradeResultStore.loadPage(1);
@@ -211,10 +271,28 @@ grade.personalGradeResult.PersonalGradeResultWin = Ext.create("Ext.window.Window
     		var personalGradeId = Ext.getCmp('personalGradeId').getValue();
     		var personalGradeResultId = Ext.getCmp('id').getValue();
     		var gradeUserType = Ext.getCmp('gradeUserType').getValue();
-    		if (gradeUserType == 0) {
-    			Ext.getCmp('evaluation').hide();
-			}else{
-				Ext.getCmp('evaluation').show();
+    		if (gradeUserType != '') {
+    			var gradeUserTypeArr = gradeUserType.split(',');
+    			if (gradeUserTypeArr[0]=='true') {
+    				Ext.getCmp('evaluation').show();
+				}else{
+					Ext.getCmp('evaluation').hide();
+				}
+    			if (gradeUserTypeArr[1]=='true') {
+    				Ext.getCmp('evaluation1').show();
+				}else{
+					Ext.getCmp('evaluation1').hide();
+				}
+    			if (gradeUserTypeArr[2]=='true') {
+    				Ext.getCmp('evaluation2').show();
+				}else{
+					Ext.getCmp('evaluation2').hide();
+				}
+    			if (gradeUserTypeArr[3]=='true') {
+    				Ext.getCmp('evaluation3').show();
+				}else{
+					Ext.getCmp('evaluation3').hide();
+				}
 			}
     		grade.personalDutyResult.PersonalDutyResultStore.load({
     			params:
@@ -234,6 +312,66 @@ grade.personalGradeResult.PersonalGradeResultWin = Ext.create("Ext.window.Window
     	}
 	}
 });
+
+
+/*grade.personalGradeResult.PersonalGradeResultWinView = Ext.create("Ext.window.Window", {
+	height : 500,
+	width : 800,
+	layout: 'border',
+	items : [grade.personalGradeResult.PersonalGradeResultForm,grade.personalDutyResult.PersonalDutyResultGrid,grade.personalDutyResultDetails.PersonalDutyResultDetailsGridView,grade.personalGradeResult.PersonalGradeResultForm1],
+	buttons : [ {
+		text : '关闭',
+		handler : function() {
+			grade.personalGradeResult.PersonalGradeResultWinView.close();
+		}
+	} ],
+	listeners: {
+    	afterrender: function(){
+    		var personalGradeId = Ext.getCmp('personalGradeId').getValue();
+    		var personalGradeResultId = Ext.getCmp('id').getValue();
+    		var gradeUserType = Ext.getCmp('gradeUserType').getValue();
+    		if (gradeUserType != '') {
+    			var gradeUserTypeArr = gradeUserType.split(',');
+    			if (gradeUserTypeArr[0]=='true') {
+    				Ext.getCmp('evaluation').show();
+				}else{
+					Ext.getCmp('evaluation').hide();
+				}
+    			if (gradeUserTypeArr[1]=='true') {
+    				Ext.getCmp('evaluation1').show();
+				}else{
+					Ext.getCmp('evaluation1').hide();
+				}
+    			if (gradeUserTypeArr[2]=='true') {
+    				Ext.getCmp('evaluation2').show();
+				}else{
+					Ext.getCmp('evaluation2').hide();
+				}
+    			if (gradeUserTypeArr[3]=='true') {
+    				Ext.getCmp('evaluation3').show();
+				}else{
+					Ext.getCmp('evaluation3').hide();
+				}
+			}
+    		grade.personalDutyResult.PersonalDutyResultStore.load({
+    			params:
+    				{
+    					personalGradeId : personalGradeId
+    				}
+    			});
+    		
+    		grade.personalDutyResultDetails.PersonalDutyResultDetailsStore.load({
+    			params:
+				{
+    				personalGradeResultId : personalGradeResultId
+				}
+			});
+    		
+    		grade.personalDutyResultDetails.ScoreStore.load();
+    	}
+	}
+});*/
+
 
 
 

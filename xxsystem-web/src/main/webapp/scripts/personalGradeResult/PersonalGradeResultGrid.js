@@ -27,6 +27,7 @@ Ext.define("grade.personalGradeResult.PersonalGradeResultModel",{
 						{name:'gender'},
 						{name:'educationBackground'},
 						{name:'politicsStatus'},
+						{name:'gradeUserType'},
 						{name:'state'}
 					]
 	});
@@ -157,26 +158,35 @@ grade.personalGradeResult.EditPersonalGradeResult = function() {
 	var row = grade.personalGradeResult.PersonalGradeResultGrid.getSelectionModel().getSelection()
 	var id = row[0].data.id;
 	var personalGradeId = row[0].data.personalGradeId;
+	var gradeUserType = row[0].data.gradeUserType;
 	var basicForm = grade.personalGradeResult.PersonalGradeResultForm.getForm();
 	basicForm.reset();
-	basicForm.url = basePath + '/personalGrade/editPersonalGradeResult.action';
-	basicForm.findField('id').setValue(id);
-	basicForm.findField('personalGradeId').setValue(personalGradeId);
-	Ext.getCmp('result_submit').show();
 	Ext.getCmp('evaluation').setReadOnly(false);
+	Ext.getCmp('evaluation1').setReadOnly(false);
+	Ext.getCmp('evaluation2').setReadOnly(false);
+	Ext.getCmp('evaluation3').setReadOnly(false);
 	basicForm.load({
 		url : basePath + '/personalGrade/getPersonalGradeResultById.action',
 		params : {
 			id : id
 		}
 	});
+	
+	Ext.getCmp('result_submit').show();
+	
+	var basicForm1 = grade.personalGradeResult.PersonalGradeResultForm1.getForm();
+	basicForm1.reset();
+	basicForm1.findField('id').setValue(id);
+	basicForm1.findField('personalGradeId').setValue(personalGradeId);
+	basicForm1.findField('gradeUserType').setValue(gradeUserType);
+	basicForm1.url = basePath + '/personalGrade/editPersonalGradeResult.action';
+	basicForm1.load({
+		url : basePath + '/personalGrade/getPersonalGradeResultById.action',
+		params : {
+			id : id
+		}
+	});
 	grade.personalGradeResult.PersonalGradeResultWin.show();
-/*	Ext.create("Ext.window.Window", {
-		height : 500,
-		width : 800,
-		layout: 'border',
-		items : [grade.personalGradeResult.PersonalGradeResultForm],
-	}).show();*/
 };
 
 /**
@@ -187,14 +197,30 @@ grade.personalGradeResult.ViewPersonalGradeResult = function() {
 	var row = grade.personalGradeResult.PersonalGradeResultGrid.getSelectionModel().getSelection()
 	var id = row[0].data.id;
 	var personalGradeId = row[0].data.personalGradeId;
+	var gradeUserType = row[0].data.gradeUserType;
 	var basicForm = grade.personalGradeResult.PersonalGradeResultWin.down('form').getForm();
 	basicForm.reset();
 	basicForm.url = basePath + '/personalGrade/editPersonalGradeResult.action';
-	basicForm.findField('id').setValue(id);
-	basicForm.findField('personalGradeId').setValue(personalGradeId);
-	Ext.getCmp('result_submit').hide();
 	Ext.getCmp('evaluation').setReadOnly(true);
+	Ext.getCmp('evaluation1').setReadOnly(true);
+	Ext.getCmp('evaluation2').setReadOnly(true);
+	Ext.getCmp('evaluation3').setReadOnly(true);
 	basicForm.load({
+		url : basePath + '/personalGrade/getPersonalGradeResultById.action',
+		params : {
+			id : id
+		}
+	});
+	
+	Ext.getCmp('result_submit').hide();
+	
+	var basicForm1 = grade.personalGradeResult.PersonalGradeResultForm1.getForm();
+	basicForm1.reset();
+	basicForm1.findField('id').setValue(id);
+	basicForm1.findField('personalGradeId').setValue(personalGradeId);
+	basicForm1.findField('gradeUserType').setValue(gradeUserType);
+	basicForm1.url = basePath + '/personalGrade/editPersonalGradeResult.action';
+	basicForm1.load({
 		url : basePath + '/personalGrade/getPersonalGradeResultById.action',
 		params : {
 			id : id
