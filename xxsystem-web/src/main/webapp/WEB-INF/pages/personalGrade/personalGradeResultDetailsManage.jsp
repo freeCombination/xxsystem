@@ -11,6 +11,19 @@
 <script type="text/javascript" src="${ctx}/scripts/personalGradeResultDetails/PersonalGradeResultDetailsGrid.js"></script>
 
 <link href="" rel="SHORTCUT ICON" />
+<style type="text/css">
+  .x-form-layout-table{
+	table-layout: fixed;
+  }
+  
+  .x-grid-td {
+    vertical-align: middle !important;
+  }
+  
+  .custom-grid-row{
+    height:45px;
+  }
+</style>
 </head>
 <body>
 </body>

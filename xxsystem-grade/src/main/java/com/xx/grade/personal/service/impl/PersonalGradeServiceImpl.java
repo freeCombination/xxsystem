@@ -939,6 +939,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 					baseDao.saveOrUpdate(gradeDetail);
 				}
 				grade.setCompositeScores(totalScore);
+				grade.setStatus(2);
 				baseDao.saveOrUpdate(grade);
 			}
 		}
@@ -1142,7 +1143,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 					cell31.setCellValue(grade.getUser().getResponsibilities().getName());
 				}
 				//现任岗位时间
-		        cell33.setCellValue("2014-10-10");
+		        cell33.setCellValue(grade.getUser().getOfficeHoldingDate());
 			}
 	        
 	        HSSFCellStyle cellStyle = wb.createCellStyle();     
@@ -1154,7 +1155,6 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 	        //获取单元格格式
 	        HSSFCellStyle style1=aSheet.getRow(5).getCell(0).getCellStyle();
 	        HSSFCellStyle style2=aSheet.getRow(5).getCell(1).getCellStyle();
-	        style2.setBorderRight(HSSFCellStyle.BORDER_THIN);
 	        int newRow=6; //从第几行开始插入
 	        int rows = personalDutys.size();//设定插入几行 
 	        if (personalDutys != null && personalDutys.size() > 0) {
@@ -1172,10 +1172,42 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			        aSheet.addMergedRegion(new Region(newRow+rowSize,(short) 2, newRow+rowSize,(short) 5)); // 
 			        HSSFCell cew3 =sourceRow.createCell((short) 2); 
 			        cew3.setCellValue(duty.getCompletion()); 
-			        cew3.setCellStyle(style1);
+			        cew3.setCellStyle(style2);
 		        	rowSize++ ;
 				}
 			}
+	        
+	        //写入其他信息
+	        HSSFRow row4 = aSheet.getRow(newRow+personalDutys.size()+1);
+	        HSSFCell cell41 = row4.getCell(0);
+	        cell41.setCellType(HSSFCellStyle.ALIGN_RIGHT);
+	        cell41.setCellValue(grade.getProblem());
+	        
+	        HSSFRow row5 = aSheet.getRow(newRow+personalDutys.size()+3);
+	        HSSFCell cell51 = row5.getCell(0);
+	        cell51.setCellType(HSSFCellStyle.ALIGN_RIGHT);
+	        cell51.setCellValue(grade.getWorkPlan());
+	        
+	        HSSFRow row6 = aSheet.getRow(newRow+personalDutys.size()+4);
+	        HSSFCell cell61 = row6.getCell(1);
+	        cell61.setCellType(HSSFCellStyle.ALIGN_RIGHT);
+	        cell61.setCellValue(evaluation);
+	        
+	        HSSFRow row7 = aSheet.getRow(newRow+personalDutys.size()+7);
+	        HSSFCell cell71 = row7.getCell(1);
+	        cell71.setCellType(HSSFCellStyle.ALIGN_RIGHT);
+	        cell71.setCellValue(evaluation1);
+	        
+	        HSSFRow row8 = aSheet.getRow(newRow+personalDutys.size()+10);
+	        HSSFCell cell81 = row8.getCell(1);
+	        cell81.setCellType(HSSFCellStyle.ALIGN_RIGHT);
+	        cell81.setCellValue(evaluation2);
+	        
+	        HSSFRow row9 = aSheet.getRow(newRow+personalDutys.size()+13);
+	        HSSFCell cell91 = row9.getCell(1);
+	        cell91.setCellType(HSSFCellStyle.ALIGN_RIGHT);
+	        cell91.setCellValue(evaluation3);
+	        
 		} catch (IOException e) {
 			e.printStackTrace();
 		} 
@@ -1197,16 +1229,16 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		Set<PersonalGradeResult> gradeResults = grade.getResult();
 		for (PersonalGradeResult personalGradeResult : gradeResults) {
 			if (StringUtil.isNotEmpty(personalGradeResult.getEvaluation())) {
-				evaluation +=  personalGradeResult.getEvaluation() + "(" + personalGradeResult.getGradeUser() + ");" ;
+				evaluation +=  personalGradeResult.getEvaluation() + "(" + personalGradeResult.getGradeUser().getRealname() + ");" ;
 			}
 			if (StringUtil.isNotEmpty(personalGradeResult.getEvaluation1())) {
-				evaluation1 +=  personalGradeResult.getEvaluation1() + "(" + personalGradeResult.getGradeUser() + ");" ;
+				evaluation1 +=  personalGradeResult.getEvaluation1() + "(" + personalGradeResult.getGradeUser().getRealname() + ");" ;
 			}
 			if (StringUtil.isNotEmpty(personalGradeResult.getEvaluation2())) {
-				evaluation2 +=  personalGradeResult.getEvaluation2() + "(" + personalGradeResult.getGradeUser() + ");" ;
+				evaluation2 +=  personalGradeResult.getEvaluation2() + "(" + personalGradeResult.getGradeUser().getRealname() + ");" ;
 			}
 			if (StringUtil.isNotEmpty(personalGradeResult.getEvaluation3())) {
-				evaluation3 +=  personalGradeResult.getEvaluation3() + "(" + personalGradeResult.getGradeUser() + ");" ;
+				evaluation3 +=  personalGradeResult.getEvaluation3() + "(" + personalGradeResult.getGradeUser().getRealname() + ");" ;
 			}
 		}
 		result.put("evaluation", evaluation);
@@ -1334,7 +1366,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			}
 		}
 		//评分状态排序 满足点击评分人员列表需求
-		hql.append(" order by pgr.personalGradeResult.state");
+		hql.append(" order by pgr.personalGradeResult.personalGrade.id,pgr.indexType.pkDictionaryId");
 		
 		totalSize =  baseDao.getTotalCount(counthql.toString(), new HashMap<String, Object>());
 		List<PersonalGradeResultDetails> personalGradeResults =  (List<PersonalGradeResultDetails>)baseDao.queryEntitysByPage(start, limit, hql.toString(),new HashMap<String, Object>());

@@ -50,7 +50,7 @@ grade.personalGradeResult.PersonalGradeResultDetailsStore = Ext.create('Ext.data
 
 //合并行
 grade.personalGradeResult.PersonalGradeResultDetailsStore.addListener('load', function(store,records) {
-	mergeCells(grade.personalGradeResult.PersonalGradeResultGrid, [1, 2, 3,4]);
+	mergeCells(grade.personalGradeResult.PersonalGradeResultGrid, [1,2,3,4,5,6]);
 });
 
 grade.personalGradeResult.PersonalGradeResultDetailsStore.getProxy().setExtraParam("state", 1);
@@ -117,7 +117,10 @@ var cm = [
 			align : "center"
 		}, {
 			header : "标题",
-			dataIndex : "title"
+			dataIndex : "title",
+        	renderer : function(value, p, record) {
+    		    return '<div style="white-space:normal;">' + value + '</div>';
+    		}
 		},
 		{
 			header : "年份",
@@ -136,12 +139,12 @@ var cm = [
 			dataIndex : "responsibilities"
 		},
 		{
-			header : "评分职员",
-			dataIndex : "userName"
-		},
-		{
 			header : "评分指标",
 			dataIndex : "indexTypeName"
+		},
+		{
+			header : "评分职员",
+			dataIndex : "userName"
 		},
 		{
 			header : "评分职员角色",
@@ -162,7 +165,6 @@ grade.personalGradeResult.PersonalGradeResultGrid = Ext.create("Ext.grid.Panel",
 	bbar : Ext.create("Ext.PagingToolbar", {
 		store : grade.personalGradeResult.PersonalGradeResultDetailsStore
 	}),
-	selModel : Ext.create("Ext.selection.CheckboxModel"),
 	store : grade.personalGradeResult.PersonalGradeResultDetailsStore,
 	columns : cm,
 	tbar : [
