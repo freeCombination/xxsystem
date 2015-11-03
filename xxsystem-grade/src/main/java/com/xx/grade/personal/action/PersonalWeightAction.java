@@ -67,8 +67,7 @@ public class PersonalWeightAction extends BaseAction {
 	 */
 	public String getPersonalWeightList() {
 		try {
-			Map<String, String> paramMap = RequestUtil
-					.getParameterMap(getRequest());
+			Map<String, String> paramMap = RequestUtil.getParameterMap(getRequest());
 			ListVo<PersonalWeightVo> resultList = this.personalWeightService.getPersonalWeightList(paramMap);
 			JsonUtil.outJson(resultList);
 		} catch (Exception e) {
