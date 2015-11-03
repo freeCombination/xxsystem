@@ -1095,17 +1095,55 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 	public HSSFWorkbook exportPersonalGradeAll(Map<String, String> paramMap,File file) {
 		HSSFWorkbook wb = null;
 		try {
+			String personalGradeId = paramMap.get("personalGradeId");
+			PersonalGrade grade = (PersonalGrade)baseDao.queryEntityById(PersonalGrade.class, Integer.parseInt(personalGradeId));
+			//如果为空不进行导出
+			if (grade == null) {
+				return null;
+			}
+			//获取职责 职责需要插入到中间行
+			Set<PersonalDuty> personalDutys = grade.getPersonalDutys();
+			//获取评价
+			Map<String, String> evaluationMaps = getEvaluationMaps(grade);
+			//分别为部门主任，分管领导，其他所领导，所领导评价
+			String evaluation = evaluationMaps.get("evaluation") ;
+			String evaluation1 = evaluationMaps.get("evaluation1") ;
+			String evaluation2 = evaluationMaps.get("evaluation2") ;
+			String evaluation3 = evaluationMaps.get("evaluation3") ;
+			
 			POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(file));
 	        //读取excel模板  
 	        wb = new HSSFWorkbook(fs);
 	        HSSFSheet aSheet = wb.getSheetAt(0);
 	        
-	        int newRow=6; 
-	        int rows = 3;//设定插入几行 
-	        aSheet.shiftRows(newRow, aSheet.getLastRowNum(), rows,true ,true); 
-	        HSSFRow sourceRow =aSheet.getRow(newRow); 
+	        //插入职员个人信息
+	        HSSFRow row1 = aSheet.getRow(1);
+	        HSSFRow row2 = aSheet.getRow(2);
+	        HSSFRow row3 = aSheet.getRow(3);
+	        HSSFCell cell11 = row1.getCell(1);
+	        HSSFCell cell13 = row1.getCell(3);
+	        HSSFCell cell15 = row1.getCell(5);
 	        
-	        sourceRow.setHeight((short)400);
+	        HSSFCell cell21 = row2.getCell(1);
+	        HSSFCell cell23 = row2.getCell(3);
+	        HSSFCell cell25 = row2.getCell(5);
+	        
+	        HSSFCell cell31 = row3.getCell(1);
+	        HSSFCell cell33 = row3.getCell(3);
+	        
+	        if (grade.getUser() != null) {
+		        cell11.setCellValue(grade.getUser().getRealname());
+		        cell13.setCellValue(grade.getUser().getGender());
+		        cell15.setCellValue(grade.getUser().getBirthDay());
+		        cell21.setCellValue(grade.getUser().getPoliticsStatus());
+		        cell23.setCellValue(grade.getUser().getEducationBackground());
+		        cell25.setCellValue(grade.getUser().getJobStartDate());
+				if (grade.getUser().getResponsibilities() != null) {
+					cell31.setCellValue(grade.getUser().getResponsibilities().getName());
+				}
+				//现任岗位时间
+		        cell33.setCellValue("2014-10-10");
+			}
 	        
 	        HSSFCellStyle cellStyle = wb.createCellStyle();     
 	        cellStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN); //下边框    
@@ -1113,20 +1151,69 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 	        cellStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);//上边框    
 	        cellStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);//右边框 
 	        
-	        aSheet.addMergedRegion(new Region(newRow,(short) 0, newRow,(short) 1)); // 
-	        HSSFCell cew2 =sourceRow.createCell((short) 0); 
-	        cew2.setCellValue("保证人名称"); 
-	        cew2.setCellStyle(cellStyle);
+	        //获取单元格格式
+	        HSSFCellStyle style1=aSheet.getRow(5).getCell(0).getCellStyle();
+	        HSSFCellStyle style2=aSheet.getRow(5).getCell(1).getCellStyle();
+	        style2.setBorderRight(HSSFCellStyle.BORDER_THIN);
+	        int newRow=6; //从第几行开始插入
+	        int rows = personalDutys.size();//设定插入几行 
+	        if (personalDutys != null && personalDutys.size() > 0) {
+		        aSheet.shiftRows(newRow, aSheet.getLastRowNum(), rows,true ,true); 
+		        int rowSize = 0 ;
+		        for (PersonalDuty duty : personalDutys) {
+		        	HSSFRow sourceRow =aSheet.getRow(newRow+rowSize); 
+			        sourceRow.setHeight((short)400);
+			        //合并 单元格 操作* 第一个参数 0 表示 起始 行* 第二个参数 a表示 起始 列* 第三个参数 0 表示结束行* 第四个参数 b表示结束列
+			        aSheet.addMergedRegion(new Region(newRow+rowSize,(short) 0, newRow+rowSize,(short) 1)); // 
+			        HSSFCell cew2 =sourceRow.createCell((short) 0); 
+			        cew2.setCellValue(duty.getWorkDuty()); 
+			        cew2.setCellStyle(style1);
 
-	        aSheet.addMergedRegion(new Region(newRow,(short) 2, newRow,(short) 5)); // 
-	        HSSFCell cew3 =sourceRow.createCell((short) 2); 
-	        cew3.setCellValue("dd"); 
-	        cew2.setCellStyle(cellStyle);
-
+			        aSheet.addMergedRegion(new Region(newRow+rowSize,(short) 2, newRow+rowSize,(short) 5)); // 
+			        HSSFCell cew3 =sourceRow.createCell((short) 2); 
+			        cew3.setCellValue(duty.getCompletion()); 
+			        cew3.setCellStyle(style1);
+		        	rowSize++ ;
+				}
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} 
 		return wb;
+	}
+
+	/**
+	 * 获取评价集合
+	 * 
+	 * @param grade
+	 * @return
+	 */
+	private Map<String, String> getEvaluationMaps(PersonalGrade grade) {
+		Map<String, String> result = new HashMap<String, String>();
+		String evaluation = "" ;
+		String evaluation1 = "" ;
+		String evaluation2 = "" ;
+		String evaluation3 = "" ;
+		Set<PersonalGradeResult> gradeResults = grade.getResult();
+		for (PersonalGradeResult personalGradeResult : gradeResults) {
+			if (StringUtil.isNotEmpty(personalGradeResult.getEvaluation())) {
+				evaluation +=  personalGradeResult.getEvaluation() + "(" + personalGradeResult.getGradeUser() + ");" ;
+			}
+			if (StringUtil.isNotEmpty(personalGradeResult.getEvaluation1())) {
+				evaluation1 +=  personalGradeResult.getEvaluation1() + "(" + personalGradeResult.getGradeUser() + ");" ;
+			}
+			if (StringUtil.isNotEmpty(personalGradeResult.getEvaluation2())) {
+				evaluation2 +=  personalGradeResult.getEvaluation2() + "(" + personalGradeResult.getGradeUser() + ");" ;
+			}
+			if (StringUtil.isNotEmpty(personalGradeResult.getEvaluation3())) {
+				evaluation3 +=  personalGradeResult.getEvaluation3() + "(" + personalGradeResult.getGradeUser() + ");" ;
+			}
+		}
+		result.put("evaluation", evaluation);
+		result.put("evaluation1", evaluation1);
+		result.put("evaluation2", evaluation2);
+		result.put("evaluation3", evaluation3);
+		return result;
 	}
 
 	@Override

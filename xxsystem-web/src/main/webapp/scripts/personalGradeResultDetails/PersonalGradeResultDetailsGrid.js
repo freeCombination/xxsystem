@@ -48,6 +48,11 @@ grade.personalGradeResult.PersonalGradeResultDetailsStore = Ext.create('Ext.data
 	}
 });
 
+//合并行
+grade.personalGradeResult.PersonalGradeResultDetailsStore.addListener('load', function(store,records) {
+	mergeCells(grade.personalGradeResult.PersonalGradeResultGrid, [1, 2, 3,4]);
+});
+
 grade.personalGradeResult.PersonalGradeResultDetailsStore.getProxy().setExtraParam("state", 1);
 
 /**
@@ -111,10 +116,6 @@ var cm = [
 			width : 60,
 			align : "center"
 		}, {
-			header : "detailsId",
-			dataIndex : "detailsId",
-			hidden : true
-		},{
 			header : "标题",
 			dataIndex : "title"
 		},
