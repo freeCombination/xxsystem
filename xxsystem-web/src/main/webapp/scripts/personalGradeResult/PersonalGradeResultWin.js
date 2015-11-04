@@ -313,7 +313,7 @@ grade.personalGradeResult.PersonalGradeResultWin = Ext.create("Ext.window.Window
 });
 
 
-grade.personalGradeResult.PersonalGradeResultWinView = Ext.create("Ext.window.Window", {
+/*grade.personalGradeResult.PersonalGradeResultWinView = Ext.create("Ext.window.Window", {
 	height : 500,
 	width : 800,
 	layout: 'border',
@@ -369,7 +369,7 @@ grade.personalGradeResult.PersonalGradeResultWinView = Ext.create("Ext.window.Wi
     		grade.personalDutyResultDetails.ScoreStore.load();
     	}
 	}
-});
+});*/
 
 
 

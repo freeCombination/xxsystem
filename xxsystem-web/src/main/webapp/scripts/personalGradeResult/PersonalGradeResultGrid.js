@@ -171,7 +171,8 @@ grade.personalGradeResult.EditPersonalGradeResult = function() {
 			id : id
 		}
 	});
-	
+	grade.personalDutyResultDetails.PersonalDutyResultDetailsGrid.down('#score').show();
+	grade.personalDutyResultDetails.PersonalDutyResultDetailsGrid.down('#scoreShow').hide();
 	Ext.getCmp('result_submit').show();
 	
 	var basicForm1 = grade.personalGradeResult.PersonalGradeResultForm1.getForm();
@@ -193,12 +194,12 @@ grade.personalGradeResult.EditPersonalGradeResult = function() {
  * 查看个人评分结果
  */
 grade.personalGradeResult.ViewPersonalGradeResult = function() {
-	grade.personalGradeResult.PersonalGradeResultWinView.setTitle('详情');
+	grade.personalGradeResult.PersonalGradeResultWin.setTitle('详情');
 	var row = grade.personalGradeResult.PersonalGradeResultGrid.getSelectionModel().getSelection()
 	var id = row[0].data.id;
 	var personalGradeId = row[0].data.personalGradeId;
 	var gradeUserType = row[0].data.gradeUserType;
-	var basicForm = grade.personalGradeResult.PersonalGradeResultWinView.down('form').getForm();
+	var basicForm = grade.personalGradeResult.PersonalGradeResultWin.down('form').getForm();
 	basicForm.reset();
 	basicForm.url = basePath + '/personalGrade/editPersonalGradeResult.action';
 	Ext.getCmp('evaluation').setReadOnly(true);
@@ -212,7 +213,9 @@ grade.personalGradeResult.ViewPersonalGradeResult = function() {
 		}
 	});
 	
-	
+	grade.personalDutyResultDetails.PersonalDutyResultDetailsGrid.down('#score').hide();
+	grade.personalDutyResultDetails.PersonalDutyResultDetailsGrid.down('#scoreShow').show();
+	Ext.getCmp('result_submit').hide();
 	var basicForm1 = grade.personalGradeResult.PersonalGradeResultForm1.getForm();
 	basicForm1.reset();
 	basicForm1.findField('id').setValue(id);
@@ -225,7 +228,7 @@ grade.personalGradeResult.ViewPersonalGradeResult = function() {
 			id : id
 		}
 	});
-	grade.personalGradeResult.PersonalGradeResultWinView.show();
+	grade.personalGradeResult.PersonalGradeResultWin.show();
 };
 
 /**

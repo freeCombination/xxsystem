@@ -73,8 +73,14 @@ var cm = [
 			dataIndex : "roleName"
 		},
 		{
+			itemId:"scoreShow",
+			header : "得分",
+			dataIndex : "score"
+		},
+		{
 			header : "得分",
 			dataIndex : "score",
+			itemId:"score",
             field:{
                 xtype:'combo',
                 maxLength:10,
