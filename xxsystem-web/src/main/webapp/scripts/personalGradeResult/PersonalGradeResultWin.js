@@ -187,11 +187,10 @@ var row9 = {
     }; */
 
 grade.personalGradeResult.PersonalGradeResultForm = Ext.create("Ext.form.Panel", {  
-    //renderTo:Ext.getBody(),  
 	layout : 'form',
 	region: "north",
     width:780,  
-    autoHeight:true,  
+    //autoHeight:true,  
     frame:true,  
     border : false,
     labelWidth:65,  
@@ -204,7 +203,7 @@ grade.personalGradeResult.PersonalGradeResultForm1 = Ext.create("Ext.form.Panel"
 	layout : 'form',
 	region: "south",
     width:780,  
-    autoHeight:true,  
+    //autoHeight:true,  
     frame:true,  
     border : false,
     labelWidth:65,  
@@ -241,7 +240,7 @@ grade.personalGradeResult.PersonalGradeResultWin = Ext.create("Ext.window.Window
 	width : 800,
 	layout: 'border',
 	autoScroll:true,
-	bodyStyle :'overflow-x:hidden;overflow-y:scroll',
+	bodyStyle :'overflow-x:scroll;overflow-y:scroll',
 	items : [grade.personalGradeResult.PersonalGradeResultForm,grade.personalDutyResult.PersonalDutyResultGrid,grade.personalDutyResultDetails.PersonalDutyResultDetailsGrid,grade.personalGradeResult.PersonalGradeResultForm1],
 	buttons : [ {
 		text : '确定',
@@ -314,7 +313,7 @@ grade.personalGradeResult.PersonalGradeResultWin = Ext.create("Ext.window.Window
 });
 
 
-/*grade.personalGradeResult.PersonalGradeResultWinView = Ext.create("Ext.window.Window", {
+grade.personalGradeResult.PersonalGradeResultWinView = Ext.create("Ext.window.Window", {
 	height : 500,
 	width : 800,
 	layout: 'border',
@@ -370,7 +369,7 @@ grade.personalGradeResult.PersonalGradeResultWin = Ext.create("Ext.window.Window
     		grade.personalDutyResultDetails.ScoreStore.load();
     	}
 	}
-});*/
+});
 
 
 

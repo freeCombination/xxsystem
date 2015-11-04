@@ -56,7 +56,7 @@ public class PersonalGradeDetails implements Serializable {
 	/**
 	 * 是否参与评分（针对于部门指标不参与单独评分）
 	 */
-	private boolean isGrade ;
+	private Integer isGrade ;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -108,11 +108,11 @@ public class PersonalGradeDetails implements Serializable {
 	}
 
 	@Column(name = "IS_GRADE")
-	public boolean isGrade() {
+	public Integer isGrade() {
 		return isGrade;
 	}
 
-	public void setGrade(boolean isGrade) {
+	public void setGrade(Integer isGrade) {
 		this.isGrade = isGrade;
 	}
 	

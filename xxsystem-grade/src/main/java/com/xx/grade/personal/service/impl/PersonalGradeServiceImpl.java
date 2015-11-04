@@ -43,6 +43,7 @@ import com.xx.system.common.exception.BusinessException;
 import com.xx.system.common.util.DateUtil;
 import com.xx.system.common.util.StringUtil;
 import com.xx.system.common.vo.ListVo;
+import com.xx.system.deptgrade.entity.FinalScore;
 import com.xx.system.dict.entity.Dictionary;
 import com.xx.system.dict.service.IDictService;
 import com.xx.system.org.entity.Duty;
@@ -278,33 +279,33 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		if (result.getTotalSize() > 0) {
 			wb = new HSSFWorkbook();
 			HSSFSheet sheet = wb.createSheet("个人职责明细");
+			HSSFCellStyle setBorder = wb.createCellStyle();
+			setBorder.setFillForegroundColor((short) 13);// 设置背景色
+			setBorder.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 			HSSFRow row = sheet.createRow(0);
 			HSSFCell cell = null;
 			//创建头部
-			cell = row.createCell(0);
-			cell.setCellValue("主键");
+/*			cell = row.createCell(0);
+			cell.setCellValue("主键");*/
 			
-			cell = row.createCell(1);
+			cell = row.createCell(0);
 			cell.setCellValue("工作职责");
 			
-			cell = row.createCell(2);
+			cell = row.createCell(1);
 			cell.setCellValue("完成情况");
 			
 			List<PersonalDutyVo> list = result.getList();
 			for (int i = 0; i < list.size(); i++) {
 				PersonalDutyVo vo = list.get(i);
 				row = sheet.createRow(i + 1);
-				//id
-				cell = row.createCell(0);
-				cell.setCellValue(String.valueOf(vo.getId()));
 				
 				//工作职责
-				cell = row.createCell(1);
-				cell.setCellValue(String.valueOf(vo.getWorkDuty()));
+				cell = row.createCell(0);
+				cell.setCellValue(vo.getWorkDuty());
 				
 				//完成情况
-				cell = row.createCell(2);
-				cell.setCellValue(String.valueOf(vo.getCompletion()));
+				cell = row.createCell(1);
+				cell.setCellValue(vo.getCompletion());
 			}
 		}
 		return wb;
@@ -313,8 +314,6 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 	@Override
 	public String uploadPersonalDutyExcel(String fileUrl,
 			Map<String, String> paramsMap) {
-	       // 年月
-        String reportDate = paramsMap.get("reportDate");
         // 标示
         String message = "importSuccess";
         String[][] content = null;
@@ -337,8 +336,8 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
             	String id = content[i][0];
             	PersonalDuty duty = (PersonalDuty)this.baseDao.queryEntityById(PersonalDuty.class, Integer.parseInt(id));
             	if (duty != null) {
-                	String workDuty = content[i][1];
-                	String completion = content[i][2];
+                	String workDuty = content[i][0];
+                	String completion = content[i][1];
                 	duty.setCompletion(completion);
 				}
             }
@@ -387,7 +386,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 				
 				for (PersonalWeight pw : pws) {
 					//对于参与评分的指标
-					if (pw.isGrade()) {
+					if (pw.isGrade() == 0) {
 						//获取该指标下所有角色权重
 						Set<IndexTypeRoleWeight> rws = pw.getIndexTypeRoles();
 						Iterator<IndexTypeRoleWeight> it = rws.iterator();
@@ -945,6 +944,13 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		}
 	}
 
+	/**
+	 * 获取个人评分对应指标的个人评分总和
+	 * 
+	 * @param grade
+	 * @param gradeDetail
+	 * @return
+	 */
 	private Double getIndexTypeTotal(PersonalGrade grade, PersonalGradeDetails gradeDetail) {
 		StringBuffer sql = new StringBuffer();
 		Double result = 0d ;
@@ -967,8 +973,39 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		}
 		System.err.println(result);
 		//如果是不参与个人评分的就是组织 TODO
-		if (!gradeDetail.isGrade()) {
-			result = 80d ;
+		if (gradeDetail.isGrade() != 0) {
+			User user = grade.getUser();
+			Organization organization = null;
+			for (OrgUser ou : user.getOrgUsers()) {
+				if (ou.getOrganization() != null) {
+					organization = ou.getOrganization();
+				}
+			}
+			if (organization != null) {
+				result = getBmScoreByOrg(organization,grade.getGradeYear());
+			}else{
+				result = 0d ;
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * 通过部门获取部门得分
+	 * 
+	 * @param organization
+	 * @param year 
+	 * @return
+	 */
+	private Double getBmScoreByOrg(Organization organization, String year) {
+		Double result = 0d ;
+		StringBuffer hql = new StringBuffer();
+		hql.append(" From FinalScore fs where fs.org.orgId = "+organization.getOrgId());
+		hql.append(" and fs.electYear = '"+year+"'");
+		List<FinalScore> finalScores = baseDao.queryEntitys(hql.toString());
+		if (finalScores != null && finalScores.size() > 0) {
+			FinalScore finalScore = finalScores.get(0);
+			result = StringUtil.isEmpty(finalScore.getScore()) ? 0d : Double.valueOf(finalScore.getScore());
 		}
 		return result;
 	}
