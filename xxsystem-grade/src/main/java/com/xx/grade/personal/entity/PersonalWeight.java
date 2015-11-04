@@ -47,7 +47,7 @@ public class PersonalWeight implements Serializable {
 	/**
 	 * 指标类型 部门绩效考核得分、工作计划完成情况、能力态度、领导能力、执行能力、工作业绩
 	 */
-	private Dictionary IndexType ;
+	private Dictionary indexType ;
 	
     /**
      * 权重
@@ -67,7 +67,7 @@ public class PersonalWeight implements Serializable {
 	/**
 	 * 是否参与评分（针对于部门指标不参与单独评分）
 	 */
-	private boolean isGrade ;
+	private Integer isGrade ;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -90,14 +90,14 @@ public class PersonalWeight implements Serializable {
 		this.classification = classification;
 	}
 
-    @ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "FK_INDEX_TYPE")
 	public Dictionary getIndexType() {
-		return IndexType;
+		return indexType;
 	}
 
 	public void setIndexType(Dictionary indexType) {
-		IndexType = indexType;
+		this.indexType = indexType;
 	}
 
 	@Column(name = "PERCENTAGE")
@@ -129,11 +129,11 @@ public class PersonalWeight implements Serializable {
 	}
 
 	@Column(name = "IS_GRADE")
-	public boolean isGrade() {
+	public Integer isGrade() {
 		return isGrade;
 	}
 
-	public void setGrade(boolean isGrade) {
+	public void setGrade(Integer isGrade) {
 		this.isGrade = isGrade;
 	}
 	

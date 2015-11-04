@@ -38,6 +38,15 @@
 		             "Ext.form.*",
 					 "Ext.data.*" ]);
 		//建立Model模型对象
+		Ext.define('DictModel', {
+            extend: 'Ext.data.Model',
+            fields: [
+                {name: 'dictionaryId',type:"int"},
+                {name: 'dictionaryName'},
+                {name: 'dictionaryValue'}
+            ]
+        }); 
+		
 		Ext.define("Weight",{
 			extend:"Ext.data.Model",
 			fields:[
@@ -66,6 +75,46 @@
         });
 		
 		//建立数据Store
+		var usrTypeStore = Ext.create('Ext.data.Store', {
+            model: 'DictModel',
+            proxy: {
+               type: 'ajax',
+               url: basePath + '/user/getSelectionsByType.action',
+               extraParams:{dictTypeCode:"GRADE_QZFL"},
+               reader: {
+                  type: 'json',
+                  root: 'list'
+               }
+            },
+            autoLoad: false,
+            listeners:{
+                load:function(store, records){
+                    var obj = {dictionaryId:0, dictionaryName:'全部'};
+                    store.insert(0, obj);
+                }
+            }
+        });
+		
+		var idxStore = Ext.create('Ext.data.Store', {
+            model: 'DictModel',
+            proxy: {
+               type: 'ajax',
+               url: basePath + '/user/getSelectionsByType.action',
+               extraParams:{dictTypeCode:"GRADE_ZBFL"},
+               reader: {
+                  type: 'json',
+                  root: 'list'
+               }
+            },
+            autoLoad: false,
+            listeners:{
+                load:function(store, records){
+                    var obj = {dictionaryId:0, dictionaryName:'全部'};
+                    store.insert(0, obj);
+                }
+            }
+        });
+		
 		var weightStore=Ext.create("Ext.data.Store", {
 	        pageSize: SystemConstant.commonSize,
 	        model:"Weight",
@@ -157,17 +206,25 @@
 			stripeRows: true,
 			tbar: ['参评人员分类',
 			{
-				id: 'indexNoQuery',
-				width: 100,   
-				labelWidth: 70,
-				xtype: 'textfield'
-			},'&nbsp;考核指标',
-			{
-				id: 'indexNameQuery',
-                width: 100,   
-                labelWidth: 70,
-                xtype: 'textfield'
-			},
+                xtype: 'combobox',
+                id:'usrTypeCombo',
+                store: usrTypeStore,
+                valueField: 'dictionaryId',
+                displayField: 'dictionaryName',
+                typeAhead:false,
+                editable:false,
+                queryMode: 'remote'
+            },'&nbsp;考核指标',
+            {
+                xtype: 'combobox',
+                id:'idxCombo',
+                store: idxStore,
+                valueField: 'dictionaryId',
+                displayField: 'dictionaryName',
+                typeAhead:false,
+                editable:false,
+                queryMode: 'remote'
+            },
             '&nbsp;',
 			{
 				id:'searchRespBtn',
@@ -177,8 +234,8 @@
 				iconCls:'search-button',
 				handler:function(){
 					var proxy = weightStore.getProxy();
-					proxy.setExtraParam("indexVo.number",Ext.getCmp("indexNoQuery").getValue());
-					proxy.setExtraParam("indexVo.name",Ext.getCmp("indexNameQuery").getValue());
+					proxy.setExtraParam("usrTypeId",Ext.getCmp("usrTypeCombo").getValue());
+					proxy.setExtraParam("idxId",Ext.getCmp("idxCombo").getValue());
 					weightStore.loadPage(1);
 				}
 			},'->',
@@ -273,6 +330,12 @@
 				}
 			} */
 		});
+		usrTypeStore.load(function(){
+            Ext.getCmp("usrTypeCombo").setValue(0);
+        });
+		idxStore.load(function(){
+            Ext.getCmp("idxCombo").setValue(0);
+        });
 		weightStore.load();
 		
 		Ext.create("Ext.container.Viewport", {

@@ -19,6 +19,7 @@ import com.xx.grade.personal.service.IPersonalWeightService;
 import com.xx.grade.personal.vo.IndexTypeRoleWeightVo;
 import com.xx.grade.personal.vo.PersonalWeightVo;
 import com.xx.system.common.dao.IBaseDao;
+import com.xx.system.common.util.StringUtil;
 import com.xx.system.common.vo.ListVo;
 import com.xx.system.dict.entity.Dictionary;
 import com.xx.system.role.entity.Role;
@@ -44,10 +45,25 @@ public class PersonalWeightServiceImpl implements IPersonalWeightService {
 		int totalSize = 0 ;
         int start = NumberUtils.toInt(paramMap.get("start"));
         int limit = NumberUtils.toInt(paramMap.get("limit"));
+        
+        String usrTypeId = paramMap.get("usrTypeId");
+        String idxId = paramMap.get("idxId");
+        
 		StringBuffer hql = new StringBuffer();
 		StringBuffer counthql = new StringBuffer();
-		hql.append(" From PersonalWeight pg where 1=1  ");
+		hql.append(" From PersonalWeight pg where 1=1 ");
 		counthql.append(" select count(*) From PersonalWeight pg where 1=1 ");
+		
+		if (StringUtil.isNotBlank(usrTypeId) && !"0".equals(usrTypeId)) {
+			hql.append(" and pg.classification.pkDictionaryId = " + usrTypeId);
+			counthql.append("  and pg.classification.pkDictionaryId = " + usrTypeId);
+		}
+		
+		if (StringUtil.isNotBlank(idxId) && !"0".equals(idxId)) {
+			hql.append(" and pg.indexType.pkDictionaryId = " + idxId);
+			counthql.append("  and pg.indexType.pkDictionaryId = " + idxId);
+		}
+		
 		totalSize =  baseDao.getTotalCount(counthql.toString(), new HashMap<String, Object>());
 		List<PersonalWeight> personalWeightLists =  (List<PersonalWeight>)baseDao.queryEntitysByPage(start, limit, hql.toString(),new HashMap<String, Object>());
 		for (PersonalWeight weight : personalWeightLists) {
