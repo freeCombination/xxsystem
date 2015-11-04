@@ -58,7 +58,7 @@
 				{name: "percentage"},
 				{name: "isGrade"},
 				{name: "remark"},
-				{}
+				{name: "rwList"}
 			]
 		});
 		
@@ -261,14 +261,14 @@
 					var ck = weightGrid.getSelectionModel().getSelection();
 					var itemsArray = new Array();
 					for(var i=0;i<ck.length;i++){
-						itemsArray.push(ck[i].data.indexId);
+						itemsArray.push(ck[i].data.id);
 					}
 					var idss = itemsArray.toString();
 					
 					Ext.Msg.confirm(SystemConstant.alertTitle,"确认删除所选指标数据吗？",function(btn) {
                         if (btn == 'yes') {
                             Ext.Ajax.request({
-                                url : '${ctx}/deptgrade/delIndexes.action',
+                                url : '${ctx}/personalWeight/deletePersonalWeigh.action',
                                 params : {ids: idss},
                                 success : function(res, options) {
                                     var result = Ext.decode(res.responseText);
@@ -288,14 +288,7 @@
                                             icon: Ext.MessageBox.INFO
                                         });
                                     }
-                                    //weightStore.loadPage(1);
-                                    weightStore.load({
-                                        params:{
-                                        	start:0,
-                                            limit:SystemConstant.commonSize,
-                                            'indexVo.electYear':Ext.getCmp('electYearQuery').getValue()
-                                        }
-                                    });
+                                    weightStore.loadPage(1);
                                 }
                             });
                         }
@@ -676,11 +669,7 @@
                                         modal : true,
                                         icon: Ext.Msg.ERROR
                                     });
-                                    weightStore.load({
-                                        params:{
-                                            'indexVo.electYear':Ext.getCmp('electYearQuery').getValue()
-                                        }
-                                    });
+                                    weightStore.load();
                                     weightRoleWin.close();
                                     Ext.MessageBox.hide();
                                  }
