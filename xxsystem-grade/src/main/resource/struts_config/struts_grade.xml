@@ -29,6 +29,9 @@
         </action>
 		
 		<action name="*" class="com.xx.grade.personal.action.PersonalGradeAction" method="{1}"></action>
-		<action name="*" class="com.xx.grade.personal.action.PersonalWeightAction" method="{1}"></action>
 	</package>
+	
+	<package name="personalWeight" extends="st" namespace="/personalWeight">
+        <action name="*" class="com.xx.grade.personal.action.PersonalWeightAction" method="{1}"></action>
+    </package>
 </struts>

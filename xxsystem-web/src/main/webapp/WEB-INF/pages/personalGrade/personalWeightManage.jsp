@@ -75,7 +75,7 @@
 	            actionMethods: {
                 	read: 'POST'
            		},
-			    url: "${ctx}/personalGrade/getPersonalWeightList.action",
+			    url: "${ctx}/personalWeight/getPersonalWeightList.action",
 			    reader: {
 				     totalProperty: "totalSize",
 				     root: "list"
