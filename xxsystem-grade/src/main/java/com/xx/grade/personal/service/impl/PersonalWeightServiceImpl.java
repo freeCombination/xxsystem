@@ -2,11 +2,9 @@ package com.xx.grade.personal.service.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -152,6 +150,7 @@ public class PersonalWeightServiceImpl implements IPersonalWeightService {
 		vo.setId(weight.getId());
 		vo.setPercentage(weight.getPercentage());
 		vo.setRemark(weight.getRemark());
+		vo.setIsGrade(weight.getIsGrade());
 		if (weight.getClassification() != null) {
 			vo.setClassificationId(weight.getClassification().getPkDictionaryId());
 			vo.setClassificationName(weight.getClassification().getDictionaryName());
@@ -189,6 +188,7 @@ public class PersonalWeightServiceImpl implements IPersonalWeightService {
 	private void buildVoToEntity(PersonalWeightVo vo, PersonalWeight weight) {
 		weight.setPercentage(vo.getPercentage());
 		weight.setRemark(vo.getRemark());
+		weight.setIsGrade(vo.getIsGrade());
 		// 分类
 		if (vo.getClassificationId() > 0) {
 			Dictionary dict = (Dictionary)baseDao.queryEntityById(Dictionary.class, vo.getClassificationId());
@@ -206,6 +206,7 @@ public class PersonalWeightServiceImpl implements IPersonalWeightService {
 	}
 
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<PersonalWeight> getPersonalWeightByClassification(int classificationId) {
 		StringBuffer hql = new StringBuffer();

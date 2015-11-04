@@ -56,23 +56,11 @@
 				{name: "indexTypeId"},
 				{name: "indexTypeName"},
 				{name: "percentage"},
-				{name: "remark"}
+				{name: "isGrade"},
+				{name: "remark"},
+				{}
 			]
 		});
-		
-		Ext.define("Classify",{
-            extend:"Ext.data.Model",
-            fields:[
-                {name: "classifyId"}, 
-                {name: "number"}, 
-                {name: "name"}, 
-                {name: "orgNames"},
-                {name: "orgIds"},
-                {name: "electYear"},
-                {name: "enable"},
-                {name: "isDelete"}
-            ]
-        });
 		
 		//建立数据Store
 		var usrTypeStore = Ext.create('Ext.data.Store', {
@@ -313,22 +301,7 @@
                         }
                     });
 				}
-			}]/* , 
-			listeners:{
-				'render': function() {
-					for(var i = 0;i < userPermissionArr.length;i++){
-						if("resp_add_btn" == userPermissionArr[i].name){
-							Ext.getCmp('addWeightBtn').setVisible(true);
-						}
-						if("resp_update_btn" == userPermissionArr[i].name){
-							Ext.getCmp('updateWeightBtn').setVisible(true);
-						}
-						if("resp_delete_btn" == userPermissionArr[i].name){
-							Ext.getCmp('delWeightBtn').setVisible(true);
-						}
-					}
-				}
-			} */
+			}]
 		});
 		usrTypeStore.load(function(){
             Ext.getCmp("usrTypeCombo").setValue(0);
@@ -346,27 +319,36 @@
 		
 		function addWeight(row){
 			var count = 0;
-			var oldNumber = '';
-			var indexId = '';
-			if (row) {
-				indexId = row.get('indexId');
-				oldNumber = row.get('number');
-			}
 			
-			var  cfStore = Ext.create('Ext.data.Store', {
-			    model: 'Classify',
-			    proxy: {
-			       type: 'ajax',
-			       url: basePath+'/deptgrade/getAllClassifies.action',
-			       extraParams:{electYear:Ext.getCmp('electYearQuery').getValue()},
-			       reader: {
-			          type: 'json'
-			       }
-			    },
-			    autoLoad: true
-			});
+			var usrTypeFormStore = Ext.create('Ext.data.Store', {
+	            model: 'DictModel',
+	            proxy: {
+	               type: 'ajax',
+	               url: basePath + '/user/getSelectionsByType.action',
+	               extraParams:{dictTypeCode:"GRADE_QZFL"},
+	               reader: {
+	                  type: 'json',
+	                  root: 'list'
+	               }
+	            },
+	            autoLoad: false
+	        });
+	        
+	        var idxFormStore = Ext.create('Ext.data.Store', {
+	            model: 'DictModel',
+	            proxy: {
+	               type: 'ajax',
+	               url: basePath + '/user/getSelectionsByType.action',
+	               extraParams:{dictTypeCode:"GRADE_ZBFL"},
+	               reader: {
+	                  type: 'json',
+	                  root: 'list'
+	               }
+	            },
+	            autoLoad: false
+	        });
 			
-			var index1Form = Ext.create("Ext.form.Panel", {
+			var weightForm = Ext.create("Ext.form.Panel", {
 				region: "north",
                 layout: 'form',
                 bodyStyle :'padding:2px 30px 2px 0',
@@ -386,54 +368,31 @@
 					    border: false,
 					    items: [
 							{
-							    id:'indexVoIndexId',
-							    name: 'indexVo.indexId',
+							    id:'personalWeightId',
+							    name: 'personalWeightVo.id',
 							    hidden:true
 							},
 							{
-			                    id:'indexVoNumber',
-			                    fieldLabel: '指标编号',
-			                    name: 'indexVo.number',
-			                    maxLength:25,
-			                    regex : new RegExp('^([^<^>])*$'),
-			                    regexText : '不能包含特殊字符！',
-			                    allowBlank: false,
-			                    validator: function(value){
-			                        var returnObj = null;
-			                        if(value == oldNumber){
-			                            return true;
-			                        }else{
-			                            $.ajax({
-			                                url : '${ctx}/deptgrade/checkIndexNumber.action',
-			                                data:{value:value},
-			                                cache : false,
-			                                async : false,
-			                                type : "POST",
-			                                dataType : 'json',
-			                                success : function (result){
-			                                    if(!result.valid){
-			                                        returnObj = result.reason;
-			                                    }else{
-			                                        returnObj = true;
-			                                    }
-			                                }
-			                            });
-			                            return returnObj;
-			                        }
-			                    }
-			                },
-			                {
-                                xtype: 'combobox',
-                                fieldLabel: '指标分类',
-                                id:'indexVoClassifyId',
-                                name: 'indexVo.classifyId',
-                                store: cfStore,
-                                valueField: 'classifyId',
-                                displayField: 'name',
-                                typeAhead:false,
-                                allowBlank:false,
-                                editable:false,
-                                queryMode: 'remote'
+				                xtype: 'combobox',
+				                fieldLabel: '参评人员分类',
+                                allowBlank: false,
+				                id:'usrTypeFormCombo',
+				                name:'personalWeightVo.classificationId',
+				                store: usrTypeFormStore,
+				                valueField: 'dictionaryId',
+				                displayField: 'dictionaryName',
+				                typeAhead:false,
+				                editable:false,
+				                queryMode: 'remote'
+				            },
+				            {
+                                id: 'weightTextfield',
+                                fieldLabel: '权重',
+                                name: 'personalWeightVo.percentage',
+                                regex : new RegExp('^[0-9]+(.[0-9]{1,2})?$'),
+                                regexText : '保留两位小数！',
+                                maxLength:50,
+                                allowBlank: false
                             }
 					    ]
 					},
@@ -448,23 +407,26 @@
                         border: false,
                         items: [
 							{
-							    id:'indexVoName',
-							    fieldLabel: '指标名称',
-							    name: 'indexVo.name',
-							    regex : new RegExp('^([^<^>])*$'),
-			                    regexText : '不能包含特殊字符！',
-							    maxLength:50,
-							    allowBlank: false
-							},
-							{
-			                    id: 'indexVoGrade',
-			                    fieldLabel: '考核分值',
-			                    name: 'indexVo.grade',
-			                    regex : new RegExp('^([^<^>])*$'),
-			                    regexText : '不能包含特殊字符！',
-			                    maxLength:50,
-                                allowBlank: false
-			                }
+                                xtype: 'combobox',
+                                fieldLabel: '考核指标',
+                                allowBlank: false,
+                                id:'idxFormCombo',
+                                name:'personalWeightVo.indexTypeId',
+                                store: idxFormStore,
+                                valueField: 'dictionaryId',
+                                displayField: 'dictionaryName',
+                                typeAhead:false,
+                                editable:false,
+                                queryMode: 'remote'
+                            },
+                            {
+                                xtype: 'checkboxfield',
+                                fieldLabel : '是否参与评分',
+                                name : 'personalWeightVo.isGrade',
+                                id : 'isGrade',
+                                inputValue:'1',
+                                checked : true
+                            }
                         ]
 					},
 					{
@@ -478,11 +440,11 @@
                         border: false,
                         items: [
                             {
-                                id:'indexVoRemark',
+                                id:'weightRemark',
                                 xtype:'textarea',
                                 rows:3,
-                                fieldLabel: '考核说明',
-                                name: 'indexVo.remark',
+                                fieldLabel: '备注',
+                                name: 'personalWeightVo.remark',
                                 //regex : new RegExp('^([^<^>])*$'),
                                 //regexText : '不能包含特殊字符！',
                                 maxLength:1000
@@ -493,126 +455,109 @@
                 ]
             });
 			
-			var index2Store = Ext.create("Ext.data.Store", {
-		        pageSize: SystemConstant.commonSize,
-		        model:"Index",
-		        remoteSort:true,
-		        proxy: {
-		            type:"ajax",
-		            actionMethods: {
-		                read: 'POST'
-		            },
-		            extraParams:{index1Id : indexId},
-		            url: "${ctx}/deptgrade/getIndex2ListByIndex1Id.action",
-		            reader:{
-		                type:'json'
-		            },
-		            simpleSortMode :true
-		        }
+			Ext.define("RoleWeight",{
+	            extend:"Ext.data.Model",
+	            fields:[
+	                {name: "id"}, 
+	                {name: "roleId"}, 
+	                {name: "roleName"}, 
+	                {name: "percentage"}
+	            ]
+	        });
+			
+			Ext.define("Role",{
+	            extend:"Ext.data.Model",
+	            fields:[
+	                {name: "roleId"}, 
+	                {name: "roleName"}
+	            ]
+	        });
+			
+			var weightRoleStore = Ext.create("Ext.data.Store", {
+		        model:"RoleWeight"
 		    });
 			
-			var index2Cm=[
+			if (row) {
+				weightRoleStore.add(row.get('rwList'));
+			}
+			
+			var roleStore = Ext.create('Ext.data.Store', {
+	            model: 'Role',
+	            proxy: {
+	               type: 'ajax',
+	               url: '${ctx}/deptgrade/getAllRole.action',
+	               reader: {
+	                  type: 'json'
+	               }
+	            },
+	            autoLoad: true
+	        });
+			
+			var weightRoleCm=[
                 {header:"序号",xtype: "rownumberer",width:60,align:"center",menuDisabled: true,sortable :false},
-                {header: "ID",width: 50,dataIndex: "indexId",hidden: true,menuDisabled: true,sortable :false},
-                {header: "二级指标编号",width: 100,dataIndex: "number",menuDisabled: true,sortable :false,
+                {header: "ID",width: 50,dataIndex: "id",hidden: true,menuDisabled: true,sortable :false},
+                {header: "角色",width: 100,dataIndex: "roleName",menuDisabled: true,sortable :false,
                     renderer : function(value, cellmeta, record, rowIndex,
                             columnIndex, store) {
                         cellmeta.tdAttr = 'data-qtip="' + value + '"';
                         return value;
                     },
                     field: {
-                    	xtype:'textfield',
-                    	maxLength:25,
-                    	regex : new RegExp('^([^<^>])*$'),
-                        regexText : '不能包含特殊字符！',
-                    	allowBlank: false
+                        xtype:'combo',
+                        allowBlank: false,
+                        editable: false,
+                        store: roleStore,
+                        queryMode: 'remote',
+                        displayField: 'roleName',
+                        valueField: 'roleName'
                     }
-
                 },
-                {header: "二级指标名称",width: 100,dataIndex: "name",menuDisabled: true,sortable :false,
-                    renderer : function(value, cellmeta, record, rowIndex,
-                            columnIndex, store) {
-                        cellmeta.tdAttr = 'data-qtip="' + value + '"';
-                        return value;
-                    },
-                    field: {
-                        xtype:'textfield',
-                        maxLength:50,
-                        regex : new RegExp('^([^<^>])*$'),
-                        regexText : '不能包含特殊字符！',
-                        allowBlank: false
-                    }
-
-                },
-                {header: "考核分值",width: 60,dataIndex: "grade",menuDisabled: true,sortable :false,
-                    renderer : function(value, cellmeta, record, rowIndex,
-                            columnIndex, store) {
-                        cellmeta.tdAttr = 'data-qtip="' + value + '"';
-                        return value;
+                {header: "权重",width: 100,dataIndex: "percentage",menuDisabled: true,sortable :false,
+                	renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
+                        var showStr = Math.round(value * 100) + "%";
+                        cellmeta.tdAttr = 'data-qtip="' + showStr + '"';
+                        return showStr;
                     },
                     field: {
                         xtype:'textfield',
                         maxLength:10,
-                        regex : new RegExp('^([^<^>])*$'),
-                        regexText : '不能包含特殊字符！',
+                        regex : new RegExp('^[0-9]+(.[0-9]{1,2})?$'),
+                        regexText : '保留两位小数！',
                         allowBlank: false
-                    }
-
-                },
-                {header: "考核说明",width: 200,dataIndex: "remark",menuDisabled: true,sortable :false,
-                    renderer : function(value, cellmeta, record, rowIndex,
-                            columnIndex, store) {
-                        cellmeta.tdAttr = 'data-qtip="' + value + '"';
-                        return value;
-                    },
-                    field: {
-                    	xtype:'textarea',
-                    	style: {
-                            marginTop: '80px'
-                        },
-                    	height:100,
-                    	maxLength:1000
-                    	//regex : new RegExp('^([^<^>])*$'),
-                        //regexText : '不能包含特殊字符！',
                     }
                 }
             ];
 			
-			var index2Sm = Ext.create("Ext.selection.CheckboxModel",{
+			var weightRoleSm = Ext.create("Ext.selection.CheckboxModel",{
 		        injectCheckbox:0,
 		        listeners: {
 		            selectionchange: function(){
-		                var c = index2Grid.getSelectionModel().getSelection();
+		                var c = weightRoleGrid.getSelectionModel().getSelection();
 		                if (c.length > 0) {
-		                    Ext.getCmp('delIndex2Btn').setDisabled(false);
+		                    Ext.getCmp('weightRoleBtn').setDisabled(false);
 		                } else {
-		                    Ext.getCmp('delIndex2Btn').setDisabled(true);
+		                    Ext.getCmp('weightRoleBtn').setDisabled(true);
 		                }
 		            }
 		        }
 		    });
 			
 			var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-		        clicksToEdit: 1/* ,
-		        listeners : {
-		            beforeedit:function(editor, e, eOpts ){
-		                
-		            }
-		        } */
+		        clicksToEdit: 1
 		    });
 			
-			var index2Grid =  Ext.create("Ext.grid.Panel",{
+			var weightRoleGrid =  Ext.create("Ext.grid.Panel",{
 		        border:false,
 		        columnLines: true,
 		        layout:"fit",
 		        region: "center",
 		        height: 120,
-		        id: "index2Grid",
-		        columns:index2Cm,
-		        selModel:index2Sm,
+		        id: "weightRoleGrid",
+		        columns:weightRoleCm,
+		        selModel:weightRoleSm,
 		        plugins: [cellEditing],
 		        forceFit : true,
-		        store: index2Store,
+		        store: weightRoleStore,
 		        autoScroll: true,
 		        stripeRows: true,
 		        tbar:["  岗位职责",
@@ -625,45 +570,44 @@
 		                handler:function(){
 		                	count++;
 		                    //拼接一个数据格式;
-		                    var data= "{ indexId:" + count
-		                            + ", number:''"
-                                    + ", name:''"
-                                    + ", grade:''"
-                                    + ", remark:'' }";
+		                    var data= "{ id:" + count
+		                            + ", roleId:''"
+                                    + ", roleName:''"
+                                    + ", percentage:''}";
 
-		                    index2Store.add(eval("("+data+")"));
+		                    weightRoleStore.add(eval("("+data+")"));
 		                }
 		            },
 		            {
-		                id : 'delIndex2Btn',
+		                id : 'weightRoleBtn',
 		                xtype : 'button',
 		                disabled : true,
 		                text : '删除',
 		                iconCls : 'delete-button',
 		                handler : function() {
-		                    var rows = index2Grid.getSelectionModel().getSelection();
+		                    var rows = weightRoleGrid.getSelectionModel().getSelection();
 		                    Ext.Msg.confirm('系统提示','确定要删除这'+rows.length+'条记录吗?',function(btn){
 		                        if(btn=='yes'){
 		                            for(var i=0; i<rows.length;i++){
-		                            	index2Store.remove(rows[i]);
+		                            	weightRoleStore.remove(rows[i]);
 		                            }
-		                            index2Grid.getView().refresh();//刷新行号
+		                            weightRoleGrid.getView().refresh();//刷新行号
 		                        }
 		                    });
 		                }
 		            }
 		        ]
 		    });
-			index2Store.load();
+			//weightRoleStore.load();
             
-			var winTitle = '添加权重';
-			var formUrl = '${ctx}/deptgrade/addWeight.action';
+			var winTitle = '添加个人评分权重';
+			var formUrl = '${ctx}/personalWeight/addPersonalWeigh.action';
 			if (row) {
-				winTitle = '修改权重';
-	            formUrl = '${ctx}/deptgrade/updateIndex.action';
+				winTitle = '修改个人评分权重';
+	            formUrl = '${ctx}/personalWeight/updatePersonalWeigh.action';
 			}
 			
-            var index2Win=Ext.create("Ext.window.Window",{
+            var weightRoleWin=Ext.create("Ext.window.Window",{
                 title: winTitle,
                 resizable: false,
                 buttonAlign:"center",
@@ -672,31 +616,30 @@
                 width: 600,
                 modal:true,
                 layout: 'border',
-                items: [index1Form, index2Grid],
+                items: [weightForm, weightRoleGrid],
                 buttons:[{
                     text: SystemConstant.saveBtnText,
                     handler: function(){
-                        if(index1Form.form.isValid()){
-                            Ext.MessageBox.wait("", "添加指标数据", 
+                        if(weightForm.form.isValid()){
+                            Ext.MessageBox.wait("", "添加个人评分权重数据", 
                                 {
                                     text:"请稍后..."
                                 }
                             );
                             
-                            var index2Lst = '';
-                            var c = index2Store.getCount();
+                            var weightRoleLst = '';
+                            var c = weightRoleStore.getCount();
                             if (c > 0) {
-                            	for(var i=0; i<index2Store.getCount(); i++){
-                                    var re = index2Store.getAt(i);
-                                    var number = re.get('number');
-                                    var name = re.get('name');
-                                    var grade = re.get('grade');
-                                    var remark = re.get('remark');
+                            	for(var i=0; i<weightRoleStore.getCount(); i++){
+                                    var re = weightRoleStore.getAt(i);
+                                    var roleName = re.get('roleName');
+                                    var roleId = roleStore.findRecord('roleName', roleName).get('roleId');
+                                    var percentage = re.get('percentage');
                                     
-                                    if (!number || !name || !grade) {
+                                    if (!roleName || !percentage) {
                                         Ext.MessageBox.show({
                                             title:'提示信息',
-                                            msg:"指标编号、名称、分值不能为空",
+                                            msg:"角色、权重不能为空！",
                                             buttons: Ext.Msg.YES,
                                             modal : true,
                                             icon: Ext.Msg.INFO
@@ -704,18 +647,16 @@
                                         return false;
                                     }
                                     
-                                    index2Lst += '&index2Lst[' + i + '].number=' + number
-                                                + '&index2Lst[' + i + '].name=' + name
-                                                + '&index2Lst[' + i + '].grade=' + grade
-                                                + '&index2Lst[' + i + '].remark=' + remark;
+                                    weightRoleLst += '&personalWeightVo.rwList[' + i + '].roleId=' + roleId
+                                                + '&personalWeightVo.rwList[' + i + '].percentage=' + percentage;
                                 }
                             	
-                            	index2Lst = index2Lst.substring(1)
+                            	weightRoleLst = weightRoleLst.substring(1)
                             }
                             
-                            index1Form.form.submit({
+                            weightForm.form.submit({
                                 url : formUrl,
-                                params : index2Lst,
+                                params : weightRoleLst,
                                 success : function(form, action) {
                                     new Ext.ux.TipsWindow({
                                         title: SystemConstant.alertTitle,
@@ -723,12 +664,8 @@
                                         html:action.result.msg
                                     }).show();
                                     
-                                    weightStore.load({
-                                        params:{
-                                            'indexVo.electYear':Ext.getCmp('electYearQuery').getValue()
-                                        }
-                                    });
-                                    index2Win.close();
+                                    weightStore.load();
+                                    weightRoleWin.close();
                                     Ext.MessageBox.hide();
                                 },
                                 failure : function(form,action){
@@ -744,7 +681,7 @@
                                             'indexVo.electYear':Ext.getCmp('electYearQuery').getValue()
                                         }
                                     });
-                                    index2Win.close();
+                                    weightRoleWin.close();
                                     Ext.MessageBox.hide();
                                  }
                             });
@@ -753,18 +690,24 @@
                 },{
                     text: '关闭',
                     handler: function(){
-                        index2Win.close();
+                        weightRoleWin.close();
                     }
                 }],
                 listeners: {
                 	afterrender: function(){
                 		if (row) {
-                            Ext.getCmp('indexVoIndexId').setValue(row.get('indexId'));
-                            Ext.getCmp('indexVoNumber').setValue(row.get('number'));
-                            Ext.getCmp('indexVoClassifyId').setValue(row.get('classifyId'));
-                            Ext.getCmp('indexVoName').setValue(row.get('name'));
-                            Ext.getCmp('indexVoGrade').setValue(row.get('grade'));
-                            Ext.getCmp('indexVoRemark').setValue(row.get('remark'));
+                            Ext.getCmp('personalWeightId').setValue(row.get('id'));
+                            usrTypeFormStore.load(function(){
+	                            Ext.getCmp('usrTypeFormCombo').setValue(row.get('classificationId'));
+                            });
+                            
+                            idxFormStore.load(function(){
+                            	Ext.getCmp('idxFormCombo').setValue(row.get('indexTypeId'));
+                            });
+                            
+                            Ext.getCmp('weightTextfield').setValue(row.get('percentage'));
+                            Ext.getCmp('isGrade').setValue(row.get('isGrade'));
+                            Ext.getCmp('weightRemark').setValue(row.get('remark'));
                         }
                 	}
                 }

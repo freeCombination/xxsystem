@@ -129,13 +129,11 @@ public class PersonalWeight implements Serializable {
 	}
 
 	@Column(name = "IS_GRADE")
-	public Integer isGrade() {
+	public Integer getIsGrade() {
 		return isGrade;
 	}
 
-	public void setGrade(Integer isGrade) {
+	public void setIsGrade(Integer isGrade) {
 		this.isGrade = isGrade;
 	}
-	
-	
 }

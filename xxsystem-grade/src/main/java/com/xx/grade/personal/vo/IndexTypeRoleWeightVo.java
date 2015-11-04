@@ -11,7 +11,7 @@ public class IndexTypeRoleWeightVo {
 	/**
 	 * 主键ID
 	 */
-	private int id; 
+	private int id;
 	
 	/**
 	 * 角色id

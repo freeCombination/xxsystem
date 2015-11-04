@@ -42,6 +42,11 @@ public class PersonalWeightVo {
     private String percentage;
     
     /**
+	 * 是否参与评分（针对于部门指标不参与单独评分）
+	 */
+	private Integer isGrade ;
+    
+    /**
      * 备注
      */
 	private String remark ;
@@ -113,5 +118,13 @@ public class PersonalWeightVo {
 
 	public void setRwList(List<IndexTypeRoleWeightVo> rwList) {
 		this.rwList = rwList;
+	}
+
+	public Integer getIsGrade() {
+		return isGrade;
+	}
+
+	public void setIsGrade(Integer isGrade) {
+		this.isGrade = isGrade;
 	}
 }
