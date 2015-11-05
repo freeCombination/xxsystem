@@ -123,6 +123,7 @@ var row6 = {
             xtype:'textarea',  
             name:'evaluation',
             id:'evaluation',
+            hidden:true,
         	regex : new RegExp('^([^<^>])*$'),
             regexText : '不能包含特殊字符！',
     		maxLength : 500,
@@ -137,6 +138,7 @@ var row7 = {
             xtype:'textarea',  
             name:'evaluation1',
             id:'evaluation1',
+            hidden:true,
         	regex : new RegExp('^([^<^>])*$'),
             regexText : '不能包含特殊字符！',
     		maxLength : 500,
@@ -151,6 +153,7 @@ var row8 = {
             xtype:'textarea',  
             name:'evaluation2',
             id:'evaluation2',
+            hidden:true,
         	regex : new RegExp('^([^<^>])*$'),
             regexText : '不能包含特殊字符！',
     		maxLength : 500,
@@ -165,6 +168,7 @@ var row9 = {
             xtype:'textarea',  
             name:'evaluation3',
             id:'evaluation3',
+            hidden:true,
         	regex : new RegExp('^([^<^>])*$'),
             regexText : '不能包含特殊字符！',
     		maxLength : 500,
@@ -190,7 +194,7 @@ grade.personalGradeResult.PersonalGradeResultForm = Ext.create("Ext.form.Panel",
 	layout : 'form',
 	region: "north",
     width:780,  
-    //autoHeight:true,  
+    height:120,
     frame:true,  
     border : false,
     labelWidth:65,  
@@ -203,7 +207,7 @@ grade.personalGradeResult.PersonalGradeResultForm1 = Ext.create("Ext.form.Panel"
 	layout : 'form',
 	region: "south",
     width:780,  
-    //autoHeight:true,  
+    height:180,
     frame:true,  
     border : false,
     labelWidth:65,  
@@ -226,8 +230,7 @@ grade.personalGradeResult.PersonalGradeResultForm1 = Ext.create("Ext.form.Panel"
 		name : 'gradeUserType',
 		xtype:'textfield',
 		hidden : true
-	 },
-           row4,row5,row6,row7,row8,row9]
+	 },row4,row5,row6,row7,row8,row9]
 });
 
 
@@ -236,11 +239,9 @@ grade.personalGradeResult.PersonalGradeResultForm1 = Ext.create("Ext.form.Panel"
  * 定义个人评分基础信息form
  */
 grade.personalGradeResult.PersonalGradeResultWin = Ext.create("Ext.window.Window", {
-	height : 500,
+	height : 560,
 	width : 800,
 	layout: 'border',
-	autoScroll:true,
-	bodyStyle :'overflow-x:scroll;overflow-y:scroll',
 	items : [grade.personalGradeResult.PersonalGradeResultForm,grade.personalDutyResult.PersonalDutyResultGrid,grade.personalDutyResultDetails.PersonalDutyResultDetailsGrid,grade.personalGradeResult.PersonalGradeResultForm1],
 	buttons : [ {
 		text : '确定',
@@ -311,66 +312,5 @@ grade.personalGradeResult.PersonalGradeResultWin = Ext.create("Ext.window.Window
     	}
 	}
 });
-
-
-/*grade.personalGradeResult.PersonalGradeResultWinView = Ext.create("Ext.window.Window", {
-	height : 500,
-	width : 800,
-	layout: 'border',
-	items : [grade.personalGradeResult.PersonalGradeResultForm,grade.personalDutyResult.PersonalDutyResultGrid,grade.personalDutyResultDetails.PersonalDutyResultDetailsGridView,grade.personalGradeResult.PersonalGradeResultForm1],
-	buttons : [ {
-		text : '关闭',
-		handler : function() {
-			grade.personalGradeResult.PersonalGradeResultWinView.close();
-		}
-	} ],
-	listeners: {
-    	afterrender: function(){
-    		var personalGradeId = Ext.getCmp('personalGradeId').getValue();
-    		var personalGradeResultId = Ext.getCmp('id').getValue();
-    		var gradeUserType = Ext.getCmp('gradeUserType').getValue();
-    		if (gradeUserType != '') {
-    			var gradeUserTypeArr = gradeUserType.split(',');
-    			if (gradeUserTypeArr[0]=='true') {
-    				Ext.getCmp('evaluation').show();
-				}else{
-					Ext.getCmp('evaluation').hide();
-				}
-    			if (gradeUserTypeArr[1]=='true') {
-    				Ext.getCmp('evaluation1').show();
-				}else{
-					Ext.getCmp('evaluation1').hide();
-				}
-    			if (gradeUserTypeArr[2]=='true') {
-    				Ext.getCmp('evaluation2').show();
-				}else{
-					Ext.getCmp('evaluation2').hide();
-				}
-    			if (gradeUserTypeArr[3]=='true') {
-    				Ext.getCmp('evaluation3').show();
-				}else{
-					Ext.getCmp('evaluation3').hide();
-				}
-			}
-    		grade.personalDutyResult.PersonalDutyResultStore.load({
-    			params:
-    				{
-    					personalGradeId : personalGradeId
-    				}
-    			});
-    		
-    		grade.personalDutyResultDetails.PersonalDutyResultDetailsStore.load({
-    			params:
-				{
-    				personalGradeResultId : personalGradeResultId
-				}
-			});
-    		
-    		grade.personalDutyResultDetails.ScoreStore.load();
-    	}
-	}
-});*/
-
-
 
 

@@ -507,9 +507,8 @@
                 },
                 {header: "权重",width: 100,dataIndex: "percentage",menuDisabled: true,sortable :false,
                 	renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
-                        var showStr = Math.round(value * 100) + "%";
-                        cellmeta.tdAttr = 'data-qtip="' + showStr + '"';
-                        return showStr;
+                        cellmeta.tdAttr = 'data-qtip="' + value + '"';
+                        return value;
                     },
                     field: {
                         xtype:'textfield',

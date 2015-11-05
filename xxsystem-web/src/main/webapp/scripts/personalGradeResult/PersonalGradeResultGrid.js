@@ -131,6 +131,7 @@ grade.personalGradeResult.PersonalGradeResultGrid = Ext.create("Ext.grid.Panel",
 		text : '查看',
 		disabledExpr : "$selectedRows != 1",// $selected 表示选中的记录数不等于1
 		disabled : true,
+		hidden:true,
 		id:'query-button',
 		iconCls : 'query-button',
 		handler : function() {
@@ -171,8 +172,6 @@ grade.personalGradeResult.EditPersonalGradeResult = function() {
 			id : id
 		}
 	});
-	grade.personalDutyResultDetails.PersonalDutyResultDetailsGrid.down('#score').show();
-	grade.personalDutyResultDetails.PersonalDutyResultDetailsGrid.down('#scoreShow').hide();
 	Ext.getCmp('result_submit').show();
 	
 	var basicForm1 = grade.personalGradeResult.PersonalGradeResultForm1.getForm();
@@ -213,8 +212,6 @@ grade.personalGradeResult.ViewPersonalGradeResult = function() {
 		}
 	});
 	
-	grade.personalDutyResultDetails.PersonalDutyResultDetailsGrid.down('#score').hide();
-	grade.personalDutyResultDetails.PersonalDutyResultDetailsGrid.down('#scoreShow').show();
 	Ext.getCmp('result_submit').hide();
 	var basicForm1 = grade.personalGradeResult.PersonalGradeResultForm1.getForm();
 	basicForm1.reset();

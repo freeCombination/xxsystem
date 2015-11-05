@@ -73,11 +73,6 @@ var cm = [
 			dataIndex : "roleName"
 		},
 		{
-			itemId:"scoreShow",
-			header : "得分",
-			dataIndex : "score"
-		},
-		{
 			header : "得分",
 			dataIndex : "score",
 			itemId:"score",
@@ -123,19 +118,12 @@ var cm = [
 grade.personalDutyResultDetails.PersonalDutyResultDetailsGrid = Ext.create("Ext.grid.Panel", {
 	title:'评分明细',
 	region : "south",
-	height : 120,
+	height : 100,
 	store : grade.personalDutyResultDetails.PersonalDutyResultDetailsStore,
 	plugins: [cellEditing],
 	columns : cm
 });
 
-grade.personalDutyResultDetails.PersonalDutyResultDetailsGridView = Ext.create("Ext.grid.Panel", {
-	title:'评分明细',
-	region : "south",
-	height : 120,
-	store : grade.personalDutyResultDetails.PersonalDutyResultDetailsStore,
-	columns : cm
-});
 
 
 

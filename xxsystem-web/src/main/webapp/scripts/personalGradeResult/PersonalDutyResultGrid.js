@@ -48,10 +48,7 @@ var cm = [
 		},
 		{
 			header : "完成情况",
-			dataIndex : "completion"/*,
-			renderer:function(value,p,record){
-				return '<div style="white-space:normal">'+value+"</div>";
-			}*/
+			dataIndex : "completion"
 		}
           ];
 
@@ -61,7 +58,6 @@ var cm = [
 grade.personalDutyResult.PersonalDutyResultGrid = Ext.create("Ext.grid.Panel", {
 	title:'岗位职责完成情况',
 	region : "center",
-	height : 120,
 	store : grade.personalDutyResult.PersonalDutyResultStore,
 	columns : cm
 });
