@@ -188,7 +188,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 				}
 				
 				icvo.setElectYear(cf.getElectYear());
-				icvo.setHasSubmit(cf.getHasSubmit());
+				//icvo.setHasSubmit(cf.getHasSubmit());
 				icvo.setEnable(cf.getEnable());
 				
 				if (cf.getScoreType() != null) {
@@ -200,6 +200,17 @@ public class IndexManageServiceImpl implements IIndexManageService {
 				}
 				else {
 					icvo.setParticipation("false");
+				}
+				
+				// 判断是否已产生评分记录，用于判断是否可以修改指标分类
+				String grHql = " from GradeRecord gr where gr.isDelete = 0"
+						+ " and gr.classify.pkClassifyId = " + cf.getPkClassifyId();
+				int hasGrade = baseDao.queryTotalCount(grHql, new HashMap<String, Object>());
+				if (hasGrade > 0) {
+					icvo.setHasSubmit(1);
+				}
+				else {
+					icvo.setHasSubmit(0);
 				}
 				
 				voLst.add(icvo);
@@ -1644,7 +1655,9 @@ public class IndexManageServiceImpl implements IIndexManageService {
 						}
 						List<FinalScore> fsLst = (List<FinalScore>)baseDao.queryEntitys(fsHql);
 						if (!CollectionUtils.isEmpty(fsLst)) {
-							vo.setSumScore(fsLst.get(0).getSumScore());
+							if (!"0".equals(fsLst.get(0).getSumScore())) {
+								vo.setSumScore(fsLst.get(0).getSumScore());
+							}
 							vo.setFinalScore(fsLst.get(0).getScore());
 						}
 						
@@ -1655,8 +1668,23 @@ public class IndexManageServiceImpl implements IIndexManageService {
 					if (!CollectionUtils.isEmpty(bdLst)) {
 						vo = new DeptGradeDetailVo();
 						vo.setCanpDept(org.getOrgName());
+						vo.setCanpDeptId(org.getOrgId());
 						vo.setBuildScore(bdLst.get(0).getScore());
 						vo.setIsParticipation(0);
+						
+						// 查询部门最终得分
+						String fsHql = " from FinalScore fs where fs.org.orgId = " + org.getOrgId();
+						if (StringUtil.isNotBlank(electYear)) {
+							fsHql += " and fs.electYear = '" + electYear + "'";
+						}
+						List<FinalScore> fsLst = (List<FinalScore>)baseDao.queryEntitys(fsHql);
+						if (!CollectionUtils.isEmpty(fsLst)) {
+							if (!"0".equals(fsLst.get(0).getSumScore())) {
+								vo.setSumScore(fsLst.get(0).getSumScore());
+							}
+							vo.setFinalScore(fsLst.get(0).getScore());
+						}
+						
 						voLst.add(vo);
 					}
 				}

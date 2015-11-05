@@ -104,6 +104,30 @@
             listeners:{
                 load:function(store, records){
                     if (records.length > 0) {
+                    	for (var i = 0; i < records.length; i++) {
+                    		if (!records[i].get('classifyName') && !records[i].get('finalScore') &&
+                                    Ext.getCmp('electYearQuery').getValue() == Ext.Date.format(new Date(),"Y")) {
+                    			records[i].set('finalScore', records[i].get('buildScore'));
+                    			
+                    			$.ajax({
+                                    type : "POST",
+                                    url : "${ctx}/deptgrade/saveFinalScore.action",
+                                    data : {
+                                        orgId:records[i].get('canpDeptId'),
+                                        sumScore:0,
+                                        finalScore:records[i].get('buildScore'),
+                                        electYear:Ext.getCmp('electYearQuery').getValue()
+                                    },
+                                    cache : false,
+                                    //async : false,
+                                    dataType : 'json',
+                                    success : function(response) {
+                                        
+                                    }
+                                });
+                            }
+                    	}
+                    	
                         mergeCells(recordGrid, [1]);
                         mergeCells(recordGrid, [5, 6, 7]);
                     }

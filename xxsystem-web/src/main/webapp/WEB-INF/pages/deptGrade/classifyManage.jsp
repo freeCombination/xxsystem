@@ -301,7 +301,18 @@
 				iconCls:'edit-button',
 				handler:function(){
 					var row = classifyGrid.getSelectionModel().getSelection()[0];
-					addClassify(row);
+					if (1 == row.get('hasSubmit')) {
+						Ext.MessageBox.show({
+                            title: SystemConstant.alertTitle,
+                            msg: '该指标分类已产生评分记录，不能修改！',
+                            buttons: Ext.MessageBox.OK,
+                            icon: Ext.MessageBox.INFO
+                        });
+						return false;
+					}
+					else {
+						addClassify(row);
+					}
 				}
 			},
 			{
