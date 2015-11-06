@@ -493,7 +493,7 @@
 	            title: '部门评分--' + record.get('name'),
 	            resizable: false,
 	            buttonAlign:"center",
-	            height: 540,
+	            height: 500,
 	            width: 1200,
 	            modal:true,
 	            closeAction : 'destroy',
