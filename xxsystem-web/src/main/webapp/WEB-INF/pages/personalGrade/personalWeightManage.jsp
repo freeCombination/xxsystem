@@ -471,6 +471,7 @@
 		    });
 			
 			if (row) {
+				weightRoleStore.removeAll();
 				weightRoleStore.add(row.get('rwList'));
 			}
 			

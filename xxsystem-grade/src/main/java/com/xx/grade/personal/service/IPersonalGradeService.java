@@ -97,7 +97,7 @@ public interface IPersonalGradeService {
 	 * @param ids
 	 * @return
 	 */
-	public String submitPersonalGrade(String ids);
+	public String submitPersonalGrade(String ids,User currentUser);
 	
 	/**
 	 * 生成评分结果

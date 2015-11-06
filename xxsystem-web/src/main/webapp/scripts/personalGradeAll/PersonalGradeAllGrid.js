@@ -36,7 +36,7 @@ grade.personalGrade.PersonalGradeStore = Ext.create('Ext.data.Store', {
 	}
 });
 
-grade.personalGrade.PersonalGradeStore.getProxy().setExtraParam("status", 2);
+grade.personalGrade.PersonalGradeStore.getProxy().setExtraParam("status","1,2");
 
 
 /**

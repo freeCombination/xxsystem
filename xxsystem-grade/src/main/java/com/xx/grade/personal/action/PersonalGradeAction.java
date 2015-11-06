@@ -605,9 +605,7 @@ public class PersonalGradeAction extends BaseAction {
 	public String submitPersonalGrade() {
 		try {
 			String ids = this.getRequest().getParameter("ids");
-			String result = personalGradeService.submitPersonalGrade(ids);
-			//生成个人评分结果表
-			personalGradeService.generatePersonalGradeResult(ids, getCurrentUser());
+			String result = personalGradeService.submitPersonalGrade(ids,getCurrentUser());
 			JsonUtil.outJson(result);
 			this.excepAndLogHandle(PersonalGradeAction.class, "提交个人评分", null,
 					true);

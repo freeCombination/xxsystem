@@ -65,14 +65,6 @@ var cm = [
 			header : "年份",
 			dataIndex : "gradeYear"
 		},
-/*		{
-			header : "存在问题",
-			dataIndex : "problem"
-		},
-		{
-			header : "工作计划",
-			dataIndex : "workPlan"
-		},*/
 		{
 			header : "综合得分",
 			dataIndex : "compositeScores"

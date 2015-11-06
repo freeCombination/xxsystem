@@ -110,7 +110,7 @@ public class PersonalWeightServiceImpl implements IPersonalWeightService {
 			//先删除所有数据
 			StringBuffer delSql = new StringBuffer();
 			delSql.append(" delete from T_INDEXTYPEROLE_WEIGHT where PERSONAL_WEIGHT_ID = "+vo.getId());
-			baseDao.executeNativeQuery(delSql.toString());
+			baseDao.executeNativeSQL(delSql.toString());
 			if (vo.getRwList() != null && vo.getRwList().size() > 0) {
 				List<IndexTypeRoleWeightVo> list = vo.getRwList();
 				for (IndexTypeRoleWeightVo indexTypeRoleWeightVo : list) {

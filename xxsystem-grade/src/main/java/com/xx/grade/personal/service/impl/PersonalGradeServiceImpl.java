@@ -25,6 +25,8 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.xx.grade.personal.entity.IndexTypeRoleWeight;
 import com.xx.grade.personal.entity.PersonalDuty;
@@ -104,11 +106,11 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		}
 		if (StringUtil.isNotEmpty(gradeYear)) {
 			hql.append(" and pg.gradeYear = '" + gradeYear + "'");
-			counthql.append(" and pg.gradeYear = " + gradeYear + "'");
+			counthql.append(" and pg.gradeYear = '" + gradeYear + "'");
 		}
 		if (StringUtil.isNotEmpty(status)) {
-			hql.append(" and pg.status = " + status);
-			counthql.append(" and pg.status = " + status);
+			hql.append(" and pg.status in (" + status+")");
+			counthql.append(" and pg.status in (" + status+")");
 		}
 
 		if (StringUtil.isNotEmpty(inputGradeUser)) {
@@ -259,14 +261,17 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		this.baseDao.saveOrUpdate(duty);
 	}
 
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
 	@Override
-	public String submitPersonalGrade(String ids) {
+	public String submitPersonalGrade(String ids,User currentUser) {
 		try {
 			if (StringUtil.isNotEmpty(ids)) {
 				StringBuffer sql = new StringBuffer();
 				sql.append(" update T_PERSONAL_GRADE t set t.STATUS = 1 ");
 				sql.append(" where t.id in ('").append(ids).append("')");
 				this.baseDao.executeNativeSQL(sql.toString());
+				//生成个人评分结果表
+				generatePersonalGradeResult(ids, currentUser);
 			}
 			return "{success:true,msg:'提交个人评分成功！'}";
 		} catch (Exception e) {
@@ -411,7 +416,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 
 				for (PersonalWeight pw : pws) {
 					// 对于参与评分的指标
-					if (pw.getIsGrade() != null && pw.getIsGrade() == 0) {
+					if (pw.getIsGrade() != null && pw.getIsGrade() == 1) {
 						// 获取该指标下所有角色权重
 						Set<IndexTypeRoleWeight> rws = pw.getIndexTypeRoles();
 						Iterator<IndexTypeRoleWeight> it = rws.iterator();
@@ -542,6 +547,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 	 * @param ids
 	 * @param curUser
 	 */
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
 	public void generatePersonalGradeResultOld(String ids, User curUser) {
 		if (StringUtil.isNotEmpty(ids) && curUser != null) {
 			StringBuffer hql = new StringBuffer();
@@ -1000,7 +1006,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		}
 		System.err.println(result);
 		// 如果是不参与个人评分的就是组织 TODO
-		if (gradeDetail.isGrade() == null || gradeDetail.isGrade() != 0) {
+		if (gradeDetail.isGrade() == null || gradeDetail.isGrade() == 0) {
 			User user = grade.getUser();
 			Organization organization = null;
 			for (OrgUser ou : user.getOrgUsers()) {

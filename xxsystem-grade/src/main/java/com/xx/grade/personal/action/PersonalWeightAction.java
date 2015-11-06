@@ -105,6 +105,7 @@ public class PersonalWeightAction extends BaseAction {
             JsonUtil.outJson("{success:true,msg:'修改个人评分权重成功！'}");
         }
         catch (Exception e) {
+        	e.printStackTrace();
             JsonUtil.outJson("{success:false,msg:'修改个人评分权重失败！'}");
             this.excepAndLogHandle(PersonalWeightAction.class, "添加个人评分权重失败", e, false);
         }
