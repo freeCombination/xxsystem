@@ -192,27 +192,27 @@ var row9 = {
 
 grade.personalGradeResult.PersonalGradeResultForm = Ext.create("Ext.form.Panel", {  
 	layout : 'form',
-	region: "north",
-    width:780,  
-    height:120,
+	//region: "north",
+    //width:780,  
+    //height:120,
     frame:true,  
     border : false,
     labelWidth:65,  
     labelAlign:'right',  
-    style:'padding:10px',  
+    //style:'padding:10px',  
     items:[row1,row2,row3]
 });
 
 grade.personalGradeResult.PersonalGradeResultForm1 = Ext.create("Ext.form.Panel", {  
 	layout : 'form',
-	region: "south",
-    width:780,  
-    height:180,
+	//region: "south",
+    //width:780,  
+    //height:180,
     frame:true,  
     border : false,
     labelWidth:65,  
     labelAlign:'right',  
-    style:'padding:10px',  
+    //style:'padding:10px',  
     items:[ {
    		id:'id',
 		name : 'id',
@@ -239,10 +239,21 @@ grade.personalGradeResult.PersonalGradeResultForm1 = Ext.create("Ext.form.Panel"
  * 定义个人评分基础信息form
  */
 grade.personalGradeResult.PersonalGradeResultWin = Ext.create("Ext.window.Window", {
-	height : 560,
+	height : 500,
 	width : 800,
-	layout: 'border',
-	items : [grade.personalGradeResult.PersonalGradeResultForm,grade.personalDutyResult.PersonalDutyResultGrid,grade.personalDutyResultDetails.PersonalDutyResultDetailsGrid,grade.personalGradeResult.PersonalGradeResultForm1],
+	//layout: 'fit',
+	border:false,
+	items : [{
+		xtype:'panel',
+		//layout: 'border',
+		//autoScroll:true,
+		bodyStyle :"overflow-x:hidden;overflow-y:auto",
+		border:false,
+		//height : 500,
+		//width : 800,
+		//region: "south",
+		items : [grade.personalGradeResult.PersonalGradeResultForm,grade.personalDutyResult.PersonalDutyResultGrid,grade.personalDutyResultDetails.PersonalDutyResultDetailsGrid,grade.personalGradeResult.PersonalGradeResultForm1]
+	}],
 	buttons : [ {
 		text : '确定',
 		id:'result_submit',

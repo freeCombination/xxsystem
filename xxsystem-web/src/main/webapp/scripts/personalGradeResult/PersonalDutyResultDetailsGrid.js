@@ -117,8 +117,10 @@ var cm = [
  */
 grade.personalDutyResultDetails.PersonalDutyResultDetailsGrid = Ext.create("Ext.grid.Panel", {
 	title:'评分明细',
-	region : "south",
-	height : 100,
+	//region : "center",
+	height : 130,
+	width : 790,
+	boder:false,
 	store : grade.personalDutyResultDetails.PersonalDutyResultDetailsStore,
 	plugins: [cellEditing],
 	columns : cm

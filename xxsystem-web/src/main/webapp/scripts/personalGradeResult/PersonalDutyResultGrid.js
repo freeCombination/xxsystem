@@ -57,7 +57,10 @@ var cm = [
  */
 grade.personalDutyResult.PersonalDutyResultGrid = Ext.create("Ext.grid.Panel", {
 	title:'岗位职责完成情况',
-	region : "center",
+	height : 160,
+	width : 790,
+	boder:false,
+	//region : "center",
 	store : grade.personalDutyResult.PersonalDutyResultStore,
 	columns : cm
 });

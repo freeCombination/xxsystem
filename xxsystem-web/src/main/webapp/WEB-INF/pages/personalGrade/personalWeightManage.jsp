@@ -658,6 +658,7 @@
                                         html:action.result.msg
                                     }).show();
                                     
+                                    weightStore.removeAll();
                                     weightStore.load();
                                     weightRoleWin.close();
                                     Ext.MessageBox.hide();
@@ -670,6 +671,8 @@
                                         modal : true,
                                         icon: Ext.Msg.ERROR
                                     });
+                                    
+                                    weightStore.removeAll();
                                     weightStore.load();
                                     weightRoleWin.close();
                                     Ext.MessageBox.hide();
