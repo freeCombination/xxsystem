@@ -411,7 +411,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 
 				for (PersonalWeight pw : pws) {
 					// 对于参与评分的指标
-					if (pw.getIsGrade() == 0) {
+					if (pw.getIsGrade() != null && pw.getIsGrade() == 0) {
 						// 获取该指标下所有角色权重
 						Set<IndexTypeRoleWeight> rws = pw.getIndexTypeRoles();
 						Iterator<IndexTypeRoleWeight> it = rws.iterator();
@@ -1000,7 +1000,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		}
 		System.err.println(result);
 		// 如果是不参与个人评分的就是组织 TODO
-		if (gradeDetail.isGrade() != 0) {
+		if (gradeDetail.isGrade() == null || gradeDetail.isGrade() != 0) {
 			User user = grade.getUser();
 			Organization organization = null;
 			for (OrgUser ou : user.getOrgUsers()) {

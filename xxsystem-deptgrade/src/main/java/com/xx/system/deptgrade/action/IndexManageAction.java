@@ -362,7 +362,8 @@ public class IndexManageAction extends BaseAction {
      */
     public String getAllRole() {
 		try {
-			JsonUtil.outJsonArray(indexManageService.getAllRole());
+			String roleType = getRequest().getParameter("roleType");
+			JsonUtil.outJsonArray(indexManageService.getAllRole(roleType));
 		} catch (Exception e) {
 			this.excepAndLogHandle(IndexManageAction.class, "获取所有角色", e, false);
 		}

@@ -606,12 +606,13 @@ public class PersonalGradeAction extends BaseAction {
 		try {
 			String ids = this.getRequest().getParameter("ids");
 			String result = personalGradeService.submitPersonalGrade(ids);
-			JsonUtil.outJson(result);
 			//生成个人评分结果表
 			personalGradeService.generatePersonalGradeResult(ids, getCurrentUser());
+			JsonUtil.outJson(result);
 			this.excepAndLogHandle(PersonalGradeAction.class, "提交个人评分", null,
 					true);
 		} catch (Exception e) {
+			e.printStackTrace();
 			JsonUtil.outJson("{success:false,msg:'提交个人评分失败！'}");
 			this.excepAndLogHandle(PersonalGradeAction.class, "提交个人评分", e,
 					false);

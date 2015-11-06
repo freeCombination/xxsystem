@@ -155,7 +155,7 @@
 						cellmeta.tdAttr = 'data-qtip="' + value + '"';
 						return value;
 					}},
-	            {header: "权重",width: 100,dataIndex: "percentage",menuDisabled: true,sortable :false,
+	            {header: "权重（%）",width: 100,dataIndex: "percentage",menuDisabled: true,sortable :false,
 					renderer : function(value, cellmeta, record, rowIndex,
 							columnIndex, store) {
 						cellmeta.tdAttr = 'data-qtip="' + value + '"';
@@ -380,7 +380,7 @@
 				            },
 				            {
                                 id: 'weightTextfield',
-                                fieldLabel: '权重',
+                                fieldLabel: '权重（%）',
                                 name: 'personalWeightVo.percentage',
                                 regex : new RegExp('^[0-9]+(.[0-9]{1,2})?$'),
                                 regexText : '保留两位小数！',
@@ -478,6 +478,7 @@
 	            model: 'Role',
 	            proxy: {
 	               type: 'ajax',
+	               extraParams:{roleType:"ROLE_GRPF"},
 	               url: '${ctx}/deptgrade/getAllRole.action',
 	               reader: {
 	                  type: 'json'
@@ -505,7 +506,7 @@
                         valueField: 'roleName'
                     }
                 },
-                {header: "权重",width: 100,dataIndex: "percentage",menuDisabled: true,sortable :false,
+                {header: "权重（%）",width: 100,dataIndex: "percentage",menuDisabled: true,sortable :false,
                 	renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
                         cellmeta.tdAttr = 'data-qtip="' + value + '"';
                         return value;
@@ -562,8 +563,8 @@
 		                handler:function(){
 		                	count++;
 		                    //拼接一个数据格式;
-		                    var data= "{ id:" + count
-		                            + ", roleId:''"
+		                    var data= "{ " //+ count
+		                            + " roleId:''"
                                     + ", roleName:''"
                                     + ", percentage:''}";
 

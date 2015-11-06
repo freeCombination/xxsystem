@@ -760,8 +760,13 @@ public class IndexManageServiceImpl implements IIndexManageService {
 	}
 
 	@Override
-	public List<RoleVo> getAllRole() throws BusinessException {
+	public List<RoleVo> getAllRole(String roleType) throws BusinessException {
 		String roleHql = " from Role r where r.isDelete = 0";
+		
+		if (StringUtil.isNotBlank(roleType)) {
+			roleHql += " and r.roleType.dictCode = '" + roleType + "'";
+		}
+		
 		List<Role> roleLst = (List<Role>)baseDao.queryEntitys(roleHql);
 		
 		List<RoleVo> voLst = new ArrayList<RoleVo>();

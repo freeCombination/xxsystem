@@ -94,6 +94,7 @@
             model: 'Role',
             proxy: {
                type: 'ajax',
+               extraParams:{roleType:"ROLE_DEPT"},
                url: '${ctx}/deptgrade/getAllRole.action',
                reader: {
                   type: 'json'

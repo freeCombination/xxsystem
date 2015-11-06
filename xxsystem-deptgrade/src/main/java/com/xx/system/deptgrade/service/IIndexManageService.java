@@ -213,7 +213,7 @@ public interface IIndexManageService {
      * @return
      * @throws BusinessException
      */
-    public List<RoleVo> getAllRole() throws BusinessException;
+    public List<RoleVo> getAllRole(String roleType) throws BusinessException;
     
     /************部门评分*************/
     
