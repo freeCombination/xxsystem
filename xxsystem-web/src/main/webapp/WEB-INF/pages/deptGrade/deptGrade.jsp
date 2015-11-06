@@ -321,7 +321,7 @@
 	                    var orgId=records[j].orgId;
 	                    headers.push({name:"orgId_"+orgId,type:'string'});
 	                    
-	                    columns.push({header:records[j].orgName + "评分",width: 80, dataIndex:"orgId_"+orgId,menuDisabled: true,sortable :false,
+	                    columns.push({header:records[j].orgName + "得分",width: 80, dataIndex:"orgId_"+orgId,menuDisabled: true,sortable :false,
 	                        field:{
 	                            xtype:'combo',
 	                            maxLength:10,
