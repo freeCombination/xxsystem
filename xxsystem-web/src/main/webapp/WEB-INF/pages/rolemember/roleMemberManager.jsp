@@ -61,6 +61,16 @@
             		{name: 'text',type: 'string'} 
             		]
    			});
+			
+			Ext.define('DictModel', {
+	            extend: 'Ext.data.Model',
+	            fields: [
+	                {name: 'dictionaryId',type:"int"},
+	                {name: 'dictionaryName'},
+	                {name: 'dictionaryValue'}
+	            ]
+	        }); 
+			
 			//建立用户Model
    			Ext.define("userModel",{
 			extend:"Ext.data.Model",
@@ -112,6 +122,20 @@
 				]
 		});
 	
+		var roleTypeStore = Ext.create('Ext.data.Store', {
+            model: 'DictModel',
+            proxy: {
+               type: 'ajax',
+               url: basePath + '/user/getSelectionsByType.action',
+               extraParams:{dictTypeCode:"ROLETYPE"},
+               reader: {
+                  type: 'json',
+                  root: 'list'
+               }
+            },
+            autoLoad: false
+        });
+   		
 			//建立数据Store
 			roleStore=Ext.create("Ext.data.Store", {
 		        pageSize: SystemConstant.commonSize,
@@ -134,7 +158,7 @@
 		            direction:"ASC"
 		        }]
 			});
-			roleStore.loadPage(1);
+			
 			//行选择模型
 			var roleSm=Ext.create("Ext.selection.CheckboxModel",{
 				injectCheckbox:1,
@@ -216,31 +240,55 @@
 				autoScroll: true,
 				stripeRows: true,
 				columns:cm,
-				tbar: [
-							"角色名称",
-							{	
-    						xtype:'textfield',
-    		    			id:'inputRoleName'
-    		    		
-    		    	},
-    		    	{
-    	    	    	text :   "查询", 
-    	    	    	iconCls: "search-button", 
-    	    	    	handler:function(){
-    	    	    		roleStore.getProxy().setExtraParam("roleName",Ext.getCmp('inputRoleName').getValue());
-    	    	    		roleStore.loadPage(1);
-    	    			} 
+				tbar: ['角色分类',
+			            {
+	                xtype: 'combobox',
+	                id:'roleTypeCombo',
+	                width:100,
+	                store: roleTypeStore,
+	                valueField: 'dictionaryId',
+	                displayField: 'dictionaryName',
+	                typeAhead:false,
+	                editable:false,
+	                queryMode: 'remote'
+	            },
+				"角色名称",
+				{	
+ 						xtype:'textfield',
+ 						width:100,
+ 		    			id:'inputRoleName'
+   		    	},
+   		    	{
+   	    	    	text :   "查询", 
+   	    	    	iconCls: "search-button", 
+   	    	    	handler:function(){
+   	    	    		var proxy = roleStore.getProxy();
+   	                    proxy.setExtraParam("roleName",Ext.getCmp('inputRoleName').getValue());
+   	                    proxy.setExtraParam("roleType",Ext.getCmp("roleTypeCombo").getValue());
+   	    	    		roleStore.loadPage(1);
+   	    			} 
     	    	  }
 				],
 				listeners:{
                     'afterrender':function(){
-                        //加载grid时候默认选中第一条
-                        roleStore.on("load",function(){
-                            if(roleStore.getCount() > 0){
-                                roleGrid.getSelectionModel().selectRange(0,0);
-                                var rows = roleGrid.getSelectionModel().getSelection();
-                                roleId = rows[0].get('roleId');
-                            }
+                    	roleTypeStore.load(function(records){
+                            Ext.getCmp("roleTypeCombo").setValue(records[0].get('dictionaryId'));
+                            
+                            roleStore.load({
+                                params:{
+                                    start:0,
+                                    limit:SystemConstant.commonSize,
+                                    'roleType':records[0].get('dictionaryId')
+                                },
+                                callback: function(records, operation, success) {
+                                	//加载grid时候默认选中第一条
+                                	if(roleStore.getCount() > 0){
+                                        roleGrid.getSelectionModel().selectRange(0,0);
+                                        var rows = roleGrid.getSelectionModel().getSelection();
+                                        roleId = rows[0].get('roleId');
+                                    }
+                                }
+                            });
                         });
                     }
                 }

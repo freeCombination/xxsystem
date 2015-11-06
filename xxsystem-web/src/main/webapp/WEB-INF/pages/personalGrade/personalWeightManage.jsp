@@ -553,7 +553,7 @@
 		        store: weightRoleStore,
 		        autoScroll: true,
 		        stripeRows: true,
-		        tbar:["  岗位职责",
+		        tbar:["  角色权重",
 		              "->",
 		            {
 		                xtype:'button',
