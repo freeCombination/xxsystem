@@ -525,8 +525,14 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		StringBuffer hql = new StringBuffer();
 		// 如果是一般员工角色，则需要排除自己
 		if (role.getRoleName().equals("一般员工")) {
-			hql.append(" select rs.user From RoleMemberScope rs where rs.role.roleId =" + role.getRoleId()
-					+ " and rs.user.userId <> " + userId);
+			String currentOrgUserIds = getUserIdsByCurrentOrg(currentOrg);
+			hql.append(" select rs.user From RoleMemberScope rs  where rs.role.roleId =" + role.getRoleId()
+					+ "  and rs.user.userId <> " + userId);
+			if (StringUtil.isNotEmpty(currentOrgUserIds)) {
+				hql.append(" and rs.user.userId in ( "+currentOrgUserIds+")");
+			}else {
+				hql.append(" and 1=0 ");
+			}
 		} // 如果是与部门挂钩的角色，则需要找到对应角色范围属于该部门的员工
 		else if (role.getRoleName().equals("部门主任") || role.getRoleName().equals("部门副主任")
 				|| role.getRoleName().equals("分管领导") || role.getRoleName().equals("分管副所长")
@@ -541,6 +547,29 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		return users;
 	}
 
+	/**
+	 * 获取部门下所有员工
+	 * @param currentOrg 
+	 * 
+	 * @return
+	 */
+	private String getUserIdsByCurrentOrg(Organization currentOrg) {
+		String userIds = "" ;
+		StringBuffer hql = new StringBuffer();
+		hql.append(" From OrgUser ou where ou.organization.orgId = "+currentOrg.getOrgId());
+		List<OrgUser> list = baseDao.queryEntitys(hql.toString());
+		if (list != null && list.size() > 0) {
+			for (OrgUser orgUser : list) {
+				if (orgUser.getUser() != null) {
+					userIds += ","+orgUser.getUser().getUserId() ;
+				}
+			}
+		}
+		if (StringUtil.isNotEmpty(userIds)) {
+			userIds = userIds.substring(1,userIds.length());
+		}
+		return userIds;
+	}
 	/**
 	 * 生成个人评分结果表（已停用）
 	 * 

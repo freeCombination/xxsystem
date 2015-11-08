@@ -378,7 +378,18 @@
 	                                        break;
 	                                    }
 	                                }
-	                                records[i].set('orgId_' + cpbm[j].orgId, grade);
+	                                
+	                                var maxScore = records[i].get('grade');
+	    	                        if (records[i].get('grade2')) {
+	    	                            maxScore = records[i].get('grade2');
+	    	                        }
+	                                
+	                                if (grades == null || grades == '') {
+	                                	records[i].set('orgId_' + cpbm[j].orgId, maxScore);
+	                                }
+	                                else {
+	                                	records[i].set('orgId_' + cpbm[j].orgId, grade);
+	                                }
 	                            }
 	                            
 	                            if (records[i].get('gradeIndex2Name')) {
@@ -561,7 +572,8 @@
                                         ).show();
                                         
                                         deptGrageWin.close();
-                                        deptGrageStore.load();
+                                        //deptGrageStore.load();
+                                        classifyStore.reload();
                                     }else{
                                         Ext.MessageBox.show({
                                             title: SystemConstant.alertTitle,
