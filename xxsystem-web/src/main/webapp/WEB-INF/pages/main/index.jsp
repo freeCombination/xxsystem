@@ -8,7 +8,8 @@
 <title>绩效评分系统</title>
 </head>
 <body>
-	<div style="padding-top: 15px;text-align:center;width: 100%;border: 0; margin: 0;">
+	<div style="text-align:center;width: 100%;border: 0; margin: 0;
+	    background: url(${ctx}/images/index/idx_bg.gif) repeat-x;">
 		<img src="${ctx}/images/welcome_bg.jpg" style="border: 0; margin: 0; padding: 0;"/>
 	</div>
 </body>

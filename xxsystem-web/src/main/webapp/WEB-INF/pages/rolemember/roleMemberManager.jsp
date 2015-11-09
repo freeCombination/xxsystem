@@ -1024,6 +1024,7 @@ var roleMemberIds;
 	        	id:'scopeUser',
 	        	title:'用户',
 	        	layout:'fit',
+	        	hidden:true,
 	            items:[scopeUserPanel]
 	        }
 	    ],

@@ -321,7 +321,7 @@
 	                    var orgId=records[j].orgId;
 	                    headers.push({name:"orgId_"+orgId,type:'string'});
 	                    
-	                    columns.push({header:records[j].orgName + "得分",width: 80, dataIndex:"orgId_"+orgId,menuDisabled: true,sortable :false,
+	                    columns.push({header:records[j].orgName + "得分",width: 75, dataIndex:"orgId_"+orgId,menuDisabled: true,sortable :false,
 	                        field:{
 	                            xtype:'combo',
 	                            maxLength:10,
@@ -367,6 +367,8 @@
 	                load:function(store, records){
 	                	if (records.length > 0) {
 	                		var has2 = false;
+	                		var hasRemark1 = false;
+	                		var hasRemark2 = false;
 	                        for(var i = 0; i < records.length; i++){
 	                            var grades = records[i].get('gradeRecs').split('|');
 	                            for(var j = 0; j < cpbm.length; j++){
@@ -395,13 +397,28 @@
 	                            if (records[i].get('gradeIndex2Name')) {
 	                            	has2 = true;
 	                            }
+	                            
+	                            if (records[i].get('remark')) {
+	                            	hasRemark1 = true;
+                                }
+	                            
+	                            if (records[i].get('remark2')) {
+                                    hasRemark2 = true;
+                                }
 	                        }
 	                        
 	                        if (!has2) {
 	                        	deptGrageGrid.columns[5].setVisible(false);
-	                        	deptGrageGrid.columns[6].setVisible(false);
 	                        	deptGrageGrid.columns[7].setVisible(false);
 	                        }
+	                        
+	                        if (!hasRemark1) {
+                                deptGrageGrid.columns[3].setVisible(false);
+                            }
+	                        
+	                        if (!hasRemark2) {
+	                        	deptGrageGrid.columns[6].setVisible(false);
+                            }
 	                        
 	                        // 统计汇总
 	                        var obj = "{indexId:-1, name:'合计'";

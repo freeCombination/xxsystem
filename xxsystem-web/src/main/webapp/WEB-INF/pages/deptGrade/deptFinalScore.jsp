@@ -59,12 +59,16 @@
                 {name: 'finalScore', type: 'string'},
                 {name: 'isParticipation', type: 'int'},
                 {name: 'classifyId', type: 'int'},
-                {name: 'canpDeptId', type: 'int'}
+                {name: 'canpDeptId', type: 'int'},
+                {name: 'jdScore', type: 'string'},
+                {name: 'jdPercentage', type: 'string'},
+                {name: 'jdSumScore', type: 'string'}
 	        ]
 	    });
 		
 		var cfPer = 0;
 		var bdPer = 0;
+		var jdPer = 0;
 		// 获取总分计算所需权重
 		$.ajax({
             type : "POST",
@@ -83,6 +87,9 @@
 	                    }
 	                    else if ('BUILDSCORE' == records.list[j].dictCode) {
                             bdPer = records.list[j].dictionaryValue;
+                        }
+	                    else if ('JDSCORE' == records.list[j].dictCode) {
+	                    	jdPer = records.list[j].dictionaryValue;
                         }
 	                }
             	}
@@ -129,7 +136,7 @@
                     	}
                     	
                         mergeCells(recordGrid, [1]);
-                        mergeCells(recordGrid, [5, 6, 7]);
+                        //mergeCells(recordGrid, [5, 6, 7]);
                     }
                 }
             }
@@ -138,21 +145,21 @@
 		var cm=[
 				{header:"序号",xtype: "rownumberer",width:60,align:"center",menuDisabled: true,sortable :false},
 	            {header: "ID",width: 70,dataIndex: "gradeDetailId",hidden: true,menuDisabled: true,sortable :false},
-	            {header: "部门",width: 100,dataIndex: "canpDept",menuDisabled: true,sortable :false,
+	            {header: "部门",width: 80,dataIndex: "canpDept",menuDisabled: true,sortable :false,
 					renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
 						cellmeta.tdAttr = 'data-qtip="' + value + '"';
 						return value;
 					}
 	            },
-                {header: "部门指标年度得分（" + (cfPer * 100) + "%权重）" ,width: 600,menuDisabled: true,sortable :false,
+                {header: "部门指标年度得分（" + (cfPer * 100) + "%权重）" ,width: 510,menuDisabled: true,sortable :false,
 					columns:[
-						{header: "指标名称",width: 240,dataIndex: "classifyName",menuDisabled: true,sortable :false,
+						{header: "指标名称",width: 180,dataIndex: "classifyName",menuDisabled: true,sortable :false,
 						    renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
 						        cellmeta.tdAttr = 'data-qtip="' + value + '"';
 						        return value;
 						    }
 						},
-						{header: "得分（可编辑）",width: 120,dataIndex: "score",menuDisabled: true,sortable :false,
+						{header: "得分（可编辑）",width: 110,dataIndex: "score",menuDisabled: true,sortable :false,
 		                    renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
 		                        cellmeta.tdAttr = 'data-qtip="' + value + '"';
 		                        return value;
@@ -165,7 +172,7 @@
 		                        allowBlank: false
 		                    }
 		                },
-		                {header: "权重（可编辑）",width: 120,dataIndex: "percentage",menuDisabled: true,sortable :false,
+		                {header: "权重（可编辑）",width: 110,dataIndex: "percentage",menuDisabled: true,sortable :false,
 		                    renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
 		                        if (value) {
 		                        	var showStr = Math.round(value * 100) + "%";
@@ -184,7 +191,7 @@
 		                        allowBlank: false
 		                    }
 		                },
-		                {header: "得分",width: 120,dataIndex: "sumScore",menuDisabled: true,sortable :false,
+		                {header: "年度得分",width: 110,dataIndex: "sumScore",menuDisabled: true,sortable :false,
 		                    renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
 		                        cellmeta.tdAttr = 'data-qtip="' + value + '"';
 		                        return value;
@@ -192,9 +199,51 @@
 		                }
 					]
                 },
-                {header: "部门 建设得分（" + (bdPer * 100) + "%权重）",width: 200,menuDisabled: true,sortable :false,
+                {header: "季度得分（" + (jdPer * 100) + "%权重）" ,width: 330,menuDisabled: true,sortable :false,
+                    columns:[
+                        {header: "得分（可编辑）",width: 110,dataIndex: "jdScore",menuDisabled: true,sortable :false,
+                            renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
+                                cellmeta.tdAttr = 'data-qtip="' + value + '"';
+                                return value;
+                            },
+                            field: {
+                                xtype:'textfield',
+                                maxLength:10,
+                                regex : new RegExp('^[0-9]+(.[0-9]{1,2})?$'),
+                                regexText : '保留两位小数！',
+                                allowBlank: false
+                            }
+                        },
+                        {header: "权重（可编辑）",width: 110,dataIndex: "jdPercentage",menuDisabled: true,sortable :false,
+                            renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
+                                if (value) {
+                                    var showStr = Math.round(value * 100) + "%";
+                                    cellmeta.tdAttr = 'data-qtip="' + showStr + '"';
+                                    return showStr;
+                                }
+                                else {
+                                    return value;
+                                }
+                            },
+                            field: {
+                                xtype:'textfield',
+                                maxLength:10,
+                                regex : new RegExp('^[0-9]+(.[0-9]{1,2})?$'),
+                                regexText : '保留两位小数！',
+                                allowBlank: false
+                            }
+                        },
+                        {header: "季度得分",width: 110,dataIndex: "jdSumScore",menuDisabled: true,sortable :false,
+                            renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
+                                cellmeta.tdAttr = 'data-qtip="' + value + '"';
+                                return value;
+                            }
+                        }
+                    ]
+                },
+                {header: "部门 建设得分（" + (bdPer * 100) + "%权重）",width: 160,menuDisabled: true,sortable :false,
                 	columns:[
-						{header: "评价得分",width: 200,dataIndex: "buildScore",menuDisabled: true,sortable :false,
+						{header: "评价得分",width: 160,dataIndex: "buildScore",menuDisabled: true,sortable :false,
 						    renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
 						        cellmeta.tdAttr = 'data-qtip="' + value + '"';
 						        return value;
@@ -202,7 +251,7 @@
 						}
                 	]
                 },
-                {header: "总分",width: 120,dataIndex: "finalScore",menuDisabled: true,sortable :false,
+                {header: "总分",width: 80,dataIndex: "finalScore",menuDisabled: true,sortable :false,
                     renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
                         cellmeta.tdAttr = 'data-qtip="' + value + '"';
                         return value;

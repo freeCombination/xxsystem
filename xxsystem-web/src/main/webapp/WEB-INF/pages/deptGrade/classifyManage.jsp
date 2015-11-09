@@ -454,7 +454,8 @@
 			    fields: [
 			        {name: 'dictionaryId',type:"int"},
 			        {name: 'dictionaryName'},
-			        {name: 'dictionaryValue'}
+			        {name: 'dictionaryValue'},
+			        {name: 'dictCode'}
 			    ]
 			}); 
 			
@@ -469,7 +470,16 @@
 			          root: 'list'
 			       }
 			    },
-			    autoLoad: false
+			    autoLoad: false,
+			    listeners:{
+	                load:function(store, records){
+	                    for (var i = 0; i < records.length; i++) {
+	                    	if (records[i].get('dictCode') == 'JDSCORE') {
+	                    		store.remove(records[i]);
+	                    	}
+	                    }
+	                }
+	            }
 			});
 			
 			var classifyForm = Ext.create("Ext.form.Panel", {

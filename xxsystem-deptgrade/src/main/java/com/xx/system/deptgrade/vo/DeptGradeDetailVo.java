@@ -77,6 +77,25 @@ public class DeptGradeDetailVo implements java.io.Serializable {
     private String finalScore;
     
     /**
+     * *******季度得分相关属性*********
+     */
+    
+    /**
+     * 季度得分
+     */
+    private String jdScore;
+    
+    /**
+     * 季度权重
+     */
+    private String jdPercentage;
+    
+    /**
+     * 季度得分小计
+     */
+    private String jdSumScore;
+    
+    /**
      * 是否参与评分
      */
     private Integer isParticipation;
@@ -218,4 +237,29 @@ public class DeptGradeDetailVo implements java.io.Serializable {
 	public void setCanpDeptId(Integer canpDeptId) {
 		this.canpDeptId = canpDeptId;
 	}
+
+	public String getJdScore() {
+		return jdScore;
+	}
+
+	public void setJdScore(String jdScore) {
+		this.jdScore = jdScore;
+	}
+
+	public String getJdPercentage() {
+		return jdPercentage;
+	}
+
+	public void setJdPercentage(String jdPercentage) {
+		this.jdPercentage = jdPercentage;
+	}
+
+	public String getJdSumScore() {
+		return jdSumScore;
+	}
+
+	public void setJdSumScore(String jdSumScore) {
+		this.jdSumScore = jdSumScore;
+	}
+	
 }

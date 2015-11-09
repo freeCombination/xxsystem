@@ -54,6 +54,21 @@ public class FinalScore implements java.io.Serializable {
     private String score;
     
     /**
+     * 季度得分
+     */
+    private String jdScore;
+    
+    /**
+     * 季度权重
+     */
+    private String jdPercentage;
+    
+    /**
+     * 季度得分小计
+     */
+    private String jdSumScore;
+    
+    /**
      * @Title getPkFinalScoreId
      * @Description: 主键
      * @date 2013-12-6
@@ -106,4 +121,32 @@ public class FinalScore implements java.io.Serializable {
 	public void setSumScore(String sumScore) {
 		this.sumScore = sumScore;
 	}
+
+	@Column(name = "JD_SCORE", nullable = true)
+	public String getJdScore() {
+		return jdScore;
+	}
+
+	public void setJdScore(String jdScore) {
+		this.jdScore = jdScore;
+	}
+
+	@Column(name = "JD_PERCENTAGE", nullable = true)
+	public String getJdPercentage() {
+		return jdPercentage;
+	}
+
+	public void setJdPercentage(String jdPercentage) {
+		this.jdPercentage = jdPercentage;
+	}
+
+	@Column(name = "JD_SUM_SCORE", nullable = true)
+	public String getJdSumScore() {
+		return jdSumScore;
+	}
+
+	public void setJdSumScore(String jdSumScore) {
+		this.jdSumScore = jdSumScore;
+	}
+	
 }
