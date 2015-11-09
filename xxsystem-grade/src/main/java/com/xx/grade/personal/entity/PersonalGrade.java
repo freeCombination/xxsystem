@@ -192,7 +192,7 @@ public class PersonalGrade implements Serializable {
 	}
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "personalGrade")
-	@OrderBy(clause="ID desc")
+	@OrderBy(clause="ID ASC")
 	public Set<PersonalDuty> getPersonalDutys() {
 		return personalDutys;
 	}

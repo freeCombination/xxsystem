@@ -203,6 +203,15 @@ grade.personalGradeResult.PersonalGradeResultForm = Ext.create("Ext.form.Panel",
     items:[row1,row2,row3]
 });
 
+grade.personalGradeResult.PersonalGradeResultFormProblem = Ext.create("Ext.form.Panel", {  
+	layout : 'form',
+    frame:true,  
+    border : false,
+    labelWidth:65,  
+    labelAlign:'right',  
+    items:[row4,row5]
+});
+
 grade.personalGradeResult.PersonalGradeResultForm1 = Ext.create("Ext.form.Panel", {  
 	layout : 'form',
 	//region: "south",
@@ -230,7 +239,7 @@ grade.personalGradeResult.PersonalGradeResultForm1 = Ext.create("Ext.form.Panel"
 		name : 'gradeUserType',
 		xtype:'textfield',
 		hidden : true
-	 },row4,row5,row6,row7,row8,row9]
+	 },row6,row7,row8,row9]
 });
 
 
@@ -239,20 +248,14 @@ grade.personalGradeResult.PersonalGradeResultForm1 = Ext.create("Ext.form.Panel"
  * 定义个人评分基础信息form
  */
 grade.personalGradeResult.PersonalGradeResultWin = Ext.create("Ext.window.Window", {
-	height : 500,
-	width : 800,
-	//layout: 'fit',
+	height : 520,
+	width : 1200,
 	border:false,
 	items : [{
 		xtype:'panel',
-		//layout: 'border',
-		//autoScroll:true,
 		bodyStyle :"overflow-x:hidden;overflow-y:auto",
 		border:false,
-		//height : 500,
-		//width : 800,
-		//region: "south",
-		items : [grade.personalGradeResult.PersonalGradeResultForm,grade.personalDutyResult.PersonalDutyResultGrid,grade.personalDutyResultDetails.PersonalDutyResultDetailsGrid,grade.personalGradeResult.PersonalGradeResultForm1]
+		items : [grade.personalGradeResult.PersonalGradeResultForm,grade.personalDutyResult.PersonalDutyResultGrid,grade.personalGradeResult.PersonalGradeResultFormProblem,grade.personalDutyResultDetails.PersonalDutyResultDetailsGrid,grade.personalGradeResult.PersonalGradeResultForm1]
 	}],
 	buttons : [ {
 		text : '确定',

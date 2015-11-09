@@ -1265,55 +1265,62 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 				int rowSize = 0;
 				for (PersonalDuty duty : personalDutys) {
 					HSSFRow sourceRow = aSheet.getRow(newRow + rowSize);
-					sourceRow.setHeight((short) 400);
-					// 合并 单元格 操作* 第一个参数 0 表示 起始 行* 第二个参数 a表示 起始 列* 第三个参数 0
-					// 表示结束行* 第四个参数 b表示结束列
-					Region region =  new Region(newRow + rowSize, (short) 0, newRow + rowSize, (short) 1);
-					setRegionStyle(aSheet,region,styleBold);//设置合并单元格的风格（加边框）
-					aSheet.addMergedRegion(region); //
-					HSSFCell cew2 = sourceRow.createCell((short) 0);
-					cew2.setCellValue(duty.getWorkDuty());
-					cew2.setCellStyle(styleBold);
-					
-					Region region1 =  new Region(newRow + rowSize, (short) 2, newRow + rowSize, (short) 5);
-					setRegionStyle(aSheet,region1,styleBold);
-					aSheet.addMergedRegion(region1); //
-					HSSFCell cew3 = sourceRow.createCell((short) 2);
-					cew3.setCellValue(duty.getCompletion());
-					cew3.setCellStyle(styleBold);
+						if (sourceRow == null) {
+							sourceRow = aSheet.createRow(newRow + rowSize);
+						}
+						sourceRow.setHeight((short) 400);
+						// 合并 单元格 操作* 第一个参数 0 表示 起始 行* 第二个参数 a表示 起始 列* 第三个参数 0
+						// 表示结束行* 第四个参数 b表示结束列
+						Region region =  new Region(newRow + rowSize, (short) 0, newRow + rowSize, (short) 1);
+						setRegionStyle(aSheet,region,styleBold);//设置合并单元格的风格（加边框）
+						aSheet.addMergedRegion(region); //
+						HSSFCell cew2 = sourceRow.createCell((short) 0);
+						cew2.setCellValue(duty.getWorkDuty());
+						cew2.setCellStyle(styleBold);
+						
+						Region region1 =  new Region(newRow + rowSize, (short) 2, newRow + rowSize, (short) 5);
+						setRegionStyle(aSheet,region1,styleBold);
+						aSheet.addMergedRegion(region1); //
+						HSSFCell cew3 = sourceRow.createCell((short) 2);
+						cew3.setCellValue(duty.getCompletion());
+						cew3.setCellStyle(styleBold);
 					rowSize++;
 				}
 			}
 
 			// 写入其他信息
+			HSSFCellStyle cellStyle2 = wb.createCellStyle();
+			cellStyle2.setAlignment(HSSFCellStyle.ALIGN_LEFT);
+			cellStyle2.setVerticalAlignment(HSSFCellStyle.VERTICAL_TOP);
+			
 			HSSFRow row4 = aSheet.getRow(newRow + personalDutys.size() + 1);
 			HSSFCell cell41 = row4.getCell(0);
-			cell41.setCellType(HSSFCellStyle.ALIGN_RIGHT);
+			cell41.setCellStyle(cellStyle2);
 			cell41.setCellValue(grade.getProblem());
 
 			HSSFRow row5 = aSheet.getRow(newRow + personalDutys.size() + 3);
 			HSSFCell cell51 = row5.getCell(0);
-			cell51.setCellType(HSSFCellStyle.ALIGN_RIGHT);
+			cell51.setCellStyle(cellStyle2);
 			cell51.setCellValue(grade.getWorkPlan());
 
 			HSSFRow row6 = aSheet.getRow(newRow + personalDutys.size() + 4);
 			HSSFCell cell61 = row6.getCell(1);
-			cell61.setCellType(HSSFCellStyle.ALIGN_RIGHT);
+			cell61.setCellStyle(cellStyle2);
 			cell61.setCellValue(evaluation);
 
 			HSSFRow row7 = aSheet.getRow(newRow + personalDutys.size() + 7);
 			HSSFCell cell71 = row7.getCell(1);
-			cell71.setCellType(HSSFCellStyle.ALIGN_RIGHT);
+			cell71.setCellStyle(cellStyle2);
 			cell71.setCellValue(evaluation1);
 
 			HSSFRow row8 = aSheet.getRow(newRow + personalDutys.size() + 10);
 			HSSFCell cell81 = row8.getCell(1);
-			cell81.setCellType(HSSFCellStyle.ALIGN_RIGHT);
+			cell81.setCellStyle(cellStyle2);
 			cell81.setCellValue(evaluation2);
 
 			HSSFRow row9 = aSheet.getRow(newRow + personalDutys.size() + 13);
 			HSSFCell cell91 = row9.getCell(1);
-			cell91.setCellType(HSSFCellStyle.ALIGN_RIGHT);
+			cell91.setCellStyle(cellStyle2);
 			cell91.setCellValue(evaluation3);
 
 		} catch (IOException e) {

@@ -44,11 +44,17 @@ var cm = [
 			hidden : true
 		}, {
 			header : "工作职责",
-			dataIndex : "workDuty"
+			dataIndex : "workDuty",
+        	renderer : function(value, p, record) {
+    		    return '<div style="white-space:normal;">' + value + '</div>';
+    		}
 		},
 		{
 			header : "完成情况",
-			dataIndex : "completion"
+			dataIndex : "completion",
+        	renderer : function(value, p, record) {
+    		    return '<div style="white-space:normal;">' + value + '</div>';
+    		}
 		}
           ];
 
@@ -57,10 +63,9 @@ var cm = [
  */
 grade.personalDutyResult.PersonalDutyResultGrid = Ext.create("Ext.grid.Panel", {
 	title:'岗位职责完成情况',
-	height : 160,
-	width : 790,
+	height : 200,
+	width : 1190,
 	boder:false,
-	//region : "center",
 	store : grade.personalDutyResult.PersonalDutyResultStore,
 	columns : cm
 });

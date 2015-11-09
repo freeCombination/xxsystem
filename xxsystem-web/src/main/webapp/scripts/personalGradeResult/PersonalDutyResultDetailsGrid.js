@@ -119,7 +119,7 @@ grade.personalDutyResultDetails.PersonalDutyResultDetailsGrid = Ext.create("Ext.
 	title:'评分明细',
 	//region : "center",
 	height : 130,
-	width : 790,
+	width : 1190,
 	boder:false,
 	store : grade.personalDutyResultDetails.PersonalDutyResultDetailsStore,
 	plugins: [cellEditing],

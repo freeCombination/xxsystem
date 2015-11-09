@@ -467,6 +467,7 @@ public class PersonalGradeAction extends BaseAction {
 						null, false);
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			JsonUtil.outJson("{success:false,msg:'导出个人职责明细信息失败！'}");
 			this.excepAndLogHandle(PersonalGradeAction.class, "导出个人职责明细信息", e,
 					false);

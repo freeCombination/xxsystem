@@ -172,6 +172,15 @@ grade.personalGradeResult.EditPersonalGradeResult = function() {
 			id : id
 		}
 	});
+	var basicFormProblem = grade.personalGradeResult.PersonalGradeResultFormProblem.getForm();
+	basicFormProblem.reset();
+	basicFormProblem.load({
+		url : basePath + '/personalGrade/getPersonalGradeResultById.action',
+		params : {
+			id : id
+		}
+	});
+	
 	Ext.getCmp('result_submit').show();
 	
 	var basicForm1 = grade.personalGradeResult.PersonalGradeResultForm1.getForm();

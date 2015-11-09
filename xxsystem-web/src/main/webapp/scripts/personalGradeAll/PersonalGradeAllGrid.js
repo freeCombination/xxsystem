@@ -39,6 +39,11 @@ grade.personalGrade.PersonalGradeStore = Ext.create('Ext.data.Store', {
 grade.personalGrade.PersonalGradeStore.getProxy().setExtraParam("status","1,2");
 
 
+grade.personalGrade.PersonalGradeStore.addListener('beforeload', function(st, rds, opts) {
+	grade.personalGrade.PersonalGradeGrid.getSelectionModel().clearSelections();
+	Ext.getCmp('export-button').setDisabled(true);
+});
+
 /**
  * 列表字段
  */
@@ -219,7 +224,10 @@ grade.personalGrade.PersonalGradeGrid = Ext.create("Ext.grid.Panel", {
         xtype:'button',
         disabled:false,
         text:'导出',
+        disabledExpr : "$selectedRows != 1 || $status!='2' ",
+        disabled : true,
         iconCls:'export-button',
+        id:'export-button',
         handler:function(){
         	var row = grade.personalGrade.PersonalGradeGrid.getSelectionModel().getSelection()
         	var personalGradeId = row[0].data.id;
