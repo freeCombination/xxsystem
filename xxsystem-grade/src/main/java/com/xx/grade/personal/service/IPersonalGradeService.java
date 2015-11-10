@@ -1,6 +1,7 @@
 package com.xx.grade.personal.service;
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -13,6 +14,7 @@ import com.xx.grade.personal.vo.PersonalDutyVo;
 import com.xx.grade.personal.vo.PersonalGradeResultDetailsVo;
 import com.xx.grade.personal.vo.PersonalGradeResultVo;
 import com.xx.grade.personal.vo.PersonalGradeVo;
+import com.xx.grade.personal.vo.ScoreVo;
 import com.xx.system.common.exception.BusinessException;
 import com.xx.system.common.vo.ListVo;
 import com.xx.system.user.entity.User;
@@ -214,5 +216,12 @@ public interface IPersonalGradeService {
 	 */
 	public ListVo<PersonalGradeResultVo> getPersonalGradeResultDetailsList(
 			Map<String, String> paramMap);
+
+	/**
+	 * 获取个人评分分数列表
+	 * @param personalGradeId
+	 * @return
+	 */
+	public List<ScoreVo> getScoreList(String personalGradeResultId);
 	
 }

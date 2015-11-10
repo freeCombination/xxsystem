@@ -41,6 +41,7 @@ import com.xx.grade.personal.vo.PersonalDutyVo;
 import com.xx.grade.personal.vo.PersonalGradeResultDetailsVo;
 import com.xx.grade.personal.vo.PersonalGradeResultVo;
 import com.xx.grade.personal.vo.PersonalGradeVo;
+import com.xx.grade.personal.vo.ScoreVo;
 import com.xx.system.common.constant.Constant;
 import com.xx.system.common.dao.IBaseDao;
 import com.xx.system.common.exception.BusinessException;
@@ -1540,5 +1541,44 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		}
 		buildResultEntityToVo(gradeResultDetail.getPersonalGradeResult(), vo);
 		vo.setId(gradeResultDetail.getId());
+	}
+
+	@Override
+	public List<ScoreVo> getScoreList(String personalGradeResultId) {
+		List<ScoreVo> result = new ArrayList<ScoreVo>();
+		int maxScore = 120 ;
+//		if (StringUtil.isNotEmpty(personalGradeResultId)) {
+//			PersonalGradeResult gradeResult = (PersonalGradeResult)baseDao.queryEntityById(PersonalGradeResult.class, Integer.parseInt(personalGradeResultId));
+//			if (gradeResult != null 
+//					&& gradeResult.getGradeUser() != null
+//					&& gradeResult.getPersonalGrade() != null
+//					&& gradeResult.getPersonalGrade().getUser() != null
+//					&& gradeResult.getPersonalGrade().getUser().getOrgUsers() != null) {
+//				Organization currentOrg = null ;
+//				User currentUser = gradeResult.getGradeUser() ;
+//				for (OrgUser ou : gradeResult.getPersonalGrade().getUser().getOrgUsers()) {
+//					if (ou != null && ou.getOrganization() != null) {
+//						currentOrg = ou.getOrganization() ;
+//						break;
+//					}
+//				}
+//				
+//				//如果部门不等于空
+//				if (currentOrg != null 
+//						&& currentOrg.getExcellentCount() != null
+//						&& currentOrg.getExcellentScore() != null) {
+//					//找出当前评分人对所评分人部门其他职工评优指标是否超过上限，上限为currentOrg.getExcellentCount()
+//					StringBuffer hql = new StringBuffer();
+//					hql.append(" select count(*) from PersonalGradeResult r where r.")
+//				}
+//				
+//			}
+//		}
+		for (int i = maxScore; i >= 0; i--) {
+			ScoreVo scoreVo = new ScoreVo();
+			scoreVo.setScore(String.valueOf(i));
+			result.add(scoreVo);
+		}
+		return result;
 	}
 }

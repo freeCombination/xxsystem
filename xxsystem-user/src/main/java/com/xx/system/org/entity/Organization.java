@@ -108,6 +108,16 @@ public class Organization implements java.io.Serializable {
     private User superintendent;
     
     /**
+     * @Fields excellentCount : 优秀数量
+     */
+    private Integer excellentCount;
+    
+    /**
+     * @Fields excellentCount : 优秀分数
+     */
+    private Integer excellentScore;
+    
+    /**
      * <p>
      * Title: Organization()
      * </p>
@@ -317,7 +327,28 @@ public class Organization implements java.io.Serializable {
         this.status = status;
     }
     
-    /**
+    
+    @Column(name = "EXCELLENT_COUNT")
+    public Integer getExcellentCount() {
+		return excellentCount;
+	}
+
+	public void setExcellentCount(Integer excellentCount) {
+		this.excellentCount = excellentCount;
+	}
+	
+	
+	@Column(name = "EXCELLENT_SCORE")
+    public Integer getExcellentScore() {
+		return excellentScore;
+	}
+
+	public void setExcellentScore(Integer excellentScore) {
+		this.excellentScore = excellentScore;
+	}
+	
+
+	/**
      * @Title getOrgUsers
      * @Description: 组织用户关系
      * @date 2013-12-6
@@ -329,7 +360,7 @@ public class Organization implements java.io.Serializable {
         return orgUsers;
     }
     
-    public void setOrgUsers(Set<OrgUser> orgUsers) {
+	public void setOrgUsers(Set<OrgUser> orgUsers) {
         this.orgUsers = orgUsers;
     }
     

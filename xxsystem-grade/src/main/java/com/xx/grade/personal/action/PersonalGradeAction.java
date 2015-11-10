@@ -666,12 +666,13 @@ public class PersonalGradeAction extends BaseAction {
 	 */
     public void getScoreList() {
         try {
-            List<ScoreVo> scoreList = new ArrayList<ScoreVo>();
-            for (int i = 120; i >= 0; i--) {
+        	String personalGradeResultId = this.getRequest().getParameter("personalGradeResultId");
+            List<ScoreVo> scoreList = personalGradeService.getScoreList(personalGradeResultId);
+/*            for (int i = 120; i >= 0; i--) {
             	ScoreVo vo = new ScoreVo();
             	vo.setScore(String.valueOf(i));
             	scoreList.add(vo);
-			}
+			}*/
             JsonUtil.outJsonArray(scoreList);
         }
         catch (Exception e) {
