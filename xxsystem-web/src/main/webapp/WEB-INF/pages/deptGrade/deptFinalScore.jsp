@@ -136,7 +136,8 @@
                     	}
                     	
                         mergeCells(recordGrid, [1]);
-                        //mergeCells(recordGrid, [5, 6, 7]);
+                        mergeCells(recordGrid, [5]);
+                        mergeCells(recordGrid, [8, 9, 10]);
                     }
                 }
             }
