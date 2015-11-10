@@ -4,7 +4,7 @@ var orgForm=Ext.create("Ext.form.Panel", {
 		border: false,
 		labelAlign: 'right',
 		fieldDefaults: {
-            labelWidth: 60,
+            labelWidth: 80,
         	labelAlign: 'right'
         },
         defaults: {
