@@ -222,6 +222,6 @@ public interface IPersonalGradeService {
 	 * @param personalGradeId
 	 * @return
 	 */
-	public List<ScoreVo> getScoreList(String personalGradeResultId);
+	public List<ScoreVo> getScoreList(String id);
 	
 }

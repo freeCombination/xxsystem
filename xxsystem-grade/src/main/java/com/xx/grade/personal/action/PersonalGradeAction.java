@@ -666,8 +666,9 @@ public class PersonalGradeAction extends BaseAction {
 	 */
     public void getScoreList() {
         try {
-        	String personalGradeResultId = this.getRequest().getParameter("personalGradeResultId");
-            List<ScoreVo> scoreList = personalGradeService.getScoreList(personalGradeResultId);
+        	//评分结果明细id
+        	String id = this.getRequest().getParameter("id");
+            List<ScoreVo> scoreList = personalGradeService.getScoreList(id);
 /*            for (int i = 120; i >= 0; i--) {
             	ScoreVo vo = new ScoreVo();
             	vo.setScore(String.valueOf(i));

@@ -178,6 +178,9 @@ public class OrgAction extends BaseAction {
                 map.put("org.orgTypeName", org.getOrgType().getDictionaryName());
                 map.put("org.orgCode", org.getOrgCode());
                 map.put("org.disOrder", org.getDisOrder());
+                //添加优秀员工
+                map.put("org.excellentCount", org.getExcellentCount());
+                map.put("org.excellentScore", org.getExcellentScore());
                 if (org.getOrganization() != null) {
                     map.put("org.organization.orgId", org.getOrganization().getOrgId());
                     map.put("org.organization.orgName", org.getOrganization().getOrgName());
@@ -581,6 +584,8 @@ public class OrgAction extends BaseAction {
             	updateOrg.setSuperintendent(userService.getUserById(org.getSuperintendent().getUserId()));
             }
             
+            updateOrg.setExcellentCount(org.getExcellentCount());
+            updateOrg.setExcellentScore(org.getExcellentScore());
             updateOrg.setOrgType(dict);
             updateOrg.setOrgName(org.getOrgName());
             updateOrg.setDisOrder(org.getDisOrder());

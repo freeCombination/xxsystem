@@ -321,13 +321,6 @@ grade.personalGradeResult.PersonalGradeResultWin = Ext.create("Ext.window.Window
     				personalGradeResultId : personalGradeResultId
 				}
 			});
-    		
-    		grade.personalDutyResultDetails.ScoreStore.load({
-    			params:
-				{
-    				personalGradeResultId : personalGradeResultId
-				}
-    		});
     	}
 	}
 });

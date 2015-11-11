@@ -64,6 +64,7 @@ import com.xx.system.user.util.HSSFUtils;
  * @author wujialing
  *
  */
+@SuppressWarnings("unchecked")
 @Service("personalGradeService")
 public class PersonalGradeServiceImpl implements IPersonalGradeService {
 
@@ -221,7 +222,6 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		// 用户ID 用户自评只能看自己的数据
 		String personalGradeId = paramMap.get("personalGradeId");
 		StringBuffer hql = new StringBuffer();
-		StringBuffer counthql = new StringBuffer();
 		hql.append(" From PersonalDuty pg where 1=1  ");
 		if (StringUtil.isNotEmpty(personalGradeId)) {
 			hql.append(" and pg.personalGrade.id = " + Integer.parseInt(personalGradeId));
@@ -927,6 +927,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 	 * 
 	 * @param result
 	 */
+	@SuppressWarnings("unused")
 	private void generateCompositeScores(PersonalGradeResult result) {
 		PersonalGrade grade = result.getPersonalGrade();
 		if (grade != null) {
@@ -1257,8 +1258,6 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			
 			HSSFCellStyle styleBold = getNewCenterStyle(wb);
 			// 获取单元格格式
-			HSSFCellStyle style1 = aSheet.getRow(5).getCell(0).getCellStyle();
-			HSSFCellStyle style2 = aSheet.getRow(5).getCell(1).getCellStyle();
 			int newRow = 6; // 从第几行开始插入
 			int rows = personalDutys.size();// 设定插入几行
 			if (personalDutys != null && personalDutys.size() > 0) {
@@ -1341,8 +1340,8 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		return style;
 	}
 
+	@SuppressWarnings("deprecation")
 	private void setRegionStyle(HSSFSheet sheet, Region region, HSSFCellStyle cs) {
-
 		for (int i = region.getRowFrom(); i <= region.getRowTo(); i++) {
 			HSSFRow row = sheet.getRow(i);
 			if (region.getColumnFrom() != region.getColumnTo()) {
@@ -1544,41 +1543,65 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 	}
 
 	@Override
-	public List<ScoreVo> getScoreList(String personalGradeResultId) {
-		List<ScoreVo> result = new ArrayList<ScoreVo>();
+	public List<ScoreVo> getScoreList(String id) {
+		List<ScoreVo> scores = new ArrayList<ScoreVo>();
 		int maxScore = 120 ;
-//		if (StringUtil.isNotEmpty(personalGradeResultId)) {
-//			PersonalGradeResult gradeResult = (PersonalGradeResult)baseDao.queryEntityById(PersonalGradeResult.class, Integer.parseInt(personalGradeResultId));
-//			if (gradeResult != null 
-//					&& gradeResult.getGradeUser() != null
-//					&& gradeResult.getPersonalGrade() != null
-//					&& gradeResult.getPersonalGrade().getUser() != null
-//					&& gradeResult.getPersonalGrade().getUser().getOrgUsers() != null) {
-//				Organization currentOrg = null ;
-//				User currentUser = gradeResult.getGradeUser() ;
-//				for (OrgUser ou : gradeResult.getPersonalGrade().getUser().getOrgUsers()) {
-//					if (ou != null && ou.getOrganization() != null) {
-//						currentOrg = ou.getOrganization() ;
-//						break;
-//					}
-//				}
-//				
-//				//如果部门不等于空
-//				if (currentOrg != null 
-//						&& currentOrg.getExcellentCount() != null
-//						&& currentOrg.getExcellentScore() != null) {
-//					//找出当前评分人对所评分人部门其他职工评优指标是否超过上限，上限为currentOrg.getExcellentCount()
-//					StringBuffer hql = new StringBuffer();
-//					hql.append(" select count(*) from PersonalGradeResult r where r.")
-//				}
-//				
-//			}
-//		}
+		//id 此id为PersonalGradeResultDetails对象的id
+		if (StringUtil.isNotEmpty(id)) {
+			PersonalGradeResultDetails detail = (PersonalGradeResultDetails)baseDao.queryEntityById(PersonalGradeResultDetails.class, Integer.parseInt(id));
+			if (detail != null 
+					&& detail.getPersonalGradeResult() != null
+					&& detail.getPersonalGradeResult().getPersonalGrade() != null) {
+				//评分人
+				PersonalGradeResult result = detail.getPersonalGradeResult() ;
+				//当前人，即评分人
+				User currentUser = result.getGradeUser();
+				//被评分人
+				PersonalGrade grade = detail.getPersonalGradeResult().getPersonalGrade();
+				//如果为个人评分分类
+				if (grade.getClassification() != null && grade.getClassification().getDictCode().equals(Constant.QZFL_YBYG)) {
+					//找到评分人组织
+					Organization gradeOrg = null ;
+					User gradeUser = grade.getUser() ;
+					for (OrgUser ou : gradeUser.getOrgUsers()) {
+						if (ou != null && ou.getOrganization() != null) {
+							gradeOrg = ou.getOrganization() ;
+							break;
+						}
+					}
+					//如果组织不为空
+					if (gradeOrg != null
+							&& gradeOrg.getExcellentCount() != null 
+							&& gradeOrg.getExcellentScore() != null) {
+						//获取该组织下所有的人员
+						String gradeUserIds = getUserIdsByCurrentOrg(gradeOrg);
+						StringBuffer hql = new StringBuffer();
+						hql.append(" From PersonalGradeResultDetails d where d.personalGradeResult.gradeUser.userId = "+currentUser.getUserId());
+						//过滤当前分类
+						hql.append(" and d.indexType.pkDictionaryId = "+detail.getIndexType().getPkDictionaryId());
+						//过滤个人评分类型
+						hql.append(" and d.personalGradeResult.personalGrade.classification.dictCode = '"+Constant.QZFL_YBYG+"'");
+						//过滤评分人部门
+						hql.append(" and d.personalGradeResult.personalGrade.user.userId in ("+gradeUserIds+")");
+						//过滤分数大于部门协定优秀分数的员工
+						hql.append(" and d.score >= "+gradeOrg.getExcellentScore());
+						//查出满足条件的评分集合
+						List<PersonalGradeResultDetails> details = (List<PersonalGradeResultDetails>)baseDao.queryEntitys(hql.toString());
+						if (details != null 
+								&& details.size() > 0
+								&& details.size() >= gradeOrg.getExcellentCount()) {
+							maxScore = gradeOrg.getExcellentScore();
+						}
+					}
+				}
+			}
+		}
+		//设置分数上线
 		for (int i = maxScore; i >= 0; i--) {
 			ScoreVo scoreVo = new ScoreVo();
 			scoreVo.setScore(String.valueOf(i));
-			result.add(scoreVo);
+			scores.add(scoreVo);
 		}
-		return result;
+		return scores;
 	}
 }

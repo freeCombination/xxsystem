@@ -175,7 +175,24 @@ var orgForm=Ext.create("Ext.form.Panel", {
 					}
 				}
 			}
-	    }, {
+	    }, 
+	    {
+	        fieldLabel: '优秀员工人数',
+	        name: 'org.excellentCount',
+	        width: 100,
+	        xtype: 'numberfield',
+	        minValue:0,
+	        maxValue:10
+	    },
+	    {
+	        fieldLabel: '优秀员工分数',
+	        name: 'org.excellentScore',
+	        width: 100,
+	        xtype: 'numberfield',
+	        minValue:0,
+	        maxValue:120
+	    },
+	    {
 	        fieldLabel: '排序',
 	        name: 'org.disOrder',
 	        width: 100,

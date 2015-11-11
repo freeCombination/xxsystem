@@ -13,6 +13,8 @@ Ext.define("orgModel",{
 			{name: "deptLeader"},
 			{name: "otherSup"},
 			{name: "superintendent"},
+			{name: "excellentCount"},
+			{name: "excellentScore"},
 			{name: "enable", type:"int"}
 		]
 });
@@ -44,6 +46,8 @@ var orgGrid = Ext.create("Ext.grid.Panel", {
 	    {header: "分管领导",width: 200,dataIndex: "superiorLeader"},
 	    {header: "其他所领导",width: 200,dataIndex: "otherSup"},
 	    {header: "所长",width: 200,dataIndex: "superintendent"},
+	    {header: "优秀员工人数",width: 200,dataIndex: "excellentCount"},
+	    {header: "优秀员工分数",width: 200,dataIndex: "excellentScore"},
 	    {header: "状态",width: 200,dataIndex: "enable",
 	    	renderer: function(value, cellmeta, record, rowIndex, columnIndex, store){
 	    		//cellmeta.tdAttr = 'data-qtip="' + orgTypeArr[i].name + '"';

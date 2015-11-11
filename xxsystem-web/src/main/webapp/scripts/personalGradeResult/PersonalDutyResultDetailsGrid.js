@@ -104,6 +104,16 @@ var cm = [
         					       
         					    }
         					});
+                    },
+                    'select':function(combo, record, eOpts){
+                    	//选择的时候重新加载得分列表
+        				var id = record.get('id');
+                		grade.personalDutyResultDetails.ScoreStore.load({
+                			params:
+            				{
+                				id : id
+            				}
+                		});
                     }
                 }
             }

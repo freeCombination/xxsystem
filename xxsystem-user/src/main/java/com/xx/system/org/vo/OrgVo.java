@@ -54,6 +54,16 @@ public class OrgVo {
     private String superintendent;
     
     /**
+     * @Fields excellentCount : 优秀数量
+     */
+    private String excellentCount;
+    
+    /**
+     * @Fields excellentCount : 优秀分数
+     */
+    private String excellentScore;
+    
+    /**
      * @Fields enable : 是否可用：0 是 1 否
      */
     private int enable;
@@ -95,7 +105,8 @@ public class OrgVo {
         this.superiorLeader = o.getBranchedLeader() == null ? "" : o.getBranchedLeader().getRealname();
         this.otherSup = o.getOtherSup() == null ? "" : o.getOtherSup().getRealname();
         this.superintendent = o.getSuperintendent() == null ? "" : o.getSuperintendent().getRealname();
-        
+        this.excellentCount = o.getExcellentCount() == null ? "" : o.getExcellentCount().toString();
+        this.excellentScore = o.getExcellentScore() == null ? "" : o.getExcellentScore().toString();
         this.enable = o.getEnable();
     }
     
@@ -236,5 +247,20 @@ public class OrgVo {
 	public void setSuperintendent(String superintendent) {
 		this.superintendent = superintendent;
 	}
-    
+
+	public String getExcellentCount() {
+		return excellentCount;
+	}
+
+	public void setExcellentCount(String excellentCount) {
+		this.excellentCount = excellentCount;
+	}
+
+	public String getExcellentScore() {
+		return excellentScore;
+	}
+
+	public void setExcellentScore(String excellentScore) {
+		this.excellentScore = excellentScore;
+	}
 }
