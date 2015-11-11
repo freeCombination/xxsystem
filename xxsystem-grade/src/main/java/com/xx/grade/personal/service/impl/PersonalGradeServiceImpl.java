@@ -1577,6 +1577,8 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 						String gradeUserIds = getUserIdsByCurrentOrg(gradeOrg);
 						StringBuffer hql = new StringBuffer();
 						hql.append(" From PersonalGradeResultDetails d where d.personalGradeResult.gradeUser.userId = "+currentUser.getUserId());
+						//过滤掉自己
+						hql.append(" and d.id <> "+detail.getId());
 						//过滤当前分类
 						hql.append(" and d.indexType.pkDictionaryId = "+detail.getIndexType().getPkDictionaryId());
 						//过滤个人评分类型

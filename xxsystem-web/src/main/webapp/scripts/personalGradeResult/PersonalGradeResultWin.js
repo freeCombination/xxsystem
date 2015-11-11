@@ -281,7 +281,7 @@ grade.personalGradeResult.PersonalGradeResultWin = Ext.create("Ext.window.Window
 		}
 	} ],
 	listeners: {
-    	afterrender: function(){
+		show: function(){
     		var personalGradeId = Ext.getCmp('personalGradeId').getValue();
     		var personalGradeResultId = Ext.getCmp('id').getValue();
     		var gradeUserType = Ext.getCmp('gradeUserType').getValue();
@@ -314,7 +314,6 @@ grade.personalGradeResult.PersonalGradeResultWin = Ext.create("Ext.window.Window
     					personalGradeId : personalGradeId
     				}
     			});
-    		
     		grade.personalDutyResultDetails.PersonalDutyResultDetailsStore.load({
     			params:
 				{
