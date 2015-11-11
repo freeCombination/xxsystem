@@ -1689,12 +1689,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 						vo.setClassifyId(oc.getClassify().getPkClassifyId());
 						vo.setScore(oc.getScore());
 						
-						if (StringUtil.isNotBlank(oc.getScore()) && !"0".equals(oc.getScore())) {
-							vo.setIsParticipation(1);
-						}
-						else {
-							vo.setIsParticipation(0);
-						}
+						vo.setIsParticipation(oc.getClassify().getIsParticipation());
 						
 						vo.setPercentage(oc.getPercentage());
 						if (!CollectionUtils.isEmpty(bdLst)) {
@@ -1708,10 +1703,18 @@ public class IndexManageServiceImpl implements IIndexManageService {
 						}
 						List<FinalScore> fsLst = (List<FinalScore>)baseDao.queryEntitys(fsHql);
 						if (!CollectionUtils.isEmpty(fsLst)) {
-							if (!"0".equals(fsLst.get(0).getSumScore())) {
-								vo.setSumScore(fsLst.get(0).getSumScore());
+							FinalScore sc = fsLst.get(0);
+							if (!"0".equals(sc.getSumScore())) {
+								vo.setSumScore(sc.getSumScore());
 							}
-							vo.setFinalScore(fsLst.get(0).getScore());
+							vo.setFinalScore(sc.getScore());
+							
+							vo.setJdScore(sc.getJdScore());
+							vo.setJdPercentage(sc.getJdPercentage());
+							
+							if (!"0".equals(sc.getJdSumScore())) {
+								vo.setJdSumScore(sc.getJdSumScore());
+							}
 						}
 						
 						voLst.add(vo);
@@ -1732,10 +1735,18 @@ public class IndexManageServiceImpl implements IIndexManageService {
 						}
 						List<FinalScore> fsLst = (List<FinalScore>)baseDao.queryEntitys(fsHql);
 						if (!CollectionUtils.isEmpty(fsLst)) {
-							if (!"0".equals(fsLst.get(0).getSumScore())) {
-								vo.setSumScore(fsLst.get(0).getSumScore());
+							FinalScore sc = fsLst.get(0);
+							if (!"0".equals(sc.getSumScore())) {
+								vo.setSumScore(sc.getSumScore());
 							}
-							vo.setFinalScore(fsLst.get(0).getScore());
+							vo.setFinalScore(sc.getScore());
+							
+							vo.setJdScore(sc.getJdScore());
+							vo.setJdPercentage(sc.getJdPercentage());
+							
+							if (!"0".equals(sc.getJdSumScore())) {
+								vo.setJdSumScore(sc.getJdSumScore());
+							}
 						}
 						
 						voLst.add(vo);
@@ -1770,8 +1781,8 @@ public class IndexManageServiceImpl implements IIndexManageService {
 	}
 
 	@Override
-	public void saveFinalScore(String orgId, String sumScore, String finalScore, String electYear) throws Exception {
-		if (StringUtil.isNotBlank(orgId) && StringUtil.isNotBlank(sumScore) && StringUtil.isNotBlank(finalScore) && StringUtil.isNotBlank(electYear)) {
+	public void saveSumScore(String orgId, String sumScore, String electYear, String flag) throws Exception {
+		if (StringUtil.isNotBlank(orgId) && StringUtil.isNotBlank(sumScore) && StringUtil.isNotBlank(electYear)) {
 			String hql = " from FinalScore fs where fs.electYear = '" + electYear + "'"
 					+ " and fs.org.orgId = " + orgId;
 			List<FinalScore> fsLst = (List<FinalScore>)baseDao.queryEntitys(hql);
@@ -1786,7 +1797,66 @@ public class IndexManageServiceImpl implements IIndexManageService {
 				fs.setOrg(org);
 			}
 			
-			fs.setSumScore(sumScore);
+			if ("jdSumScore".equals(flag)) {
+				fs.setJdSumScore(sumScore);
+			}
+			else {
+				fs.setSumScore(sumScore);
+			}
+			
+			baseDao.saveOrUpdate(fs);
+		}
+	}
+	
+	@Override
+	public void saveJdEditScore(String orgId, String score, String percentage, String electYear, String flag) throws Exception {
+		if (StringUtil.isNotBlank(orgId) && StringUtil.isNotBlank(electYear)) {
+			String hql = " from FinalScore fs where fs.electYear = '" + electYear + "'"
+					+ " and fs.org.orgId = " + orgId;
+			List<FinalScore> fsLst = (List<FinalScore>)baseDao.queryEntitys(hql);
+			FinalScore fs = null;
+			if (!CollectionUtils.isEmpty(fsLst)) {
+				fs = fsLst.get(0);
+			}
+			else {
+				fs = new FinalScore();
+				fs.setElectYear(electYear);
+				Organization org = (Organization)baseDao.queryEntityById(Organization.class, NumberUtils.toInt(orgId));
+				fs.setOrg(org);
+			}
+			
+			if ("percentage".equals(flag)) {
+				if (StringUtil.isNotBlank(percentage)) {
+					fs.setJdPercentage(percentage);
+				}
+			}
+			else {
+				if (StringUtil.isNotBlank(score)) {
+					fs.setJdScore(score);
+				}
+			}
+			
+			baseDao.saveOrUpdate(fs);
+		}
+	}
+	
+	@Override
+	public void saveFinalScore(String orgId, String finalScore, String electYear) throws Exception {
+		if (StringUtil.isNotBlank(orgId) && StringUtil.isNotBlank(finalScore) && StringUtil.isNotBlank(electYear)) {
+			String hql = " from FinalScore fs where fs.electYear = '" + electYear + "'"
+					+ " and fs.org.orgId = " + orgId;
+			List<FinalScore> fsLst = (List<FinalScore>)baseDao.queryEntitys(hql);
+			FinalScore fs = null;
+			if (!CollectionUtils.isEmpty(fsLst)) {
+				fs = fsLst.get(0);
+			}
+			else {
+				fs = new FinalScore();
+				fs.setElectYear(electYear);
+				Organization org = (Organization)baseDao.queryEntityById(Organization.class, NumberUtils.toInt(orgId));
+				fs.setOrg(org);
+			}
+			
 			fs.setScore(finalScore);
 			
 			baseDao.saveOrUpdate(fs);

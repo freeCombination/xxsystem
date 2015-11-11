@@ -528,7 +528,7 @@ public class IndexManageAction extends BaseAction {
 	}
 	
 	/**
-     * 保存未参加指标对应部门编辑得分
+     * 保存指标编辑得分和权重
      */
     public String saveEditScore() {
     	String msg = "{success:'false',msg:'保存未参加指标对应部门编辑得分失败'}";
@@ -554,13 +554,51 @@ public class IndexManageAction extends BaseAction {
     	String msg = "{success:'false',msg:'保存部门最终得分失败'}";
 		try {
 			String orgId = getRequest().getParameter("orgId");
-			String sumScore = getRequest().getParameter("sumScore");
 			String finalScore = getRequest().getParameter("finalScore");
 			String electYear = getRequest().getParameter("electYear");
-			indexManageService.saveFinalScore(orgId, sumScore, finalScore, electYear);
+			indexManageService.saveFinalScore(orgId, finalScore, electYear);
 			msg = "{success:'true',msg:'保存部门最终得分成功'}";
 		} catch (Exception e) {
 			this.excepAndLogHandle(IndexManageAction.class, "保存部门最终得分", e, false);
+		}
+		JsonUtil.outJson(msg);
+		return null;
+    }
+    
+    /**
+     * 保存指标得分小计或季度得分小计
+     */
+    public String saveSumScore() {
+    	String msg = "{success:'false',msg:'保存指标得分小计或季度得分小计失败'}";
+		try {
+			String orgId = getRequest().getParameter("orgId");
+			String sumScore = getRequest().getParameter("sumScore");
+			String electYear = getRequest().getParameter("electYear");
+			String flag = getRequest().getParameter("flag");
+			indexManageService.saveSumScore(orgId, sumScore, electYear, flag);
+			msg = "{success:'true',msg:'保存指标得分小计或季度得分小计成功'}";
+		} catch (Exception e) {
+			this.excepAndLogHandle(IndexManageAction.class, "保存指标得分小计或季度得分小计", e, false);
+		}
+		JsonUtil.outJson(msg);
+		return null;
+    }
+    
+    /**
+     * 保存季度得分和权重
+     */
+    public String saveJdEditScore() {
+    	String msg = "{success:'false',msg:'保存季度得分和权重失败'}";
+		try {
+			String orgId = getRequest().getParameter("orgId");
+			String score = getRequest().getParameter("score");
+			String percentage = getRequest().getParameter("percentage");
+			String electYear = getRequest().getParameter("electYear");
+			String flag = getRequest().getParameter("flag");
+			indexManageService.saveJdEditScore(orgId, score, percentage, electYear, flag);
+			msg = "{success:'true',msg:'保存季度得分和权重成功'}";
+		} catch (Exception e) {
+			this.excepAndLogHandle(IndexManageAction.class, "保存季度得分和权重", e, false);
 		}
 		JsonUtil.outJson(msg);
 		return null;

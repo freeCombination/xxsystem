@@ -211,28 +211,39 @@ function chooseOrganization(objName,objId,userId){
 		border:false,
 		rootVisible: false,
 		store: Ext.create('Ext.data.TreeStore', {
-				model: 'treeModel',
-				nodeParam:'parentId',
-				autoLoad:false,
-				clearOnLoad :true,
-				proxy: {
-					type: 'ajax',
-					extraParams:params,
-					reader:{
-							 type: 'json'
-						  },
-					 folderSort: true,
-					 sorters: [{
-								property: 'orgId',
-								direction: 'DESC'
-					 }],
-					url :'${ctx}/org/getUnitTreeListForModifyUser.action'
-				},
-				root: {
-					  expanded: true,
-					  id:"0"
-					  }
-				})
+			model: 'treeModel',
+			nodeParam:'parentId',
+			autoLoad:false,
+			clearOnLoad :true,
+			proxy: {
+				type: 'ajax',
+				extraParams:params,
+				reader:{
+						 type: 'json'
+					  },
+				 folderSort: true,
+				 sorters: [{
+							property: 'orgId',
+							direction: 'DESC'
+				 }],
+				url :'${ctx}/org/getUnitTreeListForModifyUser.action'
+			},
+			root: {
+				  expanded: true,
+				  id:"0"
+				  }
+			}),
+			listeners:{
+	            checkchange : function(node) {
+	                orgTreePanel.getRootNode().cascadeBy(function(child){
+	                    if(child.data.id != 0 && child.get('checked')){
+	                        if (child.data.id != node.data.id) {
+	                            child.set('checked', false);
+	                        }
+	                    }
+	                });
+	            }
+	        }
 	});
 	
 	var win = new Ext.Window({
