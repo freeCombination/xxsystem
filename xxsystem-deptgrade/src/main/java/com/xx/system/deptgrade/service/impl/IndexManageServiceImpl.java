@@ -1988,7 +1988,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 		titleRow.setHeight((short) 800);
 		HSSFCell titleCell = titleRow.createCell(0);
 		titleCell.setCellStyle(titleStyle);
-		titleCell.setCellValue("中储粮成都粮食储藏所" + electYear + "年度部门绩效得分");
+		titleCell.setCellValue(electYear + "年成都所组织绩效考核评分汇总表");
 		
 		// 创建表头行
 		sheet.addMergedRegion(new CellRangeAddress(1, 2, 0, 0));
