@@ -3,6 +3,8 @@ package com.xx.system.deptgrade.service;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
 import com.xx.system.common.exception.BusinessException;
 import com.xx.system.common.vo.ListVo;
 import com.xx.system.deptgrade.vo.DeptGradeDetailVo;
@@ -359,4 +361,13 @@ public interface IIndexManageService {
      * @throws Exception
      */
     public void saveJdEditScore(String orgId, String score, String percentage, String electYear, String flag) throws Exception;
+    
+    /**
+     * 导出部门最终得分
+     * 
+     * @param electYear 参评年月
+     * @return
+     * @throws Exception
+     */
+    public HSSFWorkbook exportDeptFinalScore(String electYear)  throws Exception;
 }

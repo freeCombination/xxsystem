@@ -1,10 +1,14 @@
 package com.xx.system.deptgrade.action;
 
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.xx.system.common.action.BaseAction;
 import com.xx.system.common.exception.BusinessException;
@@ -602,5 +606,28 @@ public class IndexManageAction extends BaseAction {
 		}
 		JsonUtil.outJson(msg);
 		return null;
+    }
+    
+    /**
+     * 导出部门最终得分
+     */
+    public String exportDeptFinalScore() {
+    	String electYear = getRequest().getParameter("electYear");
+    	
+		try {
+			HSSFWorkbook wb = indexManageService.exportDeptFinalScore(electYear);
+			HttpServletResponse response = getResponse();
+	        response.setContentType("application/vnd.ms-excel;charset=UTF-8");
+	        response.setHeader("Content-disposition", "attachment;filename=\""
+	        		+ new String((electYear + "年度部门绩效得分.xls").getBytes("GBK"), "ISO8859_1") + "\"");
+	        OutputStream ouputStream = response.getOutputStream();
+	        wb.write(ouputStream);
+	        ouputStream.flush();
+	        ouputStream.close();
+		} catch (Exception e) {
+			this.excepAndLogHandle(IndexManageAction.class, "导出部门最终得分", e, false);
+		}
+    	
+    	return null;
     }
 }

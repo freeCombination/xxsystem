@@ -241,7 +241,7 @@
                         }
                     ]
                 },
-                {header: "部门 建设得分（" + (bdPer * 100) + "%权重）",width: 160,menuDisabled: true,sortable :false,
+                {header: "部门建设得分（" + (bdPer * 100) + "%权重）",width: 160,menuDisabled: true,sortable :false,
                     columns:[
                         {header: "评价得分",width: 160,dataIndex: "buildScore",menuDisabled: true,sortable :false,
                             renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
@@ -426,7 +426,15 @@
             	xtype: 'checkboxfield',
                 id : 'editable'
             },
-            '&nbsp;&nbsp;&nbsp;&nbsp;']
+            '&nbsp;&nbsp;&nbsp;&nbsp;',
+            {
+            	xtype:'button',
+                text:'导出',
+                iconCls:'export-button',
+                handler:function(){
+                    window.location.href = "${ctx}/deptgrade/exportDeptFinalScore.action?electYear=" + Ext.getCmp('electYearQuery').getValue();
+                }
+            }]
         });
         
         recordStore.load({
