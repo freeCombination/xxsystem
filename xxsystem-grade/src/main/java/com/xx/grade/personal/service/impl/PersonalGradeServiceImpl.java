@@ -899,6 +899,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		baseDao.updateEntity(result);
 	}
 
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRED)
 	@Override
 	public String submitPersonalGradeResult(String ids) {
 		try {
