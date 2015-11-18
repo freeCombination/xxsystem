@@ -3,6 +3,8 @@ package com.xx.system.deptgrade.service;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
 import com.xx.system.common.exception.BusinessException;
 import com.xx.system.common.vo.ListVo;
 import com.xx.system.deptgrade.vo.DeptGradeDetailVo;
@@ -316,13 +318,13 @@ public interface IIndexManageService {
     public List<DeptGradeDetailVo> queryDeptFinalScore(String electYear) throws Exception;
     
     /**
-     * 保存未参加指标对应部门编辑得分
+     * 保存指标编辑得分和权重
      * 
      * @param cfId 指标分类id
      * @param orgId 部门id
      * @param score 得分
      * @param percentage 权重
-     * @param flag
+     * @param flag 指标得分或权重标志
      * @throws Exception
      */
     public void saveEditScore(String cfId, String orgId, String score, String percentage, String flag) throws Exception;
@@ -331,10 +333,41 @@ public interface IIndexManageService {
      * 保存部门最终得分
      * 
      * @param orgId 部门id
-     * @param sumScore 指标得分小计
      * @param finalScore 最终得分
      * @param electYear 参评年月
      * @throws Exception
      */
-    public void saveFinalScore(String orgId, String sumScore, String finalScore, String electYear) throws Exception;
+    public void saveFinalScore(String orgId, String finalScore, String electYear) throws Exception;
+    
+    /**
+     * 保存指标得分小计或季度得分小计
+     * 
+     * @param orgId 部门id
+     * @param sumScore 指标得分小计或季度得分小计
+     * @param electYear 参评年月
+     * @param flag 指标得分或季度得分小计标志
+     * @throws Exception
+     */
+    public void saveSumScore(String orgId, String sumScore, String electYear, String flag) throws Exception;
+    
+    /**
+     * 保存季度得分和权重
+     * 
+     * @param orgId 部门id
+     * @param score 季度得分
+     * @param percentage 季度得分权重
+     * @param electYear 参评年月
+     * @param flag 季度得分或权重标志
+     * @throws Exception
+     */
+    public void saveJdEditScore(String orgId, String score, String percentage, String electYear, String flag) throws Exception;
+    
+    /**
+     * 导出部门最终得分
+     * 
+     * @param electYear 参评年月
+     * @return
+     * @throws Exception
+     */
+    public HSSFWorkbook exportDeptFinalScore(String electYear)  throws Exception;
 }

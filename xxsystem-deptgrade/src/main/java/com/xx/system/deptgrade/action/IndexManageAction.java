@@ -1,10 +1,14 @@
 package com.xx.system.deptgrade.action;
 
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.xx.system.common.action.BaseAction;
 import com.xx.system.common.exception.BusinessException;
@@ -528,7 +532,7 @@ public class IndexManageAction extends BaseAction {
 	}
 	
 	/**
-     * 保存未参加指标对应部门编辑得分
+     * 保存指标编辑得分和权重
      */
     public String saveEditScore() {
     	String msg = "{success:'false',msg:'保存未参加指标对应部门编辑得分失败'}";
@@ -554,15 +558,76 @@ public class IndexManageAction extends BaseAction {
     	String msg = "{success:'false',msg:'保存部门最终得分失败'}";
 		try {
 			String orgId = getRequest().getParameter("orgId");
-			String sumScore = getRequest().getParameter("sumScore");
 			String finalScore = getRequest().getParameter("finalScore");
 			String electYear = getRequest().getParameter("electYear");
-			indexManageService.saveFinalScore(orgId, sumScore, finalScore, electYear);
+			indexManageService.saveFinalScore(orgId, finalScore, electYear);
 			msg = "{success:'true',msg:'保存部门最终得分成功'}";
 		} catch (Exception e) {
 			this.excepAndLogHandle(IndexManageAction.class, "保存部门最终得分", e, false);
 		}
 		JsonUtil.outJson(msg);
 		return null;
+    }
+    
+    /**
+     * 保存指标得分小计或季度得分小计
+     */
+    public String saveSumScore() {
+    	String msg = "{success:'false',msg:'保存指标得分小计或季度得分小计失败'}";
+		try {
+			String orgId = getRequest().getParameter("orgId");
+			String sumScore = getRequest().getParameter("sumScore");
+			String electYear = getRequest().getParameter("electYear");
+			String flag = getRequest().getParameter("flag");
+			indexManageService.saveSumScore(orgId, sumScore, electYear, flag);
+			msg = "{success:'true',msg:'保存指标得分小计或季度得分小计成功'}";
+		} catch (Exception e) {
+			this.excepAndLogHandle(IndexManageAction.class, "保存指标得分小计或季度得分小计", e, false);
+		}
+		JsonUtil.outJson(msg);
+		return null;
+    }
+    
+    /**
+     * 保存季度得分和权重
+     */
+    public String saveJdEditScore() {
+    	String msg = "{success:'false',msg:'保存季度得分和权重失败'}";
+		try {
+			String orgId = getRequest().getParameter("orgId");
+			String score = getRequest().getParameter("score");
+			String percentage = getRequest().getParameter("percentage");
+			String electYear = getRequest().getParameter("electYear");
+			String flag = getRequest().getParameter("flag");
+			indexManageService.saveJdEditScore(orgId, score, percentage, electYear, flag);
+			msg = "{success:'true',msg:'保存季度得分和权重成功'}";
+		} catch (Exception e) {
+			this.excepAndLogHandle(IndexManageAction.class, "保存季度得分和权重", e, false);
+		}
+		JsonUtil.outJson(msg);
+		return null;
+    }
+    
+    /**
+     * 导出部门最终得分
+     */
+    public String exportDeptFinalScore() {
+    	String electYear = getRequest().getParameter("electYear");
+    	
+		try {
+			HSSFWorkbook wb = indexManageService.exportDeptFinalScore(electYear);
+			HttpServletResponse response = getResponse();
+	        response.setContentType("application/vnd.ms-excel;charset=UTF-8");
+	        response.setHeader("Content-disposition", "attachment;filename=\""
+	        		+ new String((electYear + "年度部门绩效得分.xls").getBytes("GBK"), "ISO8859_1") + "\"");
+	        OutputStream ouputStream = response.getOutputStream();
+	        wb.write(ouputStream);
+	        ouputStream.flush();
+	        ouputStream.close();
+		} catch (Exception e) {
+			this.excepAndLogHandle(IndexManageAction.class, "导出部门最终得分", e, false);
+		}
+    	
+    	return null;
     }
 }

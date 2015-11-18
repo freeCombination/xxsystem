@@ -202,8 +202,8 @@ var orgForm=Ext.create("Ext.form.Panel", {
 	    }]
 	 });
 var orgWin = Ext.create("Ext.window.Window", {
-	height : 350,
-	width : 380,
+	height : 380,
+	width : 420,
 	items : [orgForm],
 	buttons : [ {
 		text : SystemConstant.yesBtnText,

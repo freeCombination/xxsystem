@@ -14,6 +14,14 @@ import java.util.Map.Entry;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -38,6 +46,7 @@ import com.xx.system.deptgrade.vo.GradeIndexVo;
 import com.xx.system.deptgrade.vo.IndexClassifyVo;
 import com.xx.system.deptgrade.vo.PercentageVo;
 import com.xx.system.dict.entity.Dictionary;
+import com.xx.system.dict.service.IDictService;
 import com.xx.system.org.entity.OrgUser;
 import com.xx.system.org.entity.Organization;
 import com.xx.system.org.service.IOrgService;
@@ -67,6 +76,9 @@ public class IndexManageServiceImpl implements IIndexManageService {
     public void setBaseDao(IBaseDao baseDao) {
         this.baseDao = baseDao;
     }
+    
+    @Resource
+    private IDictService dictService;
     
     @Resource
     public IOrgService organizationService;
@@ -1689,12 +1701,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 						vo.setClassifyId(oc.getClassify().getPkClassifyId());
 						vo.setScore(oc.getScore());
 						
-						if (StringUtil.isNotBlank(oc.getScore()) && !"0".equals(oc.getScore())) {
-							vo.setIsParticipation(1);
-						}
-						else {
-							vo.setIsParticipation(0);
-						}
+						vo.setIsParticipation(oc.getClassify().getIsParticipation());
 						
 						vo.setPercentage(oc.getPercentage());
 						if (!CollectionUtils.isEmpty(bdLst)) {
@@ -1708,10 +1715,18 @@ public class IndexManageServiceImpl implements IIndexManageService {
 						}
 						List<FinalScore> fsLst = (List<FinalScore>)baseDao.queryEntitys(fsHql);
 						if (!CollectionUtils.isEmpty(fsLst)) {
-							if (!"0".equals(fsLst.get(0).getSumScore())) {
-								vo.setSumScore(fsLst.get(0).getSumScore());
+							FinalScore sc = fsLst.get(0);
+							if (!"0".equals(sc.getSumScore())) {
+								vo.setSumScore(sc.getSumScore());
 							}
-							vo.setFinalScore(fsLst.get(0).getScore());
+							vo.setFinalScore(sc.getScore());
+							
+							vo.setJdScore(sc.getJdScore());
+							vo.setJdPercentage(sc.getJdPercentage());
+							
+							if (!"0".equals(sc.getJdSumScore())) {
+								vo.setJdSumScore(sc.getJdSumScore());
+							}
 						}
 						
 						voLst.add(vo);
@@ -1732,10 +1747,18 @@ public class IndexManageServiceImpl implements IIndexManageService {
 						}
 						List<FinalScore> fsLst = (List<FinalScore>)baseDao.queryEntitys(fsHql);
 						if (!CollectionUtils.isEmpty(fsLst)) {
-							if (!"0".equals(fsLst.get(0).getSumScore())) {
-								vo.setSumScore(fsLst.get(0).getSumScore());
+							FinalScore sc = fsLst.get(0);
+							if (!"0".equals(sc.getSumScore())) {
+								vo.setSumScore(sc.getSumScore());
 							}
-							vo.setFinalScore(fsLst.get(0).getScore());
+							vo.setFinalScore(sc.getScore());
+							
+							vo.setJdScore(sc.getJdScore());
+							vo.setJdPercentage(sc.getJdPercentage());
+							
+							if (!"0".equals(sc.getJdSumScore())) {
+								vo.setJdSumScore(sc.getJdSumScore());
+							}
 						}
 						
 						voLst.add(vo);
@@ -1770,8 +1793,8 @@ public class IndexManageServiceImpl implements IIndexManageService {
 	}
 
 	@Override
-	public void saveFinalScore(String orgId, String sumScore, String finalScore, String electYear) throws Exception {
-		if (StringUtil.isNotBlank(orgId) && StringUtil.isNotBlank(sumScore) && StringUtil.isNotBlank(finalScore) && StringUtil.isNotBlank(electYear)) {
+	public void saveSumScore(String orgId, String sumScore, String electYear, String flag) throws Exception {
+		if (StringUtil.isNotBlank(orgId) && StringUtil.isNotBlank(sumScore) && StringUtil.isNotBlank(electYear)) {
 			String hql = " from FinalScore fs where fs.electYear = '" + electYear + "'"
 					+ " and fs.org.orgId = " + orgId;
 			List<FinalScore> fsLst = (List<FinalScore>)baseDao.queryEntitys(hql);
@@ -1786,10 +1809,297 @@ public class IndexManageServiceImpl implements IIndexManageService {
 				fs.setOrg(org);
 			}
 			
-			fs.setSumScore(sumScore);
+			if ("jdSumScore".equals(flag)) {
+				fs.setJdSumScore(sumScore);
+			}
+			else {
+				fs.setSumScore(sumScore);
+			}
+			
+			baseDao.saveOrUpdate(fs);
+		}
+	}
+	
+	@Override
+	public void saveJdEditScore(String orgId, String score, String percentage, String electYear, String flag) throws Exception {
+		if (StringUtil.isNotBlank(orgId) && StringUtil.isNotBlank(electYear)) {
+			String hql = " from FinalScore fs where fs.electYear = '" + electYear + "'"
+					+ " and fs.org.orgId = " + orgId;
+			List<FinalScore> fsLst = (List<FinalScore>)baseDao.queryEntitys(hql);
+			FinalScore fs = null;
+			if (!CollectionUtils.isEmpty(fsLst)) {
+				fs = fsLst.get(0);
+			}
+			else {
+				fs = new FinalScore();
+				fs.setElectYear(electYear);
+				Organization org = (Organization)baseDao.queryEntityById(Organization.class, NumberUtils.toInt(orgId));
+				fs.setOrg(org);
+			}
+			
+			if ("percentage".equals(flag)) {
+				if (StringUtil.isNotBlank(percentage)) {
+					fs.setJdPercentage(percentage);
+				}
+			}
+			else {
+				if (StringUtil.isNotBlank(score)) {
+					fs.setJdScore(score);
+				}
+			}
+			
+			baseDao.saveOrUpdate(fs);
+		}
+	}
+	
+	@Override
+	public void saveFinalScore(String orgId, String finalScore, String electYear) throws Exception {
+		if (StringUtil.isNotBlank(orgId) && StringUtil.isNotBlank(finalScore) && StringUtil.isNotBlank(electYear)) {
+			String hql = " from FinalScore fs where fs.electYear = '" + electYear + "'"
+					+ " and fs.org.orgId = " + orgId;
+			List<FinalScore> fsLst = (List<FinalScore>)baseDao.queryEntitys(hql);
+			FinalScore fs = null;
+			if (!CollectionUtils.isEmpty(fsLst)) {
+				fs = fsLst.get(0);
+			}
+			else {
+				fs = new FinalScore();
+				fs.setElectYear(electYear);
+				Organization org = (Organization)baseDao.queryEntityById(Organization.class, NumberUtils.toInt(orgId));
+				fs.setOrg(org);
+			}
+			
 			fs.setScore(finalScore);
 			
 			baseDao.saveOrUpdate(fs);
 		}
+	}
+
+	@Override
+	public HSSFWorkbook exportDeptFinalScore(String electYear) throws Exception {
+		
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet sheet = wb.createSheet("部门绩效得分");
+		
+		// 标题行字体
+		Font titleFont = wb.createFont();
+		titleFont.setFontName("华文楷体");
+		titleFont.setFontHeightInPoints((short) 20);
+		titleFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+		titleFont.setCharSet(Font.DEFAULT_CHARSET);
+		titleFont.setColor(IndexedColors.BLACK.getIndex());
+		
+		// 标题行样式
+		CellStyle titleStyle = wb.createCellStyle();
+		titleStyle.setAlignment(CellStyle.ALIGN_CENTER);
+		titleStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+		titleStyle.setFont(titleFont);
+		titleStyle.setFillBackgroundColor(IndexedColors.SKY_BLUE.getIndex());
+		
+		// 表头行字体
+		Font headFont = wb.createFont();
+		headFont.setFontName("宋体");
+		headFont.setFontHeightInPoints((short) 10);
+		headFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+		headFont.setCharSet(Font.DEFAULT_CHARSET);
+		headFont.setColor(IndexedColors.BLACK.getIndex());
+		
+		// 表头行样式
+		CellStyle headStyle = wb.createCellStyle();
+		headStyle.setAlignment(CellStyle.ALIGN_CENTER);
+		headStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+		headStyle.setFont(headFont);
+		headStyle.setFillBackgroundColor(IndexedColors.YELLOW.getIndex());
+		headStyle.setBorderTop(CellStyle.BORDER_MEDIUM);
+		headStyle.setBorderBottom(CellStyle.BORDER_THIN);
+		headStyle.setBorderLeft(CellStyle.BORDER_THIN);
+		headStyle.setBorderRight(CellStyle.BORDER_THIN);
+		headStyle.setTopBorderColor(IndexedColors.BLACK.getIndex());
+		headStyle.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+		headStyle.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+		headStyle.setRightBorderColor(IndexedColors.BLACK.getIndex());
+		
+		// 内容行字体
+		Font contentFont = wb.createFont();
+		contentFont.setFontName("宋体");
+		contentFont.setFontHeightInPoints((short) 10);
+		contentFont.setBoldweight(Font.BOLDWEIGHT_NORMAL);
+		contentFont.setCharSet(Font.DEFAULT_CHARSET);
+		contentFont.setColor(IndexedColors.BLACK.getIndex());
+		
+		// 内容行样式
+		CellStyle contentStyle = wb.createCellStyle();
+		contentStyle.setAlignment(CellStyle.ALIGN_CENTER);
+		contentStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+		contentStyle.setFont(contentFont);
+		contentStyle.setBorderTop(CellStyle.BORDER_THIN);
+		contentStyle.setBorderBottom(CellStyle.BORDER_THIN);
+		contentStyle.setBorderLeft(CellStyle.BORDER_THIN);
+		contentStyle.setBorderRight(CellStyle.BORDER_THIN);
+		contentStyle.setTopBorderColor(IndexedColors.BLACK.getIndex());
+		contentStyle.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+		contentStyle.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+		contentStyle.setRightBorderColor(IndexedColors.BLACK.getIndex());
+		contentStyle.setWrapText(true); // 字段换行
+		
+		List<Dictionary> dictlist = dictService.getDictByTypeCode("SCORETYPE");
+		
+		String[] excelHeader = {"部门", "季度得分", "", "", "部门指标年度得分", "", "", "", "部门建设得分", "总分"};
+		
+		if (!CollectionUtils.isEmpty(dictlist)) {
+			String cfPer = "";
+			String bdPer = "";
+			String jdPer = "";
+			
+			for (Dictionary dict : dictlist) {
+				if ("INXSCORE".equals(dict.getDictCode())) {
+                    cfPer = "部门指标年度得分（" + (StringUtil.isNotBlank(dict.getDictionaryValue()) ? 
+    						String.format("%.2f", NumberUtils.toFloat(dict.getDictionaryValue()) * 100) + "%" : "") + "）";
+                }
+                else if ("BUILDSCORE".equals(dict.getDictCode())) {
+                    bdPer = "部门建设得分（" + (StringUtil.isNotBlank(dict.getDictionaryValue()) ? 
+    						String.format("%.2f", NumberUtils.toFloat(dict.getDictionaryValue()) * 100) + "%" : "")  + "）";
+                }
+                else if ("JDSCORE".equals(dict.getDictCode())) {
+                    jdPer = "季度得分（" + (StringUtil.isNotBlank(dict.getDictionaryValue()) ? 
+    						String.format("%.2f", NumberUtils.toFloat(dict.getDictionaryValue()) * 100) + "%" : "") + "）";
+                }
+			}
+			
+			excelHeader[1] = jdPer;
+			excelHeader[4] = cfPer;
+			excelHeader[8] = bdPer;
+		}
+		
+		
+		String[] excelHeader1 = {"", "得分（可编辑）", "权重（可编辑）", "季度得分", "指标名称", "得分（可编辑）",
+			"权重（可编辑）", "年度得分", "评价得分", ""}; 
+		// 单元格列宽
+		int[] excelHeaderWidth = {120, 90, 90, 90, 120, 90, 90, 90, 160, 90};
+		
+		// 设置列宽度（像素）
+		for (int i = 0; i < excelHeaderWidth.length; i++) {  
+		    sheet.setColumnWidth(i, 42 * excelHeaderWidth[i]);
+		}
+		
+		// 创建标题行
+		sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 9));
+		HSSFRow titleRow = sheet.createRow(0);
+		titleRow.setHeight((short) 800);
+		HSSFCell titleCell = titleRow.createCell(0);
+		titleCell.setCellStyle(titleStyle);
+		titleCell.setCellValue(electYear + "年成都所组织绩效考核评分汇总表");
+		
+		// 创建表头行
+		sheet.addMergedRegion(new CellRangeAddress(1, 2, 0, 0));
+		sheet.addMergedRegion(new CellRangeAddress(1, 1, 1, 3));
+		sheet.addMergedRegion(new CellRangeAddress(1, 1, 4, 7));
+		sheet.addMergedRegion(new CellRangeAddress(1, 2, 9, 9));
+		HSSFRow headRow = sheet.createRow(1);
+		headRow.setHeight((short) 400);
+		for (int i = 0; i < excelHeader.length; i++) {
+		    HSSFCell cell = headRow.createCell(i);
+		    cell.setCellValue(excelHeader[i]);
+		    cell.setCellStyle(headStyle);
+		}
+		
+		HSSFRow headRow1 = sheet.createRow(2);
+		headRow1.setHeight((short) 400);
+		for (int i = 0; i < excelHeader1.length; i++) {
+		    HSSFCell cell = headRow1.createCell(i);
+		    cell.setCellValue(excelHeader1[i]);
+		    cell.setCellStyle(headStyle);
+		}
+		
+		List<DeptGradeDetailVo> scLst = queryDeptFinalScore(electYear);
+		if (!CollectionUtils.isEmpty(scLst)) {
+			int r = 0;
+			// 数据合并的开始行号
+			int startRow = 0;
+			int endRow = 0;
+			// 用于判断是否合并单元格
+			int canpDeptId = -1;
+			for (DeptGradeDetailVo vo : scLst) {
+				r++;
+				
+				if (canpDeptId != vo.getCanpDeptId()) {
+					canpDeptId = vo.getCanpDeptId();
+					
+					if (r > 1) {
+						endRow = r + 2 - 1;
+						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 0, 0));
+						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 1, 1));
+						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 2, 2));
+						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 3, 3));
+						
+						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 7, 7));
+						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 8, 8));
+						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 9, 9));
+					}
+					
+					startRow = r + 2;
+				}
+				else {
+					if (r == scLst.size()) {
+						endRow = r + 2;
+						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 0, 0));
+						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 1, 1));
+						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 2, 2));
+						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 3, 3));
+						
+						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 7, 7));
+						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 8, 8));
+						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 9, 9));
+					}
+				}
+				
+				HSSFRow contexRow = sheet.createRow(r + 2);
+				contexRow.setHeight((short) 380);
+				
+				HSSFCell dept = contexRow.createCell(0);
+				dept.setCellValue(vo.getCanpDept());
+				dept.setCellStyle(contentStyle);
+				
+				HSSFCell jdScore = contexRow.createCell(1);
+				jdScore.setCellValue(vo.getJdScore());
+				jdScore.setCellStyle(contentStyle);
+				
+				HSSFCell jdPercentage = contexRow.createCell(2);
+				jdPercentage.setCellValue(StringUtil.isNotBlank(vo.getJdPercentage()) ? 
+						String.format("%.2f", NumberUtils.toFloat(vo.getJdPercentage()) * 100) + "%" : "");
+				jdPercentage.setCellStyle(contentStyle);
+				
+				HSSFCell jdSumScore = contexRow.createCell(3);
+				jdSumScore.setCellValue(vo.getJdSumScore());
+				jdSumScore.setCellStyle(contentStyle);
+				
+				HSSFCell classifyName = contexRow.createCell(4);
+				classifyName.setCellValue(vo.getClassifyName());
+				classifyName.setCellStyle(contentStyle);
+				
+				HSSFCell score = contexRow.createCell(5);
+				score.setCellValue(vo.getScore());
+				score.setCellStyle(contentStyle);
+				
+				HSSFCell percentage = contexRow.createCell(6);
+				percentage.setCellValue(StringUtil.isNotBlank(vo.getPercentage()) ? 
+						String.format("%.2f", NumberUtils.toFloat(vo.getPercentage()) * 100) + "%" : "");
+				percentage.setCellStyle(contentStyle);
+				
+				HSSFCell sumScore = contexRow.createCell(7);
+				sumScore.setCellValue(vo.getSumScore());
+				sumScore.setCellStyle(contentStyle);
+				
+				HSSFCell buildScore = contexRow.createCell(8);
+				buildScore.setCellValue(vo.getBuildScore());
+				buildScore.setCellStyle(contentStyle);
+				
+				HSSFCell finalScore = contexRow.createCell(9);
+				finalScore.setCellValue(vo.getFinalScore());
+				finalScore.setCellStyle(contentStyle);
+			}
+		}
+		
+		return wb;
 	}
 }

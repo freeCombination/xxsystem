@@ -105,9 +105,10 @@ var cm = [
         					    }
         					});
                     },
-                    'select':function(combo, record, eOpts){
+                    'focus':function(combo, The, eOpts){
                     	//选择的时候重新加载得分列表
-        				var id = record.get('id');
+                  		var row = grade.personalDutyResultDetails.PersonalDutyResultDetailsGrid.getSelectionModel().getSelection();
+        				var id = row[0].data.id;
                 		grade.personalDutyResultDetails.ScoreStore.load({
                 			params:
             				{
