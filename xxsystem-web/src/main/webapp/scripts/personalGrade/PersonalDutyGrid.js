@@ -47,14 +47,17 @@ var cm = [
 			hidden : true
 		}, {
 			header : "工作职责",
-			dataIndex : "workDuty"
+			dataIndex : "workDuty",
+        	renderer : function(value, p, record) {
+    		    return '<div style="white-space:normal;">' + value + '</div>';
+    		}
 		},
 		{
 			header : "完成情况",
 			dataIndex : "completion",
-/*			renderer:function(value,p,record){
-				return '<div style="white-space:normal">'+value+"</div>";
-			},*/
+        	renderer : function(value, p, record) {
+    		    return '<div style="white-space:normal;">' + value + '</div>';
+    		},
 			field: {
             	xtype:'textarea',
             	style: {

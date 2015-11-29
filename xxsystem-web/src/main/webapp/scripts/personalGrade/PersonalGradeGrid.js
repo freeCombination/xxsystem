@@ -65,10 +65,10 @@ var cm = [
 			header : "年份",
 			dataIndex : "gradeYear"
 		},
-		{
+/*		{
 			header : "综合得分",
 			dataIndex : "compositeScores"
-		},
+		},*/
 		{
 			header : "已提交人数/总人数",
 			renderer:function(value, cellmeta, record, rowIndex, columnIndex, store){
