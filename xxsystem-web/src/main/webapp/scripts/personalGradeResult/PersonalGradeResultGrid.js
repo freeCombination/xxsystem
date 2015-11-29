@@ -200,12 +200,12 @@ grade.personalGradeResult.EditPersonalGradeResult = function() {
 		}
 	});
 	
-	var scoreColumns = grade.personalDutyResultDetails.PersonalDutyResultDetailsGrid.columns;
+/*	var scoreColumns = grade.personalDutyResultDetails.PersonalDutyResultDetailsGrid.columns;
 	var c = scoreColumns[4];
 	c.hidden = false ;
 	
 	var c1 = scoreColumns[5];
-	c1.hidden = true ;
+	c1.hidden = true ;*/
 	
 	grade.personalGradeResult.PersonalGradeResultWin.show();
 };
@@ -250,12 +250,12 @@ grade.personalGradeResult.ViewPersonalGradeResult = function() {
 	
 	//设置分数列
 	//isCellEditable
-	var scoreColumns = grade.personalDutyResultDetails.PersonalDutyResultDetailsGrid.columns;
+/*	var scoreColumns = grade.personalDutyResultDetails.PersonalDutyResultDetailsGrid.columns;
 	var c = scoreColumns[4];
 	c.hidden = true ;
 	
 	var c1 = scoreColumns[5];
-	c1.hidden = false ;
+	c1.hidden = false ;*/
 	
 	/**/
 	grade.personalGradeResult.PersonalGradeResultWin.show();
