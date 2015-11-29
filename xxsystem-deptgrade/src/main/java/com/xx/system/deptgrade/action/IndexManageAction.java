@@ -513,6 +513,23 @@ public class IndexManageAction extends BaseAction {
 		return null;
 	}
 	
+	/**
+     * 撤回用户提交的评分
+     */
+    public String rollback() {
+    	String msg = "{success:'false',msg:'撤回用户提交的评分失败'}";
+		try {
+			String userId = getRequest().getParameter("userId");
+			String electYear = getRequest().getParameter("electYear");
+			indexManageService.rollback(userId, electYear);
+			msg = "{success:'true',msg:'撤回用户提交的评分成功'}";
+		} catch (Exception e) {
+			this.excepAndLogHandle(IndexManageAction.class, "撤回用户提交的评分", e, false);
+		}
+		JsonUtil.outJson(msg);
+		return null;
+    }
+	
 	/******************部门最终得分********************/
 	
 	/**

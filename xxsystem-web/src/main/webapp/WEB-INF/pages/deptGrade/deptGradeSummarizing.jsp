@@ -300,11 +300,11 @@
 		    });
 		    
 		    var userCm1=[
-		        {xtype: "rownumberer",text:"序号",width:60,align:"center"},
-		        {header: "ID",width: 70,align:'left',dataIndex: "userId",hidden: true,menuDisabled: true,sortable:false},
-		        {header: "部门",width: 200,align:'left',dataIndex: "orgName",width:90,menuDisabled: true,sortable:false},
-		        {header: "姓名",width: 200,align:'center',dataIndex: "realname",width:90,menuDisabled: true,sortable:false},
-		        {header: "状态",width: 200,align:'center',dataIndex: "flag",width:90,menuDisabled: true,sortable:false,
+		        {xtype: "rownumberer",text:"序号",width:40,align:"center"},
+		        {header: "ID",align:'left',dataIndex: "userId",hidden: true,menuDisabled: true,sortable:false},
+		        {header: "部门",width: 100,align:'left',dataIndex: "orgName",menuDisabled: true,sortable:false},
+		        {header: "姓名",width: 80,align:'center',dataIndex: "realname",menuDisabled: true,sortable:false},
+		        {header: "状态",width: 80,align:'center',dataIndex: "flag",menuDisabled: true,sortable:false,
 		        	renderer: function(value, cellmeta, record, rowIndex, columnIndex, store){
                         //cellmeta.tdAttr = 'data-qtip="' + orgTypeArr[i].name + '"';
                         var status = '<span style="color:red;">未评分</span>';
@@ -313,7 +313,24 @@
                         }
                         return status;
                     }
-		        }
+		        },
+                {header: "操作",width: 40,dataIndex: "userId",align:'center',menuDisabled: true,sortable:false,
+                    renderer: function(value, cellmeta, record, rowIndex, columnIndex, store){
+                    	if (Ext.getCmp('electYearQuery').getValue() == Ext.Date.format(new Date(),"Y")) {
+                    		var str = '';
+                    		for(var i = 0;i < userPermissionArr.length;i++){
+                    			if("deptgrade_rollback_btn" == userPermissionArr[i].name){
+                    				str = '<img title="撤回评分" src="${ctx}/images/icons/revoke.gif" style="cursor: pointer;padding:0;margin:0;heigth:16px;" onclick="rollback('+value+')"/>';
+                    				break;
+                                }
+                    		}
+                    		return str;
+                    	}
+                    	else {
+                    		return '';
+                    	}
+                    }
+                }
 		    ];
 
 		    userRoleStore1 = Ext.create('Ext.data.Store', {
@@ -372,6 +389,46 @@
 		        }}
 		        ]
 		    }).show();
+		}
+		
+		rollback = function(userId){
+			Ext.Msg.confirm(SystemConstant.alertTitle,"确定撤回该用户的评分吗？",function(btn) {
+                if (btn == 'yes') {
+                    Ext.MessageBox.wait("", "撤销中", 
+                        {
+                            text:"请稍后..."
+                        }
+                    );
+                    
+                    $.ajax({
+                        url : '${ctx}/deptgrade/rollback.action',
+                        data: {userId : userId, electYear : Ext.getCmp('electYearQuery').getValue()},
+                        cache : false,
+                        async : false,
+                        type : "POST",
+                        dataType : 'json',
+                        success : function (responseText){
+                            var result = responseText; // Ext.decode(responseText);
+                            if(result.success == "true"){
+                                new Ext.ux.TipsWindow({
+                                    title:SystemConstant.alertTitle,
+                                    html: result.msg
+                                }).show();
+                                Ext.MessageBox.hide();
+                                userRoleStore1.reload();
+                            }else{
+                                Ext.MessageBox.hide();
+                                Ext.MessageBox.show({
+                                    title: SystemConstant.alertTitle,
+                                    msg: result.msg,
+                                    buttons: Ext.MessageBox.OK,
+                                    icon: Ext.MessageBox.INFO
+                                });
+                            }
+                        }
+                    });
+                }
+            });
 		}
 		
 		Ext.create("Ext.container.Viewport", {

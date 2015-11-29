@@ -1018,7 +1018,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 				String fenguanHql = " from Organization o where o.status = 0"
 						+ " and o.enable = 0"
 						+ " and o.otherSup is not null"
-						+ " and o.otherSup.userId = " + currUsr.getUserId();
+						+ " and o.otherSup like '%," + currUsr.getUserId() + ",%'";
 				List<Organization> fenguanOrg = (List<Organization>)baseDao.queryEntitys(fenguanHql);
 				if (!CollectionUtils.isEmpty(fenguanOrg)) {
 					for (Organization org : fenguanOrg) {
@@ -1328,7 +1328,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 								String fenguanHql = " from Organization o where o.status = 0"
 										+ " and o.enable = 0"
 										+ " and o.otherSup is not null"
-										+ " and o.otherSup.userId = " + currUsr.getUserId();
+										+ " and o.otherSup like '%," + currUsr.getUserId() + ",%'";
 								List<Organization> fenguanOrg = (List<Organization>)baseDao.queryEntitys(fenguanHql);
 								// 如果其他领导所关联的所有部门恰好是该指标分类关联的所有部门，就有可能没有提交评分，视为提交
 								boolean notAllEq = false;
@@ -1395,7 +1395,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 													String fenguanHql = " from Organization o where o.status = 0"
 															+ " and o.enable = 0"
 															+ " and o.otherSup is not null"
-															+ " and o.otherSup.userId = " + currUsr.getUserId();
+															+ " and o.otherSup like '%," + currUsr.getUserId() + ",%'";
 													List<Organization> fenguanOrg = (List<Organization>)baseDao.queryEntitys(fenguanHql);
 													// 如果其他领导所关联的所有部门包含该部门，说明在该指标评分时未参与
 													if (!CollectionUtils.isEmpty(fenguanOrg)) {
@@ -1619,7 +1619,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 								String fenguanHql = " from Organization o where o.status = 0"
 										+ " and o.enable = 0"
 										+ " and o.otherSup is not null"
-										+ " and o.otherSup.userId = " + rms.getUser().getUserId();
+										+ " and o.otherSup like '%," + rms.getUser().getUserId() + ",%'";
 								List<Organization> fenguanOrg = (List<Organization>)baseDao.queryEntitys(fenguanHql);
 								// 如果其他领导所关联的所有部门只有一个部门且刚好是该部门，也表示提交了
 								if (!CollectionUtils.isEmpty(fenguanOrg)) {
@@ -1650,6 +1650,33 @@ public class IndexManageServiceImpl implements IIndexManageService {
 		}
 		
 		return uvLst;
+	}
+	
+	/**
+     *  撤回用户提交的评分
+     * @param userId 用户ID
+     * @param electYear 参评年份
+     * @throws Exception
+     */
+	@Override
+    public void rollback(String userId, String electYear) throws Exception {
+		if (StringUtil.isNotBlank(userId) && !"0".equals(userId) && StringUtil.isNotBlank(electYear)) {
+			String hql = " from ClassifyUser c"
+					+ " where c.isDelete = 0 and c.hasSubmit = 1"
+					+ " and c.user.userId = " + userId
+					+ " and c.classify.isDelete = 0 and c.classify.isParticipation = 1"
+					+ " and c.classify.enable = 0 and c.classify.electYear = '" + electYear + "'";
+			
+			//  set c.hasSubmit = 0
+			List<ClassifyUser> lst = (List<ClassifyUser>)baseDao.queryEntitys(hql);
+			if (!CollectionUtils.isEmpty(lst)) {
+				for (ClassifyUser cu : lst) {
+					cu.setHasSubmit(0);
+				}
+				
+				baseDao.saveOrUpdate(lst);
+			}
+		}
 	}
 
     /******************部门最终得分********************/

@@ -306,6 +306,14 @@ public interface IIndexManageService {
      */
     public List<UserVo> showGradeUser(String electYear) throws Exception;
     
+    /**
+     *  撤回用户提交的评分
+     * @param userId 用户ID
+     * @param electYear 参评年份
+     * @throws Exception
+     */
+    public void rollback(String userId, String electYear) throws Exception;
+    
     /******************部门最终得分********************/
     
     /**
