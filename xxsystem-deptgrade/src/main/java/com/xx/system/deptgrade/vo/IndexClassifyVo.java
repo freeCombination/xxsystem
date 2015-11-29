@@ -75,6 +75,13 @@ public class IndexClassifyVo implements java.io.Serializable {
      * @Fields hasSaved : 是否已评分：0 否 1 是
      */
     private Integer hasSaved;
+    
+    /**
+     * 不参与该指标评分的用户
+     */
+    private String noParticipationUsr;
+    
+    private String noParticipationUsrNames;
 
 	public int getClassifyId() {
 		return classifyId;
@@ -178,6 +185,22 @@ public class IndexClassifyVo implements java.io.Serializable {
 
 	public void setHasSaved(Integer hasSaved) {
 		this.hasSaved = hasSaved;
+	}
+
+	public String getNoParticipationUsr() {
+		return noParticipationUsr;
+	}
+
+	public void setNoParticipationUsr(String noParticipationUsr) {
+		this.noParticipationUsr = noParticipationUsr;
+	}
+
+	public String getNoParticipationUsrNames() {
+		return noParticipationUsrNames;
+	}
+
+	public void setNoParticipationUsrNames(String noParticipationUsrNames) {
+		this.noParticipationUsrNames = noParticipationUsrNames;
 	}
 
 }

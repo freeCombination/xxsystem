@@ -403,7 +403,7 @@ function createAddUserInfo(nameId, idId, userId, multi){
     	model: 'userModel',
 		proxy: {
 			type: 'ajax',
-			//extraParams:{roleId:roleId,flag: 'QxUser',roleIdOrRoleMemberId:type},
+			extraParams:{flag: 'QxUser'},
 			actionMethods: {
                 read: 'POST'
             },

@@ -135,7 +135,7 @@ grade.personalGradeResult.PersonalGradeResultGrid = Ext.create("Ext.grid.Panel",
 		text : '查看',
 		disabledExpr : "$selectedRows != 1",// $selected 表示选中的记录数不等于1
 		disabled : true,
-		hidden:true,
+		//hidden:true,
 		id:'query-button',
 		iconCls : 'query-button',
 		handler : function() {

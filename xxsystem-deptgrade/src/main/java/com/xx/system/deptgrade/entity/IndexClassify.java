@@ -83,6 +83,11 @@ public class IndexClassify implements java.io.Serializable {
     private Integer isParticipation;
     
     /**
+     * 不参与该指标评分的用户
+     */
+    private String noParticipationUsr;
+    
+    /**
      * @Title getPkClassifyId
      * @Description: 主键
      * @date 2013-12-6
@@ -180,6 +185,15 @@ public class IndexClassify implements java.io.Serializable {
 
 	public void setIsParticipation(Integer isParticipation) {
 		this.isParticipation = isParticipation;
+	}
+
+	@Column(name = "NO_PARTICIPATION_USR")
+	public String getNoParticipationUsr() {
+		return noParticipationUsr;
+	}
+
+	public void setNoParticipationUsr(String noParticipationUsr) {
+		this.noParticipationUsr = noParticipationUsr;
 	}
 	
 }

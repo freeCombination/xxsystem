@@ -55,6 +55,7 @@ import com.xx.system.role.entity.Role;
 import com.xx.system.role.entity.RoleMemberScope;
 import com.xx.system.role.vo.RoleVo;
 import com.xx.system.user.entity.User;
+import com.xx.system.user.service.IUserService;
 import com.xx.system.user.vo.UserVo;
 
 import net.sf.json.JSONArray;
@@ -82,6 +83,9 @@ public class IndexManageServiceImpl implements IIndexManageService {
     
     @Resource
     public IOrgService organizationService;
+    
+    @Resource
+    private IUserService userService;
 
 	@Override
 	public List<IndexClassifyVo> getAllClassifies(String electYear, String participation) throws BusinessException {
@@ -214,6 +218,11 @@ public class IndexManageServiceImpl implements IIndexManageService {
 					icvo.setParticipation("false");
 				}
 				
+				if (StringUtil.isNotBlank(cf.getNoParticipationUsr())) {
+					icvo.setNoParticipationUsr(cf.getNoParticipationUsr().substring(1, cf.getNoParticipationUsr().length() - 1));
+					icvo.setNoParticipationUsrNames(userService.getUserRealNamesByIds(cf.getNoParticipationUsr().substring(1, cf.getNoParticipationUsr().length() - 1)));
+				}
+				
 				// 判断是否已产生评分记录，用于判断是否可以修改指标分类
 				String grHql = " from GradeRecord gr where gr.isDelete = 0"
 						+ " and gr.classify.pkClassifyId = " + cf.getPkClassifyId();
@@ -245,6 +254,9 @@ public class IndexManageServiceImpl implements IIndexManageService {
 			cf.setEnable(1);
 			cf.setIsDelete(0);
 			cf.setIsParticipation("true".equals(vo.getParticipation()) ? 1 : 0);
+			if (StringUtil.isNotBlank(vo.getNoParticipationUsr())) {
+				cf.setNoParticipationUsr("," + vo.getNoParticipationUsr() + ",");
+			}
 			
 			// 查询字典
 			if (vo.getScoreTypeId() != null && vo.getScoreTypeId() > 0) {
@@ -293,6 +305,10 @@ public class IndexManageServiceImpl implements IIndexManageService {
 				cf.setIsDelete(0);
 				
 				cf.setIsParticipation("true".equals(vo.getParticipation()) ? 1 : 0);
+				
+				if (StringUtil.isNotBlank(vo.getNoParticipationUsr())) {
+					cf.setNoParticipationUsr("," + vo.getNoParticipationUsr() + ",");
+				}
 				
 				// 查询字典
 				if (vo.getScoreTypeId() != null && vo.getScoreTypeId() > 0) {
@@ -864,6 +880,8 @@ public class IndexManageServiceImpl implements IIndexManageService {
 				cfHql += " and i.electYear = '" + vo.getElectYear() + "'";
 			}
 		}
+		// 排除不能参与指标评分的用户对应的指标
+		cfHql += " and (i.noParticipationUsr is null or i.noParticipationUsr not like '%," + currUsr.getUserId() + ",%')";
 		
 		// 获取当前登陆用户所在部门，进而获取该用户可评分的部门
 		// 由于部门上也关联了部门主任、分管领导等用户信息，也可以把登录用户的id拿去匹配这些用户id，获取到的部门ids就可以限定指标分类的查询
@@ -1342,8 +1360,20 @@ public class IndexManageServiceImpl implements IIndexManageService {
 									}
 								}
 								
+								// 排除不能参与指标评分的用户对应的指标
+								boolean noParticipation = false;
+								if (StringUtil.isNotBlank(gp.getClassify().getNoParticipationUsr())) {
+									String uids = gp.getClassify().getNoParticipationUsr();
+									uids = uids.substring(1, uids.length() - 1);
+									String[] ids = uids.split(",");
+									
+									if (ids.length == 1 && rms.getUser().getUserId() == NumberUtils.toInt(ids[0])) {
+										noParticipation = true;
+									}
+								}
+								
 								int hasSubmit = baseDao.queryTotalCount(cuHql, new HashMap<String, Object>());
-								if (!containOrg && notAllEq && hasSubmit <= 0) {
+								if (!containOrg && notAllEq && !noParticipation && hasSubmit <= 0) {
 									allSubmit = false;
 									break;
 								}
@@ -1381,6 +1411,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 									if (!CollectionUtils.isEmpty(rmLst)) {
 										String userIds = "";
 										int containUsr = 0;
+										boolean noParticipation = false;
 										for (RoleMemberScope member : rmLst) {
 											userIds += "," + member.getUser().getUserId();
 											
@@ -1389,6 +1420,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 												Organization usrOrg = ouIt.next().getOrganization();
 												if (usrOrg.getOrgId() == orgId) {
 													containUsr++;
+													noParticipation = true;
 												}
 												else {
 													// 由于分馆所领导可能管理多个部门，分馆所领导不能评分这些部门，也需要排除，可通过与部门关联的分馆所领导对比，对比上就排除该部门
@@ -1402,9 +1434,25 @@ public class IndexManageServiceImpl implements IIndexManageService {
 														for (Organization org : fenguanOrg) {
 															if (org.getOrgId() == orgId) {
 																containUsr++;
+																noParticipation = true;
 																break;
 															}
 														}
+													}
+												}
+											}
+											
+											// 排除不能参与指标评分的用户对应的指标
+											if (StringUtil.isNotBlank(oc.getClassify().getNoParticipationUsr())) {
+												String uids = oc.getClassify().getNoParticipationUsr();
+												uids = uids.substring(1, uids.length() - 1);
+												String[] ids = uids.split(",");
+												
+												// noParticipation = false 表名该用户所在部门不在 该指标关联部门内，此时，如果该用户不能对该 指标进行评分，containUsr + 1
+												for (String id : ids) {
+													if (member.getUser().getUserId() == NumberUtils.toInt(id) && !noParticipation) {
+														containUsr++;
+														break;
 													}
 												}
 											}
@@ -1630,6 +1678,17 @@ public class IndexManageServiceImpl implements IIndexManageService {
 								
 								if (hasSubmit > 0) {
 									vo.setFlag("1");
+								}
+								
+								// 排除不能参与指标评分的用户对应的指标
+								if (StringUtil.isNotBlank(gp.getClassify().getNoParticipationUsr())) {
+									String uids = gp.getClassify().getNoParticipationUsr();
+									uids = uids.substring(1, uids.length() - 1);
+									String[] ids = uids.split(",");
+									
+									if (ids.length == 1 && rms.getUser().getUserId() == NumberUtils.toInt(ids[0])) {
+										vo.setFlag("1");
+									}
 								}
 								
 								allUser.put(rms.getUser().getUserId(), vo);

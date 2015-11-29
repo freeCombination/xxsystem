@@ -48,7 +48,20 @@ grade.personalDutyResultDetails.ScoreStore = Ext.create('Ext.data.Store', {
 });
 
 var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-    clicksToEdit: 1
+    clicksToEdit: 1,
+    listeners : {
+        beforeedit:function(editor, e, eOpts ){
+        	var title = grade.personalGradeResult.PersonalGradeResultWin.title;
+        	if ('详情' == title) {
+        		//e.column.field.editable = false;
+        		e.column.field.readOnly = true;
+        		//e.column.field = null;
+        	}
+        	else {
+        		e.column.field.readOnly = false;
+        	}
+        }
+    }
 });
 
 /**
