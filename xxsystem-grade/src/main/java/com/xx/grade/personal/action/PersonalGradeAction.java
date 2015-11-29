@@ -193,7 +193,24 @@ public class PersonalGradeAction extends BaseAction {
         }
         return null;
     }
-	
+	  
+	  
+	  /**
+	   * 刷新得分
+	   * @return
+	   */
+	  public String refreshScore() {
+	    try {
+	        String id = this.getRequest().getParameter("id");
+	        personalGradeService.refreshScore(id);
+	        JsonUtil.outJson("{success:true,msg:'刷新个人得分成功'}");
+	    } catch (Exception e) {
+	    	JsonUtil.outJson("{success:false,msg:'刷新个人得分失败'}");
+	    	this.excepAndLogHandle(PersonalGradeAction.class, "刷新个人得分", e, false);
+	    }
+	    return null;
+	}
+
 	/**
 	 * 查询员工评分明细
 	 * 
@@ -207,6 +224,7 @@ public class PersonalGradeAction extends BaseAction {
 					.getPersonalGradeResultDetailsList(paramMap);
 			JsonUtil.outJson(resultList);
 		} catch (Exception e) {
+			e.printStackTrace();
 			this.excepAndLogHandle(PersonalGradeAction.class, "获取评分结果列表失败", e,
 					false);
 		}

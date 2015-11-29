@@ -64,6 +64,11 @@ public class PersonalGradeVo {
 	private Integer status ;
 	
 	/**
+	 * 部门分数是否有变化 0未变化 1有变化
+	 */
+	private Integer isScoreChange ;
+	
+	/**
 	 * 应该提交的人数
 	 */
 	private Integer totalPersonCount ;
@@ -175,5 +180,13 @@ public class PersonalGradeVo {
 
 	public void setCommitPersonCount(Integer commitPersonCount) {
 		this.commitPersonCount = commitPersonCount;
+	}
+
+	public Integer getIsScoreChange() {
+		return isScoreChange;
+	}
+
+	public void setIsScoreChange(Integer isScoreChange) {
+		this.isScoreChange = isScoreChange;
 	}
 }

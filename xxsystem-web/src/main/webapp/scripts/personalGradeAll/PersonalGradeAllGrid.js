@@ -21,6 +21,7 @@ Ext.define("grade.personalGrade.PersonalGradeModel",{
 						{name:'orgName'},
 						{name:'totalPersonCount'},
 						{name:'commitPersonCount'},
+						{name:'isScoreChange'},
 						{name:'title'}
 					]
 	});
@@ -42,6 +43,7 @@ grade.personalGrade.PersonalGradeStore.getProxy().setExtraParam("status","1,2");
 grade.personalGrade.PersonalGradeStore.addListener('beforeload', function(st, rds, opts) {
 	grade.personalGrade.PersonalGradeGrid.getSelectionModel().clearSelections();
 	Ext.getCmp('export-button').setDisabled(true);
+	Ext.getCmp('query-button').setDisabled(true);
 });
 
 /**
@@ -110,8 +112,43 @@ var cm = [
 		{
 			header : "综合得分",
 			dataIndex : "compositeScores"
-		}
+		},
+    	{
+			header: "操作",dataIndex: "",width:50,
+    		renderer:function(value, cellmeta, record, rowIndex, columnIndex, store){
+					var isScoreChange = record.get('isScoreChange');
+					var id = record.get('id');
+					if(isScoreChange == 0){
+						
+					}else if(isScoreChange == 1){
+						return '<img title="部门得分发生变化，可刷新个人得分" src="'+basePath+'/images/icons/refresh.gif" style="cursor: pointer" onclick="grade.personalGrade.refreshScore('+id+')"/>';
+					}
+				},
+				align:'center'
+    	}
       ];
+
+/**
+ * 刷新得分
+ */
+grade.personalGrade.refreshScore = function(id){
+	Ext.Ajax.request({
+    	url: basePath+'/personalGrade/refreshScore.action',
+ 		params: {
+ 	   		id:id
+ 	   	},
+ 		success: function(response, opts) {
+ 	      	var result = Ext.decode(response.responseText);
+ 	      	var flag = result.success;
+ 	      	if(flag){
+ 	      		grade.personalGrade.PersonalGradeStore.load();
+ 	      		Ext.Msg.showTip(result.msg);
+ 	      	}else{
+ 	      		Ext.Msg.showInfo(result.msg);
+ 	      	}
+ 	   	}
+	});
+}
 
 /**
  * 查看未评分人员列表
@@ -220,6 +257,17 @@ grade.personalGrade.PersonalGradeGrid = Ext.create("Ext.grid.Panel", {
 		}
 	},
 	"->",
+	 {
+		xtype : 'button',
+		text : '查看',
+		disabledExpr : "$selectedRows != 1",// $selected 表示选中的记录数不等于1
+		disabled : true,
+		id:'query-button',
+		iconCls : 'query-button',
+		handler : function() {
+			grade.personalGrade.ViewPersonalGradeAll();
+		}
+	},
     {
         xtype:'button',
         disabled:false,
@@ -254,6 +302,24 @@ grade.personalGrade.PersonalGradeGrid = Ext.create("Ext.grid.Panel", {
     }
 	]
 });
+
+/**
+ * 查看详情
+ */
+grade.personalGrade.ViewPersonalGradeAll = function(){
+	var row = grade.personalGrade.PersonalGradeGrid.getSelectionModel().getSelection()
+	var id = row[0].data.id;
+	var basicForm = grade.personalGrade.PersonalGradeViewWin.down('form').getForm();
+	basicForm.reset();
+	basicForm.findField('id').setValue(id);
+	basicForm.load({
+		url : basePath + '/personalGrade/getPersonalGradeById.action',
+		params : {
+			id : id
+		}
+	});
+	grade.personalGrade.PersonalGradeViewWin.show();
+}
 
 
 

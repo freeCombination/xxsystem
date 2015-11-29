@@ -229,5 +229,12 @@ public interface IPersonalGradeService {
 	 * @param id
 	 */
 	public void backCommit(String id);
+
+	/**
+	 * 刷新个人得分
+	 * 
+	 * @param id
+	 */
+	public void refreshScore(String id);
 	
 }

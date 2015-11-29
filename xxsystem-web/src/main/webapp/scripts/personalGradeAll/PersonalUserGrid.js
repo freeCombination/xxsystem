@@ -52,7 +52,8 @@ var cm = [
 				}
 			}
 		},
-    	{header: "操作",dataIndex: "",width:50,
+    	{
+			header: "操作",dataIndex: "",width:50,
     		renderer:function(value, cellmeta, record, rowIndex, columnIndex, store){
 					var state = record.get('state');
 					var id = record.get('id');

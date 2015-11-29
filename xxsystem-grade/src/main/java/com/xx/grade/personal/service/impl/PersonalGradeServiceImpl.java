@@ -176,6 +176,47 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		vo.setTotalPersonCount(getResultCounts(null, grade.getId()));
 		vo.setCommitPersonCount(getResultCounts(1, grade.getId()));
 		vo.setWorkPlan(grade.getWorkPlan());
+		setIsScoreChange(grade,vo);
+	}
+	
+	/**
+	 * 计算部门得分是否更新
+	 * 
+	 * @param grade
+	 * @param vo
+	 */
+	private void setIsScoreChange(PersonalGrade grade, PersonalGradeVo vo){
+		if (grade.getStatus() != 2) {
+			vo.setIsScoreChange(0);
+		}else{
+			Set<PersonalGradeDetails> details = grade.getDetails();
+			String orgScore = "" ;
+			String newOrgScore = "" ;
+			for (PersonalGradeDetails detail : details) {
+				if (detail.isGrade() == null || detail.isGrade() == 0) {
+					orgScore = detail.getScore() == null ? "" : detail.getScore().toString();
+					User user = grade.getUser();
+					Organization organization = null;
+					for (OrgUser ou : user.getOrgUsers()) {
+						if (ou.getOrganization() != null) {
+							organization = ou.getOrganization();
+						}
+					}
+					if (organization != null) {
+						if (getBmScoreByOrg(organization, grade.getGradeYear()) != null) {
+							newOrgScore = getBmScoreByOrg(organization, grade.getGradeYear()).toString();
+						}
+					}
+				}
+				break;
+			}
+			//部门得分有变化
+			if (!orgScore.equals(newOrgScore)) {
+				vo.setIsScoreChange(1);
+			}else{
+				vo.setIsScoreChange(0);
+			}
+		}
 	}
 
 	/**
@@ -1542,7 +1583,9 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 	}
 
 	private void buildResultDetailsEntityToVo(PersonalGradeResultDetails gradeResultDetail, PersonalGradeResultVo vo) {
-		vo.setScore(gradeResultDetail.getScore());
+		if (gradeResultDetail.getScore() != null) {
+			vo.setScore(gradeResultDetail.getScore());
+		}
 		vo.setPercentage(gradeResultDetail.getPercentage());
 		vo.setDetailsId(gradeResultDetail.getId());
 		if (gradeResultDetail.getIndexType() != null) {
@@ -1631,6 +1674,23 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 					gradeResult.setState(0);
 					baseDao.update(grade);
 					baseDao.update(gradeResult);
+				}
+			}
+		}
+	}
+
+	@Override
+	public void refreshScore(String id) {
+		if (StringUtil.isNotEmpty(id)) {
+			PersonalGrade grade = (PersonalGrade)baseDao.queryEntityById(PersonalGrade.class, Integer.parseInt(id));
+			if (grade != null) {
+				if (grade.getResult() != null) {
+					for (PersonalGradeResult result : grade.getResult()) {
+						if (result != null) {
+							generateCompositeScoresNew(result);
+							break;
+						}
+					}
 				}
 			}
 		}
