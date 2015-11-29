@@ -896,7 +896,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 		String fenguanHql = " from Organization o where o.status = 0"
 				+ " and o.enable = 0"
 				+ " and o.otherSup is not null"
-				+ " and o.otherSup.userId = " + currUsr.getUserId();
+				+ " and o.otherSup like '%," + currUsr.getUserId() + ",%'";
 		List<Organization> fenguanOrg = (List<Organization>)baseDao.queryEntitys(fenguanHql);
 		if (!CollectionUtils.isEmpty(fenguanOrg)) {
 			for (Organization org : fenguanOrg) {

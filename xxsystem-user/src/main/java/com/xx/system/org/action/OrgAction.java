@@ -197,8 +197,8 @@ public class OrgAction extends BaseAction {
                 }
                 
                 if (org.getOtherSup() != null) {
-                    map.put("otherSupIds", org.getOtherSup());
-                    map.put("otherSupNames", userService.getUserRealNamesByIds(org.getOtherSup()));
+                    map.put("otherSupIds", org.getOtherSup().substring(1, org.getOtherSup().length() -1));
+                    map.put("otherSupNames", userService.getUserRealNamesByIds(org.getOtherSup().substring(1, org.getOtherSup().length() -1)));
                 }
                 
                 if (org.getSuperintendent() != null) {
@@ -519,7 +519,7 @@ public class OrgAction extends BaseAction {
             }
             String otherSupIds = getRequest().getParameter("otherSupIds");
             if (StringUtil.isNotBlank(otherSupIds)) {
-            	org.setOtherSup(otherSupIds);
+            	org.setOtherSup("," + otherSupIds + ",");
             }
             
             if (org.getSuperintendent() == null || org.getSuperintendent().getUserId() == null || org.getSuperintendent().getUserId() == 0) {
@@ -585,7 +585,7 @@ public class OrgAction extends BaseAction {
             }
             String otherSupIds = getRequest().getParameter("otherSupIds");
             if (StringUtil.isNotBlank(otherSupIds)) {
-            	updateOrg.setOtherSup(otherSupIds);
+            	updateOrg.setOtherSup("," + otherSupIds + ",");
             }
             
             if (org.getSuperintendent() != null && org.getSuperintendent().getUserId() != null && org.getSuperintendent().getUserId() != 0) {
