@@ -320,7 +320,7 @@
                     		var str = '';
                     		for(var i = 0;i < userPermissionArr.length;i++){
                     			if("deptgrade_rollback_btn" == userPermissionArr[i].name){
-                    				str = '<img title="撤回评分" src="${ctx}/images/icons/revoke.gif" style="cursor: pointer;padding:0;margin:0;heigth:16px;" onclick="rollback('+value+')"/>';
+                    				str = '<img title="撤回评分" src="${ctx}/images/icons/revokeBack.gif" style="cursor: pointer;padding:0;margin:0;heigth:16px;" onclick="rollback('+value+')"/>';
                     				break;
                                 }
                     		}
