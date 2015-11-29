@@ -136,12 +136,12 @@ var orgForm=Ext.create("Ext.form.Panel", {
 				}
 			}
 	    }, {
-	    	name : 'org.otherSup.userId',
+	    	name : 'otherSupIds',
 	    	id : 'otherSupId',
 	    	hidden:true
 	    }, {
 	    	fieldLabel: '其他所领导',
-	        name: 'org.otherSup.realname',
+	        name: 'otherSupNames',
 	        id : 'otherSupName',
 	        //allowBlank: false,
 	        width: 100,
@@ -149,9 +149,9 @@ var orgForm=Ext.create("Ext.form.Panel", {
 				'focus':function(){
 					var userId = Ext.getCmp('otherSupId').getValue();
 					if(userId && userId != 0){
-						createAddUserInfo('otherSupName','otherSupId',userId);
+						createAddUserInfo('otherSupName','otherSupId',userId, 'multi');
 					}else{
-						createAddUserInfo('otherSupName','otherSupId');
+						createAddUserInfo('otherSupName','otherSupId', null, 'multi');
 					}
 				}
 			}
@@ -245,7 +245,7 @@ var orgWin = Ext.create("Ext.window.Window", {
 	} ]
 });
 
-function createAddUserInfo(nameId, idId, userId){
+function createAddUserInfo(nameId, idId, userId, multi){
 	//左侧组织树store
 	var orgTreeStore1 = Ext.create('Ext.data.TreeStore', {
 		  proxy: {
@@ -353,7 +353,7 @@ function createAddUserInfo(nameId, idId, userId){
 	
 	
 	//行选择模型
-	var userSm1=Ext.create("Ext.selection.CheckboxModel",{
+	var userSmSingle=Ext.create("Ext.selection.CheckboxModel",{
 		injectCheckbox:1,
 		mode : 'SINGLE',
     	listeners: {
@@ -368,6 +368,27 @@ function createAddUserInfo(nameId, idId, userId){
 		    }
 		}
 	});
+	
+	var userSmMulti=Ext.create("Ext.selection.CheckboxModel",{
+		injectCheckbox:1,
+		//mode : 'SINGLE',
+    	listeners: {
+		    selectionchange: function(){
+	    	    var rows = Ext.getCmp('userPanel1').getSelectionModel().getSelection();
+	        	//var c = userPanel1.getSelectionModel().getSelection();
+			 	if(rows.length > 0){
+					Ext.getCmp('userOK').setDisabled(false);
+			 	}else{
+				 	Ext.getCmp('userOK').setDisabled(true);
+			 	}
+		    }
+		}
+	});
+	
+	var userSm1=userSmSingle;
+	if (multi && multi == "multi") {
+		userSm1=userSmMulti;
+	}
 		  
 	var userCm1=[
 		{xtype: "rownumberer",text:"序号",width:60,align:"center"},
@@ -456,11 +477,21 @@ function createAddUserInfo(nameId, idId, userId){
 			disabled:true,
 			handler:function(){
 				var rows = Ext.getCmp('userPanel1').getSelectionModel().getSelection();
-				var userId = rows[0].get("userId");
-				var userName = rows[0].get("realname");
 				
-				Ext.getCmp(idId + '').setValue(userId);
-				Ext.getCmp(nameId + '').setValue(userName);
+				var userNames = '';
+				var userIds = '';
+				for(var i=0; i<rows.length; i++){
+					if(i < rows.length-1){
+						userNames += rows[i].get("realname")+",";
+						userIds += rows[i].get("userId")+",";
+	    			}else {
+	    				userNames += rows[i].get("realname");
+	    				userIds += rows[i].get("userId");
+	    			}
+				}
+				
+				Ext.getCmp(idId + '').setValue(userIds);
+				Ext.getCmp(nameId + '').setValue(userNames);
 				
 				userWin1.close();
 			}

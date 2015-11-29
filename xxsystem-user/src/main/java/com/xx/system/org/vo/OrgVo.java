@@ -103,7 +103,27 @@ public class OrgVo {
         
         this.deptLeader = o.getDeptHead() == null ? "" : o.getDeptHead().getRealname();
         this.superiorLeader = o.getBranchedLeader() == null ? "" : o.getBranchedLeader().getRealname();
-        this.otherSup = o.getOtherSup() == null ? "" : o.getOtherSup().getRealname();
+        this.otherSup = o.getOtherSup() == null ? "" : o.getOtherSup();
+        this.superintendent = o.getSuperintendent() == null ? "" : o.getSuperintendent().getRealname();
+        this.excellentCount = o.getExcellentCount() == null ? "" : o.getExcellentCount().toString();
+        this.excellentScore = o.getExcellentScore() == null ? "" : o.getExcellentScore().toString();
+        this.enable = o.getEnable();
+    }
+    
+    public OrgVo(Organization o, String otherSup) {
+        this.orgCode = o.getOrgCode();
+        this.orgId = o.getOrgId();
+        this.orgName = o.getOrgName();
+        this.parentOrgId =
+            o.getOrganization() == null ? 0 : o.getOrganization().getOrgId();
+        this.parentOrgName =
+            o.getOrganization() == null ? "" : o.getOrganization().getOrgName();
+        this.orgTypeValue = o.getOrgType().getDictionaryValue();
+        this.orgTypeName = o.getOrgType().getDictionaryName();
+        
+        this.deptLeader = o.getDeptHead() == null ? "" : o.getDeptHead().getRealname();
+        this.superiorLeader = o.getBranchedLeader() == null ? "" : o.getBranchedLeader().getRealname();
+        this.otherSup = otherSup;
         this.superintendent = o.getSuperintendent() == null ? "" : o.getSuperintendent().getRealname();
         this.excellentCount = o.getExcellentCount() == null ? "" : o.getExcellentCount().toString();
         this.excellentScore = o.getExcellentScore() == null ? "" : o.getExcellentScore().toString();

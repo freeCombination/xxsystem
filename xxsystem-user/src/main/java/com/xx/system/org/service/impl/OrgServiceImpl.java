@@ -38,6 +38,7 @@ import com.xx.system.org.entity.Organization;
 import com.xx.system.org.service.IOrgService;
 import com.xx.system.org.service.IOrgUserService;
 import com.xx.system.org.vo.OrgVo;
+import com.xx.system.user.service.IUserService;
 import com.xx.system.user.util.HSSFUtils;
 
 
@@ -89,6 +90,12 @@ public class OrgServiceImpl implements IOrgService {
     public void setOrganizationService(IOrgService organizationService) {
         this.organizationService = organizationService;
     }
+    
+    /**
+     * @Fields userService :
+     */
+    @Resource
+    private IUserService userService;
     
     @Autowired
     @Qualifier("baseDao")
@@ -1142,7 +1149,8 @@ public class OrgServiceImpl implements IOrgService {
            
             if (!CollectionUtils.isEmpty(orgLst)) {
                 for (Organization o : orgLst) {
-                    OrgVo ov = new OrgVo(o);
+                	String names = userService.getUserRealNamesByIds(o.getOtherSup());
+                    OrgVo ov = new OrgVo(o, names);
                     orgVoList.add(ov);
                 }
             }

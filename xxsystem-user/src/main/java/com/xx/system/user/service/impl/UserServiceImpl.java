@@ -2144,4 +2144,20 @@ public class UserServiceImpl implements IUserService {
     {
         return  HSSFUtils.updateTempleUser(path, textlist);
     }
+
+	@Override
+	public String getUserRealNamesByIds(String ids) throws BusinessException {
+		if (StringUtil.isNotBlank(ids)) {
+			String hql = " select u.realname from User u where u.status = 0 and u.enable = 1"
+					+ " and u.userId in (" + ids + ")";
+			List<String> names = (List<String>)baseDao.queryEntitys(hql);
+			String namesStr = "";
+			for (String name : names) {
+				namesStr += "," + name;
+			}
+			
+			return namesStr.substring(1);
+		}
+		return null;
+	}
 }

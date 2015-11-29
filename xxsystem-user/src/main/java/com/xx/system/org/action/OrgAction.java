@@ -197,8 +197,8 @@ public class OrgAction extends BaseAction {
                 }
                 
                 if (org.getOtherSup() != null) {
-                    map.put("org.otherSup.userId", org.getOtherSup().getUserId());
-                    map.put("org.otherSup.realname", org.getOtherSup().getRealname());
+                    map.put("otherSupIds", org.getOtherSup());
+                    map.put("otherSupNames", userService.getUserRealNamesByIds(org.getOtherSup()));
                 }
                 
                 if (org.getSuperintendent() != null) {
@@ -514,8 +514,12 @@ public class OrgAction extends BaseAction {
             	org.setBranchedLeader(null);
             }
             
-            if (org.getOtherSup() == null || org.getOtherSup().getUserId() == null || org.getOtherSup().getUserId() == 0) {
+            if (StringUtil.isBlank(org.getOtherSup())) {
             	org.setOtherSup(null);
+            }
+            String otherSupIds = getRequest().getParameter("otherSupIds");
+            if (StringUtil.isNotBlank(otherSupIds)) {
+            	org.setOtherSup(otherSupIds);
             }
             
             if (org.getSuperintendent() == null || org.getSuperintendent().getUserId() == null || org.getSuperintendent().getUserId() == 0) {
@@ -576,8 +580,12 @@ public class OrgAction extends BaseAction {
             	updateOrg.setBranchedLeader(userService.getUserById(org.getBranchedLeader().getUserId()));
             }
             
-            if (org.getOtherSup() != null && org.getOtherSup().getUserId() != null && org.getOtherSup().getUserId() != 0) {
-            	updateOrg.setOtherSup(userService.getUserById(org.getOtherSup().getUserId()));
+            if (StringUtil.isBlank(org.getOtherSup())) {
+            	updateOrg.setOtherSup(null);
+            }
+            String otherSupIds = getRequest().getParameter("otherSupIds");
+            if (StringUtil.isNotBlank(otherSupIds)) {
+            	updateOrg.setOtherSup(otherSupIds);
             }
             
             if (org.getSuperintendent() != null && org.getSuperintendent().getUserId() != null && org.getSuperintendent().getUserId() != 0) {

@@ -420,4 +420,6 @@ public interface IUserService {
       */
      public Map<String, Object> getUserByIdForUpdate(Integer userId)
          throws BusinessException;
+     
+     public String getUserRealNamesByIds(String ids) throws BusinessException;
 }

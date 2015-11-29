@@ -100,7 +100,7 @@ public class Organization implements java.io.Serializable {
     /**
      * 所领导
      */
-    private User otherSup;
+    private String otherSup;
     
     /**
      * 所长
@@ -399,13 +399,12 @@ public class Organization implements java.io.Serializable {
 		this.branchedLeader = branchedLeader;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "FK_OTHERSUP")
-	public User getOtherSup() {
+	@Column(name = "OTHERSUP")
+	public String getOtherSup() {
 		return otherSup;
 	}
 
-	public void setOtherSup(User otherSup) {
+	public void setOtherSup(String otherSup) {
 		this.otherSup = otherSup;
 	}
 
