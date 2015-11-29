@@ -223,5 +223,11 @@ public interface IPersonalGradeService {
 	 * @return
 	 */
 	public List<ScoreVo> getScoreList(String id);
+
+	/**
+	 * 撤回个人评分
+	 * @param id
+	 */
+	public void backCommit(String id);
 	
 }

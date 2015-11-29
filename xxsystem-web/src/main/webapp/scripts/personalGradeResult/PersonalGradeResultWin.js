@@ -242,7 +242,12 @@ grade.personalGradeResult.PersonalGradeResultForm1 = Ext.create("Ext.form.Panel"
 	 },row6,row7,row8,row9]
 });
 
-
+var htmlDes = new Ext.Panel({
+	id:"des",
+	title:"评分说明",
+	border:false,
+	html:"<div>&nbsp;&nbsp;&nbsp;&nbsp;对员工评价打分的最高分值为120分，评价分值高于120分的为无效评价。110≤得分≤120绩效等级为A级，90≤得分<110绩效等级为B级，70≤得分<90绩效等级为C级，60≤得分<70绩效等级为D级，得分<60绩效等级为E级，各部门按15%以内的比例确定A级绩效员工。</div>"
+});
 
 /**
  * 定义个人评分基础信息form
@@ -255,7 +260,7 @@ grade.personalGradeResult.PersonalGradeResultWin = Ext.create("Ext.window.Window
 		xtype:'panel',
 		bodyStyle :"overflow-x:hidden;overflow-y:auto",
 		border:false,
-		items : [grade.personalGradeResult.PersonalGradeResultForm,grade.personalDutyResult.PersonalDutyResultGrid,grade.personalGradeResult.PersonalGradeResultFormProblem,grade.personalDutyResultDetails.PersonalDutyResultDetailsGrid,grade.personalGradeResult.PersonalGradeResultForm1]
+		items : [grade.personalGradeResult.PersonalGradeResultForm,grade.personalDutyResult.PersonalDutyResultGrid,grade.personalGradeResult.PersonalGradeResultFormProblem,htmlDes,grade.personalDutyResultDetails.PersonalDutyResultDetailsGrid,grade.personalGradeResult.PersonalGradeResultForm1]
 	}],
 	buttons : [ {
 		text : '确定',

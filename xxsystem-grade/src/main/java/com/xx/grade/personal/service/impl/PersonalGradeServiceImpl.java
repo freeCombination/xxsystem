@@ -636,7 +636,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 				if (currentOrg.getOtherSup() != null) {
 					PersonalGradeResult result = new PersonalGradeResult();
 					result.setPersonalGrade(grade);
-					result.setGradeUser(currentOrg.getOtherSup());
+					//result.setGradeUser(currentOrg.getOtherSup());
 					result.setState(0);
 					result.setGradeUserType(3);
 					gradeResults.add(result);
@@ -689,7 +689,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			OrgUserhql.append(" and ou.user.userId <> " + currentOrg.getBranchedLeader().getUserId());
 		}
 		if (currentOrg.getOtherSup() != null) {
-			OrgUserhql.append(" and ou.user.userId <> " + currentOrg.getOtherSup().getUserId());
+			//OrgUserhql.append(" and ou.user.userId <> " + currentOrg.getOtherSup().getUserId());
 		}
 		if (currentOrg.getSuperintendent() != null) {
 			OrgUserhql.append(" and ou.user.userId <> " + currentOrg.getSuperintendent().getUserId());
@@ -903,12 +903,20 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 	@Override
 	public String submitPersonalGradeResult(String ids) {
 		try {
+			String msg = "" ;
 			if (StringUtil.isNotEmpty(ids)) {
 				String[] idsArr = ids.split(",");
 				for (String id : idsArr) {
 					PersonalGradeResult result = (PersonalGradeResult) baseDao
 							.queryEntityById(PersonalGradeResult.class, Integer.parseInt(id));
-					if (result != null) {
+					Set<PersonalGradeResultDetails> details = result.getDetails();
+					for (PersonalGradeResultDetails detail : details) {
+						if (detail.getScore() == null) {
+							msg += result.getPersonalGrade().getTitle()+"<br/>" ;
+							break ;
+						}
+					}
+					if (result != null && StringUtil.isEmpty(msg)) {
 						result.setState(1);
 						result.setGradeDate(new Date());
 						baseDao.saveOrUpdate(result);
@@ -916,7 +924,11 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 					}
 				}
 			}
-			return "{success:true,msg:'提交成功！'}";
+			if (StringUtil.isNotEmpty(msg)) {
+				return "{success:false,msg:'"+msg+"存在未评分项，请先进行评分'}";
+			}else{
+				return "{success:true,msg:'提交成功！'}";
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "{success:false,msg:'提交失败！'}";
@@ -1606,5 +1618,21 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			scores.add(scoreVo);
 		}
 		return scores;
+	}
+
+	@Override
+	public void backCommit(String id) {
+		if (StringUtil.isNotEmpty(id)) {
+			PersonalGradeResult gradeResult = (PersonalGradeResult)baseDao.queryEntityById(PersonalGradeResult.class, Integer.parseInt(id));
+			if (gradeResult != null) {
+				PersonalGrade grade = gradeResult.getPersonalGrade();
+				if (grade != null) {
+					grade.setStatus(1);
+					gradeResult.setState(0);
+					baseDao.update(grade);
+					baseDao.update(gradeResult);
+				}
+			}
+		}
 	}
 }

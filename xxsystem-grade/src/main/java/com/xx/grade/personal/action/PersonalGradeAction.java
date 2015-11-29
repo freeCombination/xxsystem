@@ -1,8 +1,8 @@
 package com.xx.grade.personal.action;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -177,6 +177,22 @@ public class PersonalGradeAction extends BaseAction {
 		}
 		return null;
 	}
+	
+	/**
+	 * 反提交
+	 * @return
+	 */
+	  public String backCommit() {
+        try {
+            String id = this.getRequest().getParameter("id");
+            personalGradeService.backCommit(id);
+            JsonUtil.outJson("{success:true,msg:'撤回个人评分成功'}");
+        } catch (Exception e) {
+            JsonUtil.outJson("{success:false,msg:'撤回个人评分失败'}");
+            this.excepAndLogHandle(PersonalGradeAction.class, "撤回个人评分", e, false);
+        }
+        return null;
+    }
 	
 	/**
 	 * 查询员工评分明细
@@ -424,9 +440,10 @@ public class PersonalGradeAction extends BaseAction {
 				this.getResponse().addHeader(
 						"Content-Disposition",
 						"attachment;filename=\""
-								+ new String(("个人评分职责明细" + ".xls")
+								+ new String(("中储粮成都粮食储藏科学研究所员工年度考核登记表" + ".xls")
 										.getBytes("GBK"), "ISO8859_1") + "\"");
 				OutputStream out = this.getResponse().getOutputStream();
+				//FileOutputStream fout = new FileOutputStream("E:/students.xls"); 
 				workBook.write(out);
 				out.flush();
 				out.close();

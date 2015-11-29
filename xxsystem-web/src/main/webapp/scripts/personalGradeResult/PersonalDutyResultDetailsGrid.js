@@ -118,7 +118,12 @@ var cm = [
                     }
                 }
             }
-		}
+		}/*,
+		{
+			header : "得分",
+			dataIndex : "score",
+			itemId:"scoreView"
+		}*/
           ];
 
 

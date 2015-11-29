@@ -9,8 +9,10 @@
 <%@include file="../common/ext.jsp"%>
 <title>个人评分</title>
 <script type="text/javascript" src="${ctx}/scripts/personalGrade/PersonalDutyGrid.js"></script>
+<script type="text/javascript" src="${ctx}/scripts/personalGrade/PersonalDutyViewGrid.js"></script>
 <script type="text/javascript" src="${ctx}/scripts/personalGrade/PersonalGradeGrid.js"></script>
 <script type="text/javascript" src="${ctx}/scripts/personalGrade/PersonalGradeWin.js"></script>
+<script type="text/javascript" src="${ctx}/scripts/personalGrade/PersonalGradeViewWin.js"></script>
 <script type="text/javascript" src="${ctx}/scripts/personalGrade/PersonalUserGrid.js"></script>
 <script type="text/javascript" src="${ctx}/scripts/personalGrade/PersonalUserWin.js"></script>
 <script type="text/javascript" src="${ctx}/scripts/personalGrade/uploadWin.js"></script>

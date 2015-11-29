@@ -9,8 +9,8 @@
 <%@include file="../common/ext.jsp"%>
 <title>个人评分汇总统计</title>
 <script type="text/javascript" src="${ctx}/scripts/personalGradeAll/PersonalGradeAllGrid.js"></script>
-<script type="text/javascript" src="${ctx}/scripts/personalGrade/PersonalUserGrid.js"></script>
-<script type="text/javascript" src="${ctx}/scripts/personalGrade/PersonalUserWin.js"></script>
+<script type="text/javascript" src="${ctx}/scripts/personalGradeAll/PersonalUserGrid.js"></script>
+<script type="text/javascript" src="${ctx}/scripts/personalGradeAll/PersonalUserWin.js"></script>
 <link href="" rel="SHORTCUT ICON" />
 </head>
 <body>

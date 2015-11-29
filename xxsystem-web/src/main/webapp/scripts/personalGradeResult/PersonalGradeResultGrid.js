@@ -72,6 +72,10 @@ var cm = [
 			dataIndex : "gradeYear"
 		},
 		{
+			header : "员工部门",
+			dataIndex : "gradeOrg"
+		},
+		{
 			header : "员工姓名",
 			dataIndex : "gradeUser"
 		},
@@ -195,6 +199,14 @@ grade.personalGradeResult.EditPersonalGradeResult = function() {
 			id : id
 		}
 	});
+	
+	var scoreColumns = grade.personalDutyResultDetails.PersonalDutyResultDetailsGrid.columns;
+	var c = scoreColumns[4];
+	c.hidden = false ;
+	
+	var c1 = scoreColumns[5];
+	c1.hidden = true ;
+	
 	grade.personalGradeResult.PersonalGradeResultWin.show();
 };
 
@@ -222,6 +234,7 @@ grade.personalGradeResult.ViewPersonalGradeResult = function() {
 	});
 	
 	Ext.getCmp('result_submit').hide();
+	
 	var basicForm1 = grade.personalGradeResult.PersonalGradeResultForm1.getForm();
 	basicForm1.reset();
 	basicForm1.findField('id').setValue(id);
@@ -234,6 +247,17 @@ grade.personalGradeResult.ViewPersonalGradeResult = function() {
 			id : id
 		}
 	});
+	
+	//设置分数列
+	//isCellEditable
+	var scoreColumns = grade.personalDutyResultDetails.PersonalDutyResultDetailsGrid.columns;
+	var c = scoreColumns[4];
+	c.hidden = true ;
+	
+	var c1 = scoreColumns[5];
+	c1.hidden = false ;
+	
+	/**/
 	grade.personalGradeResult.PersonalGradeResultWin.show();
 };
 
@@ -261,7 +285,7 @@ grade.personalGradeResult.SubmitPersonalGradeResult = function() {
 						Ext.Msg.showTip(data.msg);
 						grade.personalGradeResult.PersonalGradeResultStore.loadPage(1);
 					} else {
-						Ext.Msg.showError(data.msg);
+						Ext.Msg.showInfo(data.msg);
 					}
 				},
 				failure : sshframe.FailureProcess.Ajax

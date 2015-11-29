@@ -41,6 +41,7 @@ grade.personalGrade.PersonalGradeStore.addListener('beforeload', function(st, rd
 	}
 	grade.personalGrade.PersonalGradeGrid.getSelectionModel().clearSelections();
 	Ext.getCmp('edit-button').setDisabled(true);
+	Ext.getCmp('query-button').setDisabled(true);
 	Ext.getCmp('submit-button').setDisabled(true);
 });
 
@@ -155,6 +156,17 @@ grade.personalGrade.PersonalGradeGrid = Ext.create("Ext.grid.Panel", {
 			grade.personalGrade.generatePersonalGrade();
 		}
 		},
+		 {
+			xtype : 'button',
+			text : '查看',
+			disabledExpr : "$selectedRows != 1",// $selected 表示选中的记录数不等于1
+			disabled : true,
+			id:'query-button',
+			iconCls : 'query-button',
+			handler : function() {
+				grade.personalGrade.ViewPersonalGrade();
+			}
+		},
 	{
 		xtype : 'button',
 		id:'edit-button',
@@ -196,6 +208,21 @@ grade.personalGrade.EditPersonalGrade = function() {
 		}
 	});
 	grade.personalGrade.PersonalGradeWin.show();
+};
+
+grade.personalGrade.ViewPersonalGrade = function() {
+	var row = grade.personalGrade.PersonalGradeGrid.getSelectionModel().getSelection()
+	var id = row[0].data.id;
+	var basicForm = grade.personalGrade.PersonalGradeViewWin.down('form').getForm();
+	basicForm.reset();
+	basicForm.findField('id').setValue(id);
+	basicForm.load({
+		url : basePath + '/personalGrade/getPersonalGradeById.action',
+		params : {
+			id : id
+		}
+	});
+	grade.personalGrade.PersonalGradeViewWin.show();
 };
 
 /**
