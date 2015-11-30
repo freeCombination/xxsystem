@@ -1253,8 +1253,9 @@ public class RoleServiceImpl implements IRoleService {
                     for (Organization org : orgLst) {
                         orgNames = orgNames + "," + org.getOrgName();
                     }
+                    
+                    userVo.setOrgName(orgNames.substring(1));
                 }
-                userVo.setOrgName(orgNames.substring(1));
                 
                 userVo.setRealname(roleMemberScope.getUser().getRealname());
                 wr.add(userVo);
