@@ -40,7 +40,7 @@ public class IndexClassify implements java.io.Serializable {
     /**
      * 考核指标分类编号
      */
-    private String number;
+    private Integer number;
     
     /**
      * 考核指标分类名称
@@ -104,12 +104,12 @@ public class IndexClassify implements java.io.Serializable {
 		this.pkClassifyId = pkClassifyId;
 	}
     
-	@Column(name = "NUMBER", nullable = true, length = 50)
-	public String getNumber() {
+	@Column(name = "NUMBER")
+	public Integer getNumber() {
 		return number;
 	}
 
-	public void setNumber(String number) {
+	public void setNumber(Integer number) {
 		this.number = number;
 	}
 

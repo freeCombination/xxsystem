@@ -373,9 +373,9 @@
 			                    id:'indexVoNumber',
 			                    fieldLabel: '指标编号',
 			                    name: 'indexVo.number',
-			                    maxLength:25,
-			                    regex : new RegExp('^([^<^>])*$'),
-			                    regexText : '不能包含特殊字符！',
+			                    maxLength:11,
+			                    regex : new RegExp('^[0-9]*$'),
+			                    regexText : '只能输入数字字符！',
 			                    allowBlank: false,
 			                    validator: function(value){
 			                        var returnObj = null;

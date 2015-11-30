@@ -38,7 +38,7 @@ public class GradeIndex implements java.io.Serializable {
     /**
      * 考核指标编号
      */
-    private String number;
+    private Integer number;
     
     /**
      * 考核指标名称
@@ -92,12 +92,12 @@ public class GradeIndex implements java.io.Serializable {
 		this.pkIndexId = pkIndexId;
 	}
     
-	@Column(name = "NUMBER", nullable = true, length = 50)
-	public String getNumber() {
+	@Column(name = "NUMBER")
+	public Integer getNumber() {
 		return number;
 	}
 
-	public void setNumber(String number) {
+	public void setNumber(Integer number) {
 		this.number = number;
 	}
 

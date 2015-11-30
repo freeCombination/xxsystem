@@ -98,7 +98,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 			cfHql += " and i.isParticipation = 1";
 		}
 		
-		cfHql += " order by i.name";
+		cfHql += " order by i.number";
 		
 		List<IndexClassify> cfLst = (List<IndexClassify>)baseDao.queryEntitys(cfHql);
 		
@@ -110,7 +110,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 				icvo = new IndexClassifyVo();
 				
 				icvo.setClassifyId(cf.getPkClassifyId());
-				icvo.setNumber(cf.getNumber());
+				icvo.setNumber(cf.getNumber() != null ? cf.getNumber().toString() : "");
 				icvo.setName(cf.getName());
 				
 				voLst.add(icvo);
@@ -168,7 +168,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 		
 		int count = baseDao.queryTotalCount(cfHql, new HashMap<String, Object>());
 		
-		cfHql += " order by i.name";
+		cfHql += " order by i.number";
 		List<IndexClassify> cfLst = (List<IndexClassify>)baseDao.queryEntitysByPage(start, limit, 
 				cfHql, new HashMap<String, Object>());
 		
@@ -180,7 +180,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 				icvo = new IndexClassifyVo();
 				
 				icvo.setClassifyId(cf.getPkClassifyId());
-				icvo.setNumber(cf.getNumber());
+				icvo.setNumber(cf.getNumber() != null ? cf.getNumber().toString() : "");
 				icvo.setName(cf.getName());
 				
 				String orgNames = "";
@@ -247,7 +247,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 	public void addClassify(IndexClassifyVo vo) throws BusinessException {
 		if (vo != null) {
 			IndexClassify cf = new IndexClassify();
-			cf.setNumber(vo.getNumber());
+			cf.setNumber(NumberUtils.toInt(vo.getNumber()));
 			cf.setName(vo.getName());
 			cf.setElectYear(vo.getElectYear());
 			cf.setHasSubmit(0);
@@ -297,7 +297,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 			IndexClassify cf = null;
 			if (!CollectionUtils.isEmpty(lst)) {
 				cf = lst.get(0);
-				cf.setNumber(vo.getNumber());
+				cf.setNumber(NumberUtils.toInt(vo.getNumber()));
 				cf.setName(vo.getName());
 				cf.setElectYear(vo.getElectYear());
 				cf.setHasSubmit(0);
@@ -561,7 +561,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 		
 		int count = baseDao.queryTotalCount(indexHql, new HashMap<String, Object>());
 		
-		indexHql += " order by g.name";
+		indexHql += " order by g.number";
 		List<GradeIndex> indexLst = (List<GradeIndex>)baseDao.queryEntitysByPage(start, limit, 
 				indexHql, new HashMap<String, Object>());
 		
@@ -573,7 +573,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 				vo = new GradeIndexVo();
 				
 				vo.setIndexId(index.getPkIndexId());
-				vo.setNumber(index.getNumber());
+				vo.setNumber(index.getNumber() != null ? index.getNumber().toString() : "");
 				vo.setName(index.getName());
 				vo.setClassifyName(index.getClassify().getName());
 				vo.setClassifyId(index.getClassify().getPkClassifyId());
@@ -593,7 +593,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 	public void addIndex(GradeIndexVo indexVo, List<GradeIndexVo> indexLst) throws BusinessException {
 		if (indexVo != null) {
 			GradeIndex index = new GradeIndex();
-			index.setNumber(indexVo.getNumber());
+			index.setNumber(NumberUtils.toInt(indexVo.getNumber()));
 			index.setName(indexVo.getName());
 			
 			IndexClassify cf = (IndexClassify)baseDao.queryEntityById(IndexClassify.class, indexVo.getClassifyId());
@@ -613,7 +613,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 				List<GradeIndex> index2Lst = new ArrayList<GradeIndex>();
 				for (GradeIndexVo vo : indexLst) {
 					index2 = new GradeIndex();
-					index2.setNumber(vo.getNumber());
+					index2.setNumber(NumberUtils.toInt(vo.getNumber()));
 					index2.setName(vo.getName());
 					index2.setGrade(vo.getGrade());
 					index2.setRemark(vo.getRemark());
@@ -637,7 +637,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 			if (!CollectionUtils.isEmpty(lst)) {
 				index = lst.get(0);
 				
-				index.setNumber(indexVo.getNumber());
+				index.setNumber(NumberUtils.toInt(indexVo.getNumber()));
 				index.setName(indexVo.getName());
 				
 				IndexClassify cf = (IndexClassify)baseDao.queryEntityById(IndexClassify.class, indexVo.getClassifyId());
@@ -660,7 +660,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 					List<GradeIndex> index2Lst = new ArrayList<GradeIndex>();
 					for (GradeIndexVo vo : indexLst) {
 						index2 = new GradeIndex();
-						index2.setNumber(vo.getNumber());
+						index2.setNumber(NumberUtils.toInt(vo.getNumber()));
 						index2.setName(vo.getName());
 						index2.setGrade(vo.getGrade());
 						index2.setRemark(vo.getRemark());
@@ -701,7 +701,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 					vo = new GradeIndexVo();
 					
 					vo.setIndexId(i.getPkIndexId());
-					vo.setNumber(i.getNumber());
+					vo.setNumber(i.getNumber() != null ? i.getNumber().toString() : "");
 					vo.setName(i.getName());
 					vo.setGrade(i.getGrade());
 					vo.setRemark(i.getRemark());
@@ -947,7 +947,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 			}
 		}
 		
-		cfHql += " order by i.name";
+		cfHql += " order by i.number";
 		List<IndexClassify> cfLst = (List<IndexClassify>)baseDao.queryEntitys(cfHql);
 		
 		IndexClassifyVo icvo = null;
@@ -958,7 +958,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 				icvo = new IndexClassifyVo();
 				
 				icvo.setClassifyId(cf.getPkClassifyId());
-				icvo.setNumber(cf.getNumber());
+				icvo.setNumber(cf.getNumber() != null ? cf.getNumber().toString() : "");
 				icvo.setName(cf.getName());
 				
 				String orgNames = "";
@@ -1116,7 +1116,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 							vo.setRemark(index.getRemark());
 							
 							vo.setIndexId(gi.getPkIndexId());
-							vo.setNumber(gi.getNumber());
+							vo.setNumber(gi.getNumber() != null ? gi.getNumber().toString() : "");
 							vo.setGradeIndex2Name(gi.getName());
 							vo.setGrade2(gi.getGrade());
 							vo.setRemark2(gi.getRemark());
@@ -1140,7 +1140,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 						vo = new GradeIndexVo();
 						
 						vo.setIndexId(index.getPkIndexId());
-						vo.setNumber(index.getNumber());
+						vo.setNumber(index.getNumber() != null ? index.getNumber().toString() : "");
 						vo.setName(index.getName());
 						vo.setClassifyName(index.getClassify().getName());
 						vo.setClassifyId(index.getClassify().getPkClassifyId());
