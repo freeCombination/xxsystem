@@ -113,9 +113,10 @@ public interface IPersonalGradeService {
 	 * 导出工作职责
 	 * 
 	 * @param dutyMap
+	 * @param file 
 	 * @return
 	 */
-	public HSSFWorkbook exportPersonalDuty(Map<String, String> dutyMap);
+	public HSSFWorkbook exportPersonalDuty(Map<String, String> dutyMap, File file);
 
 	/**
 	 * 导入工作职责

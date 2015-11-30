@@ -98,7 +98,7 @@ public class HSSFUtils {
                                         || StringUtils.isBlank(str)) {
                                         content.append("null");
                                     } else {
-                                        content.append(str);
+                                        content.append(str.replaceAll("\n", "&n"));
                                     }
                                     content.append("\n");
                                 }
@@ -115,7 +115,11 @@ public class HSSFUtils {
         for (int i = 1; i < row.length; i++) {
             String[] col = row[i].split("\n");
             for (int j = 0; j < col.length; j++) {
-                cols[i][j] = col[j];
+            	if (StringUtils.isNotBlank(col[j]) && col[j].contains("&n")) {
+            		cols[i][j] = col[j].replaceAll("&n", "\n");
+				}else{
+					cols[i][j] = col[j];
+				}
             }
         }
         
@@ -489,7 +493,7 @@ public class HSSFUtils {
         } catch (FileNotFoundException e) {
             
         } catch (Exception e) {
-            
+            e.printStackTrace();
         }
         return excelContent;
     }

@@ -322,59 +322,108 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 	}
 
 	@Override
-	public HSSFWorkbook exportPersonalDuty(Map<String, String> dutyMap) {
-		ListVo<PersonalDutyVo> result = getPersonalDutyList(dutyMap);
-		HSSFWorkbook wb = null;
-		if (result.getTotalSize() > 0) {
-			wb = new HSSFWorkbook();
-			HSSFSheet sheet = wb.createSheet("个人职责明细");
-			sheet.setColumnWidth(0, 10000);
-			sheet.setColumnWidth(1, 10000);
-			HSSFCellStyle style = wb.createCellStyle();
-			style.setAlignment(HSSFCellStyle.ALIGN_CENTER);
-			style.setBorderBottom(HSSFCellStyle.BORDER_MEDIUM);
-			style.setBottomBorderColor(HSSFColor.BLACK.index);
-			style.setBorderLeft(HSSFCellStyle.BORDER_MEDIUM);
-			style.setLeftBorderColor(HSSFColor.BLACK.index);
-			style.setBorderRight(HSSFCellStyle.BORDER_MEDIUM);
-			style.setRightBorderColor(HSSFColor.BLACK.index);
-			style.setBorderTop(HSSFCellStyle.BORDER_MEDIUM);
-			style.setTopBorderColor(HSSFColor.BLACK.index);
-			// 设置字体
-			HSSFFont font = wb.createFont();
-			font.setFontHeightInPoints((short) 14); // 字体高度
-			font.setFontName("黑体 "); // 字体
-			style.setFont(font);
-			style.setWrapText(true);// 设置自动换行
-
-			HSSFRow row = sheet.createRow(0);
-			HSSFCell cell = null;
-			// 创建头部
-			/*
-			 * cell = row.createCell(0); cell.setCellValue("主键");
-			 */
-
-			cell = row.createCell(0);
-			cell.setCellStyle(style);
-			cell.setCellValue("工作职责");
-
-			cell = row.createCell(1);
-			cell.setCellStyle(style);
-			cell.setCellValue("完成情况");
-
-			List<PersonalDutyVo> list = result.getList();
-			for (int i = 0; i < list.size(); i++) {
-				PersonalDutyVo vo = list.get(i);
-				row = sheet.createRow(i + 1);
-
-				// 工作职责
-				cell = row.createCell(0);
-				cell.setCellValue(vo.getWorkDuty());
-
-				// 完成情况
-				cell = row.createCell(1);
-				cell.setCellValue(vo.getCompletion());
+	public HSSFWorkbook exportPersonalDuty(Map<String, String> dutyMap,File file) {
+		String personalGradeId = dutyMap.get("personalGradeId");
+		HSSFWorkbook wb = null ;
+		try {
+			PersonalGrade grade = (PersonalGrade)baseDao.queryEntityById(PersonalGrade.class, Integer.parseInt(personalGradeId));
+			//如果为空 不导出
+			if (grade == null) {
+				return null ;
 			}
+			Set<PersonalDuty> personalDutys = grade.getPersonalDutys();
+			POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(file));
+			// 读取excel模板
+			wb = new HSSFWorkbook(fs);
+			HSSFSheet aSheet = wb.getSheetAt(0);
+			// 插入表头信息
+			HSSFRow row0 = aSheet.getRow(0);
+			HSSFCell cell0 = row0.getCell(0);
+			cell0.setCellValue(grade.getGradeYear()+"年员工年度考核登记表");
+			// 插入职员个人信息
+			HSSFRow row1 = aSheet.getRow(1);
+			HSSFRow row2 = aSheet.getRow(2);
+			HSSFRow row3 = aSheet.getRow(3);
+			HSSFCell cell11 = row1.getCell(1);
+			HSSFCell cell13 = row1.getCell(4);
+			HSSFCell cell15 = row1.getCell(6);
+
+			HSSFCell cell21 = row2.getCell(1);
+			HSSFCell cell23 = row2.getCell(4);
+			HSSFCell cell25 = row2.getCell(6);
+
+			HSSFCell cell31 = row3.getCell(1);
+			HSSFCell cell33 = row3.getCell(6);
+
+			if (grade.getUser() != null) {
+				cell11.setCellValue(grade.getUser().getRealname());
+				cell13.setCellValue(grade.getUser().getGender());
+				cell15.setCellValue(grade.getUser().getBirthDay());
+				cell21.setCellValue(grade.getUser().getPoliticsStatus());
+				cell23.setCellValue(grade.getUser().getEducationBackground());
+				cell25.setCellValue(grade.getUser().getJobStartDate());
+				if (grade.getUser().getResponsibilities() != null) {
+					cell31.setCellValue(grade.getUser().getResponsibilities().getName());
+				}
+				// 现任岗位时间
+				cell33.setCellValue(grade.getUser().getOfficeHoldingDate());
+			}
+			
+			HSSFCellStyle cellStyle = wb.createCellStyle();
+			cellStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN); // 下边框
+			cellStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);// 左边框
+			cellStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);// 上边框
+			cellStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);// 右边框
+			
+			HSSFCellStyle styleBold = getNewCenterStyle(wb);
+			// 获取单元格格式
+			int newRow = 6; // 从第几行开始插入
+			int rows = personalDutys.size();// 设定插入几行
+			if (personalDutys != null && personalDutys.size() > 0) {
+				aSheet.shiftRows(newRow, aSheet.getLastRowNum(), rows, true, true);
+				int rowSize = 0;
+				for (PersonalDuty duty : personalDutys) {
+					HSSFRow sourceRow = aSheet.getRow(newRow + rowSize);
+						if (sourceRow == null) {
+							sourceRow = aSheet.createRow(newRow + rowSize);
+						}
+						sourceRow.setHeight((short) 400);
+						// 合并 单元格 操作* 第一个参数 0 表示 起始 行* 第二个参数 a表示 起始 列* 第三个参数 0
+						// 表示结束行* 第四个参数 b表示结束列
+						Region region =  new Region(newRow + rowSize, (short) 0, newRow + rowSize, (short) 2);
+						setRegionStyle(aSheet,region,styleBold);//设置合并单元格的风格（加边框）
+						aSheet.addMergedRegion(region); //
+						HSSFCell cew2 = sourceRow.createCell((short) 0);
+						cew2.setCellValue(duty.getWorkDuty());
+						cew2.setCellStyle(styleBold);
+						
+						Region region1 =  new Region(newRow + rowSize, (short) 3, newRow + rowSize, (short) 6);
+						setRegionStyle(aSheet,region1,styleBold);
+						aSheet.addMergedRegion(region1); //
+						HSSFCell cew3 = sourceRow.createCell((short) 3);
+						cew3.setCellValue(duty.getCompletion());
+						cew3.setCellStyle(styleBold);
+						rowSize++;
+				}
+			}
+
+			// 写入其他信息
+			HSSFCellStyle cellStyle2 = wb.createCellStyle();
+			cellStyle2.setAlignment(HSSFCellStyle.ALIGN_LEFT);
+			cellStyle2.setVerticalAlignment(HSSFCellStyle.VERTICAL_TOP);
+			
+			HSSFRow row4 = aSheet.getRow(newRow + personalDutys.size() + 1);
+			HSSFCell cell41 = row4.getCell(0);
+			cell41.setCellStyle(cellStyle2);
+			cell41.setCellValue(grade.getProblem());
+
+			HSSFRow row5 = aSheet.getRow(newRow + personalDutys.size() + 3);
+			HSSFCell cell51 = row5.getCell(0);
+			cell51.setCellStyle(cellStyle2);
+			cell51.setCellValue(grade.getWorkPlan());
+			
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return wb;
 	}
@@ -401,18 +450,24 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			PersonalGrade grade = (PersonalGrade) baseDao.queryEntityById(PersonalGrade.class,
 					Integer.parseInt(personalGradeId));
 			baseDao.executeHql("delete From PersonalDuty d where d.personalGrade.id=" + grade.getId());
-			for (int i = 1; i < col; i++) {
+			for (int i = 6; i < col-7 ; i++) {
 				PersonalDuty duty = new PersonalDuty();
 				if (duty != null) {
 					String workDuty = content[i][0];
-					String completion = content[i][1];
-					duty.setWorkDuty(workDuty);
-					duty.setCompletion(completion);
+					String completion = content[i][3];
+					duty.setWorkDuty(workDuty.equals("null")?"":workDuty);
+					duty.setCompletion(completion.equals("null")?"":completion);
 					duty.setPersonalGrade(grade);
 					duties.add(duty);
 				}
 			}
 			this.baseDao.saveOrUpdate(duties);
+			//修改工作计划和总结
+			String workPlan = content[col-4][0];
+			String problem = content[col-6][0];
+			grade.setProblem(problem);
+			grade.setWorkPlan(workPlan);
+			this.baseDao.update(grade);
 		}
 		return message;
 	}
@@ -1280,15 +1335,15 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			HSSFRow row2 = aSheet.getRow(2);
 			HSSFRow row3 = aSheet.getRow(3);
 			HSSFCell cell11 = row1.getCell(1);
-			HSSFCell cell13 = row1.getCell(3);
-			HSSFCell cell15 = row1.getCell(5);
+			HSSFCell cell13 = row1.getCell(4);
+			HSSFCell cell15 = row1.getCell(6);
 
 			HSSFCell cell21 = row2.getCell(1);
-			HSSFCell cell23 = row2.getCell(3);
-			HSSFCell cell25 = row2.getCell(5);
+			HSSFCell cell23 = row2.getCell(4);
+			HSSFCell cell25 = row2.getCell(6);
 
 			HSSFCell cell31 = row3.getCell(1);
-			HSSFCell cell33 = row3.getCell(3);
+			HSSFCell cell33 = row3.getCell(6);
 
 			if (grade.getUser() != null) {
 				cell11.setCellValue(grade.getUser().getRealname());
@@ -1325,20 +1380,20 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 						sourceRow.setHeight((short) 400);
 						// 合并 单元格 操作* 第一个参数 0 表示 起始 行* 第二个参数 a表示 起始 列* 第三个参数 0
 						// 表示结束行* 第四个参数 b表示结束列
-						Region region =  new Region(newRow + rowSize, (short) 0, newRow + rowSize, (short) 1);
+						Region region =  new Region(newRow + rowSize, (short) 0, newRow + rowSize, (short) 2);
 						setRegionStyle(aSheet,region,styleBold);//设置合并单元格的风格（加边框）
 						aSheet.addMergedRegion(region); //
 						HSSFCell cew2 = sourceRow.createCell((short) 0);
 						cew2.setCellValue(duty.getWorkDuty());
 						cew2.setCellStyle(styleBold);
 						
-						Region region1 =  new Region(newRow + rowSize, (short) 2, newRow + rowSize, (short) 5);
+						Region region1 =  new Region(newRow + rowSize, (short) 3, newRow + rowSize, (short) 6);
 						setRegionStyle(aSheet,region1,styleBold);
 						aSheet.addMergedRegion(region1); //
-						HSSFCell cew3 = sourceRow.createCell((short) 2);
+						HSSFCell cew3 = sourceRow.createCell((short) 3);
 						cew3.setCellValue(duty.getCompletion());
 						cew3.setCellStyle(styleBold);
-					rowSize++;
+						rowSize++;
 				}
 			}
 

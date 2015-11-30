@@ -419,8 +419,11 @@ public class PersonalGradeAction extends BaseAction {
 		try {
 			Map<String, String> dutyMap = RequestUtil.getParameterMap(super
 					.getRequest());
+			HttpServletRequest request = this.getRequest();
+			ServletContext servletContext = request.getSession().getServletContext();
+			File file=new File(servletContext.getRealPath("/template/dutyTemplate.xls")); 
 			HSSFWorkbook workBook = this.personalGradeService
-					.exportPersonalDuty(dutyMap);
+					.exportPersonalDuty(dutyMap,file);
 			if (workBook != null) {
 				this.getRequest().getSession()
 						.setAttribute("personalDutyWorkBook", workBook);

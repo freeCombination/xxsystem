@@ -60,6 +60,14 @@
 						var proxy = grade.personalDuty.PersonalDutyStore.getProxy();
 						proxy.setExtraParam("personalGradeId",Ext.getCmp("personalGradeId").getValue());
 						grade.personalDuty.PersonalDutyStore.load();
+						//刷新工作完成情况及计划
+						var basicForm = grade.personalGrade.PersonalGradeWin.down('form').getForm();
+						basicForm.load({
+							url : basePath + '/personalGrade/getPersonalGradeById.action',
+							params : {
+								id : Ext.getCmp("personalGradeId").getValue()
+							}
+						});
 		 	      	}else{
 		 	      		Ext.Msg.showError(flag);
 		 	      	}
