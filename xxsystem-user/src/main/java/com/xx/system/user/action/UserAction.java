@@ -428,6 +428,7 @@ public class UserAction extends BaseAction {
             	oldUser.setResponsibilities(user.getResponsibilities());
             }
             
+            oldUser.setRespChangeDate(user.getRespChangeDate());
             oldUser.setNationality(user.getNationality());
             oldUser.setPartyDate(user.getPartyDate());
             oldUser.setJobStartDate(user.getJobStartDate());

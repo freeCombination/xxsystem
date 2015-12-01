@@ -2011,6 +2011,7 @@ public class UserServiceImpl implements IUserService {
             data.put("user.respName",user.getResponsibilities().getName());
         }
         
+        data.put("user.respChangeDate", user.getRespChangeDate() == null ? "" :user.getRespChangeDate());
         data.put("user.nationality", user.getNationality() == null ? "" : user.getNationality());
         data.put("user.partyDate", user.getPartyDate() == null ? "" : user.getPartyDate());
         data.put("user.jobStartDate", user.getJobStartDate() == null ? "" : user.getJobStartDate());
@@ -2092,6 +2093,7 @@ public class UserServiceImpl implements IUserService {
         	vo.setRespName(user.getResponsibilities().getName());
         }
         
+        vo.setRespChangeDate(user.getRespChangeDate());
         vo.setNationality(user.getNationality() == null ? "" : user.getNationality());
         vo.setPartyDate(user.getPartyDate() == null ? "" : user.getPartyDate());
         vo.setJobStartDate(user.getJobStartDate() == null ? "" : user.getJobStartDate());

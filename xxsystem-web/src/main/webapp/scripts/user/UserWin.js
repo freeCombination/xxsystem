@@ -88,7 +88,7 @@ sshframe.user.UserForm = Ext.create("Ext.form.Panel", {
 									minLength:SystemConstant.passwordMinLength,
 									regex : /^[^\u4e00-\u9fa5]{0,}$/
 								},
-								{ 
+								{
 									allowBlank:false, 
 									fieldLabel: '确认密码',
 									maxLength:18,
@@ -177,6 +177,7 @@ sshframe.user.UserForm = Ext.create("Ext.form.Panel", {
 									editable:false,
 									queryMode: 'remote'
 								},
+								{ xtype: 'datefield',format : 'Y-m-d', fieldLabel: '现任岗位时间', name: 'user.respChangeDate', maxValue: new Date(),editable:false},
 								{ fieldLabel: 'ERP ID',regex : /^[\w.\-\u4e00-\u9fa5]+$/,regexText : '不能包含特殊字符',emptyText: '', name: 'user.erpId',maxLength:10},
 								{ fieldLabel: '电话',name: 'user.mobileNo',emptyText: '',regex : /^[1][0-9]{10}$/,regexText : '手机号码由数字1开头的11位数字组成，请检查'},
 								{ fieldLabel: '办公号码',maxLength: 12,name: 'user.phoneNo',emptyText: '', regex : /^[\d-]*$/,regexText : '电话号码只能包含数字和“-”，请检查',maxLength:12},

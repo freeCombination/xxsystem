@@ -143,6 +143,11 @@ public class User implements java.io.Serializable {
     private Responsibilities responsibilities;
     
     /**
+     * 现任岗位时间
+     */
+    private String respChangeDate;
+    
+    /**
      * 民族
      */
     private String nationality;
@@ -727,5 +732,14 @@ public class User implements java.io.Serializable {
 
 	public void setPoliticsStatus(String politicsStatus) {
 		this.politicsStatus = politicsStatus;
+	}
+
+	@Column(name = "RESP_CHANGE_DATE", length = 10)
+	public String getRespChangeDate() {
+		return respChangeDate;
+	}
+
+	public void setRespChangeDate(String respChangeDate) {
+		this.respChangeDate = respChangeDate;
 	}
 }

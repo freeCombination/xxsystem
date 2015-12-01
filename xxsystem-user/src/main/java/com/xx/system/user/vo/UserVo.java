@@ -125,6 +125,11 @@ public class UserVo {
     private Integer respId;
     
     /**
+     * 现任岗位时间
+     */
+    private String respChangeDate;
+    
+    /**
      * 民族
      */
     private String nationality;
@@ -601,5 +606,13 @@ public class UserVo {
 
 	public void setPoliticsStatus(String politicsStatus) {
 		this.politicsStatus = politicsStatus;
+	}
+
+	public String getRespChangeDate() {
+		return respChangeDate;
+	}
+
+	public void setRespChangeDate(String respChangeDate) {
+		this.respChangeDate = respChangeDate;
 	}
 }
