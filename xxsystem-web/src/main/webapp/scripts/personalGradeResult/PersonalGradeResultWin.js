@@ -91,7 +91,7 @@ var row3 = {
 		    items:[{  
 		        xtype:'displayfield',  
 		        name:'responsibilities',
-		        fieldLabel:'任现岗位时间'
+		        fieldLabel:'现任岗位时间'
 		    }]  
 		}]  
 };
