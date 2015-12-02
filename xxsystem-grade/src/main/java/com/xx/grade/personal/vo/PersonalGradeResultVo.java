@@ -82,6 +82,11 @@ public class PersonalGradeResultVo {
     private String responsibilities;
     
     /**
+     * 岗位时间
+     */
+    private String respChangeDate ;
+    
+    /**
      * 出生日期
      */
     private String birthDay;
@@ -339,4 +344,14 @@ public class PersonalGradeResultVo {
 	public void setDetailsId(Integer detailsId) {
 		this.detailsId = detailsId;
 	}
+
+	public String getRespChangeDate() {
+		return respChangeDate;
+	}
+
+	public void setRespChangeDate(String respChangeDate) {
+		this.respChangeDate = respChangeDate;
+	}
+	
+	
 }

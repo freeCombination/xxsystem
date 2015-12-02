@@ -929,6 +929,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 				if (user.getResponsibilities() != null) {
 					vo.setResponsibilities(user.getResponsibilities().getName());
 				}
+				vo.setRespChangeDate(user.getRespChangeDate());
 				vo.setBirthDay(user.getBirthDay());
 				vo.setGender(user.getGender());
 				vo.setPoliticsStatus(user.getPoliticsStatus());

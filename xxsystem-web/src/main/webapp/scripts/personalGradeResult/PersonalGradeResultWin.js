@@ -90,7 +90,7 @@ var row3 = {
 		    border : false,
 		    items:[{  
 		        xtype:'displayfield',  
-		        name:'responsibilities',
+		        name:'respChangeDate',
 		        fieldLabel:'现任岗位时间'
 		    }]  
 		}]  
