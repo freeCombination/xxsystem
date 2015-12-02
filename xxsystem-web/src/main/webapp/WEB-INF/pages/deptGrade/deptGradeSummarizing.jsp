@@ -316,7 +316,8 @@
 		        },
                 {header: "操作",width: 40,dataIndex: "userId",align:'center',menuDisabled: true,sortable:false,
                     renderer: function(value, cellmeta, record, rowIndex, columnIndex, store){
-                    	if (Ext.getCmp('electYearQuery').getValue() == Ext.Date.format(new Date(),"Y")) {
+                    	var flag = record.get('flag');
+                    	if (Ext.getCmp('electYearQuery').getValue() == Ext.Date.format(new Date(),"Y") && flag == 1) {
                     		var str = '';
                     		for(var i = 0;i < userPermissionArr.length;i++){
                     			if("deptgrade_rollback_btn" == userPermissionArr[i].name){
