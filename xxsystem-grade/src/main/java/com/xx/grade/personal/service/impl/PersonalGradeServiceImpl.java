@@ -366,7 +366,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 					cell31.setCellValue(grade.getUser().getResponsibilities().getName());
 				}
 				// 现任岗位时间
-				cell33.setCellValue(grade.getUser().getOfficeHoldingDate());
+				cell33.setCellValue(grade.getUser().getRespChangeDate());
 			}
 			
 			HSSFCellStyle cellStyle = wb.createCellStyle();
@@ -1329,8 +1329,41 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(file));
 			// 读取excel模板
 			wb = new HSSFWorkbook(fs);
-			HSSFSheet aSheet = wb.getSheetAt(0);
-
+			//封面
+			HSSFSheet fSheet = wb.getSheetAt(0);
+			HSSFRow frow1 = fSheet.getRow(9);
+			HSSFRow frow2 = fSheet.getRow(17);
+			HSSFRow frow3 = fSheet.getRow(19);
+			HSSFRow frow4 = fSheet.getRow(21);
+			
+			//年度
+			HSSFCell fcell1 = frow1.getCell(3);
+			//部门
+			HSSFCell fcell2 = frow2.getCell(4);
+			//姓名
+			HSSFCell fcell3 = frow3.getCell(4);
+			//填表日期
+			HSSFCell fcell4 = frow4.getCell(4);
+			fcell1.setCellValue("（ "+grade.getGradeYear()+" 年度）");
+			if (grade.getUser() != null) {
+				//部门
+				if (grade.getUser().getOrgUsers() != null) {
+					Set<OrgUser> orgUsers = grade.getUser().getOrgUsers();
+					for (OrgUser orgUser : orgUsers) {
+						if (orgUser.getOrganization() != null) {
+							fcell2.setCellValue(orgUser.getOrganization().getOrgName());
+							break;
+						}
+					}
+				}
+				//姓名
+				fcell3.setCellValue(grade.getUser().getRealname());
+			}
+			//填表日期
+			fcell4.setCellValue(DateUtil.getNowDate("yyyy-MM-dd"));
+			
+			//个人评分汇总表
+			HSSFSheet aSheet = wb.getSheetAt(1);
 			// 插入职员个人信息
 			HSSFRow row1 = aSheet.getRow(1);
 			HSSFRow row2 = aSheet.getRow(2);
@@ -1357,7 +1390,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 					cell31.setCellValue(grade.getUser().getResponsibilities().getName());
 				}
 				// 现任岗位时间
-				cell33.setCellValue(grade.getUser().getOfficeHoldingDate());
+				cell33.setCellValue(grade.getUser().getRespChangeDate());
 			}
 
 			HSSFCellStyle cellStyle = wb.createCellStyle();
