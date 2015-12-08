@@ -116,12 +116,13 @@ var cm = [
     	{
 			header: "操作",dataIndex: "",width:50,
     		renderer:function(value, cellmeta, record, rowIndex, columnIndex, store){
-					var isScoreChange = record.get('isScoreChange');
+					var status = record.get('status');
 					var id = record.get('id');
-					if(isScoreChange == 0){
-						
-					}else if(isScoreChange == 1){
-						return '<img title="部门得分发生变化，可刷新个人得分" src="'+basePath+'/images/icons/refresh.gif" style="cursor: pointer" onclick="grade.personalGrade.refreshScore('+id+')"/>';
+					//已归档的数据可以刷新得分，得分在两种情况下会出现变化，1.部门总得分发生变化 ； 2.对于已经提交的人员，管理员对用户进行删除或者禁用操作。
+					if(status == 2){
+						return '<img title="刷新个人得分" src="'+basePath+'/images/icons/refresh.gif" style="cursor: pointer" onclick="grade.personalGrade.refreshScore('+id+')"/>';
+					}else{
+						return '';
 					}
 				},
 				align:'center'

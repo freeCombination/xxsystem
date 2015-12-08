@@ -102,6 +102,10 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		StringBuffer counthql = new StringBuffer();
 		hql.append(" From PersonalGrade pg where 1=1 and pg.isDelete = 0 ");
 		counthql.append(" select count(*) From PersonalGrade pg where 1=1 and pg.isDelete = 0 ");
+		//如果评分人或者被评分人失效 禁用或者删除 则删除人员的数据
+		hql.append(" and pg.user.status = 0 and pg.user.enable = 1 ");
+		counthql.append(" and pg.user.status = 0 and pg.user.enable = 1 ");
+		
 		if (StringUtil.isNotEmpty(userId)) {
 			hql.append(" and pg.user.userId = " + Integer.parseInt(userId));
 			counthql.append(" and pg.user.userId = " + Integer.parseInt(userId));
@@ -230,6 +234,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		int count = 0;
 		StringBuffer hql = new StringBuffer();
 		hql.append(" select count(*) from PersonalGradeResult r where r.personalGrade.id = " + personalGradeId);
+		hql.append(" and r.gradeUser.status = 0 and r.gradeUser.enable = 1 ");
 		if (status != null) {
 			hql.append(" and r.state = " + status);
 		}
@@ -625,6 +630,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			String currentOrgUserIds = getUserIdsByCurrentOrg(currentOrg);
 			hql.append(" select rs.user From RoleMemberScope rs  where rs.role.roleId =" + role.getRoleId()
 					+ "  and rs.user.userId <> " + userId);
+			hql.append(" and rs.user.status = 0 and rs.user.enable = 1 ");
 			if (StringUtil.isNotEmpty(currentOrgUserIds)) {
 				hql.append(" and rs.user.userId in ( "+currentOrgUserIds+")");
 			}else {
@@ -636,9 +642,11 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 				|| role.getRoleName().equals("部门负责人")) {
 			hql.append(" select sm.roleMemberScope.user From ScopeMember sm where sm.org.orgId = "
 					+ currentOrg.getOrgId() + " and sm.roleMemberScope.role.roleId = " + role.getRoleId());
+			hql.append(" and sm.roleMemberScope.user.status = 0 and sm.roleMemberScope.user.enable = 1 ");
 		} // 其他角色，直接取对于角色下的所有人
 		else {
 			hql.append(" select rs.user From RoleMemberScope rs where rs.role.roleId =" + role.getRoleId());
+			hql.append(" and rs.user.status = 0 and rs.user.enable = 1 ");
 		}
 		users = baseDao.queryEntitys(hql.toString());
 		return users;
@@ -849,6 +857,10 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		StringBuffer counthql = new StringBuffer();
 		hql.append(" From PersonalGradeResult pgr where 1=1");
 		counthql.append(" select count(*) From PersonalGradeResult pgr where 1=1 ");
+		
+		hql.append(" and pgr.gradeUser.status = 0 and pgr.gradeUser.enable =1 ");
+		counthql.append(" and pgr.gradeUser.status = 0 and pgr.gradeUser.enable =1 ");
+		
 		if (StringUtil.isNotEmpty(userId)) {
 			hql.append(" and pgr.gradeUser.userId = " + Integer.parseInt(userId));
 			counthql.append(" and pgr.gradeUser.userId = " + Integer.parseInt(userId));
@@ -1090,7 +1102,9 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			StringBuffer hql = new StringBuffer();
 			StringBuffer hqlCount = new StringBuffer();
 			hql.append(" From PersonalGradeResult r where r.state=1 and r.personalGrade.id=" + grade.getId());
+			hql.append(" and r.gradeUser.status = 0 and r.gradeUser.enable = 1");
 			hqlCount.append(" select count(*) from PersonalGradeResult r where r.personalGrade.id= " + grade.getId());
+			hqlCount.append(" and r.gradeUser.status = 0 and r.gradeUser.enable = 1");
 			int totalSize = baseDao.getTotalCount(hqlCount.toString(), new HashMap<String, Object>());
 			List<PersonalGradeResult> results = baseDao.queryEntitys(hql.toString());
 			// 判断是否已经提交完成
@@ -1132,7 +1146,9 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		sql.append(" from T_PERSONAL_GRADE_RESULT_DETAILS d ");
 		sql.append(" INNER JOIN T_PERSONAL_GRADE_RESULT r on r.ID = d.PERSONAL_GRADE_RESULT_ID ");
 		sql.append(" INNER JOIN T_PERSONAL_GRADE g on g.ID = r.PERSONAL_GRADE_ID ");
+		sql.append(" INNER JOIN t_user u on u.USER_ID = r.GRADE_USER_ID ");
 		sql.append(" where 1=1  ");
+		sql.append(" AND u.ISENABLE = 1 and u.STATUS  = 0");
 		sql.append(" AND d.FK_INDEX_TYPE = " + gradeDetail.getIndexType().getPkDictionaryId());
 		sql.append(" and g.ID = " + grade.getId());
 		sql.append(" GROUP BY d.FK_ROLE_ID ,d.FK_INDEX_TYPE,d.PERCENTAGE ");
