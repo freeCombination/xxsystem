@@ -1629,6 +1629,10 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		StringBuffer counthql = new StringBuffer();
 		hql.append(" From PersonalGradeResultDetails pgr where 1=1");
 		counthql.append(" select count(*) From PersonalGradeResultDetails pgr where 1=1 ");
+		
+		hql.append(" and pgr.personalGradeResult.gradeUser.status = 0 and pgr.personalGradeResult.gradeUser.enable = 1 ");
+		counthql.append(" and pgr.personalGradeResult.gradeUser.status = 0 and pgr.personalGradeResult.gradeUser.enable = 1 ");
+		
 		if (StringUtil.isNotEmpty(userId)) {
 			hql.append(" and pgr.personalGradeResult.gradeUser.userId = " + Integer.parseInt(userId));
 			counthql.append(" and pgr.personalGradeResult.gradeUser.userId = " + Integer.parseInt(userId));
