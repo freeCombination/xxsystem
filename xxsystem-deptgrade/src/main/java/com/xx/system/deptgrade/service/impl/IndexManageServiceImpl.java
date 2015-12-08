@@ -1016,6 +1016,23 @@ public class IndexManageServiceImpl implements IIndexManageService {
 		
 		return voLst;
 	}
+	
+	/**
+	 * 判断当前登录用户是否是所长或分管所领导
+	 * @return
+	 */
+	private boolean include(User currUsr){
+		
+		String hql = " from RoleMemberScope r where r.role.roleCode in ('DG_SZ', 'DG_FGSLD')"
+				+ " and r.user.userId = " + currUsr.getUserId();
+		
+		int count = baseDao.queryTotalCount(hql, new HashMap<String, Object>());
+		if (count > 0) {
+			return true;
+		}
+		
+		return false;
+	}
 
 	@Override
 	public List<OrgVo> getOrgListForGrade(IndexClassifyVo vo, User currUsr) throws Exception {
@@ -1024,23 +1041,25 @@ public class IndexManageServiceImpl implements IIndexManageService {
 		if (vo != null) {
 			IndexClassify ic = (IndexClassify)baseDao.queryEntityById(IndexClassify.class, vo.getClassifyId());
 			if (ic != null && ic.getOrgCfs() != null && ic.getOrgCfs().size() > 0) {
-				// 获取当前登陆用户所在部门，进而获取该用户可评分的部门（排除自己所在部门）
-				Iterator<OrgUser> ouIt = currUsr.getOrgUsers().iterator();
 				Map<Integer, Organization> orgMap = new HashMap<Integer, Organization>();
-				while (ouIt.hasNext()) {
-					Organization usrOrg = ouIt.next().getOrganization();
-					orgMap.put(usrOrg.getOrgId(), usrOrg);
-				}
-				
-				// 由于分馆所领导可能管理多个部门，分馆所领导不能评分这些部门，也需要排除，可通过与部门关联的分馆所领导对比，对比上就排除该部门
-				String fenguanHql = " from Organization o where o.status = 0"
-						+ " and o.enable = 0"
-						+ " and o.otherSup is not null"
-						+ " and o.otherSup like '%," + currUsr.getUserId() + ",%'";
-				List<Organization> fenguanOrg = (List<Organization>)baseDao.queryEntitys(fenguanHql);
-				if (!CollectionUtils.isEmpty(fenguanOrg)) {
-					for (Organization org : fenguanOrg) {
-						orgMap.put(org.getOrgId(), org);
+				if (!include(currUsr)) {
+					// 获取当前登陆用户所在部门，进而获取该用户可评分的部门（排除自己所在部门）
+					Iterator<OrgUser> ouIt = currUsr.getOrgUsers().iterator();
+					while (ouIt.hasNext()) {
+						Organization usrOrg = ouIt.next().getOrganization();
+						orgMap.put(usrOrg.getOrgId(), usrOrg);
+					}
+					
+					// 由于分馆所领导可能管理多个部门，分馆所领导不能评分这些部门，也需要排除，可通过与部门关联的分馆所领导对比，对比上就排除该部门
+					String fenguanHql = " from Organization o where o.status = 0"
+							+ " and o.enable = 0"
+							+ " and o.otherSup is not null"
+							+ " and o.otherSup like '%," + currUsr.getUserId() + ",%'";
+					List<Organization> fenguanOrg = (List<Organization>)baseDao.queryEntitys(fenguanHql);
+					if (!CollectionUtils.isEmpty(fenguanOrg)) {
+						for (Organization org : fenguanOrg) {
+							orgMap.put(org.getOrgId(), org);
+						}
 					}
 				}
 				
@@ -1328,15 +1347,13 @@ public class IndexManageServiceImpl implements IIndexManageService {
 					if (!CollectionUtils.isEmpty(rmsLst)) {
 						for (RoleMemberScope rms : rmsLst) {
 							if (rms.getUser() != null) {
-								// 查询ClassifyUser，判断是否提交
-								String cuHql = " from ClassifyUser cu where cu.isDelete = 0 and cu.hasSubmit = 1"
-										+ " and cu.classify.pkClassifyId = " + gp.getClassify().getPkClassifyId()
-										+ " and cu.user.userId = " + rms.getUser().getUserId();
+								boolean inclued = include(rms.getUser());
+								
 								boolean containOrg = false;
 								Iterator<OrgUser> ouIt = rms.getUser().getOrgUsers().iterator();
 								while (ouIt.hasNext()) {
 									Organization usrOrg = ouIt.next().getOrganization();
-									if (orgIdLst.size() == 1 && orgIdLst.contains(usrOrg.getOrgId())) {
+									if (orgIdLst.size() == 1 && orgIdLst.contains(usrOrg.getOrgId()) && !inclued) {
 										containOrg = true;
 										break;
 									}
@@ -1346,7 +1363,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 								String fenguanHql = " from Organization o where o.status = 0"
 										+ " and o.enable = 0"
 										+ " and o.otherSup is not null"
-										+ " and o.otherSup like '%," + currUsr.getUserId() + ",%'";
+										+ " and o.otherSup like '%," + rms.getUser().getUserId() + ",%'";
 								List<Organization> fenguanOrg = (List<Organization>)baseDao.queryEntitys(fenguanHql);
 								// 如果其他领导所关联的所有部门恰好是该指标分类关联的所有部门，就有可能没有提交评分，视为提交
 								boolean notAllEq = false;
@@ -1358,6 +1375,10 @@ public class IndexManageServiceImpl implements IIndexManageService {
 											break;
 										}
 									}
+								}
+								
+								if (inclued) {
+									notAllEq = true;
 								}
 								
 								// 排除不能参与指标评分的用户对应的指标
@@ -1372,6 +1393,10 @@ public class IndexManageServiceImpl implements IIndexManageService {
 									}
 								}
 								
+								// 查询ClassifyUser，判断是否提交
+								String cuHql = " from ClassifyUser cu where cu.isDelete = 0 and cu.hasSubmit = 1"
+										+ " and cu.classify.pkClassifyId = " + gp.getClassify().getPkClassifyId()
+										+ " and cu.user.userId = " + rms.getUser().getUserId();
 								int hasSubmit = baseDao.queryTotalCount(cuHql, new HashMap<String, Object>());
 								if (!containOrg && notAllEq && !noParticipation && hasSubmit <= 0) {
 									allSubmit = false;
@@ -1415,10 +1440,12 @@ public class IndexManageServiceImpl implements IIndexManageService {
 										for (RoleMemberScope member : rmLst) {
 											userIds += "," + member.getUser().getUserId();
 											
+											boolean inclued = include(member.getUser());
+											
 											Iterator<OrgUser> ouIt = member.getUser().getOrgUsers().iterator();
 											while (ouIt.hasNext()) {
 												Organization usrOrg = ouIt.next().getOrganization();
-												if (usrOrg.getOrgId() == orgId) {
+												if (usrOrg.getOrgId() == orgId && !inclued) {
 													containUsr++;
 													noParticipation = true;
 												}
@@ -1427,12 +1454,12 @@ public class IndexManageServiceImpl implements IIndexManageService {
 													String fenguanHql = " from Organization o where o.status = 0"
 															+ " and o.enable = 0"
 															+ " and o.otherSup is not null"
-															+ " and o.otherSup like '%," + currUsr.getUserId() + ",%'";
+															+ " and o.otherSup like '%," + member.getUser().getUserId() + ",%'";
 													List<Organization> fenguanOrg = (List<Organization>)baseDao.queryEntitys(fenguanHql);
 													// 如果其他领导所关联的所有部门包含该部门，说明在该指标评分时未参与
 													if (!CollectionUtils.isEmpty(fenguanOrg)) {
 														for (Organization org : fenguanOrg) {
-															if (org.getOrgId() == orgId) {
+															if (org.getOrgId() == orgId && !inclued) {
 																containUsr++;
 																noParticipation = true;
 																break;
@@ -1655,10 +1682,16 @@ public class IndexManageServiceImpl implements IIndexManageService {
 								
 								int hasSubmit = baseDao.queryTotalCount(cuHql, new HashMap<String, Object>());
 								
+								if (hasSubmit > 0) {
+									vo.setFlag("1");
+								}
+								
+								boolean include =  include(rms.getUser());
+								
 								// 获取该指标包含的所有部门（如果该指标只包含自己所在部门，默认已提交）
 								if (gp.getClassify().getOrgCfs() != null && gp.getClassify().getOrgCfs().size() == 1) {
 									Iterator<OrgAndClassify> ocIt = gp.getClassify().getOrgCfs().iterator();
-									if (selfOrgIds.contains(ocIt.next().getOrg().getOrgId())) {
+									if (selfOrgIds.contains(ocIt.next().getOrg().getOrgId()) && !include) {
 										vo.setFlag("1");
 									}
 								}
@@ -1671,13 +1704,9 @@ public class IndexManageServiceImpl implements IIndexManageService {
 								List<Organization> fenguanOrg = (List<Organization>)baseDao.queryEntitys(fenguanHql);
 								// 如果其他领导所关联的所有部门只有一个部门且刚好是该部门，也表示提交了
 								if (!CollectionUtils.isEmpty(fenguanOrg)) {
-									if (fenguanOrg.size() == 1 && selfOrgIds.contains(fenguanOrg.get(0).getOrgId())) {
+									if (fenguanOrg.size() == 1 && selfOrgIds.contains(fenguanOrg.get(0).getOrgId()) && !include) {
 										vo.setFlag("1");
 									}
-								}
-								
-								if (hasSubmit > 0) {
-									vo.setFlag("1");
 								}
 								
 								// 排除不能参与指标评分的用户对应的指标
