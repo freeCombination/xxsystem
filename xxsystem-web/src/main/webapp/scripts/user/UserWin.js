@@ -118,7 +118,23 @@ sshframe.user.UserForm = Ext.create("Ext.form.Panel", {
 								{ fieldLabel: '身份证号码',regex : /^[\w.\-\u4e00-\u9fa5]+$/, regexText : '不能包含特殊字符',emptyText: '', name: 'user.idCard',maxLength:18},
 								{ fieldLabel: '民族',regex : /^[\w.\-\u4e00-\u9fa5]+$/, regexText : '不能包含特殊字符',name: 'user.nationality',emptyText: '',maxLength: 50},
 								{ fieldLabel: '籍贯',regex : /^[\w.\-\u4e00-\u9fa5]+$/, regexText : '不能包含特殊字符',name: 'user.birthPlace',emptyText: '',maxLength: 50},
-								{ xtype: 'datefield',format : 'Y-m-d', fieldLabel: '出生日期', name: 'user.birthDay', maxValue: new Date(),editable:false}
+								{
+									xtype: 'textfield', fieldLabel: '出生年月', name: 'user.birthDay',
+									readOnly:true,
+									id:'birthNy',
+									listeners:{
+							            "afterrender":function(com,eOpts){
+							                    var startTime=Ext.getDom("birthNy-inputEl");
+							                    startTime.initcfg={dateFmt:'yyyy-MM-dd',disabledDates:[]};
+							                    startTime.style.cssText="background: url('"+basePath+"/script/my97DatePicker/skin/datePicker.gif') no-repeat right #FFF;";
+							                    startTime.onclick=function(){
+							                        WdatePicker({dateFmt:'yyyy年MM月',maxDate:new Date()});
+							                    };
+							            }
+							        }
+								}
+								
+								
 							]},
 						{
 							columnWidth : .5,
@@ -177,7 +193,21 @@ sshframe.user.UserForm = Ext.create("Ext.form.Panel", {
 									editable:false,
 									queryMode: 'remote'
 								},
-								{ xtype: 'datefield',format : 'Y-m-d', fieldLabel: '现任岗位时间', name: 'user.respChangeDate', maxValue: new Date(),editable:false},
+								{
+									xtype: 'textfield', fieldLabel: '现任岗位时间', name: 'user.respChangeDate',
+									readOnly:true,
+									id:'respChangeDate',
+									listeners:{
+							            "afterrender":function(com,eOpts){
+							                    var startTime=Ext.getDom("respChangeDate-inputEl");
+							                    startTime.initcfg={dateFmt:'yyyy-MM-dd',disabledDates:[]};
+							                    startTime.style.cssText="background: url('"+basePath+"/script/my97DatePicker/skin/datePicker.gif') no-repeat right #FFF;";
+							                    startTime.onclick=function(){
+							                        WdatePicker({dateFmt:'yyyy年MM月',maxDate:new Date()});
+							                    };
+							            }
+							        }
+								},
 								{ fieldLabel: 'ERP ID',regex : /^[\w.\-\u4e00-\u9fa5]+$/,regexText : '不能包含特殊字符',emptyText: '', name: 'user.erpId',maxLength:10},
 								{ fieldLabel: '电话',name: 'user.mobileNo',emptyText: '',regex : /^[1][0-9]{10}$/,regexText : '手机号码由数字1开头的11位数字组成，请检查'},
 								{ fieldLabel: '办公号码',maxLength: 12,name: 'user.phoneNo',emptyText: '', regex : /^[\d-]*$/,regexText : '电话号码只能包含数字和“-”，请检查',maxLength:12},

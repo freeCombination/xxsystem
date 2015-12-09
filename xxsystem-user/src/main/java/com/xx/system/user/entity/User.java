@@ -734,7 +734,7 @@ public class User implements java.io.Serializable {
 		this.politicsStatus = politicsStatus;
 	}
 
-	@Column(name = "RESP_CHANGE_DATE", length = 10)
+	@Column(name = "RESP_CHANGE_DATE", length = 50)
 	public String getRespChangeDate() {
 		return respChangeDate;
 	}
