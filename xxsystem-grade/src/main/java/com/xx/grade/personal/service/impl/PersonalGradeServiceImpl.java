@@ -455,7 +455,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			PersonalGrade grade = (PersonalGrade) baseDao.queryEntityById(PersonalGrade.class,
 					Integer.parseInt(personalGradeId));
 			baseDao.executeHql("delete From PersonalDuty d where d.personalGrade.id=" + grade.getId());
-			for (int i = 6; i < col-7 ; i++) {
+			for (int i = 6; i < col-5 ; i++) {
 				PersonalDuty duty = new PersonalDuty();
 				if (duty != null) {
 					String workDuty = content[i][0];
@@ -468,8 +468,8 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			}
 			this.baseDao.saveOrUpdate(duties);
 			//修改工作计划和总结
-			String workPlan = content[col-4][0];
-			String problem = content[col-6][0];
+			String workPlan = content[col-2][0];
+			String problem = content[col-4][0];
 			grade.setProblem(problem);
 			grade.setWorkPlan(workPlan);
 			this.baseDao.update(grade);
