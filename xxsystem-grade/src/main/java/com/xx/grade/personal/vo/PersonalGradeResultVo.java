@@ -128,6 +128,8 @@ public class PersonalGradeResultVo {
 	
 	private String percentage ; //角色所占比例
 	
+	private String jobStartDate;
+	
 
 	public String getRoleName() {
 		return roleName;
@@ -351,6 +353,14 @@ public class PersonalGradeResultVo {
 
 	public void setRespChangeDate(String respChangeDate) {
 		this.respChangeDate = respChangeDate;
+	}
+
+	public String getJobStartDate() {
+		return jobStartDate;
+	}
+
+	public void setJobStartDate(String jobStartDate) {
+		this.jobStartDate = jobStartDate;
 	}
 	
 	

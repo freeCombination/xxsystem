@@ -731,7 +731,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 				if (currentOrg.getBranchedLeader() != null) {
 					PersonalGradeResult result = new PersonalGradeResult();
 					result.setPersonalGrade(grade);
-					result.setGradeUser(currentOrg.getBranchedLeader());
+					//result.setGradeUser(currentOrg.getBranchedLeader());
 					result.setState(0);
 					result.setGradeUserType(2);
 					gradeResults.add(result);
@@ -790,7 +790,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			OrgUserhql.append(" and ou.user.userId <> " + currentOrg.getDeptHead().getUserId());
 		}
 		if (currentOrg.getBranchedLeader() != null) {
-			OrgUserhql.append(" and ou.user.userId <> " + currentOrg.getBranchedLeader().getUserId());
+			//OrgUserhql.append(" and ou.user.userId <> " + currentOrg.getBranchedLeader().getUserId());
 		}
 		if (currentOrg.getOtherSup() != null) {
 			//OrgUserhql.append(" and ou.user.userId <> " + currentOrg.getOtherSup().getUserId());
@@ -941,6 +941,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 				if (user.getResponsibilities() != null) {
 					vo.setResponsibilities(user.getResponsibilities().getName());
 				}
+				vo.setJobStartDate(user.getJobStartDate());
 				vo.setRespChangeDate(user.getRespChangeDate());
 				vo.setBirthDay(user.getBirthDay());
 				vo.setGender(user.getGender());

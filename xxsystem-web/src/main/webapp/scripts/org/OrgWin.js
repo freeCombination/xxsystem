@@ -116,12 +116,12 @@ var orgForm=Ext.create("Ext.form.Panel", {
 				}
 			}
 	    }, {
-	    	name : 'org.branchedLeader.userId',
+	    	name : 'org.branchedLeader',
 	    	id : 'branchedLeaderId',
 	    	hidden:true
 	    }, {
 	    	fieldLabel: '分管领导',
-	        name: 'org.branchedLeader.realname',
+	        name: 'branchedLeaderName',
 	        id : 'branchedLeaderName',
 	        //allowBlank: false,
 	        width: 100,
@@ -129,9 +129,9 @@ var orgForm=Ext.create("Ext.form.Panel", {
 				'focus':function(){
 					var userId = Ext.getCmp('branchedLeaderId').getValue();
 					if(userId && userId != 0){
-						createAddUserInfo('branchedLeaderName','branchedLeaderId',userId);
+						createAddUserInfo('branchedLeaderName','branchedLeaderId',userId, 'multi');
 					}else{
-						createAddUserInfo('branchedLeaderName','branchedLeaderId');
+						createAddUserInfo('branchedLeaderName','branchedLeaderId', null, 'multi');
 					}
 				}
 			}

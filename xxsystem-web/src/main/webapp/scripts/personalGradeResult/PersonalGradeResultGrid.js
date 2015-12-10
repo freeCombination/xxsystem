@@ -29,7 +29,8 @@ Ext.define("grade.personalGradeResult.PersonalGradeResultModel",{
 						{name:'politicsStatus'},
 						{name:'gradeUserType'},
 						{name:'respChangeDate'},
-						{name:'state'}
+						{name:'state'},
+						{name:'jobStartDate'}
 					]
 	});
 

@@ -64,8 +64,8 @@ var row2 = {
             layout:'form', 
             border : false,
             items:[{  
-                xtype:'displayfield',  
-                name:'educationBackground',
+                xtype:'displayfield',
+                name:'jobStartDate',
                 fieldLabel:'参加工作时间'
             }]  
         }]  

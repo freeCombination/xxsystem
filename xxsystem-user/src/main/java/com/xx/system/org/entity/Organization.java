@@ -95,7 +95,7 @@ public class Organization implements java.io.Serializable {
     /**
      * 分管领导
      */
-    private User branchedLeader;
+    private String branchedLeader;
     
     /**
      * 所领导
@@ -389,13 +389,12 @@ public class Organization implements java.io.Serializable {
 		this.deptHead = deptHead;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "FK_BRANCHEDLEADER")
-	public User getBranchedLeader() {
+    @Column(name = "BRANCHEDLEADER")
+	public String getBranchedLeader() {
 		return branchedLeader;
 	}
 
-	public void setBranchedLeader(User branchedLeader) {
+	public void setBranchedLeader(String branchedLeader) {
 		this.branchedLeader = branchedLeader;
 	}
 

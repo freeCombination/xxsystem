@@ -192,8 +192,8 @@ public class OrgAction extends BaseAction {
                 }
                 
                 if (org.getBranchedLeader() != null) {
-                    map.put("org.branchedLeader.userId", org.getBranchedLeader().getUserId());
-                    map.put("org.branchedLeader.realname", org.getBranchedLeader().getRealname());
+                    map.put("org.branchedLeader", org.getBranchedLeader().substring(1, org.getBranchedLeader().length() -1));
+                    map.put("branchedLeaderName", userService.getUserRealNamesByIds(org.getBranchedLeader().substring(1, org.getBranchedLeader().length() -1)));
                 }
                 
                 if (org.getOtherSup() != null) {
@@ -510,8 +510,11 @@ public class OrgAction extends BaseAction {
             	org.setDeptHead(null);
             }
             
-            if (org.getBranchedLeader() == null || org.getBranchedLeader().getUserId() == null || org.getBranchedLeader().getUserId() == 0) {
+            if (StringUtil.isBlank(org.getBranchedLeader())) {
             	org.setBranchedLeader(null);
+            }
+            if (StringUtil.isNotBlank(org.getBranchedLeader())) {
+            	org.setBranchedLeader("," + org.getBranchedLeader() + ",");
             }
             
             if (StringUtil.isBlank(org.getOtherSup())) {
@@ -576,8 +579,11 @@ public class OrgAction extends BaseAction {
             	updateOrg.setDeptHead(userService.getUserById(org.getDeptHead().getUserId()));
             }
             
-            if (org.getBranchedLeader() != null && org.getBranchedLeader().getUserId() != null && org.getBranchedLeader().getUserId() != 0) {
-            	updateOrg.setBranchedLeader(userService.getUserById(org.getBranchedLeader().getUserId()));
+            if (StringUtil.isBlank(org.getBranchedLeader())) {
+            	updateOrg.setBranchedLeader(null);
+            }
+            if (StringUtil.isNotBlank(org.getBranchedLeader())) {
+            	updateOrg.setBranchedLeader("," + org.getBranchedLeader() + ",");
             }
             
             if (StringUtil.isBlank(org.getOtherSup())) {

@@ -102,7 +102,7 @@ public class OrgVo {
         this.orgTypeName = o.getOrgType().getDictionaryName();
         
         this.deptLeader = o.getDeptHead() == null ? "" : o.getDeptHead().getRealname();
-        this.superiorLeader = o.getBranchedLeader() == null ? "" : o.getBranchedLeader().getRealname();
+        this.superiorLeader = o.getBranchedLeader() == null ? "" : o.getBranchedLeader();
         this.otherSup = o.getOtherSup() == null ? "" : o.getOtherSup();
         this.superintendent = o.getSuperintendent() == null ? "" : o.getSuperintendent().getRealname();
         this.excellentCount = o.getExcellentCount() == null ? "" : o.getExcellentCount().toString();
@@ -110,7 +110,7 @@ public class OrgVo {
         this.enable = o.getEnable();
     }
     
-    public OrgVo(Organization o, String otherSup) {
+    public OrgVo(Organization o, String otherSup, String branchedLeader) {
         this.orgCode = o.getOrgCode();
         this.orgId = o.getOrgId();
         this.orgName = o.getOrgName();
@@ -122,7 +122,7 @@ public class OrgVo {
         this.orgTypeName = o.getOrgType().getDictionaryName();
         
         this.deptLeader = o.getDeptHead() == null ? "" : o.getDeptHead().getRealname();
-        this.superiorLeader = o.getBranchedLeader() == null ? "" : o.getBranchedLeader().getRealname();
+        this.superiorLeader = branchedLeader;
         this.otherSup = otherSup;
         this.superintendent = o.getSuperintendent() == null ? "" : o.getSuperintendent().getRealname();
         this.excellentCount = o.getExcellentCount() == null ? "" : o.getExcellentCount().toString();

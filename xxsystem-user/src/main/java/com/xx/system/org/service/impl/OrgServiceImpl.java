@@ -1150,10 +1150,14 @@ public class OrgServiceImpl implements IOrgService {
             if (!CollectionUtils.isEmpty(orgLst)) {
                 for (Organization o : orgLst) {
                 	String names = "";
+                	String names1 = "";
                 	if (StringUtil.isNotBlank(o.getOtherSup())) {
                 		names = userService.getUserRealNamesByIds(o.getOtherSup().substring(1, o.getOtherSup().length()-1));
                 	}
-                    OrgVo ov = new OrgVo(o, names);
+                	if (StringUtil.isNotBlank(o.getBranchedLeader())) {
+                		names1 = userService.getUserRealNamesByIds(o.getBranchedLeader().substring(1, o.getBranchedLeader().length()-1));
+                	}
+                    OrgVo ov = new OrgVo(o, names, names1);
                     orgVoList.add(ov);
                 }
             }
