@@ -13,8 +13,6 @@ import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
-import net.sf.json.JSONArray;
-
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -60,6 +58,8 @@ import com.xx.system.user.entity.User;
 import com.xx.system.user.service.IUserService;
 import com.xx.system.user.vo.UserVo;
 
+import net.sf.json.JSONArray;
+
 /**
  * 指标逻辑接口实现
  * 
@@ -69,7 +69,6 @@ import com.xx.system.user.vo.UserVo;
 @SuppressWarnings("unchecked")
 @Service("indexManageService")
 public class IndexManageServiceImpl implements IIndexManageService {
-	public static final String CLASSIFY_TYPE = "BUILDSCORE";
     
     @Autowired
     @Qualifier("baseDao")
@@ -914,8 +913,8 @@ public class IndexManageServiceImpl implements IIndexManageService {
 		// 由于分馆所领导可能管理多个部门，分馆所领导不能评分这些部门，也需要排除，可通过与部门关联的分馆所领导对比，对比上就排除该部门
 		String fenguanHql = " from Organization o where o.status = 0"
 				+ " and o.enable = 0"
-				+ " and (o.otherSup like '%," + currUsr.getUserId() + ",%'"
-				+ " or o.branchedLeader like '%," + currUsr.getUserId() + ",%')";
+				+ " and o.otherSup is not null"
+				+ " and o.otherSup like '%," + currUsr.getUserId() + ",%'";
 		List<Organization> fenguanOrg = (List<Organization>)baseDao.queryEntitys(fenguanHql);
 		if (!CollectionUtils.isEmpty(fenguanOrg)) {
 			for (Organization org : fenguanOrg) {
@@ -1019,29 +1018,12 @@ public class IndexManageServiceImpl implements IIndexManageService {
 	}
 	
 	/**
-	 * 判断当前登录用户是否是所长
+	 * 判断当前登录用户是否是所长或分管所领导
 	 * @return
 	 */
-	private boolean isSuperintendent(User currUsr){
+	private boolean include(User currUsr){
 		
-		String hql = " from RoleMemberScope r where r.role.roleCode = 'DG_SZ'"
-				+ " and r.user.userId = " + currUsr.getUserId();
-		
-		int count = baseDao.queryTotalCount(hql, new HashMap<String, Object>());
-		if (count > 0) {
-			return true;
-		}
-		
-		return false;
-	}
-	
-	/**
-	 * 判断当前登录用户是否是分管所领导
-	 * @return
-	 */
-	private boolean isBranchedLeader(User currUsr){
-		
-		String hql = " from RoleMemberScope r where r.role.roleCode = 'DG_FGSLD'"
+		String hql = " from RoleMemberScope r where r.role.roleCode in ('DG_SZ', 'DG_FGSLD')"
 				+ " and r.user.userId = " + currUsr.getUserId();
 		
 		int count = baseDao.queryTotalCount(hql, new HashMap<String, Object>());
@@ -1060,9 +1042,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 			IndexClassify ic = (IndexClassify)baseDao.queryEntityById(IndexClassify.class, vo.getClassifyId());
 			if (ic != null && ic.getOrgCfs() != null && ic.getOrgCfs().size() > 0) {
 				Map<Integer, Organization> orgMap = new HashMap<Integer, Organization>();
-				boolean isBranchedLeader = isBranchedLeader(currUsr);
-				if ((!isSuperintendent(currUsr) && !isBranchedLeader) || 
-						(isBranchedLeader && !CLASSIFY_TYPE.equals(ic.getScoreType().getDictCode()))) {
+				if (!include(currUsr)) {
 					// 获取当前登陆用户所在部门，进而获取该用户可评分的部门（排除自己所在部门）
 					Iterator<OrgUser> ouIt = currUsr.getOrgUsers().iterator();
 					while (ouIt.hasNext()) {
@@ -1073,8 +1053,8 @@ public class IndexManageServiceImpl implements IIndexManageService {
 					// 由于分馆所领导可能管理多个部门，分馆所领导不能评分这些部门，也需要排除，可通过与部门关联的分馆所领导对比，对比上就排除该部门
 					String fenguanHql = " from Organization o where o.status = 0"
 							+ " and o.enable = 0"
-							+ " and (o.otherSup like '%," + currUsr.getUserId() + ",%'"
-							+ " or o.branchedLeader like '%," + currUsr.getUserId() + ",%')";
+							+ " and o.otherSup is not null"
+							+ " and o.otherSup like '%," + currUsr.getUserId() + ",%'";
 					List<Organization> fenguanOrg = (List<Organization>)baseDao.queryEntitys(fenguanHql);
 					if (!CollectionUtils.isEmpty(fenguanOrg)) {
 						for (Organization org : fenguanOrg) {
@@ -1367,16 +1347,14 @@ public class IndexManageServiceImpl implements IIndexManageService {
 					if (!CollectionUtils.isEmpty(rmsLst)) {
 						for (RoleMemberScope rms : rmsLst) {
 							if (rms.getUser() != null) {
-								boolean inclued = isSuperintendent(rms.getUser());
-								boolean isBranchedLeader = isBranchedLeader(rms.getUser());
+								boolean inclued = include(rms.getUser());
 								
 								boolean containOrg = false;
 								Iterator<OrgUser> ouIt = rms.getUser().getOrgUsers().iterator();
 								while (ouIt.hasNext()) {
 									Organization usrOrg = ouIt.next().getOrganization();
-									if (orgIdLst.size() == 1 && orgIdLst.contains(usrOrg.getOrgId()) && !inclued
-											&& (!isBranchedLeader || (isBranchedLeader && !CLASSIFY_TYPE.equals(gp.getClassify().getScoreType().getDictCode())))) {
-										containOrg = true;// 当且仅当包含自己所在部门判断为已提交
+									if (orgIdLst.size() == 1 && orgIdLst.contains(usrOrg.getOrgId()) && !inclued) {
+										containOrg = true;
 										break;
 									}
 								}
@@ -1384,8 +1362,8 @@ public class IndexManageServiceImpl implements IIndexManageService {
 								// 由于分馆所领导可能管理多个部门，分馆所领导不能评分这些部门，也需要排除，可通过与部门关联的分馆所领导对比，对比上就排除该部门
 								String fenguanHql = " from Organization o where o.status = 0"
 										+ " and o.enable = 0"
-										+ " and (o.otherSup like '%," + rms.getUser().getUserId() + ",%'"
-										+ " or o.branchedLeader like '%," + rms.getUser().getUserId() + ",%')";
+										+ " and o.otherSup is not null"
+										+ " and o.otherSup like '%," + rms.getUser().getUserId() + ",%'";
 								List<Organization> fenguanOrg = (List<Organization>)baseDao.queryEntitys(fenguanHql);
 								// 如果其他领导所关联的所有部门恰好是该指标分类关联的所有部门，就有可能没有提交评分，视为提交
 								boolean notAllEq = false;
@@ -1400,9 +1378,6 @@ public class IndexManageServiceImpl implements IIndexManageService {
 								}
 								
 								if (inclued) {
-									notAllEq = true;
-								}
-								if (isBranchedLeader && CLASSIFY_TYPE.equals(gp.getClassify().getScoreType().getDictCode())) {
 									notAllEq = true;
 								}
 								
@@ -1465,14 +1440,12 @@ public class IndexManageServiceImpl implements IIndexManageService {
 										for (RoleMemberScope member : rmLst) {
 											userIds += "," + member.getUser().getUserId();
 											
-											boolean inclued = isSuperintendent(member.getUser());
-											boolean isBranchedLeader = isBranchedLeader(member.getUser());
+											boolean inclued = include(member.getUser());
 											
 											Iterator<OrgUser> ouIt = member.getUser().getOrgUsers().iterator();
 											while (ouIt.hasNext()) {
 												Organization usrOrg = ouIt.next().getOrganization();
-												if (usrOrg.getOrgId() == orgId && !inclued 
-														&& (!isBranchedLeader || (isBranchedLeader && !CLASSIFY_TYPE.equals(gp.getClassify().getScoreType().getDictCode())))) {
+												if (usrOrg.getOrgId() == orgId && !inclued) {
 													containUsr++;
 													noParticipation = true;
 												}
@@ -1480,14 +1453,13 @@ public class IndexManageServiceImpl implements IIndexManageService {
 													// 由于分馆所领导可能管理多个部门，分馆所领导不能评分这些部门，也需要排除，可通过与部门关联的分馆所领导对比，对比上就排除该部门
 													String fenguanHql = " from Organization o where o.status = 0"
 															+ " and o.enable = 0"
-															+ " and (o.otherSup like '%," + member.getUser().getUserId() + ",%'"
-															+ " or o.branchedLeader like '%," + member.getUser().getUserId() + ",%')";
+															+ " and o.otherSup is not null"
+															+ " and o.otherSup like '%," + member.getUser().getUserId() + ",%'";
 													List<Organization> fenguanOrg = (List<Organization>)baseDao.queryEntitys(fenguanHql);
 													// 如果其他领导所关联的所有部门包含该部门，说明在该指标评分时未参与
 													if (!CollectionUtils.isEmpty(fenguanOrg)) {
 														for (Organization org : fenguanOrg) {
-															if (org.getOrgId() == orgId && !inclued 
-																	&& (!isBranchedLeader || (isBranchedLeader && !CLASSIFY_TYPE.equals(gp.getClassify().getScoreType().getDictCode())))) {
+															if (org.getOrgId() == orgId && !inclued) {
 																containUsr++;
 																noParticipation = true;
 																break;
@@ -1714,14 +1686,12 @@ public class IndexManageServiceImpl implements IIndexManageService {
 									vo.setFlag("1");
 								}
 								
-								boolean include =  isSuperintendent(rms.getUser());
-								boolean isBranchedLeader = isBranchedLeader(rms.getUser());
+								boolean include =  include(rms.getUser());
 								
 								// 获取该指标包含的所有部门（如果该指标只包含自己所在部门，默认已提交）
 								if (gp.getClassify().getOrgCfs() != null && gp.getClassify().getOrgCfs().size() == 1) {
 									Iterator<OrgAndClassify> ocIt = gp.getClassify().getOrgCfs().iterator();
-									if (selfOrgIds.contains(ocIt.next().getOrg().getOrgId()) && !include
-											&& (!isBranchedLeader || (isBranchedLeader && !CLASSIFY_TYPE.equals(gp.getClassify().getScoreType().getDictCode())))) {
+									if (selfOrgIds.contains(ocIt.next().getOrg().getOrgId()) && !include) {
 										vo.setFlag("1");
 									}
 								}
@@ -1729,13 +1699,12 @@ public class IndexManageServiceImpl implements IIndexManageService {
 								// 由于分馆所领导可能管理多个部门，分馆所领导不能评分这些部门，也需要排除，可通过与部门关联的分馆所领导对比，对比上就排除该部门
 								String fenguanHql = " from Organization o where o.status = 0"
 										+ " and o.enable = 0"
-										+ " and (o.otherSup like '%," + rms.getUser().getUserId() + ",%'"
-										+ " or o.branchedLeader like '%," + rms.getUser().getUserId() + ",%')";
+										+ " and o.otherSup is not null"
+										+ " and o.otherSup like '%," + rms.getUser().getUserId() + ",%'";
 								List<Organization> fenguanOrg = (List<Organization>)baseDao.queryEntitys(fenguanHql);
 								// 如果其他领导所关联的所有部门只有一个部门且刚好是该部门，也表示提交了
 								if (!CollectionUtils.isEmpty(fenguanOrg)) {
-									if (fenguanOrg.size() == 1 && selfOrgIds.contains(fenguanOrg.get(0).getOrgId()) && !include 
-											&& (!isBranchedLeader || (isBranchedLeader && !CLASSIFY_TYPE.equals(gp.getClassify().getScoreType().getDictCode())))) {
+									if (fenguanOrg.size() == 1 && selfOrgIds.contains(fenguanOrg.get(0).getOrgId()) && !include) {
 										vo.setFlag("1");
 									}
 								}

@@ -46,14 +46,14 @@ var cm = [
 			header : "工作职责",
 			dataIndex : "workDuty",
         	renderer : function(value, p, record) {
-    		    return '<div style="white-space:normal;">' + value + '</div>';
+    		    return '<div style="white-space:normal;line-height:16px;">' + value + '</div>';
     		}
 		},
 		{
 			header : "完成情况",
 			dataIndex : "completion",
         	renderer : function(value, p, record) {
-    		    return '<div style="white-space:normal;">' + value + '</div>';
+    		    return '<div style="white-space:normal;line-height:16px;">' + value + '</div>';
     		}
 		}
           ];
