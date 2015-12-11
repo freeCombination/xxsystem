@@ -130,6 +130,8 @@ public class PersonalGradeResultVo {
 	
 	private String jobStartDate;
 	
+	private int isHaveGrade ;//是否评分
+	
 
 	public String getRoleName() {
 		return roleName;
@@ -362,6 +364,12 @@ public class PersonalGradeResultVo {
 	public void setJobStartDate(String jobStartDate) {
 		this.jobStartDate = jobStartDate;
 	}
-	
-	
+
+	public int getIsHaveGrade() {
+		return isHaveGrade;
+	}
+
+	public void setIsHaveGrade(int isHaveGrade) {
+		this.isHaveGrade = isHaveGrade;
+	}
 }

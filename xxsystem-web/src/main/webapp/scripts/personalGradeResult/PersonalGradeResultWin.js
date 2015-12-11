@@ -102,7 +102,7 @@ var row4 = {
         items:[{  
             xtype:'displayfield',  
             name:'problem',
-            fieldLabel:'存在的问题' 
+            fieldLabel:'二、存在的问题' 
         }]  
     }; 
 
@@ -112,7 +112,7 @@ var row5 = {
         items:[{  
             xtype:'displayfield',  
             name:'workPlan',
-            fieldLabel:'明年工作计划'
+            fieldLabel:'三、明年工作计划'
         }]  
     }; 
 

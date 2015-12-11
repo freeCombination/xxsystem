@@ -931,6 +931,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		vo.setEvaluation1(gradeResult.getEvaluation1());
 		vo.setEvaluation2(gradeResult.getEvaluation3());
 		vo.setEvaluation3(gradeResult.getEvaluation3());
+		vo.setIsHaveGrade(isHaveGrade(gradeResult));
 		if (gradeResult.getPersonalGrade() != null) {
 			PersonalGrade grade = gradeResult.getPersonalGrade();
 			vo.setGradeYear(grade.getGradeYear());
@@ -1043,6 +1044,24 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			e.printStackTrace();
 			return "{success:false,msg:'提交失败！'}";
 		}
+	}
+	
+	/**
+	 * 是否评分
+	 * 
+	 * @param result
+	 * @return
+	 */
+	private int isHaveGrade(PersonalGradeResult result){
+		int isHaveGrade = 1 ;
+		Set<PersonalGradeResultDetails> details = result.getDetails();
+		for (PersonalGradeResultDetails detail : details) {
+			if (detail.getScore() == null) {
+				isHaveGrade = 0 ;
+				break ;
+			}
+		}
+		return isHaveGrade ;
 	}
 
 	/**

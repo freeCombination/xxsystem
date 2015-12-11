@@ -62,7 +62,7 @@ var cm = [
  * 定义Grid
  */
 grade.personalDutyResult.PersonalDutyResultGrid = Ext.create("Ext.grid.Panel", {
-	title:'岗位职责完成情况',
+	title:'一、岗位职责完成情况',
 	height : 200,
 	width : 1190,
 	boder:false,

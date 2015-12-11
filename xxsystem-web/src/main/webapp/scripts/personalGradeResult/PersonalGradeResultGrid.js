@@ -30,7 +30,8 @@ Ext.define("grade.personalGradeResult.PersonalGradeResultModel",{
 						{name:'gradeUserType'},
 						{name:'respChangeDate'},
 						{name:'state'},
-						{name:'jobStartDate'}
+						{name:'jobStartDate'},
+						{name:'isHaveGrade'}
 					]
 	});
 
@@ -81,19 +82,26 @@ var cm = [
 			header : "员工姓名",
 			dataIndex : "gradeUser"
 		},
-		/*{
-			header : "得分",
-			dataIndex : "score"
-		},*/
 		{
-			header : "状态",
+			header : "是否评分",
+			dataIndex : "isHaveGrade",
+			renderer:function(value, cellmeta, record, rowIndex, columnIndex, store){
+                var hasSub = '<span style="color:red;">否</span>';
+                if (1 == value) {
+                    hasSub = '<span style="color:green;">是</span>';
+                }
+                return hasSub;
+			}
+		},
+		{
+			header : "是否提交",
 			dataIndex : "state",
 			renderer:function(value, cellmeta, record, rowIndex, columnIndex, store){
-				if(value == 0){
-					return '未处理';
-				}else if(value == 1){
-					return '已提交';
-				}
+                var hasSub = '<span style="color:red;">否</span>';
+                if (1 == value) {
+                    hasSub = '<span style="color:green;">是</span>';
+                }
+                return hasSub;
 			}
 		}
           ]
@@ -161,7 +169,7 @@ grade.personalGradeResult.PersonalGradeResultGrid = Ext.create("Ext.grid.Panel",
  * 编辑个人评分
  */
 grade.personalGradeResult.EditPersonalGradeResult = function() {
-	grade.personalGradeResult.PersonalGradeResultWin.setTitle('评分');
+	grade.personalGradeResult.PersonalGradeResultWin.setTitle('员工年度考核登记表');
 	var row = grade.personalGradeResult.PersonalGradeResultGrid.getSelectionModel().getSelection()
 	var id = row[0].data.id;
 	var personalGradeId = row[0].data.personalGradeId;
@@ -216,7 +224,7 @@ grade.personalGradeResult.EditPersonalGradeResult = function() {
  * 查看个人评分结果
  */
 grade.personalGradeResult.ViewPersonalGradeResult = function() {
-	grade.personalGradeResult.PersonalGradeResultWin.setTitle('详情');
+	grade.personalGradeResult.PersonalGradeResultWin.setTitle('员工年度考核登记表');
 	var row = grade.personalGradeResult.PersonalGradeResultGrid.getSelectionModel().getSelection()
 	var id = row[0].data.id;
 	var personalGradeId = row[0].data.personalGradeId;
@@ -250,16 +258,6 @@ grade.personalGradeResult.ViewPersonalGradeResult = function() {
 		}
 	});
 	
-	//设置分数列
-	//isCellEditable
-/*	var scoreColumns = grade.personalDutyResultDetails.PersonalDutyResultDetailsGrid.columns;
-	var c = scoreColumns[4];
-	c.hidden = true ;
-	
-	var c1 = scoreColumns[5];
-	c1.hidden = false ;*/
-	
-	/**/
 	grade.personalGradeResult.PersonalGradeResultWin.show();
 };
 
