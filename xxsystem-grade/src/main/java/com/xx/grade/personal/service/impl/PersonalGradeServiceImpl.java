@@ -11,15 +11,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.hssf.util.Region;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -392,6 +391,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 						if (sourceRow == null) {
 							sourceRow = aSheet.createRow(newRow + rowSize);
 						}
+						System.err.println(getExcelCellAutoHeight(duty.getWorkDuty(), 20));
 						sourceRow.setHeight((short) 400);
 						// 合并 单元格 操作* 第一个参数 0 表示 起始 行* 第二个参数 a表示 起始 列* 第三个参数 0
 						// 表示结束行* 第四个参数 b表示结束列
@@ -1447,7 +1447,9 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 						if (sourceRow == null) {
 							sourceRow = aSheet.createRow(newRow + rowSize);
 						}
-						sourceRow.setHeight((short) 400);
+						//System.err.println(getExcelCellAutoHeight(duty.getWorkDuty(), 20));
+						//sourceRow.setHeight((short) 400);
+						sourceRow.setHeightInPoints(5+getExcelCellAutoHeight(duty.getWorkDuty(), 20));
 						// 合并 单元格 操作* 第一个参数 0 表示 起始 行* 第二个参数 a表示 起始 列* 第三个参数 0
 						// 表示结束行* 第四个参数 b表示结束列
 						Region region =  new Region(newRow + rowSize, (short) 0, newRow + rowSize, (short) 2);
@@ -1516,8 +1518,50 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		style.setBorderRight(HSSFCellStyle.BORDER_THIN);
 		style.setBorderTop(HSSFCellStyle.BORDER_THIN);
 		style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+		style.setWrapText(true);
 		return style;
 	}
+	
+	/**
+	 * 计算高度
+	 * str 是单元格需要放入的 字符串 fontCountInline 是该单元格每行多少个汉字 全角为1 英文或符号为0.5
+	 * @param str
+	 * @param fontCountInline
+	 * @return
+	 */
+	public static float getExcelCellAutoHeight(String str, float fontCountInline) {
+        float defaultRowHeight = 12.00f;//每一行的高度指定
+        float defaultCount = 0.00f;
+        for (int i = 0; i < str.length(); i++) {
+            float ff = getregex(str.substring(i, i + 1));
+            defaultCount = defaultCount + ff;
+        }
+        return ((int) (defaultCount / fontCountInline) + 1) * defaultRowHeight;//计算
+    }
+
+    public static float getregex(String charStr) {
+        
+        if(charStr==" ")
+        {
+            return 0.5f;
+        }
+        // 判断是否为字母或字符
+        if (Pattern.compile("^[A-Za-z0-9]+$").matcher(charStr).matches()) {
+            return 0.5f;
+        }
+        // 判断是否为全角
+
+        if (Pattern.compile("[\u4e00-\u9fa5]+$").matcher(charStr).matches()) {
+            return 1.00f;
+        }
+        //全角符号 及中文
+        if (Pattern.compile("[^x00-xff]").matcher(charStr).matches()) {
+            return 1.00f;
+        }
+        return 0.5f;
+
+    }
+
 
 	@SuppressWarnings("deprecation")
 	private void setRegionStyle(HSSFSheet sheet, Region region, HSSFCellStyle cs) {
