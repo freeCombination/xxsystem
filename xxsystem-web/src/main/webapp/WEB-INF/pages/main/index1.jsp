@@ -264,7 +264,7 @@ function getIE() {
 			</span>
 			<span class="top_bot bot2"> <s:if
 					test="#session.currentUserName!=null || #request.currentUserName!=null">
-					欢迎您 <s:if test="#session.CurrentUser.type.dictCode=='LOCALUSER'"><a href="#" onclick="updatePassWord();">${currentUserName }</a></s:if>
+					欢迎您 <a href="#" onclick="updatePassWord();">${currentUserName }</a>
     			<s:else>${currentUserName }</s:else>！
     		</s:if> <s:else>
     			未登录
