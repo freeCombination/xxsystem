@@ -1336,8 +1336,8 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			if (role.getRoleName().equals("部门主任") || role.getRoleName().equals("部门副主任")) {
 				isBmzr = true;
 			}
-			if (role.getRoleName().equals("总工") || role.getRoleName().equals("副总工")
-					|| role.getRoleName().equals("质检中心总工")) {
+			if (role.getRoleName().equals("总工/副总工") || role.getRoleName().equals("副总工")
+					|| role.getRoleName().equals("总工") || role.getRoleName().equals("质检中心总工")) {
 				isLd = true;
 			}
 		}
