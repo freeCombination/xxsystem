@@ -1405,15 +1405,15 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			HSSFRow row2 = aSheet.getRow(2);
 			HSSFRow row3 = aSheet.getRow(3);
 			HSSFCell cell11 = row1.getCell(1);
-			HSSFCell cell13 = row1.getCell(4);
-			HSSFCell cell15 = row1.getCell(6);
+			HSSFCell cell13 = row1.getCell(3);
+			HSSFCell cell15 = row1.getCell(5);
 
 			HSSFCell cell21 = row2.getCell(1);
-			HSSFCell cell23 = row2.getCell(4);
-			HSSFCell cell25 = row2.getCell(6);
+			HSSFCell cell23 = row2.getCell(3);
+			HSSFCell cell25 = row2.getCell(5);
 
 			HSSFCell cell31 = row3.getCell(1);
-			HSSFCell cell33 = row3.getCell(6);
+			HSSFCell cell33 = row3.getCell(5);
 
 			if (grade.getUser() != null) {
 				cell11.setCellValue(grade.getUser().getRealname());
@@ -1449,7 +1449,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 						}
 						//System.err.println(getExcelCellAutoHeight(duty.getWorkDuty(), 20));
 						//sourceRow.setHeight((short) 400);
-						sourceRow.setHeightInPoints(5+getExcelCellAutoHeight(duty.getWorkDuty(), 20));
+						sourceRow.setHeightInPoints(10+getExcelCellAutoHeight(duty.getWorkDuty(), 19));
 						// 合并 单元格 操作* 第一个参数 0 表示 起始 行* 第二个参数 a表示 起始 列* 第三个参数 0
 						// 表示结束行* 第四个参数 b表示结束列
 						Region region =  new Region(newRow + rowSize, (short) 0, newRow + rowSize, (short) 2);
@@ -1459,7 +1459,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 						cew2.setCellValue(duty.getWorkDuty());
 						cew2.setCellStyle(styleBold);
 						
-						Region region1 =  new Region(newRow + rowSize, (short) 3, newRow + rowSize, (short) 6);
+						Region region1 =  new Region(newRow + rowSize, (short) 3, newRow + rowSize, (short) 5);
 						setRegionStyle(aSheet,region1,styleBold);
 						aSheet.addMergedRegion(region1); //
 						HSSFCell cew3 = sourceRow.createCell((short) 3);
@@ -1473,6 +1473,10 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			HSSFCellStyle cellStyle2 = wb.createCellStyle();
 			cellStyle2.setAlignment(HSSFCellStyle.ALIGN_LEFT);
 			cellStyle2.setVerticalAlignment(HSSFCellStyle.VERTICAL_TOP);
+			cellStyle2.setBorderBottom(HSSFCellStyle.BORDER_THIN); // 下边框
+			cellStyle2.setBorderLeft(HSSFCellStyle.BORDER_THIN);// 左边框
+			cellStyle2.setBorderTop(HSSFCellStyle.BORDER_THIN);// 上边框
+			cellStyle2.setBorderRight(HSSFCellStyle.BORDER_THIN);// 右边框
 			
 			HSSFRow row4 = aSheet.getRow(newRow + personalDutys.size() + 1);
 			HSSFCell cell41 = row4.getCell(0);
