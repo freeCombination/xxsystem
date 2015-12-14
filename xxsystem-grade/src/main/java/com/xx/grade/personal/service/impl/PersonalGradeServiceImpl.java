@@ -521,7 +521,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 					if (pw.getIsGrade() != null && pw.getIsGrade() == 1) {
 						// 获取该指标下所有角色权重
 						Set<IndexTypeRoleWeight> rws = pw.getIndexTypeRoles();
-						Iterator<IndexTypeRoleWeight> it = rws.iterator();
+						Iterator<IndexTypeRoleWeight> it =rws.iterator();
 						while (it.hasNext()) {
 							IndexTypeRoleWeight rw = it.next();
 							Role role = rw.getRole();
@@ -550,6 +550,52 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 						}
 					}
 				}
+				//对于部门主任或副主任评分的角色，需过滤掉同一人为分管领导和副所长的角色
+				if (classification.getDictCode().equals(Constant.QZFL_BMLD)) {
+					deleteDetailsForSameRole(grade);
+				}
+			
+			}
+		}
+	}
+
+	/**
+	 * 对于部门主任或副主任评分的角色，需过滤掉同一人为分管领导和副所长的角色
+	 * 
+	 * @param grade
+	 */
+	private void deleteDetailsForSameRole(PersonalGrade grade){
+		List<PersonalGradeResult> results = baseDao.queryEntitys(" From PersonalGradeResult r where r.personalGrade.id = "+grade.getId());
+		for (PersonalGradeResult result : results) {
+			List<PersonalGradeResultDetails> details = baseDao.queryEntitys(" From PersonalGradeResultDetails r where r.personalGradeResult.id = "+result.getId());
+			List<PersonalGradeResultDetails> roleA = new ArrayList<PersonalGradeResultDetails>() ;
+			List<PersonalGradeResultDetails> roleB = new ArrayList<PersonalGradeResultDetails>() ;
+			for (PersonalGradeResultDetails detail : details) {
+				if ("分管领导".equals(detail.getRole().getRoleName())) {
+					roleA.add(detail) ;
+				}else if("副所长".equals(detail.getRole().getRoleName())){
+					roleB.add(detail) ;
+				}
+			}
+			
+			String delIds = "" ;
+			
+			//如果两个角色都不为空
+			if (roleA.size() > 0 && roleB.size() > 0) {
+				for (PersonalGradeResultDetails detailB : roleB) {
+					for (PersonalGradeResultDetails detailA : roleA) {
+						//如果评分类型相同
+						if (detailA.getIndexType().getDictCode().equals(detailB.getIndexType().getDictCode())) {
+							delIds += detailB.getId() + "," ;
+							break;
+						}
+					}
+				}
+			}
+			
+			if (StringUtil.isNotEmpty(delIds)) {
+				delIds = delIds.substring(0, delIds.length()-1);
+				baseDao.executeHql(" delete from PersonalGradeResultDetails d where d.id in ("+delIds+")");
 			}
 		}
 	}
@@ -807,7 +853,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		if (StringUtil.isNotEmpty(userId)) {
 			userId = userId.substring(1, userId.length());
 		}
-		// 获取所有上级组织领导 TODO
+		// 获取所有上级组织领导 
 		StringBuffer hql = new StringBuffer();
 		hql.append(" From User u where u.userId in (" + userId + ")");
 		List<User> users = baseDao.queryEntitys(hql.toString());

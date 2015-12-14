@@ -52,7 +52,7 @@ var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
     listeners : {
         beforeedit:function(editor, e, eOpts ){
         	var title = grade.personalGradeResult.PersonalGradeResultWin.title;
-        	if ('详情' == title) {
+        	if ('员工年度考核登记表详情' == title) {
         		//e.column.field.editable = false;
         		e.column.field.readOnly = true;
         		//e.column.field = null;

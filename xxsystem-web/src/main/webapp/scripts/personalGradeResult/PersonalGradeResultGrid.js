@@ -224,7 +224,7 @@ grade.personalGradeResult.EditPersonalGradeResult = function() {
  * 查看个人评分结果
  */
 grade.personalGradeResult.ViewPersonalGradeResult = function() {
-	grade.personalGradeResult.PersonalGradeResultWin.setTitle('员工年度考核登记表');
+	grade.personalGradeResult.PersonalGradeResultWin.setTitle('员工年度考核登记表详情');
 	var row = grade.personalGradeResult.PersonalGradeResultGrid.getSelectionModel().getSelection()
 	var id = row[0].data.id;
 	var personalGradeId = row[0].data.personalGradeId;
