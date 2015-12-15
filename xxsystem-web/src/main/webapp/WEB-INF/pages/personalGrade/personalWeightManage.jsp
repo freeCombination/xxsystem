@@ -621,13 +621,14 @@
                                 }
                             );
                             
+                            
                             var weightRoleLst = '';
                             var c = weightRoleStore.getCount();
                             if (c > 0) {
                             	for(var i=0; i<weightRoleStore.getCount(); i++){
                                     var re = weightRoleStore.getAt(i);
                                     var roleName = re.get('roleName');
-                                    var roleId = roleStore.findRecord('roleName', roleName).get('roleId');
+                                    var roleId = roleStore.findRecord('roleName', roleName, 0, false, false, true).get('roleId');
                                     var percentage = re.get('percentage');
                                     
                                     if (!roleName || !percentage) {
