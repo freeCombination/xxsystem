@@ -1325,20 +1325,11 @@ public class IndexManageServiceImpl implements IIndexManageService {
 			List<GradePercentage> gpLst = (List<GradePercentage>)baseDao.queryEntitys(gpHql);
 			if (!CollectionUtils.isEmpty(gpLst)) {
 				boolean allSubmit = true;
+				
 				for (GradePercentage gp : gpLst) {
 					// 一旦判断到有一个没有提交就跳出循环，增强程序性能
 					if (!allSubmit) {
 						break;
-					}
-					
-					// 获取该权重包含的指标分类所包含的所有部门
-					List<Integer> orgIdLst = new ArrayList<Integer>();
-					if (gp.getClassify().getOrgCfs() != null && gp.getClassify().getOrgCfs().size() > 0) {
-						Iterator<OrgAndClassify> ocIt = gp.getClassify().getOrgCfs().iterator();
-						while (ocIt.hasNext()) {
-				        	Organization org = ocIt.next().getOrg();
-				        	orgIdLst.add(org.getOrgId());
-						}
 					}
 					
 					// 查询角色下包含的用户（RoleMemberScope），进而通过ClassifyUser判断用户是否已提交部门评分
@@ -1347,15 +1338,36 @@ public class IndexManageServiceImpl implements IIndexManageService {
 					if (!CollectionUtils.isEmpty(rmsLst)) {
 						for (RoleMemberScope rms : rmsLst) {
 							if (rms.getUser() != null) {
-								boolean inclued = include(rms.getUser());
+								boolean countFlag = false;
+								boolean selfOrg = false;
+								boolean fgOrg = false;
+								boolean notJoin = false;
 								
-								boolean containOrg = false;
 								Iterator<OrgUser> ouIt = rms.getUser().getOrgUsers().iterator();
+								List<Integer> selfOrgIds = new ArrayList<Integer>();
 								while (ouIt.hasNext()) {
 									Organization usrOrg = ouIt.next().getOrganization();
-									if (orgIdLst.size() == 1 && orgIdLst.contains(usrOrg.getOrgId()) && !inclued) {
-										containOrg = true;
-										break;
+									selfOrgIds.add(usrOrg.getOrgId());
+								}
+								
+								// 查询ClassifyUser，判断是否提交
+								String cuHql = " from ClassifyUser cu where cu.isDelete = 0 and cu.hasSubmit = 1"
+										+ " and cu.classify.pkClassifyId = " + gp.getClassify().getPkClassifyId()
+										+ " and cu.user.userId = " + rms.getUser().getUserId();
+								
+								int hasSubmit = baseDao.queryTotalCount(cuHql, new HashMap<String, Object>());
+								
+								if (hasSubmit > 0) {
+									countFlag = true;
+								}
+								
+								boolean include =  include(rms.getUser());
+								
+								// 获取该指标包含的所有部门（如果该指标只包含自己所在部门，默认已提交）
+								if (gp.getClassify().getOrgCfs() != null && gp.getClassify().getOrgCfs().size() == 1) {
+									Iterator<OrgAndClassify> ocIt = gp.getClassify().getOrgCfs().iterator();
+									if (selfOrgIds.contains(ocIt.next().getOrg().getOrgId()) && !include) {
+										selfOrg = true;
 									}
 								}
 								
@@ -1365,40 +1377,29 @@ public class IndexManageServiceImpl implements IIndexManageService {
 										+ " and o.otherSup is not null"
 										+ " and o.otherSup like '%," + rms.getUser().getUserId() + ",%'";
 								List<Organization> fenguanOrg = (List<Organization>)baseDao.queryEntitys(fenguanHql);
-								// 如果其他领导所关联的所有部门恰好是该指标分类关联的所有部门，就有可能没有提交评分，视为提交
-								boolean notAllEq = false;
+								// 如果其他领导所关联的所有部门只有一个部门且刚好是该部门，也表示提交了
 								if (!CollectionUtils.isEmpty(fenguanOrg)) {
-									for (Organization org : fenguanOrg) {
-										if (!orgIdLst.contains(org.getOrgId())) {
-											// 只要有一个不包含，该指标分类、该用户就没有提交评分
-											notAllEq = true;
-											break;
-										}
+									if (fenguanOrg.size() == 1 && selfOrgIds.contains(fenguanOrg.get(0).getOrgId()) && !include) {
+										fgOrg = true;
 									}
 								}
 								
-								if (inclued) {
-									notAllEq = true;
-								}
-								
 								// 排除不能参与指标评分的用户对应的指标
-								boolean noParticipation = false;
 								if (StringUtil.isNotBlank(gp.getClassify().getNoParticipationUsr())) {
 									String uids = gp.getClassify().getNoParticipationUsr();
 									uids = uids.substring(1, uids.length() - 1);
 									String[] ids = uids.split(",");
 									
 									if (ids.length == 1 && rms.getUser().getUserId() == NumberUtils.toInt(ids[0])) {
-										noParticipation = true;
+										notJoin = true;
 									}
 								}
 								
-								// 查询ClassifyUser，判断是否提交
-								String cuHql = " from ClassifyUser cu where cu.isDelete = 0 and cu.hasSubmit = 1"
-										+ " and cu.classify.pkClassifyId = " + gp.getClassify().getPkClassifyId()
-										+ " and cu.user.userId = " + rms.getUser().getUserId();
-								int hasSubmit = baseDao.queryTotalCount(cuHql, new HashMap<String, Object>());
-								if (!containOrg && notAllEq && !noParticipation && hasSubmit <= 0) {
+								if (!countFlag && !selfOrg && !fgOrg && !notJoin) {
+									Iterator<OrgAndClassify> ocIt = gp.getClassify().getOrgCfs().iterator();
+									if (selfOrgIds.contains(ocIt.next().getOrg().getOrgId()) && !include) {
+										selfOrg = true;
+									}
 									allSubmit = false;
 									break;
 								}
