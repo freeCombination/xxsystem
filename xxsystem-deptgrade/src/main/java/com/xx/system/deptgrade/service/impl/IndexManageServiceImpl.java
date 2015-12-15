@@ -922,12 +922,14 @@ public class IndexManageServiceImpl implements IIndexManageService {
 			}
 		}
 		
+		boolean include =  include(currUsr);
+		
 		// 查询OrgAndClassify，限制IndexClassify
 		String ocHql = " from OrgAndClassify oc where oc.isDelete = 0 and oc.classify.isParticipation = 1";
 		/*
 		 * 自己不能查看自己所在部门关联的指标分类（当一个指标只关联了自己所在的部门，注释掉表示可以查看，但不能评分）
 		 */
-		if (StringUtil.isNotBlank(selfDept)) {
+		if (StringUtil.isNotBlank(selfDept) && !include) {
 			ocHql += " and oc.org.orgId not in (" + selfDept.substring(1) + ")";
 		}
 		
