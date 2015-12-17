@@ -44,6 +44,11 @@ public class FinalScore implements java.io.Serializable {
     private Organization org;
     
     /**
+     * 加分项
+     */
+    private String plusedScore;
+    
+    /**
      * 指标得分小计
      */
     private String sumScore;
@@ -147,6 +152,15 @@ public class FinalScore implements java.io.Serializable {
 
 	public void setJdSumScore(String jdSumScore) {
 		this.jdSumScore = jdSumScore;
+	}
+
+	@Column(name = "PLUSED_SCORE", nullable = true)
+	public String getPlusedScore() {
+		return plusedScore;
+	}
+
+	public void setPlusedScore(String plusedScore) {
+		this.plusedScore = plusedScore;
 	}
 	
 }

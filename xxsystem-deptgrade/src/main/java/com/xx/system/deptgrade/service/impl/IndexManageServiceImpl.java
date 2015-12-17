@@ -1838,6 +1838,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 								vo.setSumScore(sc.getSumScore());
 							}
 							vo.setFinalScore(sc.getScore());
+							vo.setPlusedScore(sc.getPlusedScore());
 							
 							vo.setJdScore(sc.getJdScore());
 							vo.setJdPercentage(sc.getJdPercentage());
@@ -1870,6 +1871,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 								vo.setSumScore(sc.getSumScore());
 							}
 							vo.setFinalScore(sc.getScore());
+							vo.setPlusedScore(sc.getPlusedScore());
 							
 							vo.setJdScore(sc.getJdScore());
 							vo.setJdPercentage(sc.getJdPercentage());
@@ -1992,6 +1994,29 @@ public class IndexManageServiceImpl implements IIndexManageService {
 			baseDao.saveOrUpdate(fs);
 		}
 	}
+	
+	@Override
+	public void savePlusedcore(String orgId, String plusedScore, String electYear) throws Exception {
+		if (StringUtil.isNotBlank(orgId) && StringUtil.isNotBlank(plusedScore) && StringUtil.isNotBlank(electYear)) {
+			String hql = " from FinalScore fs where fs.electYear = '" + electYear + "'"
+					+ " and fs.org.orgId = " + orgId;
+			List<FinalScore> fsLst = (List<FinalScore>)baseDao.queryEntitys(hql);
+			FinalScore fs = null;
+			if (!CollectionUtils.isEmpty(fsLst)) {
+				fs = fsLst.get(0);
+			}
+			else {
+				fs = new FinalScore();
+				fs.setElectYear(electYear);
+				Organization org = (Organization)baseDao.queryEntityById(Organization.class, NumberUtils.toInt(orgId));
+				fs.setOrg(org);
+			}
+			
+			fs.setPlusedScore(plusedScore);
+			
+			baseDao.saveOrUpdate(fs);
+		}
+	}
 
 	@Override
 	public HSSFWorkbook exportDeptFinalScore(String electYear) throws Exception {
@@ -2058,11 +2083,24 @@ public class IndexManageServiceImpl implements IIndexManageService {
 		contentStyle.setBottomBorderColor(IndexedColors.BLACK.getIndex());
 		contentStyle.setLeftBorderColor(IndexedColors.BLACK.getIndex());
 		contentStyle.setRightBorderColor(IndexedColors.BLACK.getIndex());
-		contentStyle.setWrapText(true); // 字段换行
+		//contentStyle.setWrapText(true); // 字段换行
+		
+		CellStyle contentStyleLeft = wb.createCellStyle();
+		contentStyleLeft.setAlignment(CellStyle.ALIGN_LEFT);
+		contentStyleLeft.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+		contentStyleLeft.setFont(contentFont);
+		contentStyleLeft.setBorderTop(CellStyle.BORDER_THIN);
+		contentStyleLeft.setBorderBottom(CellStyle.BORDER_THIN);
+		contentStyleLeft.setBorderLeft(CellStyle.BORDER_THIN);
+		contentStyleLeft.setBorderRight(CellStyle.BORDER_THIN);
+		contentStyleLeft.setTopBorderColor(IndexedColors.BLACK.getIndex());
+		contentStyleLeft.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+		contentStyleLeft.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+		contentStyleLeft.setRightBorderColor(IndexedColors.BLACK.getIndex());
 		
 		List<Dictionary> dictlist = dictService.getDictByTypeCode("SCORETYPE");
 		
-		String[] excelHeader = {"部门", "季度得分", "", "", "部门指标年度得分", "", "", "", "部门建设得分", "总分"};
+		String[] excelHeader = {"部门", "季度得分", "部门指标年度得分", "", "", "", "", "部门建设得分", "总分"};
 		
 		if (!CollectionUtils.isEmpty(dictlist)) {
 			String cfPer = "";
@@ -2085,23 +2123,23 @@ public class IndexManageServiceImpl implements IIndexManageService {
 			}
 			
 			excelHeader[1] = jdPer;
-			excelHeader[4] = cfPer;
-			excelHeader[8] = bdPer;
+			excelHeader[2] = cfPer;
+			excelHeader[7] = bdPer;
 		}
 		
 		
-		String[] excelHeader1 = {"", "得分（可编辑）", "权重（可编辑）", "季度得分", "指标名称", "得分（可编辑）",
-			"权重（可编辑）", "年度得分", "评价得分", ""}; 
+		String[] excelHeader1 = {"", "季度得分（可编辑）", "加减分项（可编辑）", "指标名称", "得分（可编辑）",
+			"权重（可编辑）", "年度得分", "评价得分", ""};
 		// 单元格列宽
-		int[] excelHeaderWidth = {120, 90, 90, 90, 120, 90, 90, 90, 160, 90};
+		int[] excelHeaderWidth = {120, 120, 120, 200, 90, 90, 90, 160, 90};
 		
 		// 设置列宽度（像素）
-		for (int i = 0; i < excelHeaderWidth.length; i++) {  
+		for (int i = 0; i < excelHeaderWidth.length; i++) {
 		    sheet.setColumnWidth(i, 42 * excelHeaderWidth[i]);
 		}
 		
 		// 创建标题行
-		sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 9));
+		sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 8));
 		HSSFRow titleRow = sheet.createRow(0);
 		titleRow.setHeight((short) 800);
 		HSSFCell titleCell = titleRow.createCell(0);
@@ -2110,9 +2148,8 @@ public class IndexManageServiceImpl implements IIndexManageService {
 		
 		// 创建表头行
 		sheet.addMergedRegion(new CellRangeAddress(1, 2, 0, 0));
-		sheet.addMergedRegion(new CellRangeAddress(1, 1, 1, 3));
-		sheet.addMergedRegion(new CellRangeAddress(1, 1, 4, 7));
-		sheet.addMergedRegion(new CellRangeAddress(1, 2, 9, 9));
+		sheet.addMergedRegion(new CellRangeAddress(1, 1, 2, 6));
+		sheet.addMergedRegion(new CellRangeAddress(1, 2, 8, 8));
 		HSSFRow headRow = sheet.createRow(1);
 		headRow.setHeight((short) 400);
 		for (int i = 0; i < excelHeader.length; i++) {
@@ -2148,11 +2185,10 @@ public class IndexManageServiceImpl implements IIndexManageService {
 						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 0, 0));
 						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 1, 1));
 						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 2, 2));
-						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 3, 3));
 						
+						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 6, 6));
 						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 7, 7));
 						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 8, 8));
-						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 9, 9));
 					}
 					
 					startRow = r + 2;
@@ -2163,11 +2199,10 @@ public class IndexManageServiceImpl implements IIndexManageService {
 						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 0, 0));
 						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 1, 1));
 						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 2, 2));
-						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 3, 3));
 						
+						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 6, 6));
 						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 7, 7));
 						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 8, 8));
-						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 9, 9));
 					}
 				}
 				
@@ -2182,37 +2217,41 @@ public class IndexManageServiceImpl implements IIndexManageService {
 				jdScore.setCellValue(vo.getJdScore());
 				jdScore.setCellStyle(contentStyle);
 				
-				HSSFCell jdPercentage = contexRow.createCell(2);
+				/*HSSFCell jdPercentage = contexRow.createCell(2);
 				jdPercentage.setCellValue(StringUtil.isNotBlank(vo.getJdPercentage()) ? 
 						String.format("%.2f", NumberUtils.toFloat(vo.getJdPercentage()) * 100) + "%" : "");
-				jdPercentage.setCellStyle(contentStyle);
+				jdPercentage.setCellStyle(contentStyle);*/
 				
-				HSSFCell jdSumScore = contexRow.createCell(3);
+				/*HSSFCell jdSumScore = contexRow.createCell(3);
 				jdSumScore.setCellValue(vo.getJdSumScore());
-				jdSumScore.setCellStyle(contentStyle);
+				jdSumScore.setCellStyle(contentStyle);*/
 				
-				HSSFCell classifyName = contexRow.createCell(4);
+				HSSFCell plusedScore = contexRow.createCell(2);
+				plusedScore.setCellValue(vo.getPlusedScore());
+				plusedScore.setCellStyle(contentStyle);
+				
+				HSSFCell classifyName = contexRow.createCell(3);
 				classifyName.setCellValue(vo.getClassifyName());
-				classifyName.setCellStyle(contentStyle);
+				classifyName.setCellStyle(contentStyleLeft);
 				
-				HSSFCell score = contexRow.createCell(5);
+				HSSFCell score = contexRow.createCell(4);
 				score.setCellValue(vo.getScore());
 				score.setCellStyle(contentStyle);
 				
-				HSSFCell percentage = contexRow.createCell(6);
+				HSSFCell percentage = contexRow.createCell(5);
 				percentage.setCellValue(StringUtil.isNotBlank(vo.getPercentage()) ? 
 						String.format("%.2f", NumberUtils.toFloat(vo.getPercentage()) * 100) + "%" : "");
 				percentage.setCellStyle(contentStyle);
 				
-				HSSFCell sumScore = contexRow.createCell(7);
+				HSSFCell sumScore = contexRow.createCell(6);
 				sumScore.setCellValue(vo.getSumScore());
 				sumScore.setCellStyle(contentStyle);
 				
-				HSSFCell buildScore = contexRow.createCell(8);
+				HSSFCell buildScore = contexRow.createCell(7);
 				buildScore.setCellValue(vo.getBuildScore());
 				buildScore.setCellStyle(contentStyle);
 				
-				HSSFCell finalScore = contexRow.createCell(9);
+				HSSFCell finalScore = contexRow.createCell(8);
 				finalScore.setCellValue(vo.getFinalScore());
 				finalScore.setCellStyle(contentStyle);
 			}

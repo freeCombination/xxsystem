@@ -62,7 +62,8 @@
                 {name: 'canpDeptId', type: 'int'},
                 {name: 'jdScore', type: 'string'},
                 {name: 'jdPercentage', type: 'string'},
-                {name: 'jdSumScore', type: 'string'}
+                {name: 'jdSumScore', type: 'string'},
+                {name: 'plusedScore', type: 'string'}
             ]
         });
         
@@ -135,8 +136,8 @@
                             }
                         } */
                         
-                        mergeCells(recordGrid, [1, 2, 3, 4]);
-                        mergeCells(recordGrid, [8, 9, 10]);
+                        mergeCells(recordGrid, [1, 2, 3]);
+                        mergeCells(recordGrid, [7, 8, 9]);
                     }
                 }
             }
@@ -151,9 +152,9 @@
                         return value;
                     }
                 },
-                {header: "季度得分（" + (jdPer * 100) + "%权重）" ,width: 330,menuDisabled: true,sortable :false,
+                {header: "季度得分（" + (jdPer * 100) + "%权重）" ,width: 140,menuDisabled: true,sortable :false,
                     columns:[
-                        {header: "得分（可编辑）",width: 110,dataIndex: "jdScore",menuDisabled: true,sortable :false,
+                        {header: "季度得分（可编辑）",width: 140,dataIndex: "jdScore",menuDisabled: true,sortable :false,
                             renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
                                 cellmeta.tdAttr = 'data-qtip="' + value + '"';
                                 return value;
@@ -165,7 +166,7 @@
                                 regexText : '保留两位小数！',
                                 allowBlank: false
                             }
-                        },
+                        }/* ,
                         {header: "权重（可编辑）",width: 110,dataIndex: "jdPercentage",menuDisabled: true,sortable :false,
                             renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
                                 if (value) {
@@ -190,18 +191,32 @@
                                 cellmeta.tdAttr = 'data-qtip="' + value + '"';
                                 return value;
                             }
-                        }
+                        } */
                     ]
                 },
-                {header: "部门指标年度得分（" + (cfPer * 100) + "%权重）" ,width: 510,menuDisabled: true,sortable :false,
+                {header: "部门指标年度得分（" + (cfPer * 100) + "%权重）" ,width: 590,menuDisabled: true,sortable :false,
                     columns:[
+						{header: "加减分项（可编辑）",width: 110,dataIndex: "plusedScore",menuDisabled: true,sortable :false,
+						    renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
+						        cellmeta.tdAttr = 'data-qtip="' + value + '"';
+						        return value;
+						    },
+						    field: {
+						        xtype:'textfield',
+						        maxLength:10,
+						        regex : new RegExp('^[-]?[0-9]+(.[0-9]{1,2})?$'),
+						        regexText : '保留两位小数！',
+						        allowBlank: false
+						    }
+						},
+                        
                         {header: "指标名称",width: 180,dataIndex: "classifyName",menuDisabled: true,sortable :false,
                             renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
                                 cellmeta.tdAttr = 'data-qtip="' + value + '"';
                                 return value;
                             }
                         },
-                        {header: "得分（可编辑）",width: 110,dataIndex: "score",menuDisabled: true,sortable :false,
+                        {header: "得分（可编辑）",width: 100,dataIndex: "score",menuDisabled: true,sortable :false,
                             renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
                                 cellmeta.tdAttr = 'data-qtip="' + value + '"';
                                 return value;
@@ -214,7 +229,7 @@
                                 allowBlank: false
                             }
                         },
-                        {header: "权重（可编辑）",width: 110,dataIndex: "percentage",menuDisabled: true,sortable :false,
+                        {header: "权重（可编辑）",width: 100,dataIndex: "percentage",menuDisabled: true,sortable :false,
                             renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
                                 if (value) {
                                     var showStr = Math.round(value * 100) + "%";
@@ -233,7 +248,8 @@
                                 allowBlank: false
                             }
                         },
-                        {header: "年度得分",width: 110,dataIndex: "sumScore",menuDisabled: true,sortable :false,
+                        
+                        {header: "年度得分",width: 100,dataIndex: "sumScore",menuDisabled: true,sortable :false,
                             renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
                                 cellmeta.tdAttr = 'data-qtip="' + value + '"';
                                 return value;
@@ -262,7 +278,8 @@
         var tempScore = '';
         var tempPerc = '';
         var tempJdScore = '';
-        var tempJdPerc = '';
+        //var tempJdPerc = '';
+        var tempPlScore = '';
         var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
             clicksToEdit: 1,
             listeners : {
@@ -270,7 +287,8 @@
                     tempScore = e.record.data.score;
                     tempPerc = e.record.data.percentage;
                     tempJdScore = e.record.data.jdScore;
-                    tempJdPerc = e.record.data.jdPercentage;
+                    //tempJdPerc = e.record.data.jdPercentage;
+                    tempPlScore = e.record.data.plusedScore;
                 },
                 edit:function(editor, e, eOpts ){
                 	var editable = Ext.getCmp('editable').getValue();
@@ -282,6 +300,7 @@
                             recordStore.getAt(e.rowIdx).set('score', tempScore);
                         }
                         else{
+                        	recordStore.getAt(e.rowIdx).set('score', editor.context.value);
                             $.ajax({
                                 type : "POST",
                                 url : "${ctx}/deptgrade/saveEditScore.action",
@@ -306,6 +325,7 @@
                             recordStore.getAt(e.rowIdx).set('percentage', tempPerc);
                         }
                         else{
+                        	recordStore.getAt(e.rowIdx).set('percentage', editor.context.value);
                             $.ajax({
                                 type : "POST",
                                 url : "${ctx}/deptgrade/saveEditScore.action",
@@ -330,6 +350,12 @@
                             recordStore.getAt(e.rowIdx).set('jdScore', tempJdScore);
                         }
                         else{
+                        	for (var i = 0; i < recordStore.getCount(); i++) {
+                                if (recordStore.getAt(i).get('canpDeptId') == e.record.data.canpDeptId) {
+                                    recordStore.getAt(i).set('jdScore', editor.context.value);
+                                }
+                            }
+                        	
                             $.ajax({
                                 type : "POST",
                                 url : "${ctx}/deptgrade/saveJdEditScore.action",
@@ -348,7 +374,7 @@
                         }
                     }
                     
-                    if ("jdPercentage" == col) {
+                    /* if ("jdPercentage" == col) {
                         if (Ext.getCmp('electYearQuery').getValue() != Ext.Date.format(new Date(),"Y") || !editable) {
                             recordStore.getAt(e.rowIdx).set('jdPercentage', tempJdPerc);
                         }
@@ -367,6 +393,35 @@
                                 dataType : 'json',
                                 success : function(response) {
                                 	saveSumScore(e, 'jd');
+                                }
+                            });
+                        }
+                    } */
+                    
+                    if ("plusedScore" == col) {
+                        if (Ext.getCmp('electYearQuery').getValue() != Ext.Date.format(new Date(),"Y") || !editable) {
+                            recordStore.getAt(e.rowIdx).set('plusedScore', tempPlScore);
+                        }
+                        else{
+                        	for (var i = 0; i < recordStore.getCount(); i++) {
+                                if (recordStore.getAt(i).get('canpDeptId') == e.record.data.canpDeptId) {
+                                	recordStore.getAt(i).set('plusedScore', editor.context.value);
+                                }
+                            }
+                        	
+                            $.ajax({
+                                type : "POST",
+                                url : "${ctx}/deptgrade/savePlusedcore.action",
+                                data : {
+                                    orgId:e.record.data.canpDeptId,
+                                    plusedScore:editor.context.value,
+                                    electYear:Ext.getCmp('electYearQuery').getValue()
+                                },
+                                cache : false,
+                                async : false,
+                                dataType : 'json',
+                                success : function(response) {
+                                    saveSumScore(e, 'idx');
                                 }
                             });
                         }
@@ -450,12 +505,15 @@
         	
     		var sumScore = 0;
     		var bdScore = '0';
+    		var plScore = '0';
     		var allFlag = true;
     		for (var i = 0; i < recordStore.getCount(); i++) {
                 if (recordStore.getAt(i).get('canpDeptId') == e.record.data.canpDeptId) {
                     var s = recordStore.getAt(i).get('score');
                     var p = recordStore.getAt(i).get('percentage');
                     bdScore = recordStore.getAt(i).get('buildScore');
+	                plScore = recordStore.getAt(i).get('plusedScore');
+                    
                     if (s && p) {
                         sumScore += parseFloat(s) * parseFloat(p);
                     }
@@ -467,12 +525,12 @@
             }
     		
     		var sc = e.record.data.jdScore;
-            var per = e.record.data.jdPercentage;
-            var jdSumScore = 0;
+            //var per = e.record.data.jdPercentage;
+            //var jdSumScore = 0;
             
-            if (allFlag && sc && per) {
-            	jdSumScore = parseFloat(sc) * parseFloat(per);
-                var finalScore = sumScore * cfPer + parseFloat(bdScore) * bdPer + jdSumScore * jdPer;
+            if (allFlag && sc) {// && per
+            	//jdSumScore = parseFloat(sc) * parseFloat(per);
+                var finalScore = (sumScore + parseFloat(plScore)) * cfPer + parseFloat(bdScore) * bdPer + sc * jdPer;
                 $.ajax({
                     type : "POST",
                     url : "${ctx}/deptgrade/saveFinalScore.action",
@@ -491,12 +549,14 @@
             }
             
     		if (allFlag && 'idx' == flag) {
+    			var cfSum = sumScore + parseFloat(plScore);
+    			
     			$.ajax({
                     type : "POST",
                     url : "${ctx}/deptgrade/saveSumScore.action",
                     data : {
                         orgId:e.record.data.canpDeptId,
-                        sumScore:sumScore.toFixed(2),
+                        sumScore:cfSum.toFixed(2),
                         electYear:Ext.getCmp('electYearQuery').getValue()
                     },
                     cache : false,
@@ -508,8 +568,9 @@
                 });
     		}
     	
-            if (sc && per && 'jd' == flag) {
-            	jdSumScore = parseFloat(sc) * parseFloat(per);
+            if (sc && 'jd' == flag) {// && per
+            	recordStore.load();
+            	/* jdSumScore = parseFloat(sc) * parseFloat(per);
             	$.ajax({
                     type : "POST",
                     url : "${ctx}/deptgrade/saveSumScore.action",
@@ -525,7 +586,7 @@
                     success : function(response) {
                         recordStore.load();
                     }
-                });
+                }); */
             }
             
         }
