@@ -512,7 +512,10 @@
                     var s = recordStore.getAt(i).get('score');
                     var p = recordStore.getAt(i).get('percentage');
                     bdScore = recordStore.getAt(i).get('buildScore');
-	                plScore = recordStore.getAt(i).get('plusedScore');
+	                
+                    if (recordStore.getAt(i).get('plusedScore')) {
+	                    plScore = recordStore.getAt(i).get('plusedScore');
+	                }
                     
                     if (s && p) {
                         sumScore += parseFloat(s) * parseFloat(p);
