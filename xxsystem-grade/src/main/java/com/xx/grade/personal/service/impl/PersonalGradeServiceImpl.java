@@ -454,15 +454,12 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			List<PersonalDuty> duties = new ArrayList<PersonalDuty>();
 			PersonalGrade grade = (PersonalGrade) baseDao.queryEntityById(PersonalGrade.class,
 					Integer.parseInt(personalGradeId));
-			baseDao.executeHql("delete From PersonalDuty d where d.personalGrade.id=" + grade.getId());
 			for (int i = 6; i < col-5 ; i++) {
-				PersonalDuty duty = new PersonalDuty();
+				String workDuty = content[i][0];
+				String completion = content[i][3];
+				PersonalDuty duty = getPersonalDutyByGradeAndWorkDuty(grade, workDuty);
 				if (duty != null) {
-					String workDuty = content[i][0];
-					String completion = content[i][3];
-					duty.setWorkDuty(workDuty.equals("null")?"":workDuty);
 					duty.setCompletion(completion.equals("null")?"":completion);
-					duty.setPersonalGrade(grade);
 					duties.add(duty);
 				}
 			}
@@ -475,6 +472,23 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			this.baseDao.update(grade);
 		}
 		return message;
+	}
+	
+	/**
+	 * 获取员工职责实体
+	 * 
+	 * @param grade
+	 * @param workDuty
+	 * @return
+	 */
+	private PersonalDuty getPersonalDutyByGradeAndWorkDuty(PersonalGrade grade,String workDuty){
+		PersonalDuty duty = null ;
+		String hql = "From PersonalDuty d where d.personalGrade.id=" + grade.getId() + " and workDuty = '"+workDuty+"'";
+		List<PersonalDuty> dutys =  baseDao.queryEntitys(hql.toString());
+		if (dutys != null && dutys.size() > 0) {
+			duty = dutys.get(0);
+		}
+		return duty ;
 	}
 
 	/**
