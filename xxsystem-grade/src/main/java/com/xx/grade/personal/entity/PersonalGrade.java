@@ -146,7 +146,7 @@ public class PersonalGrade implements Serializable {
 		this.gradeYear = gradeYear;
 	}
 
-	@Column(name = "PROBLEM", length = 500)
+	@Column(name = "PROBLEM")
 	public String getProblem() {
 		return problem;
 	}
@@ -155,7 +155,7 @@ public class PersonalGrade implements Serializable {
 		this.problem = problem;
 	}
 
-	@Column(name = "WORK_PLAN", length = 500)
+	@Column(name = "WORK_PLAN")
 	public String getWorkPlan() {
 		return workPlan;
 	}

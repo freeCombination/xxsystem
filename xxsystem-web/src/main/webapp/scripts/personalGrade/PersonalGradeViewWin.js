@@ -13,7 +13,9 @@ grade.personalGrade.PersonalGradeViewForm = Ext.create("Ext.form.Panel", {
 	layout : 'form',
 	region: "south",
 	title:'工作计划',
+	height : 200,
 	border : false,
+	autoScroll:true,
 	labelAlign : 'right',
 	frame: true,
 	fieldDefaults : {

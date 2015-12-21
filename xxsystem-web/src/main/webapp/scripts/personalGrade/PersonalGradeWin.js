@@ -36,7 +36,7 @@ grade.personalGrade.PersonalGradeForm = Ext.create("Ext.form.Panel", {
         		//vtype:'filterHtml',
             	regex : new RegExp('^([^<^>])*$'),
                 regexText : '不能包含特殊字符！',
-        		maxLength : 500,
+        		//maxLength : 500,
         		xtype : 'textareafield'
         	},
         	{
@@ -46,7 +46,7 @@ grade.personalGrade.PersonalGradeForm = Ext.create("Ext.form.Panel", {
         		//vtype:'filterHtml',
             	regex : new RegExp('^([^<^>])*$'),
                 regexText : '不能包含特殊字符！',
-        		maxLength : 500,
+        		//maxLength : 500,
         		xtype : 'textareafield'
         	}
             ]
