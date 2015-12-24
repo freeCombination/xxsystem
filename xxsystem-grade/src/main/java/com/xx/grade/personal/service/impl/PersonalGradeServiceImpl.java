@@ -704,7 +704,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 					+ currentOrg.getOrgId() + " and sm.roleMemberScope.role.roleId = " + role.getRoleId());
 			hql.append(" and sm.roleMemberScope.user.status = 0 and sm.roleMemberScope.user.enable = 1 ");
 			if ("部门主任".equals(role.getRoleName())) {
-				hql.append(" and sm.roleMemberScope.user.userId <> " + userId) ;
+				//hql.append(" and sm.roleMemberScope.user.userId <> " + userId) ;
 			}
 		} // 其他角色，直接取对于角色下的所有人
 		else {

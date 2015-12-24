@@ -274,8 +274,9 @@ grade.personalGrade.PersonalGradeGrid = Ext.create("Ext.grid.Panel", {
 		xtype : 'button',
 		text : '删除',
 		id:'delete-button',
-		disabledExpr : "$selectedRows == 0 || $status=='1' || $status == '2'",
+		disabledExpr : "$selectedRows == 0",
 		disabled : true,
+		/hidden:true,
 		iconCls : 'delete-button',
 		handler : function() {
 			grade.personalGrade.deletePersonalGrade();
