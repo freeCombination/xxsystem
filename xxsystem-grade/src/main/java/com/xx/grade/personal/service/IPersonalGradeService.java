@@ -237,5 +237,12 @@ public interface IPersonalGradeService {
 	 * @param id
 	 */
 	public void refreshScore(String id);
+
+	/**
+	 * 删除个人评分
+	 * 
+	 * @param ids
+	 */
+	public void deletePersonalGrade(String ids);
 	
 }

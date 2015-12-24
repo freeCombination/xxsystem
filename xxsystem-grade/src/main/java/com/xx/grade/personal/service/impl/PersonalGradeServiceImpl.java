@@ -703,10 +703,14 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			hql.append(" select sm.roleMemberScope.user From ScopeMember sm where sm.org.orgId = "
 					+ currentOrg.getOrgId() + " and sm.roleMemberScope.role.roleId = " + role.getRoleId());
 			hql.append(" and sm.roleMemberScope.user.status = 0 and sm.roleMemberScope.user.enable = 1 ");
+			if ("部门主任".equals(role.getRoleName())) {
+				hql.append(" and sm.roleMemberScope.user.userId <> " + userId) ;
+			}
 		} // 其他角色，直接取对于角色下的所有人
 		else {
 			hql.append(" select rs.user From RoleMemberScope rs where rs.role.roleId =" + role.getRoleId());
 			hql.append(" and rs.user.status = 0 and rs.user.enable = 1 ");
+			//hql.append(" and rs.user.userId <> " + userId) ;
 		}
 		users = baseDao.queryEntitys(hql.toString());
 		return users;
@@ -931,6 +935,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			counthql.append(" and pgr.state = " + Integer.parseInt(state));
 		}
 
+		
 		if (StringUtil.isNotEmpty(inputGradeUser)) {
 			hql.append(" and pgr.personalGrade.user.realname like '%" + inputGradeUser + "%'");
 			counthql.append(" and pgr.personalGrade.user.realname like '%" + inputGradeUser + "%'");
@@ -963,6 +968,10 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 				counthql.append(" and 1=0 ");
 			}
 		}
+		
+		hql.append(" and pgr.personalGrade.isDelete = 0  ");
+		counthql.append(" and pgr.personalGrade.isDelete = 0  ");
+		
 		// 评分状态排序 满足点击评分人员列表需求
 		hql.append(" order by pgr.state");
 
@@ -1287,6 +1296,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			StringBuffer hql = new StringBuffer();
 			hql.append(" From PersonalGrade where gradeYear = '" + gradeYear + "'");
 			hql.append(" and user.userId=" + currentUser.getUserId());
+			hql.append(" and isDelete = 0 ");
 			List<PersonalGrade> grades = baseDao.queryEntitys(hql.toString());
 			if (grades != null && grades.size() > 0) {
 				result = "{success:false,msg:'生成个人评分失败，已存在数据！'}";
@@ -1688,6 +1698,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		String personalGradeResultId = paramMap.get("personalGradeResultId");
 		StringBuffer hql = new StringBuffer();
 		hql.append(" From PersonalGradeResultDetails d where 1=1  ");
+		hql.append(" and d.personalGradeResult.personalGrade.isDelete = 0 ");
 		if (StringUtil.isNotEmpty(personalGradeResultId)) {
 			hql.append(" and d.personalGradeResult.id = " + Integer.parseInt(personalGradeResultId));
 		} else {
@@ -1803,6 +1814,9 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 				counthql.append(" and 1=0 ");
 			}
 		}
+		
+		hql.append(" and pgr.personalGradeResult.personalGrade.isDelete = 0 ");
+		counthql.append(" and pgr.personalGradeResult.personalGrade.isDelete = 0 ");
 		// 评分状态排序 满足点击评分人员列表需求
 		hql.append(" order by pgr.personalGradeResult.personalGrade.id,pgr.indexType.pkDictionaryId");
 
@@ -1932,4 +1946,14 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			}
 		}
 	}
+
+	@Override
+	public void deletePersonalGrade(String ids) {
+        StringBuffer delHql =
+                new StringBuffer(" update PersonalGrade set isDelete = 1 where id in ("
+                    + ids + ")");
+            baseDao.executeHql(delHql.toString());
+	}
+	
+	
 }

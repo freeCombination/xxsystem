@@ -715,8 +715,27 @@ public class PersonalGradeAction extends BaseAction {
         }
         catch (Exception e) {
             // 发生异常是，进行日志入库和生成日志文件
-            this.excepAndLogHandle(DictAction.class, "获取个人评分分数下拉列表", e, false);
+            this.excepAndLogHandle(PersonalGradeAction.class, "获取个人评分分数下拉列表", e, false);
         }
+    }
+    
+    /**
+     * 删除个人评分
+     * 
+     * @return
+     */
+    public String deletePersonalGrade() {
+        try {
+            String ids = this.getRequest().getParameter("ids");
+            personalGradeService.deletePersonalGrade(ids);
+            JsonUtil.outJson("{success:true,msg:'删除个人评分成功'}");
+            this.excepAndLogHandle(PersonalGradeAction.class, "删除个人评分", null, true);
+        }
+        catch (Exception e) {
+            JsonUtil.outJson("{success:false,msg:'删除个人评分失败'}");
+            this.excepAndLogHandle(PersonalGradeAction.class, "删除个人评分", e, false);
+        }
+        return null;
     }
 	
 

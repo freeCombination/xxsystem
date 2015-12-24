@@ -44,6 +44,7 @@ grade.personalGrade.PersonalGradeStore.addListener('beforeload', function(st, rd
 	grade.personalGrade.PersonalGradeGrid.getSelectionModel().clearSelections();
 	Ext.getCmp('export-button').setDisabled(true);
 	Ext.getCmp('query-button').setDisabled(true);
+	Ext.getCmp('delete-button').setDisabled(true);
 });
 
 /**
@@ -149,7 +150,7 @@ grade.personalGrade.refreshScore = function(id){
  	      	}
  	   	}
 	});
-}
+};
 
 /**
  * 查看未评分人员列表
@@ -269,6 +270,17 @@ grade.personalGrade.PersonalGradeGrid = Ext.create("Ext.grid.Panel", {
 			grade.personalGrade.ViewPersonalGradeAll();
 		}
 	},
+	{
+		xtype : 'button',
+		text : '删除',
+		id:'delete-button',
+		disabledExpr : "$selectedRows == 0 || $status=='1' || $status == '2'",
+		disabled : true,
+		iconCls : 'delete-button',
+		handler : function() {
+			grade.personalGrade.deletePersonalGrade();
+		}
+	},
     {
         xtype:'button',
         disabled:false,
@@ -278,7 +290,7 @@ grade.personalGrade.PersonalGradeGrid = Ext.create("Ext.grid.Panel", {
         iconCls:'export-button',
         id:'export-button',
         handler:function(){
-        	var row = grade.personalGrade.PersonalGradeGrid.getSelectionModel().getSelection()
+        	var row = grade.personalGrade.PersonalGradeGrid.getSelectionModel().getSelection();
         	var personalGradeId = row[0].data.id;
         	Ext.Ajax.request({ 
 		 		url: basePath+'/personalGrade/exportPersonalGradeAll.action',
@@ -308,7 +320,7 @@ grade.personalGrade.PersonalGradeGrid = Ext.create("Ext.grid.Panel", {
  * 查看详情
  */
 grade.personalGrade.ViewPersonalGradeAll = function(){
-	var row = grade.personalGrade.PersonalGradeGrid.getSelectionModel().getSelection()
+	var row = grade.personalGrade.PersonalGradeGrid.getSelectionModel().getSelection();
 	var id = row[0].data.id;
 	var basicForm = grade.personalGrade.PersonalGradeViewWin.down('form').getForm();
 	basicForm.reset();
@@ -320,7 +332,39 @@ grade.personalGrade.ViewPersonalGradeAll = function(){
 		}
 	});
 	grade.personalGrade.PersonalGradeViewWin.show();
-}
+};
+
+
+/**
+ * 调用后台删除
+ */
+grade.personalGrade.deletePersonalGrade = function() {
+	var rows = grade.personalGrade.PersonalGradeGrid.getSelectionModel().getSelection();
+	var ids = "";
+	for (var i = 0; i < rows.length; i++) {
+		ids += (rows[i].data.id + ",");
+	}
+	ids = ids.substring(0, ids.length - 1);
+	Ext.Msg.confirm(SystemConstant.alertTitle, "确认删除这" + rows.length + "条数据吗?删除个人评分后，员工需重新生成个人评分！", function(btn) {
+		if (btn == 'yes') {
+			Ext.Ajax.request({
+				url : basePath + '/personalGrade/deletePersonalGrade.action',
+				params : {
+					ids : ids
+				},
+				success : function(res, options) {
+					var data = Ext.decode(res.responseText);
+					if (data.success) {
+						Ext.Msg.showTip(data.msg);
+						grade.personalGrade.PersonalGradeStore.loadPage(1);
+					} else {
+						Ext.Msg.showError(data.msg);
+					}
+				}
+			});
+		}
+	});
+};
 
 
 
