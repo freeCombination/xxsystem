@@ -37,12 +37,18 @@ grade.personalGrade.PersonalGradeViewForm = Ext.create("Ext.form.Panel", {
         	{
         		fieldLabel : '存在问题',
         		name : 'problem',
-        		xtype : 'displayfield'
+        		xtype : 'displayfield',
+        		renderer:function(value){
+        			return value.replace(/\n/g,'<br />');
+        		}
         	},
         	{
         		fieldLabel : '工作计划',
         		name : 'workPlan',
-        		xtype : 'displayfield'
+        		xtype : 'displayfield',
+        		renderer:function(value){
+        			return value.replace(/\n/g,'<br />');
+        		}
         	}
             ]
 });
