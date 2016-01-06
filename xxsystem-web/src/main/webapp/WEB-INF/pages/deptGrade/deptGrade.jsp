@@ -612,7 +612,13 @@
 	         }).show();
 	        
 	        
-	        if (Ext.getCmp("electYearQuery").getValue() == Ext.Date.format(new Date(),"Y")) {
+	        var hasSubmit = record.get('hasSubmit');
+            if (1 == hasSubmit) {
+                Ext.getCmp('saveGradeBtn').setVisible(false);
+            }
+	        
+	        
+	        /* if (Ext.getCmp("electYearQuery").getValue() == Ext.Date.format(new Date(),"Y")) {
 	        	var hasSubmit = record.get('hasSubmit');
 	            if (1 == hasSubmit) {
 	                Ext.getCmp('saveGradeBtn').setVisible(false);
@@ -620,7 +626,7 @@
 	        }
 	        else {
 	        	Ext.getCmp('saveGradeBtn').setVisible(false);
-	        }
+	        } */
 	        
 	         
 	         deptGrageStore.load({
