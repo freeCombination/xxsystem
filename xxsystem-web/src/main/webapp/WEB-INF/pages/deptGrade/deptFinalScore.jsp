@@ -296,7 +296,7 @@
                     var col = e.column.dataIndex;
                     if ("score" == col) {
                         if (!e.record.data.classifyName || e.record.data.isParticipation == 1 ||
-                                Ext.getCmp('electYearQuery').getValue() != Ext.Date.format(new Date(),"Y") || !editable) {
+                                !editable) {//Ext.getCmp('electYearQuery').getValue() != Ext.Date.format(new Date(),"Y") || 
                             recordStore.getAt(e.rowIdx).set('score', tempScore);
                         }
                         else{
@@ -321,7 +321,7 @@
                     
                     if ("percentage" == col) {
                         if (!e.record.data.classifyName ||
-                                Ext.getCmp('electYearQuery').getValue() != Ext.Date.format(new Date(),"Y") || !editable) {
+                                !editable) {//Ext.getCmp('electYearQuery').getValue() != Ext.Date.format(new Date(),"Y") || 
                             recordStore.getAt(e.rowIdx).set('percentage', tempPerc);
                         }
                         else{
@@ -346,7 +346,7 @@
                     }
                     
                     if ("jdScore" == col) {
-                        if (Ext.getCmp('electYearQuery').getValue() != Ext.Date.format(new Date(),"Y") || !editable) {
+                        if (!editable) {//Ext.getCmp('electYearQuery').getValue() != Ext.Date.format(new Date(),"Y") || 
                             recordStore.getAt(e.rowIdx).set('jdScore', tempJdScore);
                         }
                         else{
@@ -399,7 +399,7 @@
                     } */
                     
                     if ("plusedScore" == col) {
-                        if (Ext.getCmp('electYearQuery').getValue() != Ext.Date.format(new Date(),"Y") || !editable) {
+                        if (!editable) {//Ext.getCmp('electYearQuery').getValue() != Ext.Date.format(new Date(),"Y") || 
                             recordStore.getAt(e.rowIdx).set('plusedScore', tempPlScore);
                         }
                         else{
