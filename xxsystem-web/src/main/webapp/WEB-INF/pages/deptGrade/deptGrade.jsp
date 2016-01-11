@@ -170,10 +170,10 @@
                             WdatePicker({readOnly:true,dateFmt:'yyyy',maxDate:Ext.Date.format(new Date(),"Y"),
                             	onpicked:function(){
                                     if ($dp.cal.getP('y') == Ext.Date.format(new Date(),"Y")) {
-                                        Ext.getCmp("submitPercentageBtn").setDisabled(false);
+                                        //Ext.getCmp("submitPercentageBtn").setDisabled(false);
                                     }
                                     else {
-                                        Ext.getCmp("submitPercentageBtn").setDisabled(true);
+                                        //Ext.getCmp("submitPercentageBtn").setDisabled(true);
                                     }
                                 }
                             });
