@@ -169,11 +169,11 @@
                         p.getEl().on('click',function(){
                             WdatePicker({readOnly:true,dateFmt:'yyyy',maxDate:Ext.Date.format(new Date(),"Y"),
                             	onpicked:function(){
-                                    if ($dp.cal.getP('y') == Ext.Date.format(new Date(),"Y")) {
-                                        //Ext.getCmp("submitPercentageBtn").setDisabled(false);
+                                    if (isCanEdit()) {//$dp.cal.getP('y') == Ext.Date.format(new Date(),"Y")
+                                        Ext.getCmp("submitPercentageBtn").setDisabled(false);
                                     }
                                     else {
-                                        //Ext.getCmp("submitPercentageBtn").setDisabled(true);
+                                        Ext.getCmp("submitPercentageBtn").setDisabled(true);
                                     }
                                 }
                             });
@@ -611,14 +611,7 @@
 	            }]
 	         }).show();
 	        
-	        
-	        var hasSubmit = record.get('hasSubmit');
-            if (1 == hasSubmit) {
-                Ext.getCmp('saveGradeBtn').setVisible(false);
-            }
-	        
-	        
-	        /* if (Ext.getCmp("electYearQuery").getValue() == Ext.Date.format(new Date(),"Y")) {
+	        if (isCanEdit()) {
 	        	var hasSubmit = record.get('hasSubmit');
 	            if (1 == hasSubmit) {
 	                Ext.getCmp('saveGradeBtn').setVisible(false);
@@ -626,9 +619,8 @@
 	        }
 	        else {
 	        	Ext.getCmp('saveGradeBtn').setVisible(false);
-	        } */
+	        }
 	        
-	         
 	         deptGrageStore.load({
 	             params:{
 	            	 cfId:record.get('classifyId')
@@ -660,6 +652,24 @@
 			items: [grageGrid]
 		});
 		
+		function isCanEdit(){
+            var now = new Date();
+            var year = now.getFullYear();
+            var month = now.getMonth();
+            var day = now.getDate();
+            
+            month += 1;
+            if(month < 10){
+                month = "0" + month;
+            }
+            
+            var deadLine = parseInt((parseInt(Ext.getCmp('electYearQuery').getValue()) + 1) + "0331");
+            var curr = parseInt(year + "" + month + "" + day);
+            if (curr <= deadLine) {
+                return true;
+            }
+            return false;
+        }
 	});
 	</script>
 </body>

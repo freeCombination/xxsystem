@@ -296,7 +296,8 @@
                     var col = e.column.dataIndex;
                     if ("score" == col) {
                         if (!e.record.data.classifyName || e.record.data.isParticipation == 1 ||
-                                !editable) {//Ext.getCmp('electYearQuery').getValue() != Ext.Date.format(new Date(),"Y") || 
+                        		!isCanEdit() || !editable) {
+                        	//Ext.getCmp('electYearQuery').getValue() != Ext.Date.format(new Date(),"Y") || 
                             recordStore.getAt(e.rowIdx).set('score', tempScore);
                         }
                         else{
@@ -320,8 +321,7 @@
                     }
                     
                     if ("percentage" == col) {
-                        if (!e.record.data.classifyName ||
-                                !editable) {//Ext.getCmp('electYearQuery').getValue() != Ext.Date.format(new Date(),"Y") || 
+                        if (!e.record.data.classifyName || !isCanEdit() || !editable) {
                             recordStore.getAt(e.rowIdx).set('percentage', tempPerc);
                         }
                         else{
@@ -346,7 +346,7 @@
                     }
                     
                     if ("jdScore" == col) {
-                        if (!editable) {//Ext.getCmp('electYearQuery').getValue() != Ext.Date.format(new Date(),"Y") || 
+                        if (!isCanEdit() || !editable) {
                             recordStore.getAt(e.rowIdx).set('jdScore', tempJdScore);
                         }
                         else{
@@ -399,7 +399,7 @@
                     } */
                     
                     if ("plusedScore" == col) {
-                        if (!editable) {//Ext.getCmp('electYearQuery').getValue() != Ext.Date.format(new Date(),"Y") || 
+                        if (!isCanEdit() || !editable) {
                             recordStore.getAt(e.rowIdx).set('plusedScore', tempPlScore);
                         }
                         else{
@@ -599,6 +599,25 @@
             renderTo: Ext.getBody(),
             items: [recordGrid]
         });
+        
+        function isCanEdit(){
+        	var now = new Date();
+            var year = now.getFullYear();
+            var month = now.getMonth();
+            var day = now.getDate();
+            
+            month += 1;
+            if(month < 10){
+                month = "0" + month;
+            }
+            
+            var deadLine = parseInt((parseInt(Ext.getCmp('electYearQuery').getValue()) + 1) + "0331");
+            var curr = parseInt(year + "" + month + "" + day);
+            if (curr <= deadLine) {
+            	return true;
+            }
+            return false;
+        }
     });
     </script>
 </body>
