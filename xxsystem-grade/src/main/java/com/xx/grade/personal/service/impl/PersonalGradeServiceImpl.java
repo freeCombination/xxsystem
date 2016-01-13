@@ -1954,6 +1954,70 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
                     + ids + ")");
             baseDao.executeHql(delHql.toString());
 	}
+
+	@Override
+	public HSSFWorkbook exportPersonalAllList(Map<String, String> paramMap,
+			File file) {
+		HSSFWorkbook wb = null;
+		try {
+			//年份
+			String gradeYear = paramMap.get("gradeYear");
+			//数据列表
+			ListVo<PersonalGradeVo> personalGradeList = this.getPersonalGradeList(paramMap);
+			List<PersonalGradeVo> lists = personalGradeList.getList();
+			POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(file));
+			// 读取excel模板
+			wb = new HSSFWorkbook(fs);
+			HSSFSheet sheet = wb.getSheetAt(0);
+			HSSFRow row = null ;
+			HSSFCell cell = null;
+			//设置表头
+			row = sheet.getRow(0);
+			cell = row.getCell(0);
+			cell.setCellValue(gradeYear+"年中储粮成都粮食储藏科学研究所员工年度考核汇总表");
+			//样式
+			HSSFCellStyle styleBold = getNewCenterStyle(wb);
+			if (lists != null && lists.size() > 0) {
+
+				int startNum = 2 ;
+				for (int i = 0; i < lists.size(); i++) {
+					PersonalGradeVo vo = lists.get(i);
+					row = sheet.createRow(startNum + i);
+					//序号
+					cell = row.createCell(0);
+					cell.setCellValue(1+i);
+					cell.setCellStyle(styleBold);
+					//标题
+					cell = row.createCell(1);
+					cell.setCellValue(vo.getTitle());
+					cell.setCellStyle(styleBold);
+					//年份
+					cell = row.createCell(2);
+					cell.setCellValue(vo.getGradeYear());
+					cell.setCellStyle(styleBold);
+					//部门
+					cell = row.createCell(3);
+					cell.setCellValue(vo.getOrgName());
+					cell.setCellStyle(styleBold);
+					//职工姓名
+					cell = row.createCell(4);
+					cell.setCellValue(vo.getUserName());
+					cell.setCellStyle(styleBold);
+					//现任岗位
+					cell = row.createCell(5);
+					cell.setCellValue(vo.getResponsibilities());
+					cell.setCellStyle(styleBold);
+					//综合得分
+					cell = row.createCell(6);
+					cell.setCellValue(vo.getCompositeScores());
+					cell.setCellStyle(styleBold);
+				}
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return wb;
+	}
 	
 	
 }

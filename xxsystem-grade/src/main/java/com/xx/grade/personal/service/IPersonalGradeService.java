@@ -244,5 +244,14 @@ public interface IPersonalGradeService {
 	 * @param ids
 	 */
 	public void deletePersonalGrade(String ids);
+
+	/**
+	 * 导出个人评分结果列表
+	 * 
+	 * @param paramMap
+	 * @param file
+	 * @return
+	 */
+	public HSSFWorkbook exportPersonalAllList(Map<String, String> paramMap,File file);
 	
 }

@@ -31,7 +31,6 @@ import com.xx.system.common.util.RequestUtil;
 import com.xx.system.common.util.StringUtil;
 import com.xx.system.common.vo.ListVo;
 import com.xx.system.common.vo.ResponseVo;
-import com.xx.system.dict.action.DictAction;
 import com.xx.system.user.entity.User;
 
 /**
@@ -474,6 +473,75 @@ public class PersonalGradeAction extends BaseAction {
 			e.printStackTrace();
 		}
 		request.getSession().removeAttribute("personalDutyWorkBook");
+		return null;
+	}
+	
+	
+	/**
+	 * 导出结果列表
+	 * 
+	 * @return
+	 */
+	public String exportPersonalAllList() {
+		try {
+			Map<String, String> paramMap = RequestUtil.getParameterMap(super
+					.getRequest());
+			HttpServletRequest request = this.getRequest();
+			ServletContext servletContext = request.getSession().getServletContext();
+			File file=new File(servletContext.getRealPath("/template/resultListTemplate.xls")); 
+			HSSFWorkbook workBook = this.personalGradeService
+					.exportPersonalAllList(paramMap,file);
+			if (workBook != null) {
+				this.getRequest().getSession()
+						.setAttribute("personalAllListWorkBook", workBook);
+				JsonUtil.outJson("{success:true,msg:'导出个人评分结果列表成功！'}");
+				this.excepAndLogHandle(PersonalGradeAction.class, "导出个人评分结果列表",
+						null, true);
+			} else {
+				JsonUtil.outJson("{success:false,msg:'导出个人评分结果列表失败！'}");
+				this.excepAndLogHandle(PersonalGradeAction.class, "导出个人评分结果列表",
+						null, false);
+			}
+		} catch (Exception e) {
+			JsonUtil.outJson("{success:false,msg:'导出个人评分结果列表失败！'}");
+			this.excepAndLogHandle(PersonalGradeAction.class, "导出个人评分结果列表", e,
+					false);
+			return null;
+		}
+		return null;
+	}
+
+	/**
+	 * 导出导出结果列表excel
+	 * 
+	 * @return
+	 */
+	public String exportPersonalAllListFile() {
+		HttpServletRequest request = this.getRequest();
+		try {
+			HSSFWorkbook workBook = (HSSFWorkbook) request.getSession()
+					.getAttribute("personalAllListWorkBook");
+			this.getResponse().reset();
+			this.getResponse().setContentType(
+					"application/msexcel;charset=UTF-8");
+			try {
+				this.getResponse().addHeader(
+						"Content-Disposition",
+						"attachment;filename=\""
+								+ new String(("中储粮成都粮食储藏科学研究所员工年度考核汇总表" + ".xls")
+										.getBytes("GBK"), "ISO8859_1") + "\"");
+				OutputStream out = this.getResponse().getOutputStream();
+				//FileOutputStream fout = new FileOutputStream("E:/students.xls"); 
+				workBook.write(out);
+				out.flush();
+				out.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		request.getSession().removeAttribute("personalAllListWorkBook");
 		return null;
 	}
 	

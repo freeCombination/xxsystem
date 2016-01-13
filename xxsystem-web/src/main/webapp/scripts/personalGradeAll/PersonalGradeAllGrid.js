@@ -313,6 +313,38 @@ grade.personalGrade.PersonalGradeGrid = Ext.create("Ext.grid.Panel", {
 			    }
 			});
         }
+    },
+    {
+        xtype:'button',
+        text:'导出Excel',
+        iconCls:'excel-button',
+        id:'excel-button',
+        handler:function(){
+        	Ext.Ajax.request({ 
+		 		url: basePath+'/personalGrade/exportPersonalAllList.action',
+			    method: "post",
+			    params:{
+					    	gradeYear:Ext.getCmp('gradeYear').getValue(),
+					    	inputGradeUser:Ext.getCmp('inputGradeUser').getValue(),
+					    	canpDeptQuery:Ext.getCmp('canpDeptQuery').getValue(),
+					    	start:"0",
+					    	limit:"999999999",
+					    	status:"1,2"
+			    		}, 
+			    success: function(response, config){ 
+			    	var result = Ext.decode(response.responseText);
+			    	if(result.success==false){
+                        Ext.Msg.alert('系统提示', "导出失败!");
+                    }else{
+                        var url = basePath+"/personalGrade/exportPersonalAllListFile.action";
+                        window.location.href = url;
+                    }
+			    }, 
+			    failure: function(){ 
+			       
+			    }
+			});
+        }
     }
 	]
 });
