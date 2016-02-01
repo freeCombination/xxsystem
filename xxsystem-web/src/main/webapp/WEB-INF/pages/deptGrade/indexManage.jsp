@@ -87,18 +87,24 @@
 		var sm=Ext.create("Ext.selection.CheckboxModel",{
 			injectCheckbox:1,
 	    	listeners: {
-		      selectionchange: function(){
-		        	var c = indexGrid.getSelectionModel().getSelection();
-					if(c.length > 0){
-						Ext.getCmp('delIndexBtn').setDisabled(false);
-					}else{
-						Ext.getCmp('delIndexBtn').setDisabled(true);
-					}
-					if(c.length == 1){
-						Ext.getCmp('updateIndexBtn').setDisabled(false);
-					}else{
-						Ext.getCmp('updateIndexBtn').setDisabled(true);
-					}
+			    selectionchange: function(){
+			    	if (Ext.getCmp("electYearQuery").getValue() == Ext.Date.format(new Date(),"Y")) {
+			    		var c = indexGrid.getSelectionModel().getSelection();
+	                    if(c.length > 0){
+	                        Ext.getCmp('delIndexBtn').setDisabled(false);
+	                    }else{
+	                        Ext.getCmp('delIndexBtn').setDisabled(true);
+	                    }
+	                    if(c.length == 1){
+	                        Ext.getCmp('updateIndexBtn').setDisabled(false);
+	                    }else{
+	                        Ext.getCmp('updateIndexBtn').setDisabled(true);
+	                    }
+			    	}
+			    	else {
+			    		Ext.getCmp('updateIndexBtn').setDisabled(true);
+			    		Ext.getCmp('delIndexBtn').setDisabled(true);
+			    	}
 				}
 			}
 	    });
@@ -182,7 +188,16 @@
                 listeners :{
                     'render' : function(p){
                         p.getEl().on('click',function(){
-                            WdatePicker({readOnly:true,dateFmt:'yyyy',maxDate:Ext.Date.format(new Date(),"Y")});
+                            WdatePicker({readOnly:true,dateFmt:'yyyy',maxDate:Ext.Date.format(new Date(),"Y"),
+                            	onpicked:function(){
+                                    if ($dp.cal.getP('y') == Ext.Date.format(new Date(),"Y")) {
+                                    	Ext.getCmp("addIndexBtn").setDisabled(false);
+                                    }
+                                    else {
+                                    	Ext.getCmp("addIndexBtn").setDisabled(true);
+                                    }
+                                }
+                            });
                             //,onpicked:function(){$dp.$('electYearQuery-inputEl').focus();}
                         });
                     }
@@ -264,7 +279,14 @@
                                             icon: Ext.MessageBox.INFO
                                         });
                                     }
-                                    indexStore.loadPage(1);
+                                    //indexStore.loadPage(1);
+                                    indexStore.load({
+                                        params:{
+                                        	start:0,
+                                            limit:SystemConstant.commonSize,
+                                            'indexVo.electYear':Ext.getCmp('electYearQuery').getValue()
+                                        }
+                                    });
                                 }
                             });
                         }
@@ -315,6 +337,7 @@
 			    proxy: {
 			       type: 'ajax',
 			       url: basePath+'/deptgrade/getAllClassifies.action',
+			       extraParams:{electYear:Ext.getCmp('electYearQuery').getValue()},
 			       reader: {
 			          type: 'json'
 			       }
@@ -679,7 +702,11 @@
                                         html:action.result.msg
                                     }).show();
                                     
-                                    indexStore.load();
+                                    indexStore.load({
+                                        params:{
+                                            'indexVo.electYear':Ext.getCmp('electYearQuery').getValue()
+                                        }
+                                    });
                                     index2Win.close();
                                     Ext.MessageBox.hide();
                                 },
@@ -691,7 +718,11 @@
                                         modal : true,
                                         icon: Ext.Msg.ERROR
                                     });
-                                    indexStore.load();
+                                    indexStore.load({
+                                        params:{
+                                            'indexVo.electYear':Ext.getCmp('electYearQuery').getValue()
+                                        }
+                                    });
                                     index2Win.close();
                                     Ext.MessageBox.hide();
                                  }

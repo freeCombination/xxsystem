@@ -29,7 +29,7 @@ public interface IIndexManageService {
      * @date 2013-11-25
      * @return List<IndexClassifyVo>
      */
-    public List<IndexClassifyVo> getAllClassifies()
+    public List<IndexClassifyVo> getAllClassifies(String electYear)
         throws BusinessException;
     
     /**
@@ -93,6 +93,14 @@ public interface IIndexManageService {
      * @throws BusinessException
      */
     public void lockUnLock(Integer classifyId) throws BusinessException;
+    
+    /**
+     * 复制评分基础数据
+     * 
+     * @return
+     * @throws Exception
+     */
+    public Map<String, String> copyBaseData() throws Exception;
     
     /************指标管理*************/
     

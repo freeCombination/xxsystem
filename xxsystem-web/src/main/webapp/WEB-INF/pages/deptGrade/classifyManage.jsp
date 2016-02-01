@@ -97,37 +97,43 @@
 		var sm=Ext.create("Ext.selection.CheckboxModel",{
 			injectCheckbox:1,
 	    	listeners: {
-		      selectionchange: function(){
-		        	var c = classifyGrid.getSelectionModel().getSelection();
-					if(c.length > 0){
-						var enable = 1;
-						for (var i = 0; i < c.length; i++) {
-							if (c[i].get('enable') != 1) {
-								enable = 0;
-								break;
-							}
-						}
-						
-						if (enable == 1) {
-							Ext.getCmp('delClassifyBtn').setDisabled(false);
-						}
-						else {
-							Ext.getCmp('delClassifyBtn').setDisabled(true);
-						}
-					}else{
-						Ext.getCmp('delClassifyBtn').setDisabled(true);
-					}
-					if(c.length == 1){
-						var enable = c[0].get('enable');
-						if (enable == 1) {
-							Ext.getCmp('updateClassifyBtn').setDisabled(false);
-						}
-						else {
-							Ext.getCmp('updateClassifyBtn').setDisabled(true);
-						}
-					}else{
-						Ext.getCmp('updateClassifyBtn').setDisabled(true);
-					}
+		        selectionchange: function(){
+		        	if (Ext.getCmp("electYearQuery").getValue() == Ext.Date.format(new Date(),"Y")) {
+		        		var c = classifyGrid.getSelectionModel().getSelection();
+	                    if(c.length > 0){
+	                        var enable = 1;
+	                        for (var i = 0; i < c.length; i++) {
+	                            if (c[i].get('enable') != 1) {
+	                                enable = 0;
+	                                break;
+	                            }
+	                        }
+	                        
+	                        if (enable == 1) {
+	                            Ext.getCmp('delClassifyBtn').setDisabled(false);
+	                        }
+	                        else {
+	                            Ext.getCmp('delClassifyBtn').setDisabled(true);
+	                        }
+	                    }else{
+	                        Ext.getCmp('delClassifyBtn').setDisabled(true);
+	                    }
+	                    if(c.length == 1){
+	                        var enable = c[0].get('enable');
+	                        if (enable == 1) {
+	                            Ext.getCmp('updateClassifyBtn').setDisabled(false);
+	                        }
+	                        else {
+	                            Ext.getCmp('updateClassifyBtn').setDisabled(true);
+	                        }
+	                    }else{
+	                        Ext.getCmp('updateClassifyBtn').setDisabled(true);
+	                    }
+		        	}
+		        	else {
+		        		Ext.getCmp('updateClassifyBtn').setDisabled(true);
+		        		Ext.getCmp('delClassifyBtn').setDisabled(true);
+		        	}
 				}
 			}
 	    });
@@ -228,7 +234,18 @@
                 listeners :{
                     'render' : function(p){
                         p.getEl().on('click',function(){
-                            WdatePicker({readOnly:true,dateFmt:'yyyy',maxDate:Ext.Date.format(new Date(),"Y")});
+                            WdatePicker({readOnly:true,dateFmt:'yyyy',maxDate:Ext.Date.format(new Date(),"Y"),
+                            	onpicked:function(){
+                                    if ($dp.cal.getP('y') == Ext.Date.format(new Date(),"Y")) {
+                                        Ext.getCmp("addClassifyBtn").setDisabled(false);
+                                        Ext.getCmp('copyPreBtn').setDisabled(false);
+                                    }
+                                    else {
+                                        Ext.getCmp("addClassifyBtn").setDisabled(true);
+                                        Ext.getCmp('copyPreBtn').setDisabled(true);
+                                    }
+                                }
+                            });
                             //,onpicked:function(){$dp.$('electYearQuery-inputEl').focus();}
                         });
                     }
@@ -310,13 +327,65 @@
                                             icon: Ext.MessageBox.INFO
                                         });
                                     }
-                                    classifyStore.loadPage(1);
+                                    //classifyStore.loadPage(1);
+                                    
+                                    classifyStore.load({
+                                        params:{
+                                            start:0,
+                                            limit:SystemConstant.commonSize,
+                                            'classifyVo.electYear':Ext.getCmp('electYearQuery').getValue()
+                                        }
+                                    });
                                 }
                             });
                         }
                     });
 				}
-			}]/* , 
+			},
+            {
+                id:'copyPreBtn',
+                xtype:'button',
+                disabled:false,
+                text:'复制评分基础数据',
+                //hidden:true,
+                iconCls:'reset-button',
+                handler:function(){
+                	Ext.MessageBox.wait("", "正在生成当前年份基础数据", {
+                        text:"请稍后..."
+                    });
+                	
+                	Ext.Ajax.request({
+                        url : '${ctx}/deptgrade/copyBaseData.action',
+                        success : function(res, options) {
+                            Ext.MessageBox.hide();
+                            
+                            var data = Ext.decode(res.responseText);
+                            if(data.success == 'true'){
+                                new Ext.ux.TipsWindow({
+                                    title : SystemConstant.alertTitle,
+                                    autoHide : 3,
+                                    html : data.msg
+                                }).show();
+                            }else{
+                                Ext.MessageBox.show({
+                                    title: SystemConstant.alertTitle,
+                                    msg: data.msg,
+                                    buttons: Ext.MessageBox.OK,
+                                    icon: Ext.MessageBox.INFO
+                                });
+                            }
+                            
+                            classifyStore.load({
+                                params:{
+                                    start:0,
+                                    limit:SystemConstant.commonSize,
+                                    'classifyVo.electYear':Ext.getCmp('electYearQuery').getValue()
+                                }
+                            });
+                        }
+                    });
+                }
+            }]/* , 
 			listeners:{
 				'render': function() {
 					for(var i = 0;i < userPermissionArr.length;i++){
@@ -510,7 +579,11 @@
                                         html:action.result.msg
                                     }).show();
                                     
-                                    classifyStore.load();
+                                    classifyStore.load({
+                                        params:{
+                                            'classifyVo.electYear':Ext.getCmp('electYearQuery').getValue()
+                                        }
+                                    });
                                     classifyWin.close();
                                     Ext.MessageBox.hide();
                                 },
@@ -522,7 +595,11 @@
                                         modal : true,
                                         icon: Ext.Msg.ERROR
                                     });
-                                    classifyStore.load();
+                                    classifyStore.load({
+                                        params:{
+                                            'classifyVo.electYear':Ext.getCmp('electYearQuery').getValue()
+                                        }
+                                    });
                                     classifyWin.close();
                                     Ext.MessageBox.hide();
                                  }
