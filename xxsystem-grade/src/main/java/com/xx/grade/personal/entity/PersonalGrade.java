@@ -105,6 +105,16 @@ public class PersonalGrade implements Serializable {
 	 */
 	private Dictionary classification ;
 	
+	
+	/**
+	 * 思想政治
+	 */
+	private String politicalThought ;
+	
+	/**
+	 * 岗位能力
+	 */
+	private String postAbility ;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -238,5 +248,23 @@ public class PersonalGrade implements Serializable {
 
 	public void setClassification(Dictionary classification) {
 		this.classification = classification;
+	}
+
+	@Column(name = "POLITICAL_THOUGHT")
+	public String getPoliticalThought() {
+		return politicalThought;
+	}
+
+	public void setPoliticalThought(String politicalThought) {
+		this.politicalThought = politicalThought;
+	}
+
+	@Column(name = "POST_ABILITY")
+	public String getPostAbility() {
+		return postAbility;
+	}
+
+	public void setPostAbility(String postAbility) {
+		this.postAbility = postAbility;
 	}
 }

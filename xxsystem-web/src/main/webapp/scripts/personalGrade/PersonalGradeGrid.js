@@ -14,6 +14,8 @@ Ext.define("grade.personalGrade.PersonalGradeModel",{
 						{name:'gradeYear'},
 						{name:'problem'},
 						{name:'workPlan'},
+						{name:'politicalThought'},
+						{name:'postAbility'},
 						{name:'compositeScores'},
 						{name:'status'},
 						{name:'totalPersonCount'},

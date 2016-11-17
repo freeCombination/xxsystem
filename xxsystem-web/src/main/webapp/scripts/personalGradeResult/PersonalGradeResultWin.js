@@ -109,18 +109,52 @@ var row4 = {
         }]  
     }; 
 
-var row5 = {  
+var row5 = {
         layout:'form', 
         border : false,
-        items:[{  
-            xtype:'displayfield',  
+        items:[{
+            xtype:'displayfield',
             name:'workPlan',
             fieldLabel:'三、明年工作计划',
     		renderer:function(value){
     			return value.replace(/\n/g,'<br />');
     		}
-        }]  
-    }; 
+        }]
+    };
+
+var row51 = {
+        layout:'form', 
+        border : false,
+        items:[{
+            xtype:'displayfield',
+            fieldLabel:'四、素质提升'
+        }]
+    };
+var row52 = {
+        layout:'form', 
+        border : false,
+        items:[{
+            xtype:'displayfield',
+            name:'politicalThought',
+            fieldLabel:'1.思想政治',
+    		renderer:function(value){
+    			return value.replace(/\n/g,'<br />');
+    		}
+        }]
+    };
+var row53 = {
+        layout:'form', 
+        border : false,
+        items:[{
+            xtype:'displayfield',
+            name:'postAbility',
+            fieldLabel:'2.岗位能力',
+    		renderer:function(value){
+    			return value.replace(/\n/g,'<br />');
+    		}
+        }]
+    };
+
 
 var row6 = {  
         layout:'form', 
@@ -214,8 +248,8 @@ grade.personalGradeResult.PersonalGradeResultFormProblem = Ext.create("Ext.form.
     frame:true,  
     border : false,
     labelWidth:65,  
-    labelAlign:'right',  
-    items:[row4,row5]
+    labelAlign:'right',
+    items:[row4,row5,row51,row52,row53]
 });
 
 grade.personalGradeResult.PersonalGradeResultForm1 = Ext.create("Ext.form.Panel", {  

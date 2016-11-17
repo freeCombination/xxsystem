@@ -54,6 +54,16 @@ public class PersonalGradeVo {
 	private String workPlan ;
 	
 	/**
+	 * 思想政治
+	 */
+	private String politicalThought ;
+	
+	/**
+	 * 岗位能力
+	 */
+	private String postAbility ;
+	
+	/**
 	 * 综合得分
 	 */
 	private String compositeScores ;
@@ -188,5 +198,21 @@ public class PersonalGradeVo {
 
 	public void setIsScoreChange(Integer isScoreChange) {
 		this.isScoreChange = isScoreChange;
+	}
+
+	public String getPoliticalThought() {
+		return politicalThought;
+	}
+
+	public void setPoliticalThought(String politicalThought) {
+		this.politicalThought = politicalThought;
+	}
+
+	public String getPostAbility() {
+		return postAbility;
+	}
+
+	public void setPostAbility(String postAbility) {
+		this.postAbility = postAbility;
 	}
 }
