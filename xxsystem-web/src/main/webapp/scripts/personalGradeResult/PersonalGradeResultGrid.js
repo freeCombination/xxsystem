@@ -229,14 +229,22 @@ grade.personalGradeResult.ViewPersonalGradeResult = function() {
 	var id = row[0].data.id;
 	var personalGradeId = row[0].data.personalGradeId;
 	var gradeUserType = row[0].data.gradeUserType;
-	var basicForm = grade.personalGradeResult.PersonalGradeResultWin.down('form').getForm();
+	var basicForm = grade.personalGradeResult.PersonalGradeResultForm.getForm();
 	basicForm.reset();
-	basicForm.url = basePath + '/personalGrade/editPersonalGradeResult.action';
 	Ext.getCmp('evaluation').setReadOnly(true);
 	Ext.getCmp('evaluation1').setReadOnly(true);
 	Ext.getCmp('evaluation2').setReadOnly(true);
 	Ext.getCmp('evaluation3').setReadOnly(true);
 	basicForm.load({
+		url : basePath + '/personalGrade/getPersonalGradeResultById.action',
+		params : {
+			id : id
+		}
+	});
+	
+	var basicFormProblem = grade.personalGradeResult.PersonalGradeResultFormProblem.getForm();
+	basicFormProblem.reset();
+	basicFormProblem.load({
 		url : basePath + '/personalGrade/getPersonalGradeResultById.action',
 		params : {
 			id : id
@@ -250,7 +258,6 @@ grade.personalGradeResult.ViewPersonalGradeResult = function() {
 	basicForm1.findField('id').setValue(id);
 	basicForm1.findField('personalGradeId').setValue(personalGradeId);
 	basicForm1.findField('gradeUserType').setValue(gradeUserType);
-	basicForm1.url = basePath + '/personalGrade/editPersonalGradeResult.action';
 	basicForm1.load({
 		url : basePath + '/personalGrade/getPersonalGradeResultById.action',
 		params : {

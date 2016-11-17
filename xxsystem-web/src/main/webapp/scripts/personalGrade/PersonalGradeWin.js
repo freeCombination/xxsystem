@@ -10,7 +10,7 @@
 grade.personalGrade.PersonalGradeForm = Ext.create("Ext.form.Panel", {
 	layout : 'form',
 	region: "south",
-	bodyStyle : 'padding:15px 10px 0 0',
+	bodyStyle : 'padding:0px 5px 0 0',
 	border : false,
 	labelAlign : 'right',
 	frame: true,
@@ -37,7 +37,8 @@ grade.personalGrade.PersonalGradeForm = Ext.create("Ext.form.Panel", {
             	regex : new RegExp('^([^<^>])*$'),
                 regexText : '不能包含特殊字符！',
         		//maxLength : 500,
-        		xtype : 'textareafield'
+        		xtype : 'textareafield',
+        		height:50
         	},
         	{
         		fieldLabel : '工作计划',
@@ -45,7 +46,8 @@ grade.personalGrade.PersonalGradeForm = Ext.create("Ext.form.Panel", {
         		name : 'workPlan',
             	regex : new RegExp('^([^<^>])*$'),
                 regexText : '不能包含特殊字符！',
-        		xtype : 'textareafield'
+        		xtype : 'textareafield',
+        		height:50
         	},
         	{
         		fieldLabel : '思想政治',
@@ -53,7 +55,8 @@ grade.personalGrade.PersonalGradeForm = Ext.create("Ext.form.Panel", {
         		name : 'politicalThought',
             	regex : new RegExp('^([^<^>])*$'),
                 regexText : '不能包含特殊字符！',
-        		xtype : 'textareafield'
+        		xtype : 'textareafield',
+        		height:50
         	},
         	{
         		fieldLabel : '岗位能力',
@@ -61,7 +64,8 @@ grade.personalGrade.PersonalGradeForm = Ext.create("Ext.form.Panel", {
         		name : 'postAbility',
             	regex : new RegExp('^([^<^>])*$'),
                 regexText : '不能包含特殊字符！',
-        		xtype : 'textareafield'
+        		xtype : 'textareafield',
+        		height:50
         	}
             ]
 });
@@ -70,7 +74,7 @@ grade.personalGrade.PersonalGradeForm = Ext.create("Ext.form.Panel", {
 
 
 grade.personalGrade.PersonalGradeWin = Ext.create("Ext.window.Window", {
-	height : 600,
+	height : 560,
 	width : 800,
 	layout: 'border',
 	items : [grade.personalDuty.PersonalDutyGrid, grade.personalGrade.PersonalGradeForm],
