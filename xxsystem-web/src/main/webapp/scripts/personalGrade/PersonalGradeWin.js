@@ -43,10 +43,24 @@ grade.personalGrade.PersonalGradeForm = Ext.create("Ext.form.Panel", {
         		fieldLabel : '工作计划',
         		allowBlank:false, 
         		name : 'workPlan',
-        		//vtype:'filterHtml',
             	regex : new RegExp('^([^<^>])*$'),
                 regexText : '不能包含特殊字符！',
-        		//maxLength : 500,
+        		xtype : 'textareafield'
+        	},
+        	{
+        		fieldLabel : '思想政治',
+        		allowBlank:false, 
+        		name : 'politicalThought',
+            	regex : new RegExp('^([^<^>])*$'),
+                regexText : '不能包含特殊字符！',
+        		xtype : 'textareafield'
+        	},
+        	{
+        		fieldLabel : '岗位能力',
+        		allowBlank:false, 
+        		name : 'postAbility',
+            	regex : new RegExp('^([^<^>])*$'),
+                regexText : '不能包含特殊字符！',
         		xtype : 'textareafield'
         	}
             ]
@@ -56,7 +70,7 @@ grade.personalGrade.PersonalGradeForm = Ext.create("Ext.form.Panel", {
 
 
 grade.personalGrade.PersonalGradeWin = Ext.create("Ext.window.Window", {
-	height : 500,
+	height : 600,
 	width : 800,
 	layout: 'border',
 	items : [grade.personalDuty.PersonalDutyGrid, grade.personalGrade.PersonalGradeForm],

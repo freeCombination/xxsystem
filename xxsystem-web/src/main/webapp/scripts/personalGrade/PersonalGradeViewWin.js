@@ -12,7 +12,7 @@
 grade.personalGrade.PersonalGradeViewForm = Ext.create("Ext.form.Panel", {
 	layout : 'form',
 	region: "south",
-	title:'工作计划',
+	// title:'工作计划',
 	height : 200,
 	border : false,
 	autoScroll:true,
@@ -45,6 +45,22 @@ grade.personalGrade.PersonalGradeViewForm = Ext.create("Ext.form.Panel", {
         	{
         		fieldLabel : '工作计划',
         		name : 'workPlan',
+        		xtype : 'displayfield',
+        		renderer:function(value){
+        			return value.replace(/\n/g,'<br />');
+        		}
+        	},
+        	{
+        		fieldLabel : '思想政治',
+        		name : 'politicalThought',
+        		xtype : 'displayfield',
+        		renderer:function(value){
+        			return value.replace(/\n/g,'<br />');
+        		}
+        	},
+        	{
+        		fieldLabel : '岗位能力',
+        		name : 'postAbility',
         		xtype : 'displayfield',
         		renderer:function(value){
         			return value.replace(/\n/g,'<br />');

@@ -72,6 +72,16 @@ public class PersonalGradeResultVo {
 	private String workPlan ;
 	
 	/**
+	 * 思想政治
+	 */
+	private String politicalThought ;
+	
+	/**
+	 * 岗位能力
+	 */
+	private String postAbility ;
+	
+	/**
 	 * 状态 0可修改 1提交（不可修改）
 	 */
 	private Integer state ;
@@ -371,5 +381,21 @@ public class PersonalGradeResultVo {
 
 	public void setIsHaveGrade(int isHaveGrade) {
 		this.isHaveGrade = isHaveGrade;
+	}
+
+	public String getPoliticalThought() {
+		return politicalThought;
+	}
+
+	public void setPoliticalThought(String politicalThought) {
+		this.politicalThought = politicalThought;
+	}
+
+	public String getPostAbility() {
+		return postAbility;
+	}
+
+	public void setPostAbility(String postAbility) {
+		this.postAbility = postAbility;
 	}
 }

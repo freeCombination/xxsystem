@@ -419,7 +419,7 @@ public class PersonalGradeAction extends BaseAction {
 					.getRequest());
 			HttpServletRequest request = this.getRequest();
 			ServletContext servletContext = request.getSession().getServletContext();
-			File file=new File(servletContext.getRealPath("/template/dutyTemplate.xls")); 
+			File file=new File(servletContext.getRealPath("/template/dutyTemplate.xls"));
 			HSSFWorkbook workBook = this.personalGradeService
 					.exportPersonalDuty(dutyMap,file);
 			if (workBook != null) {
@@ -658,6 +658,8 @@ public class PersonalGradeAction extends BaseAction {
 			if (null != grade) {
 				grade.setWorkPlan(gradeMap.get("workPlan"));
 				grade.setProblem(gradeMap.get("problem"));
+				grade.setPoliticalThought(gradeMap.get("politicalThought"));
+				grade.setPostAbility(gradeMap.get("postAbility"));
 			} else {
 				JsonUtil.outJson("{success:'false',msg:'编辑个人评分失败，未找到该数据！'}");
 			}

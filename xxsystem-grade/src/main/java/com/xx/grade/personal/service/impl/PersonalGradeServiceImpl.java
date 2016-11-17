@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -179,6 +180,8 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		vo.setTotalPersonCount(getResultCounts(null, grade.getId()));
 		vo.setCommitPersonCount(getResultCounts(1, grade.getId()));
 		vo.setWorkPlan(grade.getWorkPlan());
+		vo.setPoliticalThought(grade.getPoliticalThought());
+		vo.setPostAbility(grade.getPostAbility());
 		setIsScoreChange(grade,vo);
 	}
 	
@@ -391,7 +394,9 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 						if (sourceRow == null) {
 							sourceRow = aSheet.createRow(newRow + rowSize);
 						}
-						System.err.println(getExcelCellAutoHeight(duty.getWorkDuty(), 20));
+						
+						// System.err.println(getExcelCellAutoHeight(duty.getWorkDuty(), 20));
+						
 						sourceRow.setHeight((short) 400);
 						// 合并 单元格 操作* 第一个参数 0 表示 起始 行* 第二个参数 a表示 起始 列* 第三个参数 0
 						// 表示结束行* 第四个参数 b表示结束列
@@ -426,6 +431,18 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			HSSFCell cell51 = row5.getCell(0);
 			cell51.setCellStyle(cellStyle2);
 			cell51.setCellValue(grade.getWorkPlan());
+			
+			if (StringUtils.isNotBlank(grade.getPoliticalThought())) {
+				HSSFRow row6 = aSheet.getRow(newRow + personalDutys.size() + 5);
+				HSSFCell cell61 = row6.getCell(3);
+				cell61.setCellValue(grade.getPoliticalThought());
+			}
+			
+			if (StringUtils.isNotBlank(grade.getPostAbility())) {
+				HSSFRow row7 = aSheet.getRow(newRow + personalDutys.size() + 6);
+				HSSFCell cell71 = row7.getCell(3);
+				cell71.setCellValue(grade.getPostAbility());
+			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -465,10 +482,16 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			}
 			this.baseDao.saveOrUpdate(duties);
 			//修改工作计划和总结
-			String workPlan = content[col-2][0];
-			String problem = content[col-4][0];
+			String workPlan = content[col-4][0];
+			String problem = content[col-6][0];
 			grade.setProblem(problem);
 			grade.setWorkPlan(workPlan);
+			
+			String postAbility = content[col-1][3];
+			String politicalThought = content[col-2][3];
+			grade.setPostAbility(postAbility);
+			grade.setPoliticalThought(politicalThought);
+			
 			this.baseDao.update(grade);
 		}
 		return message;
@@ -1027,6 +1050,8 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			vo.setTitle(grade.getTitle());
 			vo.setProblem(grade.getProblem());
 			vo.setWorkPlan(grade.getWorkPlan());
+			vo.setPoliticalThought(grade.getPoliticalThought());
+			vo.setPostAbility(grade.getPostAbility());
 		}
 	}
 
