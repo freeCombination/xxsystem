@@ -251,10 +251,12 @@ grade.personalGrade.PersonalGradeGrid = Ext.create("Ext.grid.Panel", {
 		text : "查询",
 		iconCls : "search-button",
 		handler : function(button) {
+			debugger;
 			var proxy = grade.personalGrade.PersonalGradeStore.getProxy();
 			proxy.setExtraParam("gradeYear", button.prev().getValue());
 			proxy.setExtraParam("inputGradeUser", Ext.getCmp('inputGradeUser').getValue());
-			proxy.setExtraParam("canpDeptQuery", Ext.getCmp('canpDeptQuery').getValue());
+			//proxy.setExtraParam("canpDeptQuery", Ext.getCmp('canpDeptQuery').getValue());
+			proxy.setExtraParam("canpDeptQueryString", Ext.getCmp('canpDeptQuery').rawValue);
 			grade.personalGrade.PersonalGradeStore.loadPage(1);
 		}
 	},

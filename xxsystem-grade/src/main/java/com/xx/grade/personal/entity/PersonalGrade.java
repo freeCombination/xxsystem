@@ -115,6 +115,31 @@ public class PersonalGrade implements Serializable {
 	 * 岗位能力
 	 */
 	private String postAbility ;
+	
+	/**
+	 * 岗位编码（记录历史，防止组织变动）
+	 */
+	private String responsibilityCode;
+	
+	/**
+	 * 岗位名称（记录历史，防止组织变动）
+	 */
+	private String responsibilityName;
+	
+    /**
+     * 组织名称（记录历史，防止组织变动）
+     */
+    private String orgName;
+    
+    /**
+     * 组织编码（记录历史，防止组织变动）
+     */
+    private String orgCode;
+    
+    /**
+     * 岗位时间（记录历史，防止组织变动）
+     */
+    private String respChangeDate;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -267,4 +292,51 @@ public class PersonalGrade implements Serializable {
 	public void setPostAbility(String postAbility) {
 		this.postAbility = postAbility;
 	}
+
+	@Column(name = "RESPONSIBILITY_CODE")
+	public String getResponsibilityCode() {
+		return responsibilityCode;
+	}
+
+	public void setResponsibilityCode(String responsibilityCode) {
+		this.responsibilityCode = responsibilityCode;
+	}
+
+	@Column(name = "RESPONSIBILITY_NAME")
+	public String getResponsibilityName() {
+		return responsibilityName;
+	}
+
+	public void setResponsibilityName(String responsibilityName) {
+		this.responsibilityName = responsibilityName;
+	}
+
+	@Column(name = "ORG_NAME")
+	public String getOrgName() {
+		return orgName;
+	}
+
+	public void setOrgName(String orgName) {
+		this.orgName = orgName;
+	}
+
+	@Column(name = "ORG_CODE")
+	public String getOrgCode() {
+		return orgCode;
+	}
+
+	public void setOrgCode(String orgCode) {
+		this.orgCode = orgCode;
+	}
+	
+	@Column(name = "RESP_CHANGE_DATE", length = 50)
+	public String getRespChangeDate() {
+		return respChangeDate;
+	}
+
+	public void setRespChangeDate(String respChangeDate) {
+		this.respChangeDate = respChangeDate;
+	}
+	
+	
 }

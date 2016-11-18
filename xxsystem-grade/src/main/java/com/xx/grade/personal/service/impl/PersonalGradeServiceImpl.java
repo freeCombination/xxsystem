@@ -97,6 +97,8 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		String inputGradeUser = paramMap.get("inputGradeUser");
 		// 部门
 		String canpDeptQuery = paramMap.get("canpDeptQuery");
+		// 部门名称
+		String canpDeptQueryString = paramMap.get("canpDeptQueryString");
 
 		StringBuffer hql = new StringBuffer();
 		StringBuffer counthql = new StringBuffer();
@@ -124,16 +126,22 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			counthql.append(" and pg.user.realname like '%" + inputGradeUser + "%'");
 		}
 
-		if (StringUtil.isNotEmpty(canpDeptQuery) && !"0".equals(canpDeptQuery)) {
-			String userIds = getAllUserIdsByOrgId(canpDeptQuery);
-			// 找到该部门下所有人员，如果人员为空，则没有数据
-			if (StringUtil.isNotEmpty(userIds)) {
-				hql.append(" and pg.user.userId in (" + userIds + ")");
-				counthql.append(" and pg.user.userId in (" + userIds + ")");
-			} else {
-				hql.append(" and 1=0 ");
-				counthql.append(" and 1=0 ");
-			}
+//		if (StringUtil.isNotEmpty(canpDeptQuery) && !"0".equals(canpDeptQuery)) {
+//			String userIds = getAllUserIdsByOrgId(canpDeptQuery);
+//			// 找到该部门下所有人员，如果人员为空，则没有数据
+//			if (StringUtil.isNotEmpty(userIds)) {
+//				hql.append(" and pg.user.userId in (" + userIds + ")");
+//				counthql.append(" and pg.user.userId in (" + userIds + ")");
+//			} else {
+//				hql.append(" and 1=0 ");
+//				counthql.append(" and 1=0 ");
+//			}
+//		}
+		
+		// 部门
+		if(StringUtil.isNotEmpty(canpDeptQueryString)){
+			hql.append(" and pg.orgName = '" + canpDeptQueryString + "'");
+			counthql.append(" and pg.orgName = '" + canpDeptQueryString + "'");
 		}
 
 		totalSize = baseDao.getTotalCount(counthql.toString(), new HashMap<String, Object>());
@@ -167,15 +175,17 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		if (grade.getUser() != null) {
 			vo.setUserId(grade.getUser().getUserId());
 			vo.setUserName(grade.getUser().getRealname());
-			if (grade.getUser().getResponsibilities() != null) {
-				vo.setResponsibilities(grade.getUser().getResponsibilities().getName());
-			}
-			if (grade.getUser().getOrgUsers() != null) {
-				for (OrgUser orguser : grade.getUser().getOrgUsers()) {
-					vo.setOrgName(orguser.getOrganization().getOrgName());
-					break;
-				}
-			}
+//			if (grade.getUser().getResponsibilities() != null) {
+//				vo.setResponsibilities(grade.getUser().getResponsibilities().getName());
+//			}
+//			if (grade.getUser().getOrgUsers() != null) {
+//				for (OrgUser orguser : grade.getUser().getOrgUsers()) {
+//					vo.setOrgName(orguser.getOrganization().getOrgName());
+//					break;
+//				}
+//			}
+			vo.setResponsibilities(grade.getResponsibilityName());
+			vo.setOrgName(grade.getOrgName());
 		}
 		vo.setTotalPersonCount(getResultCounts(null, grade.getId()));
 		vo.setCommitPersonCount(getResultCounts(1, grade.getId()));
@@ -369,11 +379,14 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 				cell21.setCellValue(grade.getUser().getPoliticsStatus());
 				cell23.setCellValue(grade.getUser().getEducationBackground());
 				cell25.setCellValue(grade.getUser().getJobStartDate());
-				if (grade.getUser().getResponsibilities() != null) {
-					cell31.setCellValue(grade.getUser().getResponsibilities().getName());
-				}
-				// 现任岗位时间
-				cell33.setCellValue(grade.getUser().getRespChangeDate());
+//				if (grade.getUser().getResponsibilities() != null) {
+//					cell31.setCellValue(grade.getUser().getResponsibilities().getName());
+//				}
+//				// 现任岗位时间
+//				cell33.setCellValue(grade.getUser().getRespChangeDate());
+				// 修改为第一次生成的岗位时间
+				cell31.setCellValue(grade.getResponsibilityName());
+				cell33.setCellValue(grade.getRespChangeDate());
 			}
 			
 			HSSFCellStyle cellStyle = wb.createCellStyle();
@@ -1032,21 +1045,26 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 				User user = grade.getUser();
 				vo.setGradeUser(user.getRealname());
 				if (user.getResponsibilities() != null) {
-					vo.setResponsibilities(user.getResponsibilities().getName());
+					//vo.setResponsibilities(user.getResponsibilities().getName());
 				}
 				vo.setJobStartDate(user.getJobStartDate());
-				vo.setRespChangeDate(user.getRespChangeDate());
+//				vo.setRespChangeDate(user.getRespChangeDate());
 				vo.setBirthDay(user.getBirthDay());
 				vo.setGender(user.getGender());
 				vo.setPoliticsStatus(user.getPoliticsStatus());
 				vo.setEducationBackground(user.getEducationBackground());
-				if (user.getOrgUsers() != null) {
-					for (OrgUser orguser : user.getOrgUsers()) {
-						vo.setGradeOrg(orguser.getOrganization().getOrgName());
-						break;
-					}
-				}
+//				if (user.getOrgUsers() != null) {
+//					for (OrgUser orguser : user.getOrgUsers()) {
+//						vo.setGradeOrg(orguser.getOrganization().getOrgName());
+//						break;
+//					}
+//				}
 			}
+			// 修改组织，岗位 *** 开始 ***
+			vo.setGradeOrg(grade.getOrgName());
+			vo.setRespChangeDate(grade.getRespChangeDate());
+			vo.setResponsibilities(grade.getResponsibilityName());
+			// 修改组织，岗位 *** 结束 ***
 			vo.setTitle(grade.getTitle());
 			vo.setProblem(grade.getProblem());
 			vo.setWorkPlan(grade.getWorkPlan());
@@ -1339,6 +1357,24 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 						grade.setStatus(0);
 						grade.setGradeYear(gradeYear);
 						grade.setClassification(classification);
+						// 设置组织
+						if(currentUser.getOrgUsers() != null){
+							 Set<OrgUser> orgs =  currentUser.getOrgUsers();
+							 for (OrgUser orgUser : orgs) {
+								if(orgUser.getOrganization() != null){
+									grade.setOrgCode(orgUser.getOrganization().getOrgCode());
+									grade.setOrgName(orgUser.getOrganization().getOrgName());
+									break ;
+								}
+							}
+						}
+						// 设置岗位
+						if(currentUser.getResponsibilities() != null){
+							grade.setResponsibilityCode(currentUser.getResponsibilities().getNumber());
+							grade.setResponsibilityName(currentUser.getResponsibilities().getName());
+						}
+						// 岗位时间
+						grade.setRespChangeDate(currentUser.getRespChangeDate());
 						baseDao.save(grade);
 						// 生成职责表
 						if (currentUser.getResponsibilities() != null) {
