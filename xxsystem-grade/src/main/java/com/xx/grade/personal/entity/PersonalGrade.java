@@ -105,7 +105,6 @@ public class PersonalGrade implements Serializable {
 	 */
 	private Dictionary classification ;
 	
-	
 	/**
 	 * 思想政治
 	 */

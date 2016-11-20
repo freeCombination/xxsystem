@@ -607,7 +607,7 @@ public class User implements java.io.Serializable {
         this.orgUsers = orgUsers;
     }
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "FK_RESP_ID")
     public Responsibilities getResponsibilities() {
 		return responsibilities;

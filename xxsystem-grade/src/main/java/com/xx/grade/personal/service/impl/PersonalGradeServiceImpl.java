@@ -139,7 +139,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 //		}
 		
 		// 部门
-		if(StringUtil.isNotEmpty(canpDeptQueryString)){
+		if(StringUtil.isNotEmpty(canpDeptQueryString) && !"全部".equals(canpDeptQueryString)){
 			hql.append(" and pg.orgName = '" + canpDeptQueryString + "'");
 			counthql.append(" and pg.orgName = '" + canpDeptQueryString + "'");
 		}
@@ -1618,23 +1618,35 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 			HSSFCell cell51 = row5.getCell(0);
 			cell51.setCellStyle(cellStyle2);
 			cell51.setCellValue(grade.getWorkPlan());
+			
+			if (StringUtils.isNotBlank(grade.getPoliticalThought())) {
+				HSSFRow rowPt = aSheet.getRow(newRow + personalDutys.size() + 5);
+				HSSFCell cellPt = rowPt.getCell(3);
+				cellPt.setCellValue(grade.getPoliticalThought());
+			}
+			
+			if (StringUtils.isNotBlank(grade.getPostAbility())) {
+				HSSFRow rowPa = aSheet.getRow(newRow + personalDutys.size() + 6);
+				HSSFCell cellPa = rowPa.getCell(3);
+				cellPa.setCellValue(grade.getPostAbility());
+			}
 
-			HSSFRow row6 = aSheet.getRow(newRow + personalDutys.size() + 4);
+			HSSFRow row6 = aSheet.getRow(newRow + personalDutys.size() + 7);
 			HSSFCell cell61 = row6.getCell(1);
 			cell61.setCellStyle(cellStyle2);
 			cell61.setCellValue(evaluation);
 
-			HSSFRow row7 = aSheet.getRow(newRow + personalDutys.size() + 7);
+			HSSFRow row7 = aSheet.getRow(newRow + personalDutys.size() + 10);
 			HSSFCell cell71 = row7.getCell(1);
 			cell71.setCellStyle(cellStyle2);
 			cell71.setCellValue(evaluation1);
 
-			HSSFRow row8 = aSheet.getRow(newRow + personalDutys.size() + 10);
+			HSSFRow row8 = aSheet.getRow(newRow + personalDutys.size() + 13);
 			HSSFCell cell81 = row8.getCell(1);
 			cell81.setCellStyle(cellStyle2);
 			cell81.setCellValue(evaluation2);
 
-			HSSFRow row9 = aSheet.getRow(newRow + personalDutys.size() + 13);
+			HSSFRow row9 = aSheet.getRow(newRow + personalDutys.size() + 16);
 			HSSFCell cell91 = row9.getCell(1);
 			cell91.setCellStyle(cellStyle2);
 			cell91.setCellValue(evaluation3);
