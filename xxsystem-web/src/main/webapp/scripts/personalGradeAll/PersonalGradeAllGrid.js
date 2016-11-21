@@ -143,6 +143,7 @@ grade.personalGrade.refreshScore = function(id){
  	      	var result = Ext.decode(response.responseText);
  	      	var flag = result.success;
  	      	if(flag){
+ 	      		grade.personalGrade.PersonalGradeStore.getProxy().setExtraParam("gradeYear",Ext.getCmp('gradeYear').getValue());
  	      		grade.personalGrade.PersonalGradeStore.load();
  	      		Ext.Msg.showTip(result.msg);
  	      	}else{
@@ -349,6 +350,8 @@ grade.personalGrade.PersonalGradeGrid = Ext.create("Ext.grid.Panel", {
     }
 	]
 });
+grade.personalGrade.PersonalGradeStore.getProxy().setExtraParam("gradeYear",Ext.getCmp('gradeYear').getValue());
+grade.personalGrade.PersonalGradeStore.load();
 
 /**
  * 查看详情
@@ -390,6 +393,7 @@ grade.personalGrade.deletePersonalGrade = function() {
 					var data = Ext.decode(res.responseText);
 					if (data.success) {
 						Ext.Msg.showTip(data.msg);
+						grade.personalGrade.PersonalGradeStore.getProxy().setExtraParam("gradeYear",Ext.getCmp('gradeYear').getValue());
 						grade.personalGrade.PersonalGradeStore.loadPage(1);
 					} else {
 						Ext.Msg.showError(data.msg);
