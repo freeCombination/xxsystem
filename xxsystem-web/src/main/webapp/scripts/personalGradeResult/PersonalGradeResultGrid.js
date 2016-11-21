@@ -118,7 +118,34 @@ grade.personalGradeResult.PersonalGradeResultGrid = Ext.create("Ext.grid.Panel",
 	selModel : Ext.create("Ext.selection.CheckboxModel"),
 	store : grade.personalGradeResult.PersonalGradeResultStore,
 	columns : cm,
-	tbar : [ '标题', {
+	tbar : ['参评年份',
+            {
+        id: 'electYearQuery',
+        width: 160,
+        labelWidth: 70,
+        xtype: 'textfield',
+        regex : new RegExp('^([^<^>])*$'),
+        regexText : '不能包含特殊字符！',
+        value: Ext.Date.format(new Date(),"Y"),
+        allowBlank: false,
+        listeners :{
+            'render' : function(p){
+                p.getEl().on('click',function(){
+                    WdatePicker({readOnly:true,dateFmt:'yyyy',maxDate:Ext.Date.format(new Date(),"Y"),
+                    	onpicked:function(){
+                            if (isCanEdit()) {//$dp.cal.getP('y') == Ext.Date.format(new Date(),"Y")
+                                Ext.getCmp("submitPercentageBtn").setDisabled(false);
+                            }
+                            else {
+                                Ext.getCmp("submitPercentageBtn").setDisabled(true);
+                            }
+                        }
+                    });
+                    //,onpicked:function(){$dp.$('electYearQuery-inputEl').focus();}
+                });
+            }
+        }
+    },'&nbsp;', '标题', {
 		xtype : 'textfield',
 		stripCharsRe : /^\s+|\s+$/g, // 禁止输入空格
 		id : 'inputTitle'
@@ -127,6 +154,7 @@ grade.personalGradeResult.PersonalGradeResultGrid = Ext.create("Ext.grid.Panel",
 		iconCls : "search-button",
 		handler : function(button) {
 			grade.personalGradeResult.PersonalGradeResultStore.getProxy().setExtraParam("inputTitle", button.prev().getValue());
+			grade.personalGradeResult.PersonalGradeResultStore.getProxy().setExtraParam("electYearQuery", Ext.getCmp('electYearQuery').getValue());
 			grade.personalGradeResult.PersonalGradeResultStore.loadPage(1);
 		}
 	}, '->', {
@@ -164,6 +192,8 @@ grade.personalGradeResult.PersonalGradeResultGrid = Ext.create("Ext.grid.Panel",
 		}
 	} ]
 });
+grade.personalGradeResult.PersonalGradeResultStore.getProxy().setExtraParam("electYearQuery", Ext.getCmp('electYearQuery').getValue());
+grade.personalGradeResult.PersonalGradeResultStore.loadPage(1);
 
 /**
  * 编辑个人评分
@@ -290,6 +320,7 @@ grade.personalGradeResult.SubmitPersonalGradeResult = function() {
 					var data = Ext.decode(res.responseText);
 					if (data.success) {
 						Ext.Msg.showTip(data.msg);
+						grade.personalGradeResult.PersonalGradeResultStore.getProxy().setExtraParam("electYearQuery", Ext.getCmp('electYearQuery').getValue());
 						grade.personalGradeResult.PersonalGradeResultStore.loadPage(1);
 					} else {
 						Ext.Msg.showInfo(data.msg);

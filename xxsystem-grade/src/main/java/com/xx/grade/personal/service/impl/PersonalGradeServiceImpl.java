@@ -953,6 +953,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		String canpDeptQuery = paramMap.get("canpDeptQuery");
 		// 标题
 		String inputTitle = paramMap.get("inputTitle");
+		String electYearQuery = paramMap.get("electYearQuery");
 		StringBuffer hql = new StringBuffer();
 		StringBuffer counthql = new StringBuffer();
 		hql.append(" From PersonalGradeResult pgr where 1=1");
@@ -981,6 +982,11 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		if (StringUtil.isNotEmpty(inputTitle)) {
 			hql.append(" and pgr.personalGrade.title like '%" + inputTitle + "%'");
 			counthql.append(" and pgr.personalGrade.title like '%" + inputTitle + "%'");
+		}
+		
+		if (StringUtil.isNotEmpty(electYearQuery)) {
+			hql.append(" and pgr.personalGrade.gradeYear = '" + electYearQuery + "'");
+			counthql.append(" and pgr.personalGrade.gradeYear = '" + electYearQuery + "'");
 		}
 
 		if (StringUtil.isNotEmpty(inputUserName)) {
