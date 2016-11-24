@@ -244,7 +244,7 @@ grade.personalGrade.PersonalGradeGrid = Ext.create("Ext.grid.Panel", {
 		listeners :{
 				'render' : function(p){
 					p.getEl().on('click',function(){
-						WdatePicker({readOnly:true,dateFmt:'yyyy',maxDate:Ext.Date.format(new Date(),"Y"),onpicked:function(){$dp.$('reportDate-inputEl').focus();}});
+						WdatePicker({readOnly:true,dateFmt:'yyyy',maxDate:Ext.Date.format(new Date(),"Y"),onpicked:function(){$dp.$('gradeYear-inputEl').focus();}});
 					});
 				}
 		}

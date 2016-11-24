@@ -133,12 +133,7 @@ grade.personalGradeResult.PersonalGradeResultGrid = Ext.create("Ext.grid.Panel",
                 p.getEl().on('click',function(){
                     WdatePicker({readOnly:true,dateFmt:'yyyy',maxDate:Ext.Date.format(new Date(),"Y"),
                     	onpicked:function(){
-                            if (isCanEdit()) {//$dp.cal.getP('y') == Ext.Date.format(new Date(),"Y")
-                                Ext.getCmp("submitPercentageBtn").setDisabled(false);
-                            }
-                            else {
-                                Ext.getCmp("submitPercentageBtn").setDisabled(true);
-                            }
+                            
                         }
                     });
                     //,onpicked:function(){$dp.$('electYearQuery-inputEl').focus();}

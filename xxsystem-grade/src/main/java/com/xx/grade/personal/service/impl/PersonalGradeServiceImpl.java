@@ -1846,6 +1846,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		String inputGradeUser = paramMap.get("inputGradeUser");
 		String inputUserName = paramMap.get("inputUserName");
 		String canpDeptQuery = paramMap.get("canpDeptQuery");
+		String electYearQuery = paramMap.get("electYearQuery");
 		// 标题
 		String inputTitle = paramMap.get("inputTitle");
 		StringBuffer hql = new StringBuffer();
@@ -1885,6 +1886,11 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 		if (StringUtil.isNotEmpty(personalGradeId)) {
 			hql.append(" and pgr.personalGradeResult.personalGrade.id = '" + personalGradeId + "'");
 			counthql.append(" and pgr.personalGradeResult.personalGrade.id = '" + personalGradeId + "'");
+		}
+		
+		if (StringUtil.isNotEmpty(electYearQuery)) {
+			hql.append(" and pgr.personalGradeResult.personalGrade.gradeYear = '" + electYearQuery + "'");
+			counthql.append(" and pgr.personalGradeResult.personalGrade.gradeYear = '" + electYearQuery + "'");
 		}
 
 		if (StringUtil.isNotEmpty(canpDeptQuery) && !"0".equals(canpDeptQuery)) {

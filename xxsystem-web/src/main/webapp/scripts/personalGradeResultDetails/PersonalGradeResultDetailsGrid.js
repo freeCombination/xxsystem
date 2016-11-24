@@ -178,7 +178,29 @@ grade.personalGradeResult.PersonalGradeResultGrid = Ext.create("Ext.grid.Panel",
 		xtype : 'textfield',
 		stripCharsRe : /^\s+|\s+$/g, // 禁止输入空格
 		id : 'inputUserName'
-	},
+	},'参评年份',
+            {
+        id: 'electYearQuery',
+        width: 80,
+        labelWidth: 70,
+        xtype: 'textfield',
+        regex : new RegExp('^([^<^>])*$'),
+        regexText : '不能包含特殊字符！',
+        value: Ext.Date.format(new Date(),"Y"),
+        allowBlank: false,
+        listeners :{
+            'render' : function(p){
+                p.getEl().on('click',function(){
+                    WdatePicker({readOnly:true,dateFmt:'yyyy',maxDate:Ext.Date.format(new Date(),"Y"),
+                    	onpicked:function(){
+                            
+                        }
+                    });
+                    //,onpicked:function(){$dp.$('electYearQuery-inputEl').focus();}
+                });
+            }
+        }
+    },
 	{
 		text : "查询",
 		iconCls : "search-button",
@@ -187,6 +209,7 @@ grade.personalGradeResult.PersonalGradeResultGrid = Ext.create("Ext.grid.Panel",
 			proxy.setExtraParam("inputGradeUser", Ext.getCmp('inputGradeUser').getValue());
 			proxy.setExtraParam("inputUserName", Ext.getCmp('inputUserName').getValue());
 			proxy.setExtraParam("canpDeptQuery", Ext.getCmp('canpDeptQuery').getValue());
+			proxy.setExtraParam("electYearQuery", Ext.getCmp('electYearQuery').getValue());
 			proxy.setExtraParam("state", 1);
 			grade.personalGradeResult.PersonalGradeResultDetailsStore.loadPage(1);
 		}
@@ -194,5 +217,7 @@ grade.personalGradeResult.PersonalGradeResultGrid = Ext.create("Ext.grid.Panel",
 	  ]
 });
 
-
-
+var proxy = grade.personalGradeResult.PersonalGradeResultDetailsStore.getProxy();
+proxy.setExtraParam("electYearQuery", Ext.getCmp('electYearQuery').getValue());
+proxy.setExtraParam("state", 1);
+grade.personalGradeResult.PersonalGradeResultDetailsStore.loadPage(1);
