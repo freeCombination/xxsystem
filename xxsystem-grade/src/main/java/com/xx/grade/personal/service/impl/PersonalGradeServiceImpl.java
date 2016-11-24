@@ -54,6 +54,7 @@ import com.xx.system.dict.service.IDictService;
 import com.xx.system.org.entity.Duty;
 import com.xx.system.org.entity.OrgUser;
 import com.xx.system.org.entity.Organization;
+import com.xx.system.org.service.IOrgService;
 import com.xx.system.role.entity.Role;
 import com.xx.system.user.entity.User;
 import com.xx.system.user.util.HSSFUtils;
@@ -79,6 +80,10 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 	@Autowired
 	@Qualifier("personalWeightService")
 	private IPersonalWeightService personalWeightService;
+	
+	@Autowired
+	@Qualifier("organizationService")
+	private IOrgService organizationService;
 
 	@Override
 	public ListVo<PersonalGradeVo> getPersonalGradeList(Map<String, String> paramMap) throws BusinessException {
@@ -1929,7 +1934,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 	}
 
 	@Override
-	public List<ScoreVo> getScoreList(String id) {
+	public List<ScoreVo> getScoreList(String id) throws Exception {
 		List<ScoreVo> scores = new ArrayList<ScoreVo>();
 		int maxScore = 120 ;
 		//id 此id为PersonalGradeResultDetails对象的id
@@ -1946,13 +1951,15 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 				PersonalGrade grade = detail.getPersonalGradeResult().getPersonalGrade();
 				//如果为个人评分分类
 				if (grade.getClassification() != null && grade.getClassification().getDictCode().equals(Constant.QZFL_YBYG)) {
-					//找到评分人组织
-					Organization gradeOrg = null ;
-					User gradeUser = grade.getUser() ;
-					for (OrgUser ou : gradeUser.getOrgUsers()) {
-						if (ou != null && ou.getOrganization() != null) {
-							gradeOrg = ou.getOrganization() ;
-							break;
+					//找到评分人组织 by wujl 2016-11-24 先通过存储的历史组织找数据，找不到则再根据人找
+					Organization gradeOrg = organizationService.getOrganizationByCode(grade.getOrgCode()) ;
+					if(gradeOrg == null){
+						User gradeUser = grade.getUser() ;
+						for (OrgUser ou : gradeUser.getOrgUsers()) {
+							if (ou != null && ou.getOrganization() != null) {
+								gradeOrg = ou.getOrganization() ;
+								break;
+							}
 						}
 					}
 					//如果组织不为空
@@ -1971,6 +1978,8 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 						hql.append(" and d.personalGradeResult.personalGrade.classification.dictCode = '"+Constant.QZFL_YBYG+"'");
 						//过滤评分人部门
 						hql.append(" and d.personalGradeResult.personalGrade.user.userId in ("+gradeUserIds+")");
+						// 过滤年份 by wujl 2016-11-24
+						hql.append(" and d.personalGradeResult.personalGrade.gradeYear = '"+grade.getGradeYear()+"'");
 						//过滤分数大于部门协定优秀分数的员工
 						hql.append(" and d.score >= "+gradeOrg.getExcellentScore());
 						//查出满足条件的评分集合
