@@ -4,7 +4,7 @@
  * @author wujl
  */
 
-var row1 = {  
+var row1 = {
         layout:'column',    //从左往右布局  
         border : false,
         items:[{  
@@ -174,7 +174,7 @@ var row6 = {
 var row7 = {  
         layout:'form', 
         border : false,
-        items:[{  
+        items:[{
             xtype:'textarea',  
             name:'evaluation1',
             id:'evaluation1',
@@ -186,10 +186,10 @@ var row7 = {
         }]  
     }; 
 
-var row8 = {  
+var row8 = {
         layout:'form', 
         border : false,
-        items:[{  
+        items:[{
             xtype:'textarea',  
             name:'evaluation2',
             id:'evaluation2',
@@ -204,7 +204,7 @@ var row8 = {
 var row9 = {  
         layout:'form', 
         border : false,
-        items:[{  
+        items:[{
             xtype:'textarea',  
             name:'evaluation3',
             id:'evaluation3',
@@ -233,7 +233,7 @@ var row9 = {
 grade.personalGradeResult.PersonalGradeResultForm = Ext.create("Ext.form.Panel", {  
 	layout : 'form',
 	//region: "north",
-    //width:780,  
+    width:1160,  
     //height:120,
     frame:true,  
     border : false,
@@ -246,6 +246,7 @@ grade.personalGradeResult.PersonalGradeResultForm = Ext.create("Ext.form.Panel",
 grade.personalGradeResult.PersonalGradeResultFormProblem = Ext.create("Ext.form.Panel", {  
 	layout : 'form',
     frame:true,  
+	width:1160,
     border : false,
     labelWidth:65,  
     labelAlign:'right',
@@ -255,7 +256,7 @@ grade.personalGradeResult.PersonalGradeResultFormProblem = Ext.create("Ext.form.
 grade.personalGradeResult.PersonalGradeResultForm1 = Ext.create("Ext.form.Panel", {  
 	layout : 'form',
 	//region: "south",
-    //width:780,  
+	width:1160,  
     //height:180,
     frame:true,  
     border : false,
@@ -285,6 +286,8 @@ grade.personalGradeResult.PersonalGradeResultForm1 = Ext.create("Ext.form.Panel"
 var htmlDes = new Ext.Panel({
 	id:"des",
 	title:"评分说明",
+	width:1160,  
+    frame:true, 
 	border:false,
 	html:"<div>&nbsp;&nbsp;&nbsp;&nbsp;对员工评价打分的最高分值为120分，评价分值高于120分的为无效评价。110≤得分≤120绩效等级为A级，90≤得分<110绩效等级为B级，70≤得分<90绩效等级为C级，60≤得分<70绩效等级为D级，得分<60绩效等级为E级，各部门按15%以内的比例确定A级绩效员工。</div>"
 });
@@ -293,7 +296,7 @@ var htmlDes = new Ext.Panel({
  * 定义个人评分基础信息form
  */
 grade.personalGradeResult.PersonalGradeResultWin = Ext.create("Ext.window.Window", {
-	height : 520,
+	height : 550,
 	width : 1200,
 	border:false,
 	items : [{
