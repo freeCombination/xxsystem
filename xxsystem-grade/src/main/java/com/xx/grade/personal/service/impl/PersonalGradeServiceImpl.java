@@ -1981,13 +1981,13 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 						//过滤当前分类
 						hql.append(" and d.indexType.pkDictionaryId = "+detail.getIndexType().getPkDictionaryId());
 						//过滤个人评分类型
-						hql.append(" and d.personalGradeResult.personalGrade.classification.dictCode = '"+Constant.QZFL_YBYG+"'");
+						//hql.append(" and d.personalGradeResult.personalGrade.classification.dictCode = '"+Constant.QZFL_YBYG+"'");
 						//过滤评分人部门
 						hql.append(" and d.personalGradeResult.personalGrade.user.userId in ("+gradeUserIds+")");
 						// 过滤年份 by wujl 2016-11-24
 						hql.append(" and d.personalGradeResult.personalGrade.gradeYear = '"+grade.getGradeYear()+"'");
 						//过滤分数大于部门协定优秀分数的员工
-						hql.append(" and d.score >= "+gradeOrg.getExcellentScore());
+						hql.append(" and d.score > "+gradeOrg.getExcellentScore());
 						//查出满足条件的评分集合
 						List<PersonalGradeResultDetails> details = (List<PersonalGradeResultDetails>)baseDao.queryEntitys(hql.toString());
 						if (details != null 
