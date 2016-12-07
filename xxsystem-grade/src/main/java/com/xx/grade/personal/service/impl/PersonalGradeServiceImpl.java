@@ -1956,7 +1956,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 				//被评分人
 				PersonalGrade grade = detail.getPersonalGradeResult().getPersonalGrade();
 				//如果为个人评分分类
-				if (grade.getClassification() != null && grade.getClassification().getDictCode().equals(Constant.QZFL_YBYG)) {
+				//if (grade.getClassification() != null && grade.getClassification().getDictCode().equals(Constant.QZFL_YBYG)) {
 					//找到评分人组织 by wujl 2016-11-24 先通过存储的历史组织找数据，找不到则再根据人找
 					Organization gradeOrg = organizationService.getOrganizationByCode(grade.getOrgCode()) ;
 					if(gradeOrg == null){
@@ -1996,7 +1996,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 							maxScore = gradeOrg.getExcellentScore();
 						}
 					}
-				}
+				//}
 			}
 		}
 		//设置分数上线
