@@ -223,7 +223,7 @@ public interface IPersonalGradeService {
 	 * @param personalGradeId
 	 * @return
 	 */
-	public List<ScoreVo> getScoreList(String id) throws Exception;
+	public List<ScoreVo> getScoreList(String id, String roleId) throws Exception;
 
 	/**
 	 * 撤回个人评分
