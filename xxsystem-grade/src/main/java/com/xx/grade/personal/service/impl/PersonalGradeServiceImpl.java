@@ -1540,11 +1540,27 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
             //填表日期
             fcell4.setCellValue(DateUtil.getNowDate("yyyy-MM-dd"));
             
+            HSSFCellStyle styleBold = getNewCenterStyle(wb);
+            
+            // 写入其他信息
+            HSSFCellStyle cellStyle2 = wb.createCellStyle();
+            cellStyle2.setAlignment(HSSFCellStyle.ALIGN_LEFT);
+            cellStyle2.setVerticalAlignment(HSSFCellStyle.VERTICAL_TOP);
+            cellStyle2.setBorderBottom(HSSFCellStyle.BORDER_THIN); // 下边框
+            cellStyle2.setBorderLeft(HSSFCellStyle.BORDER_THIN);// 左边框
+            cellStyle2.setBorderTop(HSSFCellStyle.BORDER_THIN);// 上边框
+            cellStyle2.setBorderRight(HSSFCellStyle.BORDER_THIN);// 右边框
+            cellStyle2.setWrapText(true);
+            
             //个人评分汇总表
             HSSFSheet aSheet = wb.getSheetAt(1);
             // 插入职员个人信息
             HSSFRow row1 = aSheet.getRow(1);
             HSSFRow row2 = aSheet.getRow(2);
+            if (grade.getUser() != null && StringUtils.isNotBlank(grade.getUser().getEducationBackground())) {
+                row2.setHeightInPoints(10 + getExcelCellAutoHeight(grade.getUser().getEducationBackground(), 7));
+            }
+            
             HSSFRow row3 = aSheet.getRow(3);
             HSSFCell cell11 = row1.getCell(1);
             HSSFCell cell13 = row1.getCell(3);
@@ -1552,6 +1568,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
 
             HSSFCell cell21 = row2.getCell(1);
             HSSFCell cell23 = row2.getCell(3);
+            cell23.setCellStyle(styleBold);
             HSSFCell cell25 = row2.getCell(5);
 
             HSSFCell cell31 = row3.getCell(1);
@@ -1570,14 +1587,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
                 // 现任岗位时间
                 cell33.setCellValue(grade.getUser().getRespChangeDate());
             }
-
-            HSSFCellStyle cellStyle = wb.createCellStyle();
-            cellStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN); // 下边框
-            cellStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);// 左边框
-            cellStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);// 上边框
-            cellStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);// 右边框
             
-            HSSFCellStyle styleBold = getNewCenterStyle(wb);
             // 获取单元格格式
             int newRow = 6; // 从第几行开始插入
             int rows = personalDutys.size();// 设定插入几行
@@ -1601,7 +1611,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
                         	flagStr = duty.getWorkDuty();
                         }
                         
-                        sourceRow.setHeightInPoints(10 + getExcelCellAutoHeight(flagStr, 19));
+                        sourceRow.setHeightInPoints(10 + getExcelCellAutoHeight(flagStr, 22));
                         // 合并 单元格 操作* 第一个参数 0 表示 起始 行* 第二个参数 a表示 起始 列* 第三个参数 0
                         // 表示结束行* 第四个参数 b表示结束列
                         Region region =  new Region(newRow + rowSize, (short) 0, newRow + rowSize, (short) 2);
@@ -1620,54 +1630,71 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
                         rowSize++;
                 }
             }
-
-            // 写入其他信息
-            HSSFCellStyle cellStyle2 = wb.createCellStyle();
-            cellStyle2.setAlignment(HSSFCellStyle.ALIGN_LEFT);
-            cellStyle2.setVerticalAlignment(HSSFCellStyle.VERTICAL_TOP);
-            cellStyle2.setBorderBottom(HSSFCellStyle.BORDER_THIN); // 下边框
-            cellStyle2.setBorderLeft(HSSFCellStyle.BORDER_THIN);// 左边框
-            cellStyle2.setBorderTop(HSSFCellStyle.BORDER_THIN);// 上边框
-            cellStyle2.setBorderRight(HSSFCellStyle.BORDER_THIN);// 右边框
             
             HSSFRow row4 = aSheet.getRow(newRow + personalDutys.size() + 1);
+            if (StringUtils.isNotBlank(grade.getProblem())) {
+                row4.setHeightInPoints(10 + getExcelCellAutoHeight(grade.getProblem(), 50));
+            }
             HSSFCell cell41 = row4.getCell(0);
             cell41.setCellStyle(cellStyle2);
             cell41.setCellValue(grade.getProblem());
 
             HSSFRow row5 = aSheet.getRow(newRow + personalDutys.size() + 3);
+            if (StringUtils.isNotBlank(grade.getWorkPlan())) {
+                row5.setHeightInPoints(10 + getExcelCellAutoHeight(grade.getWorkPlan(), 50));
+            }
             HSSFCell cell51 = row5.getCell(0);
             cell51.setCellStyle(cellStyle2);
             cell51.setCellValue(grade.getWorkPlan());
             
             if (StringUtils.isNotBlank(grade.getPoliticalThought())) {
                 HSSFRow rowPt = aSheet.getRow(newRow + personalDutys.size() + 5);
+                if (StringUtils.isNotBlank(grade.getPoliticalThought())) {
+                    rowPt.setHeightInPoints(10 + getExcelCellAutoHeight(grade.getPoliticalThought(), 22));
+                }
                 HSSFCell cellPt = rowPt.getCell(3);
+                cellPt.setCellStyle(cellStyle2);
                 cellPt.setCellValue(grade.getPoliticalThought());
             }
             
             if (StringUtils.isNotBlank(grade.getPostAbility())) {
                 HSSFRow rowPa = aSheet.getRow(newRow + personalDutys.size() + 6);
+                if (StringUtils.isNotBlank(grade.getPostAbility())) {
+                	rowPa.setHeightInPoints(10 + getExcelCellAutoHeight(grade.getPostAbility(), 22));
+                }
                 HSSFCell cellPa = rowPa.getCell(3);
+                cellPa.setCellStyle(cellStyle2);
                 cellPa.setCellValue(grade.getPostAbility());
             }
 
             HSSFRow row6 = aSheet.getRow(newRow + personalDutys.size() + 7);
+            if (StringUtils.isNotBlank(evaluation)) {
+                row6.setHeightInPoints(getExcelCellAutoHeight(evaluation, 40));
+            }
             HSSFCell cell61 = row6.getCell(1);
             cell61.setCellStyle(cellStyle2);
             cell61.setCellValue(evaluation);
 
             HSSFRow row7 = aSheet.getRow(newRow + personalDutys.size() + 10);
+            if (StringUtils.isNotBlank(evaluation1)) {
+                row7.setHeightInPoints(getExcelCellAutoHeight(evaluation1, 40));
+            }
             HSSFCell cell71 = row7.getCell(1);
             cell71.setCellStyle(cellStyle2);
             cell71.setCellValue(evaluation1);
 
             HSSFRow row8 = aSheet.getRow(newRow + personalDutys.size() + 13);
+            if (StringUtils.isNotBlank(evaluation2)) {
+                row8.setHeightInPoints(getExcelCellAutoHeight(evaluation2, 40));
+            }
             HSSFCell cell81 = row8.getCell(1);
             cell81.setCellStyle(cellStyle2);
             cell81.setCellValue(evaluation2);
 
             HSSFRow row9 = aSheet.getRow(newRow + personalDutys.size() + 16);
+            if (StringUtils.isNotBlank(evaluation3)) {
+                row9.setHeightInPoints(getExcelCellAutoHeight(evaluation3, 40));
+            }
             HSSFCell cell91 = row9.getCell(1);
             cell91.setCellStyle(cellStyle2);
             cell91.setCellValue(evaluation3);
