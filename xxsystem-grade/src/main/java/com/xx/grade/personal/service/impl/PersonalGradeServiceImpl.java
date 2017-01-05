@@ -1591,7 +1591,17 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
                         }
                         //System.err.println(getExcelCellAutoHeight(duty.getWorkDuty(), 20));
                         //sourceRow.setHeight((short) 400);
-                        sourceRow.setHeightInPoints(10+getExcelCellAutoHeight(duty.getWorkDuty(), 19));
+                        
+                        // 2017/01/05 何东 判断职责和职责完成情况，使用长度较长的作为行高判断依据
+                        String flagStr = duty.getCompletion();
+                        if (StringUtils.isNotBlank(duty.getWorkDuty()) && StringUtils.isNotBlank(duty.getCompletion())
+                        		&& duty.getWorkDuty().length() > duty.getCompletion().length()) {
+                        	flagStr = duty.getWorkDuty();
+                        } else if (StringUtils.isBlank(duty.getCompletion())) {
+                        	flagStr = duty.getWorkDuty();
+                        }
+                        
+                        sourceRow.setHeightInPoints(10 + getExcelCellAutoHeight(flagStr, 19));
                         // 合并 单元格 操作* 第一个参数 0 表示 起始 行* 第二个参数 a表示 起始 列* 第三个参数 0
                         // 表示结束行* 第四个参数 b表示结束列
                         Region region =  new Region(newRow + rowSize, (short) 0, newRow + rowSize, (short) 2);
