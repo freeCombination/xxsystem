@@ -303,7 +303,12 @@ grade.personalGradeResult.PersonalGradeResultWin = Ext.create("Ext.window.Window
 		xtype:'panel',
 		bodyStyle :"overflow-x:hidden;overflow-y:auto",
 		border:false,
-		items : [grade.personalGradeResult.PersonalGradeResultForm,grade.personalDutyResult.PersonalDutyResultGrid,grade.personalGradeResult.PersonalGradeResultFormProblem,htmlDes,grade.personalDutyResultDetails.PersonalDutyResultDetailsGrid,grade.personalGradeResult.PersonalGradeResultForm1]
+		items : [grade.personalGradeResult.PersonalGradeResultForm,
+		         grade.personalDutyResult.PersonalDutyResultGrid,
+		         grade.personalGradeResult.PersonalGradeResultFormProblem,
+		         htmlDes,
+		         grade.personalDutyResultDetails.PersonalDutyResultDetailsGrid,
+		         grade.personalGradeResult.PersonalGradeResultForm1]
 	}],
 	buttons : [ {
 		text : '确定',

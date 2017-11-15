@@ -744,8 +744,11 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
             hql.append(" select sm.roleMemberScope.user From ScopeMember sm where sm.org.orgId = "
                     + currentOrg.getOrgId() + " and sm.roleMemberScope.role.roleId = " + role.getRoleId());
             hql.append(" and sm.roleMemberScope.user.status = 0 and sm.roleMemberScope.user.enable = 1 ");
-            if ("部门主任".equals(role.getRoleName())) {
-                //hql.append(" and sm.roleMemberScope.user.userId <> " + userId) ;
+            
+            // hed 2017-11-15 20:30 需求变更：部门主任、部门副主任可以相互评分，且不能自己评自己，
+            // 且为了不影响其他逻辑，此处只剔除 部门主任、部门副主任 这两个角色对应的自己
+            if ("部门主任".equals(role.getRoleName()) || "部门副主任".equals(role.getRoleName())) {
+                hql.append(" and sm.roleMemberScope.user.userId <> " + userId) ;
             }
         } // 其他角色，直接取对于角色下的所有人
         else {
