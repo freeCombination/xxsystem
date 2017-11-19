@@ -72,8 +72,10 @@ sshframe.user.UserForm = Ext.create("Ext.form.Panel", {
 							    	fieldLabel: '登录名', 
 							    	name: 'user.username',
 							    	emptyText: '登录名',
-					              	regex : /^[\w-]{4,16}$/,
-					              	regexText : '登录名由4到16位数字、字母、下划线、中划线组成，请检查',
+					              	// regex : /^[\w-]{4,16}$/,
+					              	// regexText : '登录名由4到16位数字、字母、下划线、中划线组成，请检查',
+					              	regex : /^[\w.\-\u4e00-\u9fa5]+$/,
+							        regexText : '不能包含特殊字符',
 					              	emptyText: '登录名不能为空',
 					              	maxLength:16
 									
