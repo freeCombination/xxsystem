@@ -173,10 +173,10 @@ public class RespAction extends BaseAction {
 	 * 根据部门查询岗位
 	 */
 	public String getAllResp() {
-		String orgId = getRequest().getParameter("orgId");
-		int id = StringUtil.isNotBlank(orgId) ? Integer.valueOf(orgId) : 0;
+		String orgIds = getRequest().getParameter("orgId");
+		//int id = StringUtil.isNotBlank(orgId) ? Integer.valueOf(orgId) : 0;
 		try {
-			JsonUtil.outJsonArray(respService.getAllResp(id));
+			JsonUtil.outJsonArray(respService.getAllResp(orgIds));
 		} catch (Exception e) {
 			this.excepAndLogHandle(RespAction.class, "根据部门查询岗位", e, false);
 		}

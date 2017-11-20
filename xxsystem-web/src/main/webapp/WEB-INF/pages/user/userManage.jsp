@@ -235,6 +235,7 @@ function chooseOrganization(objName,objId,userId){
 			}),
 			listeners:{
 	            checkchange : function(node) {
+	            	/*
 	                orgTreePanel.getRootNode().cascadeBy(function(child){
 	                    if(child.data.id != 0 && child.get('checked')){
 	                        if (child.data.id != node.data.id) {
@@ -242,6 +243,7 @@ function chooseOrganization(objName,objId,userId){
 	                        }
 	                    }
 	                });
+	            	*/
 	            }
 	        }
 	});

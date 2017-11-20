@@ -548,68 +548,67 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
             for (OrgUser orgUser : currentOrgs) {
                 if (orgUser.getOrganization() != null) {
                     currentOrg = orgUser.getOrganization();
-                    break;
-                }
-            }
+                    // hed 2017/11/20 若一个领导管理了多个部门，多个部门一般员工需要对其进行评分，用户管理模块已支持一个人多个部门的管理
+                    for (PersonalGrade grade : grades) {
+                        Dictionary classification = grade.getClassification();
+                        // 获取该权重分类下的所有权重维护
+                        List<PersonalWeight> pws = personalWeightService
+                                .getPersonalWeightByClassification(classification.getPkDictionaryId());
 
-            for (PersonalGrade grade : grades) {
-                Dictionary classification = grade.getClassification();
-                // 获取该权重分类下的所有权重维护
-                List<PersonalWeight> pws = personalWeightService
-                        .getPersonalWeightByClassification(classification.getPkDictionaryId());
+                        // 生成指标评分明细历史
+                        for (PersonalWeight pw : pws) {
+                            PersonalGradeDetails gradeDetail = getGradeDetailsByGrade(grade, pw.getIndexType());
+                            if (gradeDetail == null) {
+                                gradeDetail = new PersonalGradeDetails();
+                                gradeDetail.setPersonalGrade(grade);
+                                gradeDetail.setIndexType(pw.getIndexType());
+                                gradeDetail.setPercentage(pw.getPercentage());
+                                gradeDetail.setGrade(pw.getIsGrade());
+                                baseDao.save(gradeDetail);
+                            }
+                        }
 
-                // 生成指标评分明细历史
-                for (PersonalWeight pw : pws) {
-                    PersonalGradeDetails gradeDetail = getGradeDetailsByGrade(grade, pw.getIndexType());
-                    if (gradeDetail == null) {
-                        gradeDetail = new PersonalGradeDetails();
-                        gradeDetail.setPersonalGrade(grade);
-                        gradeDetail.setIndexType(pw.getIndexType());
-                        gradeDetail.setPercentage(pw.getPercentage());
-                        gradeDetail.setGrade(pw.getIsGrade());
-                        baseDao.save(gradeDetail);
-                    }
-                }
-
-                for (PersonalWeight pw : pws) {
-                    // 对于参与评分的指标
-                    if (pw.getIsGrade() != null && pw.getIsGrade() == 1) {
-                        // 获取该指标下所有角色权重
-                        Set<IndexTypeRoleWeight> rws = pw.getIndexTypeRoles();
-                        Iterator<IndexTypeRoleWeight> it =rws.iterator();
-                        while (it.hasNext()) {
-                            IndexTypeRoleWeight rw = it.next();
-                            Role role = rw.getRole();
-                            List<User> users = getUsersExcludeSelf(role, grade.getUser().getUserId(), currentOrg);
-                            for (User user : users) {
-                                PersonalGradeResult result = getResultByUserAndGrade(user, grade);
-                                if (result == null) {
-                                    result = new PersonalGradeResult();
-                                    result.setPersonalGrade(grade);
-                                    result.setGradeUser(user);
-                                    result.setState(0);
-                                    result.setGradeUserType(0);
-                                    baseDao.save(result);
-                                }
-                                PersonalGradeResultDetails detail = getDetailsByRoleAndIndexAndResult(role,
-                                        pw.getIndexType(), result);
-                                if (detail == null) {
-                                    detail = new PersonalGradeResultDetails();
-                                    detail.setPersonalGradeResult(result);
-                                    detail.setIndexType(pw.getIndexType());
-                                    detail.setRole(role);
-                                    detail.setPercentage(rw.getPercentage());
-                                    baseDao.save(detail);
+                        for (PersonalWeight pw : pws) {
+                            // 对于参与评分的指标
+                            if (pw.getIsGrade() != null && pw.getIsGrade() == 1) {
+                                // 获取该指标下所有角色权重
+                                Set<IndexTypeRoleWeight> rws = pw.getIndexTypeRoles();
+                                Iterator<IndexTypeRoleWeight> it =rws.iterator();
+                                while (it.hasNext()) {
+                                    IndexTypeRoleWeight rw = it.next();
+                                    Role role = rw.getRole();
+                                    List<User> users = getUsersExcludeSelf(role, grade.getUser().getUserId(), currentOrg);
+                                    for (User user : users) {
+                                        PersonalGradeResult result = getResultByUserAndGrade(user, grade);
+                                        if (result == null) {
+                                            result = new PersonalGradeResult();
+                                            result.setPersonalGrade(grade);
+                                            result.setGradeUser(user);
+                                            result.setState(0);
+                                            result.setGradeUserType(0);
+                                            baseDao.save(result);
+                                        }
+                                        PersonalGradeResultDetails detail = getDetailsByRoleAndIndexAndResult(role,
+                                                pw.getIndexType(), result);
+                                        if (detail == null) {
+                                            detail = new PersonalGradeResultDetails();
+                                            detail.setPersonalGradeResult(result);
+                                            detail.setIndexType(pw.getIndexType());
+                                            detail.setRole(role);
+                                            detail.setPercentage(rw.getPercentage());
+                                            baseDao.save(detail);
+                                        }
+                                    }
                                 }
                             }
                         }
+                        //对于部门主任或副主任评分的角色，需过滤掉同一人为分管领导和副所长的角色
+                        if (classification.getDictCode().equals(Constant.QZFL_BMLD)) {
+                            deleteDetailsForSameRole(grade);
+                        }
+                    
                     }
                 }
-                //对于部门主任或副主任评分的角色，需过滤掉同一人为分管领导和副所长的角色
-                if (classification.getDictCode().equals(Constant.QZFL_BMLD)) {
-                    deleteDetailsForSameRole(grade);
-                }
-            
             }
         }
     }
@@ -754,7 +753,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
         else {
             hql.append(" select rs.user From RoleMemberScope rs where rs.role.roleId =" + role.getRoleId());
             hql.append(" and rs.user.status = 0 and rs.user.enable = 1 ");
-            //hql.append(" and rs.user.userId <> " + userId) ;
+            hql.append(" and rs.user.userId <> " + userId) ;
         }
         users = baseDao.queryEntitys(hql.toString());
         return users;

@@ -23,7 +23,7 @@ public interface IRespService {
      * @date 2013-11-25
      * @return List<RespVo>
      */
-    public List<RespVo> getAllResp(Integer orgId)
+    public List<RespVo> getAllResp(String orgIds)
         throws BusinessException;
     
     /**

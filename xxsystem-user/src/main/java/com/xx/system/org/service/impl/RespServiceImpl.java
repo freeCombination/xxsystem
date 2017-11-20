@@ -45,13 +45,24 @@ public class RespServiceImpl implements IRespService {
     public IOrgService organizationService;
 
 	@Override
-	public List<RespVo> getAllResp(Integer orgId) throws BusinessException {
+	public List<RespVo> getAllResp(String orgIds) throws BusinessException {
 		List<RespVo> voLst = new ArrayList<RespVo>();
 		
-		String respHql = " from Responsibilities r where r.isDelete = 0 and r.enable = 0";
-		if (orgId != null && orgId != 0) {
-			respHql += " and r.organization.orgId = " + orgId;
+		if (StringUtil.isBlank(orgIds)) return voLst;
+		
+		String ids = "";
+		for (String id : orgIds.split(",")) {
+			ids += ",'" + id + "'";
 		}
+		
+		ids = ids.substring(1);
+		
+		String respHql = " from Responsibilities r where r.isDelete = 0 and r.enable = 0";
+//		if (orgId != null && orgId != 0) {
+//			respHql += " and r.organization.orgId = " + orgId;
+//		}
+		
+		respHql += " and r.organization.orgId in (" + ids + ")";
 		
 		List<Responsibilities> respLst = (List<Responsibilities>)baseDao.queryEntitys(respHql);
 		if (!CollectionUtils.isEmpty(respLst)) {
