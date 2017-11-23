@@ -15,6 +15,8 @@ var row1 = {
                 xtype:'displayfield',
                 id:'gradeUser',
                 name:'gradeUser',
+                labelCls: "custom_font_size",
+                fieldCls: "custom_font_size",
                 fieldLabel:'姓    名'
             }]  
         },{  
@@ -24,6 +26,8 @@ var row1 = {
             items:[{  
                 xtype:'displayfield',  
                 name:'gender',
+                labelCls: "custom_font_size",
+                fieldCls: "custom_font_size",
                 fieldLabel:'性    别'
             }]  
         },{  
@@ -33,6 +37,8 @@ var row1 = {
             items:[{  
                 xtype:'displayfield',  
                 name:'birthDay',
+                labelCls: "custom_font_size",
+                fieldCls: "custom_font_size",
                 fieldLabel:'出生年月'
             }]  
         }]  
@@ -48,6 +54,8 @@ var row2 = {
             items:[{  
                 xtype:'displayfield',  
                 name:'politicsStatus',
+                labelCls: "custom_font_size",
+                fieldCls: "custom_font_size",
                 fieldLabel:'政治面貌'
             }]  
         },{  
@@ -57,6 +65,8 @@ var row2 = {
             items:[{  
                 xtype:'displayfield',  
                 name:'educationBackground',
+                labelCls: "custom_font_size",
+                fieldCls: "custom_font_size",
                 fieldLabel:'最高学历'
             }]  
         },{  
@@ -66,6 +76,9 @@ var row2 = {
             items:[{  
                 xtype:'displayfield',
                 name:'jobStartDate',
+                labelCls: "custom_font_size",
+                fieldCls: "custom_font_size",
+                labelWidth:140,
                 fieldLabel:'参加工作时间'
             }]  
         }]  
@@ -82,6 +95,8 @@ var row3 = {
 	    items:[{  
 	        xtype:'displayfield',
 	        name:'responsibilities',
+	        labelCls: "custom_font_size",
+            fieldCls: "custom_font_size",
 	        fieldLabel:'现任岗位' 
 	    }]  
 		},{  
@@ -91,6 +106,9 @@ var row3 = {
 		    items:[{  
 		        xtype:'displayfield',  
 		        name:'respChangeDate',
+		        labelCls: "custom_font_size",
+                fieldCls: "custom_font_size",
+                labelWidth:140,
 		        fieldLabel:'现任岗位时间'
 		    }]  
 		}]  
@@ -102,6 +120,9 @@ var row4 = {
         items:[{  
             xtype:'displayfield',  
             name:'problem',
+            labelCls: "custom_font_size",
+            fieldCls: "custom_font_size",
+            labelWidth:140,
             fieldLabel:'二、存在的问题' ,
     		renderer:function(value){
     			return value.replace(/\n/g,'<br />');
@@ -115,6 +136,9 @@ var row5 = {
         items:[{
             xtype:'displayfield',
             name:'workPlan',
+            labelCls: "custom_font_size",
+            fieldCls: "custom_font_size",
+            labelWidth:140,
             fieldLabel:'三、明年工作计划',
     		renderer:function(value){
     			return value.replace(/\n/g,'<br />');
@@ -127,6 +151,9 @@ var row51 = {
         border : false,
         items:[{
             xtype:'displayfield',
+            labelCls: "custom_font_size",
+            fieldCls: "custom_font_size",
+            labelWidth:140,
             fieldLabel:'四、素质提升'
         }]
     };
@@ -135,6 +162,8 @@ var row52 = {
         border : false,
         items:[{
             xtype:'displayfield',
+            labelCls: "custom_font_size",
+            fieldCls: "custom_font_size",
             name:'politicalThought',
             fieldLabel:'1.思想政治',
     		renderer:function(value){
@@ -147,6 +176,8 @@ var row53 = {
         border : false,
         items:[{
             xtype:'displayfield',
+            labelCls: "custom_font_size",
+            fieldCls: "custom_font_size",
             name:'postAbility',
             fieldLabel:'2.岗位能力',
     		renderer:function(value){
@@ -163,6 +194,8 @@ var row6 = {
             xtype:'textarea',  
             name:'evaluation',
             id:'evaluation',
+            labelCls: "custom_font_size",
+            fieldCls: "custom_font_size",
             hidden:true,
         	regex : new RegExp('^([^<^>])*$'),
             regexText : '不能包含特殊字符！',
@@ -178,6 +211,8 @@ var row7 = {
             xtype:'textarea',  
             name:'evaluation1',
             id:'evaluation1',
+            labelCls: "custom_font_size",
+            fieldCls: "custom_font_size",
             hidden:true,
         	regex : new RegExp('^([^<^>])*$'),
             regexText : '不能包含特殊字符！',
@@ -193,6 +228,8 @@ var row8 = {
             xtype:'textarea',  
             name:'evaluation2',
             id:'evaluation2',
+            labelCls: "custom_font_size",
+            fieldCls: "custom_font_size",
             hidden:true,
         	regex : new RegExp('^([^<^>])*$'),
             regexText : '不能包含特殊字符！',
@@ -208,6 +245,8 @@ var row9 = {
             xtype:'textarea',  
             name:'evaluation3',
             id:'evaluation3',
+            labelCls: "custom_font_size",
+            fieldCls: "custom_font_size",
             hidden:true,
         	regex : new RegExp('^([^<^>])*$'),
             regexText : '不能包含特殊字符！',
@@ -237,7 +276,7 @@ grade.personalGradeResult.PersonalGradeResultForm = Ext.create("Ext.form.Panel",
     //height:120,
     frame:true,  
     border : false,
-    labelWidth:65,  
+    labelWidth:140,
     labelAlign:'right',  
     //style:'padding:10px',  
     items:[row1,row2,row3]
@@ -248,7 +287,7 @@ grade.personalGradeResult.PersonalGradeResultFormProblem = Ext.create("Ext.form.
     frame:true,  
 	width:1160,
     border : false,
-    labelWidth:65,  
+    labelWidth:140,
     labelAlign:'right',
     items:[row4,row5,row51,row52,row53]
 });
@@ -260,7 +299,7 @@ grade.personalGradeResult.PersonalGradeResultForm1 = Ext.create("Ext.form.Panel"
     //height:180,
     frame:true,  
     border : false,
-    labelWidth:65,  
+    labelWidth:140,
     labelAlign:'right',  
     //style:'padding:10px',  
     items:[ {
@@ -289,7 +328,7 @@ var htmlDes = new Ext.Panel({
 	width:1160,  
     frame:true, 
 	border:false,
-	html:"<div>&nbsp;&nbsp;&nbsp;&nbsp;对员工评价打分的最高分值为120分，评价分值高于120分的为无效评价。110≤得分≤120绩效等级为A级，90≤得分<110绩效等级为B级，70≤得分<90绩效等级为C级，60≤得分<70绩效等级为D级，得分<60绩效等级为E级，各部门按15%以内的比例确定A级绩效员工。</div>"
+	html:'<div style="font-size:16px;color:red;">&nbsp;&nbsp;&nbsp;&nbsp;对员工评价打分的最高分值为120分，评价分值高于120分的为无效评价。110≤得分≤120绩效等级为A级，90≤得分<110绩效等级为B级，70≤得分<90绩效等级为C级，60≤得分<70绩效等级为D级，得分<60绩效等级为E级，各部门按15%以内的比例确定A级绩效员工。</div>'
 });
 
 /**

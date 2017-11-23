@@ -598,6 +598,8 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
                                             detail.setPercentage(rw.getPercentage());
                                             baseDao.save(detail);
                                         }
+                                        
+                                        delDetailsByIndexAndResult(pw.getIndexType(), result);
                                     }
                                 }
                             }
@@ -693,6 +695,42 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
             detail = details.get(0);
         }
         return detail;
+    }
+    
+    /**
+     * hed 2017-11-23 为了实现部门主任和副主任互评（作为一般员工），将部门主任和副主任加入了一般员工，但部门主任给一般员工评分出现了两条“能力态度”
+     * 因此，删除部门主任作为一般员工给一般员工评分的明细记录
+     * 
+     * @param indexType
+     * @param result
+     * @return
+     */
+    private void delDetailsByIndexAndResult(Dictionary indexType, PersonalGradeResult result) {
+        PersonalGradeResultDetails detail = null;
+        StringBuffer hql = new StringBuffer();
+        hql.append(" From PersonalGradeResultDetails d where d.personalGradeResult.id =" + result.getId()
+                + " and d.indexType.pkDictionaryId=" + indexType.getPkDictionaryId());
+        List<PersonalGradeResultDetails> details = baseDao.queryEntitys(hql.toString());
+        // 当同一个评分人同时以“一般员工”、“部门主任”两个角色对同一一般员工进行评分时，删除角色为“一般员工”，
+        // 注：PersonalGradeResult result中有评分人信息
+        PersonalGradeResultDetails ybygDetail = null;
+        boolean existYbyg = false, existBmzr = false;
+        if (details != null && details.size() > 1) {
+            for (PersonalGradeResultDetails d : details) {
+            	if (d.getRole() != null && d.getRole().getRoleName().equals("一般员工")) {
+            		existYbyg = true;
+            		ybygDetail = d;
+            	}
+            	
+            	if (d.getRole() != null && d.getRole().getRoleName().equals("部门主任")) {
+            		existBmzr = true;
+            	}
+            }
+            
+            if (existYbyg && existBmzr) {
+            	baseDao.deleteEntity(ybygDetail);
+            }
+        }
     }
 
     /**

@@ -28,6 +28,10 @@
   .custom-grid-row{
     height:45px;
   }
+  
+  .custom_font_size{
+    font-size:16px;
+  }
 </style>
 </head>
 <body>
