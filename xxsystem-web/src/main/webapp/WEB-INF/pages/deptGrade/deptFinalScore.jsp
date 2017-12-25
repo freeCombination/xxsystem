@@ -527,6 +527,8 @@
                 }
             }
     		
+    		bdScore = (bdScore == null || bdScore == '' ? '0' : bdScore);
+    		
     		var sc = e.record.data.jdScore;
             //var per = e.record.data.jdPercentage;
             //var jdSumScore = 0;
@@ -566,7 +568,7 @@
                     async : false,
                     dataType : 'json',
                     success : function(response) {
-                    	recordStore.load();
+                    	recordStore.reload();
                     }
                 });
     		}

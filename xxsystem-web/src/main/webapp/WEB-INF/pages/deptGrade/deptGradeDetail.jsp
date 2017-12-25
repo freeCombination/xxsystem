@@ -333,6 +333,11 @@
 			Ext.getCmp("classifyIdQuery").setValue('0');
 		});
 		
+		recordStore.on('beforeload',function(store,options){
+		      var new_params = {"electYear":Ext.getCmp('electYearQuery').getValue()};
+		      Ext.apply(store.proxy.extraParams, new_params);
+		  });
+		
 		recordStore.load({
             params:{
                 start:0,

@@ -1306,7 +1306,7 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
                     gradeDetail.setScore(indexTypeTotal);
                     baseDao.saveOrUpdate(gradeDetail);
                 }
-                grade.setCompositeScores(totalScore);
+                grade.setCompositeScores(Double.parseDouble(String.format("%.2f", totalScore)));
                 grade.setStatus(2);
                 baseDao.saveOrUpdate(grade);
             }
@@ -1344,20 +1344,28 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
                         .divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_UP).doubleValue();
             }
         }
-        System.err.println(result);
+        
         // 如果是不参与个人评分的就是组织 TODO
         if (gradeDetail.isGrade() == null || gradeDetail.isGrade() == 0) {
             User user = grade.getUser();
-            Organization organization = null;
+            double orgScore = 0d;
+            int count = 0;
             for (OrgUser ou : user.getOrgUsers()) {
+                // hed 2017-12-25 取所有部门的平均分
                 if (ou.getOrganization() != null) {
-                    organization = ou.getOrganization();
+                    Double score = getBmScoreByOrg(ou.getOrganization(), grade.getGradeYear());
+                    if (score != null && score > 0) {
+                        orgScore += score;
+                        count++;
+                    }
                 }
             }
-            if (organization != null) {
-                result = getBmScoreByOrg(organization, grade.getGradeYear());
+            
+            if (count > 1) {
+                BigDecimal data2 = new BigDecimal(orgScore);
+                result = data2.divide(new BigDecimal(count), BigDecimal.ROUND_HALF_UP).doubleValue();
             } else {
-                result = 0d;
+            	result = orgScore;
             }
         }
         return result;
