@@ -1846,6 +1846,11 @@ public class IndexManageServiceImpl implements IIndexManageService {
 							if (!"0".equals(sc.getJdSumScore())) {
 								vo.setJdSumScore(sc.getJdSumScore());
 							}
+							
+							vo.setPartyScore(sc.getPartyScore());
+							vo.setZhzlScore(sc.getZhzlScore());
+							vo.setSecScore(sc.getSecScore());
+							vo.setLhScore(sc.getLhScore());
 						}
 						
 						voLst.add(vo);
@@ -1879,6 +1884,11 @@ public class IndexManageServiceImpl implements IIndexManageService {
 							if (!"0".equals(sc.getJdSumScore())) {
 								vo.setJdSumScore(sc.getJdSumScore());
 							}
+							
+							vo.setPartyScore(sc.getPartyScore());
+							vo.setZhzlScore(sc.getZhzlScore());
+							vo.setSecScore(sc.getSecScore());
+							vo.setLhScore(sc.getLhScore());
 						}
 						
 						voLst.add(vo);
@@ -1996,8 +2006,8 @@ public class IndexManageServiceImpl implements IIndexManageService {
 	}
 	
 	@Override
-	public void savePlusedcore(String orgId, String plusedScore, String electYear) throws Exception {
-		if (StringUtil.isNotBlank(orgId) && StringUtil.isNotBlank(plusedScore) && StringUtil.isNotBlank(electYear)) {
+	public void saveInputScore(String orgId, String score, String flag, String electYear) throws Exception {
+		if (StringUtil.isNotBlank(orgId) && StringUtil.isNotBlank(score) && StringUtil.isNotBlank(flag) && StringUtil.isNotBlank(electYear)) {
 			String hql = " from FinalScore fs where fs.electYear = '" + electYear + "'"
 					+ " and fs.org.orgId = " + orgId;
 			List<FinalScore> fsLst = (List<FinalScore>)baseDao.queryEntitys(hql);
@@ -2011,8 +2021,21 @@ public class IndexManageServiceImpl implements IIndexManageService {
 				Organization org = (Organization)baseDao.queryEntityById(Organization.class, NumberUtils.toInt(orgId));
 				fs.setOrg(org);
 			}
-			
-			fs.setPlusedScore(plusedScore);
+			if ("plusedScore".equals(flag)) {
+				fs.setPlusedScore(score);
+			}
+			if ("partyScore".equals(flag)) {
+				fs.setPartyScore(score);
+			}
+			if ("zhzlScore".equals(flag)) {
+				fs.setZhzlScore(score);
+			}
+			if ("secScore".equals(flag)) {
+				fs.setSecScore(score);
+			}
+			if ("lhScore".equals(flag)) {
+				fs.setLhScore(score);
+			}
 			
 			baseDao.saveOrUpdate(fs);
 		}
@@ -2100,12 +2123,17 @@ public class IndexManageServiceImpl implements IIndexManageService {
 		
 		List<Dictionary> dictlist = dictService.getDictByTypeCode("SCORETYPE");
 		
-		String[] excelHeader = {"部门", "季度得分", "部门指标年度得分", "", "", "", "", "部门建设得分", "总分"};
+		String[] excelHeader = {"部门", "季度得分", "部门指标年度得分", "", "", "", "", "部门建设得分", "党建", "综合治理", "保密", "例会", "总分"};
 		
 		if (!CollectionUtils.isEmpty(dictlist)) {
 			String cfPer = "";
 			String bdPer = "";
 			String jdPer = "";
+			
+			String partyPer = "";
+			String zhzlPer = "";
+			String secPer = "";
+			String lhPer = "";
 			
 			for (Dictionary dict : dictlist) {
 				if ("INXSCORE".equals(dict.getDictCode())) {
@@ -2120,18 +2148,38 @@ public class IndexManageServiceImpl implements IIndexManageService {
                     jdPer = "季度得分（" + (StringUtil.isNotBlank(dict.getDictionaryValue()) ? 
     						String.format("%.2f", NumberUtils.toFloat(dict.getDictionaryValue()) * 100) + "%" : "") + "）";
                 }
+                else if ("PARTYSCORE".equals(dict.getDictCode())) {
+                	partyPer = "党建（" + (StringUtil.isNotBlank(dict.getDictionaryValue()) ? 
+    						String.format("%.2f", NumberUtils.toFloat(dict.getDictionaryValue()) * 100) + "%" : "") + "）";
+                }
+                else if ("ZHZLSCORE".equals(dict.getDictCode())) {
+                    zhzlPer = "综合治理（" + (StringUtil.isNotBlank(dict.getDictionaryValue()) ? 
+    						String.format("%.2f", NumberUtils.toFloat(dict.getDictionaryValue()) * 100) + "%" : "") + "）";
+                }
+                else if ("SECSCORE".equals(dict.getDictCode())) {
+                    secPer = "保密（" + (StringUtil.isNotBlank(dict.getDictionaryValue()) ? 
+    						String.format("%.2f", NumberUtils.toFloat(dict.getDictionaryValue()) * 100) + "%" : "") + "）";
+                }
+                else if ("LHSCORE".equals(dict.getDictCode())) {
+                    lhPer = "例会（" + (StringUtil.isNotBlank(dict.getDictionaryValue()) ? 
+    						String.format("%.2f", NumberUtils.toFloat(dict.getDictionaryValue()) * 100) + "%" : "") + "）";
+                }
 			}
 			
 			excelHeader[1] = jdPer;
 			excelHeader[2] = cfPer;
 			excelHeader[7] = bdPer;
+			excelHeader[8] = partyPer;
+			excelHeader[9] = zhzlPer;
+			excelHeader[10] = secPer;
+			excelHeader[11] = lhPer;
 		}
 		
 		
 		String[] excelHeader1 = {"", "季度得分（可编辑）", "加减分项（可编辑）", "指标名称", "得分（可编辑）",
-			"权重（可编辑）", "年度得分", "评价得分", ""};
+			"权重（可编辑）", "年度得分", "评价得分", "（可编辑）", "（可编辑）", "（可编辑）", "（可编辑）", ""};
 		// 单元格列宽
-		int[] excelHeaderWidth = {120, 120, 120, 200, 90, 90, 90, 160, 90};
+		int[] excelHeaderWidth = {120, 120, 120, 200, 90, 90, 90, 160, 110, 110, 110, 110, 90};
 		
 		// 设置列宽度（像素）
 		for (int i = 0; i < excelHeaderWidth.length; i++) {
@@ -2139,7 +2187,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 		}
 		
 		// 创建标题行
-		sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 8));
+		sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 12));
 		HSSFRow titleRow = sheet.createRow(0);
 		titleRow.setHeight((short) 800);
 		HSSFCell titleCell = titleRow.createCell(0);
@@ -2149,7 +2197,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 		// 创建表头行
 		sheet.addMergedRegion(new CellRangeAddress(1, 2, 0, 0));
 		sheet.addMergedRegion(new CellRangeAddress(1, 1, 2, 6));
-		sheet.addMergedRegion(new CellRangeAddress(1, 2, 8, 8));
+		sheet.addMergedRegion(new CellRangeAddress(1, 2, 12, 12));
 		HSSFRow headRow = sheet.createRow(1);
 		headRow.setHeight((short) 400);
 		for (int i = 0; i < excelHeader.length; i++) {
@@ -2189,6 +2237,11 @@ public class IndexManageServiceImpl implements IIndexManageService {
 						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 6, 6));
 						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 7, 7));
 						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 8, 8));
+						
+						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 9, 9));
+						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 10, 10));
+						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 11, 11));
+						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 12, 12));
 					}
 					
 					startRow = r + 2;
@@ -2203,6 +2256,11 @@ public class IndexManageServiceImpl implements IIndexManageService {
 						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 6, 6));
 						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 7, 7));
 						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 8, 8));
+						
+						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 9, 9));
+						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 10, 10));
+						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 11, 11));
+						sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, 12, 12));
 					}
 				}
 				
@@ -2251,7 +2309,23 @@ public class IndexManageServiceImpl implements IIndexManageService {
 				buildScore.setCellValue(vo.getBuildScore());
 				buildScore.setCellStyle(contentStyle);
 				
-				HSSFCell finalScore = contexRow.createCell(8);
+				HSSFCell partyScore = contexRow.createCell(8);
+				partyScore.setCellValue(vo.getPartyScore());
+				partyScore.setCellStyle(contentStyle);
+				
+				HSSFCell zhzlScore = contexRow.createCell(9);
+				zhzlScore.setCellValue(vo.getZhzlScore());
+				zhzlScore.setCellStyle(contentStyle);
+				
+				HSSFCell secScore = contexRow.createCell(10);
+				secScore.setCellValue(vo.getSecScore());
+				secScore.setCellStyle(contentStyle);
+				
+				HSSFCell lhScore = contexRow.createCell(11);
+				lhScore.setCellValue(vo.getLhScore());
+				lhScore.setCellStyle(contentStyle);
+				
+				HSSFCell finalScore = contexRow.createCell(12);
 				finalScore.setCellValue(vo.getFinalScore());
 				finalScore.setCellStyle(contentStyle);
 			}

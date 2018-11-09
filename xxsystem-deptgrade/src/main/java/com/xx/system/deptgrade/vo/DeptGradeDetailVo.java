@@ -114,6 +114,24 @@ public class DeptGradeDetailVo implements java.io.Serializable {
      * 评分人所在部门
      */
     private String gradeUsrDept;
+    
+    
+    /**
+     * 党建得分
+     */
+    private String partyScore;
+    /**
+     * 综合治理得分
+     */
+    private String zhzlScore;
+    /**
+     * 保密得分
+     */
+    private String secScore;
+    /**
+     * 例会得分
+     */
+    private String lhScore;
 
 	public Integer getGradeDetailId() {
 		return gradeDetailId;
@@ -273,6 +291,38 @@ public class DeptGradeDetailVo implements java.io.Serializable {
 
 	public void setPlusedScore(String plusedScore) {
 		this.plusedScore = plusedScore;
+	}
+
+	public String getPartyScore() {
+		return partyScore;
+	}
+
+	public void setPartyScore(String partyScore) {
+		this.partyScore = partyScore;
+	}
+
+	public String getZhzlScore() {
+		return zhzlScore;
+	}
+
+	public void setZhzlScore(String zhzlScore) {
+		this.zhzlScore = zhzlScore;
+	}
+
+	public String getSecScore() {
+		return secScore;
+	}
+
+	public void setSecScore(String secScore) {
+		this.secScore = secScore;
+	}
+
+	public String getLhScore() {
+		return lhScore;
+	}
+
+	public void setLhScore(String lhScore) {
+		this.lhScore = lhScore;
 	}
 	
 }

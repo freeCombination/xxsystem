@@ -74,6 +74,26 @@ public class FinalScore implements java.io.Serializable {
     private String jdSumScore;
     
     /**
+     * 党建
+     */
+    private String partyScore;
+    
+    /**
+     * 综合治理
+     */
+    private String zhzlScore;
+    
+    /**
+     * 保密
+     */
+    private String secScore;
+    
+    /**
+     * 例会
+     */
+    private String lhScore;
+    
+    /**
      * @Title getPkFinalScoreId
      * @Description: 主键
      * @date 2013-12-6
@@ -161,6 +181,42 @@ public class FinalScore implements java.io.Serializable {
 
 	public void setPlusedScore(String plusedScore) {
 		this.plusedScore = plusedScore;
+	}
+
+	@Column(name = "PARTY_SCORE", nullable = true)
+	public String getPartyScore() {
+		return partyScore;
+	}
+
+	public void setPartyScore(String partyScore) {
+		this.partyScore = partyScore;
+	}
+
+	@Column(name = "ZHZL_SCORE", nullable = true)
+	public String getZhzlScore() {
+		return zhzlScore;
+	}
+
+	public void setZhzlScore(String zhzlScore) {
+		this.zhzlScore = zhzlScore;
+	}
+
+	@Column(name = "SEC_SCORE", nullable = true)
+	public String getSecScore() {
+		return secScore;
+	}
+
+	public void setSecScore(String secScore) {
+		this.secScore = secScore;
+	}
+
+	@Column(name = "LH_SCORE", nullable = true)
+	public String getLhScore() {
+		return lhScore;
+	}
+
+	public void setLhScore(String lhScore) {
+		this.lhScore = lhScore;
 	}
 	
 }

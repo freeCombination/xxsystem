@@ -63,13 +63,22 @@
                 {name: 'jdScore', type: 'string'},
                 {name: 'jdPercentage', type: 'string'},
                 {name: 'jdSumScore', type: 'string'},
-                {name: 'plusedScore', type: 'string'}
+                {name: 'plusedScore', type: 'string'},
+                {name: 'partyScore', type: 'string'},
+                {name: 'zhzlScore', type: 'string'},
+                {name: 'secScore', type: 'string'},
+                {name: 'lhScore', type: 'string'}
             ]
         });
         
         var cfPer = 0;
         var bdPer = 0;
         var jdPer = 0;
+        
+        var partyPer = 0;
+        var zhzlPer = 0;
+        var secPer = 0;
+        var lhPer = 0;
         // 获取总分计算所需权重
         $.ajax({
             type : "POST",
@@ -91,6 +100,18 @@
                         }
                         else if ('JDSCORE' == records.list[j].dictCode) {
                             jdPer = records.list[j].dictionaryValue;
+                        }
+                        else if ('PARTYSCORE' == records.list[j].dictCode) {
+                        	partyPer = records.list[j].dictionaryValue;
+                        }
+                        else if ('ZHZLSCORE' == records.list[j].dictCode) {
+                        	zhzlPer = records.list[j].dictionaryValue;
+                        }
+                        else if ('SECSCORE' == records.list[j].dictCode) {
+                        	secPer = records.list[j].dictionaryValue;
+                        }
+                        else if ('LHSCORE' == records.list[j].dictCode) {
+                        	lhPer = records.list[j].dictionaryValue;
                         }
                     }
                 }
@@ -137,7 +158,7 @@
                         } */
                         
                         mergeCells(recordGrid, [1, 2, 3]);
-                        mergeCells(recordGrid, [7, 8, 9]);
+                        mergeCells(recordGrid, [7, 8, 9, 10, 11, 12, 13]);
                     }
                 }
             }
@@ -152,7 +173,7 @@
                         return value;
                     }
                 },
-                {header: "季度得分（" + (jdPer * 100) + "%权重）" ,width: 140,menuDisabled: true,sortable :false,
+                {header: "季度得分（" + (jdPer * 100).toFixed(0) + "%权重）" ,width: 140,menuDisabled: true,sortable :false,
                     columns:[
                         {header: "季度得分（可编辑）",width: 140,dataIndex: "jdScore",menuDisabled: true,sortable :false,
                             renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
@@ -194,9 +215,9 @@
                         } */
                     ]
                 },
-                {header: "部门指标年度得分（" + (cfPer * 100) + "%权重）" ,width: 590,menuDisabled: true,sortable :false,
+                {header: "部门指标年度得分（" + (cfPer * 100).toFixed(0) + "%权重）" ,width: 610,menuDisabled: true,sortable :false,
                     columns:[
-						{header: "加减分项（可编辑）",width: 110,dataIndex: "plusedScore",menuDisabled: true,sortable :false,
+						{header: "加减分项（可编辑）",width: 130,dataIndex: "plusedScore",menuDisabled: true,sortable :false,
 						    renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
 						        cellmeta.tdAttr = 'data-qtip="' + value + '"';
 						        return value;
@@ -257,12 +278,80 @@
                         }
                     ]
                 },
-                {header: "部门建设得分（" + (bdPer * 100) + "%权重）",width: 160,menuDisabled: true,sortable :false,
+                {header: "部门建设得分（" + (bdPer * 100).toFixed(0) + "%权重）",width: 160,menuDisabled: true,sortable :false,
                     columns:[
                         {header: "评价得分",width: 160,dataIndex: "buildScore",menuDisabled: true,sortable :false,
                             renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
                                 cellmeta.tdAttr = 'data-qtip="' + value + '"';
                                 return value;
+                            }
+                        }
+                    ]
+                },
+                {header: "党建（" + (partyPer * 100).toFixed(0) + "%权重）",width: 120,menuDisabled: true,sortable :false,
+                    columns:[
+                        {header: "（可编辑）",width: 120,dataIndex: "partyScore",menuDisabled: true,sortable :false,
+                            renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
+                                cellmeta.tdAttr = 'data-qtip="' + value + '"';
+                                return value;
+                            },
+                            field: {
+                                xtype:'textfield',
+                                maxLength:10,
+                                regex : new RegExp('^[0-9]+(.[0-9]{1,2})?$'),
+                                regexText : '保留两位小数！',
+                                allowBlank: false
+                            }
+                        }
+                    ]
+                },
+                {header: "综合治理（" + (zhzlPer * 100).toFixed(0) + "%权重）",width: 140,menuDisabled: true,sortable :false,
+                    columns:[
+                        {header: "（可编辑）",width: 140,dataIndex: "zhzlScore",menuDisabled: true,sortable :false,
+                            renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
+                                cellmeta.tdAttr = 'data-qtip="' + value + '"';
+                                return value;
+                            },
+                            field: {
+                                xtype:'textfield',
+                                maxLength:10,
+                                regex : new RegExp('^[0-9]+(.[0-9]{1,2})?$'),
+                                regexText : '保留两位小数！',
+                                allowBlank: false
+                            }
+                        }
+                    ]
+                },
+                {header: "保密（" + (secPer * 100).toFixed(0) + "%权重）",width: 120,menuDisabled: true,sortable :false,
+                    columns:[
+                        {header: "（可编辑）",width: 120,dataIndex: "secScore",menuDisabled: true,sortable :false,
+                            renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
+                                cellmeta.tdAttr = 'data-qtip="' + value + '"';
+                                return value;
+                            },
+                            field: {
+                                xtype:'textfield',
+                                maxLength:10,
+                                regex : new RegExp('^[0-9]+(.[0-9]{1,2})?$'),
+                                regexText : '保留两位小数！',
+                                allowBlank: false
+                            }
+                        }
+                    ]
+                },
+                {header: "例会（" + (lhPer * 100).toFixed(0) + "%权重）",width: 120,menuDisabled: true,sortable :false,
+                    columns:[
+                        {header: "（可编辑）",width: 120,dataIndex: "lhScore",menuDisabled: true,sortable :false,
+                            renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
+                                cellmeta.tdAttr = 'data-qtip="' + value + '"';
+                                return value;
+                            },
+                            field: {
+                                xtype:'textfield',
+                                maxLength:10,
+                                regex : new RegExp('^[0-9]+(.[0-9]{1,2})?$'),
+                                regexText : '保留两位小数！',
+                                allowBlank: false
                             }
                         }
                     ]
@@ -280,6 +369,11 @@
         var tempJdScore = '';
         //var tempJdPerc = '';
         var tempPlScore = '';
+        
+        var tempPartyScore = '';
+        var tempZhzlScore = '';
+        var tempSecScore = '';
+        var tempLhScore = '';
         var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
             clicksToEdit: 1,
             listeners : {
@@ -289,6 +383,11 @@
                     tempJdScore = e.record.data.jdScore;
                     //tempJdPerc = e.record.data.jdPercentage;
                     tempPlScore = e.record.data.plusedScore;
+                    
+                    tempPartyScore = e.record.data.partyScore;
+                    tempZhzlScore = e.record.data.zhzlScore;
+                    tempSecScore = e.record.data.secScore;
+                    tempLhScore = e.record.data.lhScore;
                 },
                 edit:function(editor, e, eOpts ){
                 	var editable = Ext.getCmp('editable').getValue();
@@ -411,10 +510,11 @@
                         	
                             $.ajax({
                                 type : "POST",
-                                url : "${ctx}/deptgrade/savePlusedcore.action",
+                                url : "${ctx}/deptgrade/saveInputScore.action",
                                 data : {
                                     orgId:e.record.data.canpDeptId,
-                                    plusedScore:editor.context.value,
+                                    score:editor.context.value,
+                                    flag:'plusedScore',
                                     electYear:Ext.getCmp('electYearQuery').getValue()
                                 },
                                 cache : false,
@@ -422,6 +522,126 @@
                                 dataType : 'json',
                                 success : function(response) {
                                     saveSumScore(e, 'idx');
+                                }
+                            });
+                        }
+                    }
+                    
+                    if ("partyScore" == col) {
+                    	if (!isCanEdit() || !editable) {
+                            recordStore.getAt(e.rowIdx).set('partyScore', tempPartyScore);
+                        }
+                        else{
+                        	for (var i = 0; i < recordStore.getCount(); i++) {
+                                if (recordStore.getAt(i).get('canpDeptId') == e.record.data.canpDeptId) {
+                                	recordStore.getAt(i).set('partyScore', editor.context.value);
+                                }
+                            }
+                        	
+                            $.ajax({
+                                type : "POST",
+                                url : "${ctx}/deptgrade/saveInputScore.action",
+                                data : {
+                                    orgId:e.record.data.canpDeptId,
+                                    score:editor.context.value,
+                                    flag:'partyScore',
+                                    electYear:Ext.getCmp('electYearQuery').getValue()
+                                },
+                                cache : false,
+                                async : false,
+                                dataType : 'json',
+                                success : function(response) {
+                                    saveSumScore(e, 'jd');
+                                }
+                            });
+                        }
+                    }
+                    
+                    if ("zhzlScore" == col) {
+                    	if (!isCanEdit() || !editable) {
+                            recordStore.getAt(e.rowIdx).set('zhzlScore', tempZhzlScore);
+                        }
+                        else{
+                        	for (var i = 0; i < recordStore.getCount(); i++) {
+                                if (recordStore.getAt(i).get('canpDeptId') == e.record.data.canpDeptId) {
+                                	recordStore.getAt(i).set('zhzlScore', editor.context.value);
+                                }
+                            }
+                        	
+                            $.ajax({
+                                type : "POST",
+                                url : "${ctx}/deptgrade/saveInputScore.action",
+                                data : {
+                                    orgId:e.record.data.canpDeptId,
+                                    score:editor.context.value,
+                                    flag:'zhzlScore',
+                                    electYear:Ext.getCmp('electYearQuery').getValue()
+                                },
+                                cache : false,
+                                async : false,
+                                dataType : 'json',
+                                success : function(response) {
+                                    saveSumScore(e, 'jd');
+                                }
+                            });
+                        }
+                    }
+                    
+                    if ("secScore" == col) {
+                    	if (!isCanEdit() || !editable) {
+                            recordStore.getAt(e.rowIdx).set('secScore', tempSecScore);
+                        }
+                        else{
+                        	for (var i = 0; i < recordStore.getCount(); i++) {
+                                if (recordStore.getAt(i).get('canpDeptId') == e.record.data.canpDeptId) {
+                                	recordStore.getAt(i).set('secScore', editor.context.value);
+                                }
+                            }
+                        	
+                            $.ajax({
+                                type : "POST",
+                                url : "${ctx}/deptgrade/saveInputScore.action",
+                                data : {
+                                    orgId:e.record.data.canpDeptId,
+                                    score:editor.context.value,
+                                    flag:'secScore',
+                                    electYear:Ext.getCmp('electYearQuery').getValue()
+                                },
+                                cache : false,
+                                async : false,
+                                dataType : 'json',
+                                success : function(response) {
+                                    saveSumScore(e, 'jd');
+                                }
+                            });
+                        }
+                    }
+                    
+                    if ("lhScore" == col) {
+                    	if (!isCanEdit() || !editable) {
+                            recordStore.getAt(e.rowIdx).set('lhScore', tempLhScore);
+                        }
+                        else{
+                        	for (var i = 0; i < recordStore.getCount(); i++) {
+                                if (recordStore.getAt(i).get('canpDeptId') == e.record.data.canpDeptId) {
+                                	recordStore.getAt(i).set('lhScore', editor.context.value);
+                                }
+                            }
+                        	
+                            $.ajax({
+                                type : "POST",
+                                url : "${ctx}/deptgrade/saveInputScore.action",
+                                data : {
+                                    orgId:e.record.data.canpDeptId,
+                                    score:editor.context.value,
+                                    flag:'lhScore',
+                                    electYear:Ext.getCmp('electYearQuery').getValue()
+                                },
+                                cache : false,
+                                async : false,
+                                dataType : 'json',
+                                success : function(response) {
+                                    saveSumScore(e, 'jd');
                                 }
                             });
                         }
@@ -532,10 +752,20 @@
     		var sc = e.record.data.jdScore;
             //var per = e.record.data.jdPercentage;
             //var jdSumScore = 0;
+            var sc1 = e.record.data.partyScore;
+            var sc2 = e.record.data.zhzlScore;
+            var sc3 = e.record.data.secScore;
+            var sc4 = e.record.data.lhScore;
             
-            if (allFlag && sc) {// && per
+            if (allFlag && sc && sc1 && sc2 && sc3 && sc4) {// && per
             	//jdSumScore = parseFloat(sc) * parseFloat(per);
-                var finalScore = (sumScore + parseFloat(plScore)) * cfPer + parseFloat(bdScore) * bdPer + sc * jdPer;
+                var finalScore = (sumScore + parseFloat(plScore)) * cfPer
+                               + parseFloat(bdScore) * bdPer
+                               + sc * jdPer
+                               + sc1 * partyPer
+                               + sc2 * zhzlPer
+                               + sc3 * secPer
+                               + sc4 * lhPer;
                 $.ajax({
                     type : "POST",
                     url : "${ctx}/deptgrade/saveFinalScore.action",

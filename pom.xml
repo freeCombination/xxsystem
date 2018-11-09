@@ -404,8 +404,6 @@
     </profiles>
     
     <modules>
-        <module>xxsystem-user</module>
-        <module>xxsystem-web</module>
         <!-- 
         <module>xxsystem-workturns</module>
         <module>xxsystem-bpm</module>
@@ -420,5 +418,7 @@
          -->
         <module>xxsystem-grade</module>
         <module>xxsystem-deptgrade</module>
+        <module>xxsystem-user</module>
+        <module>xxsystem-web</module>
   </modules>
 </project>

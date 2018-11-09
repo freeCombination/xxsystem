@@ -587,15 +587,16 @@ public class IndexManageAction extends BaseAction {
     }
     
     /**
-     * 保存加减分项
+     * 保存输入得分
      */
-    public String savePlusedcore() {
+    public String saveInputScore() {
     	String msg = "{success:'false',msg:'保存加减分项失败'}";
 		try {
 			String orgId = getRequest().getParameter("orgId");
-			String plusedScore = getRequest().getParameter("plusedScore");
+			String score = getRequest().getParameter("score");
+			String flag = getRequest().getParameter("flag");
 			String electYear = getRequest().getParameter("electYear");
-			indexManageService.savePlusedcore(orgId, plusedScore, electYear);
+			indexManageService.saveInputScore(orgId, score, flag, electYear);
 			msg = "{success:'true',msg:'保存加减分项成功'}";
 		} catch (Exception e) {
 			this.excepAndLogHandle(IndexManageAction.class, "保存加减分项", e, false);

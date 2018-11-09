@@ -348,14 +348,15 @@ public interface IIndexManageService {
     public void saveFinalScore(String orgId, String finalScore, String electYear) throws Exception;
     
     /**
-     * 保存加减分项
+     * 保存手动编辑得分
      * 
      * @param orgId 部门id
-     * @param plusedScore 加减分
+     * @param score 得分
+     * @param flag 得分项
      * @param electYear 参评年月
      * @throws Exception
      */
-    public void savePlusedcore(String orgId, String plusedScore, String electYear) throws Exception;
+    public void saveInputScore(String orgId, String score, String flag, String electYear) throws Exception;
     
     /**
      * 保存指标得分小计或季度得分小计
