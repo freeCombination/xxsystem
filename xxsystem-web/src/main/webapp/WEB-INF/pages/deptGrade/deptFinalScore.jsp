@@ -158,7 +158,7 @@
                         } */
                         
                         mergeCells(recordGrid, [1, 2, 3]);
-                        mergeCells(recordGrid, [7, 8, 9, 10, 11, 12, 13]);
+                        mergeCells(recordGrid, [7, 8, 9, 10, 11, 12, 13, 14]);
                     }
                 }
             }
@@ -167,7 +167,7 @@
         var cm=[
                 {header:"序号",xtype: "rownumberer",width:60,align:"center",menuDisabled: true,sortable :false},
                 {header: "ID",width: 70,dataIndex: "gradeDetailId",hidden: true,menuDisabled: true,sortable :false},
-                {header: "部门",width: 80,dataIndex: "canpDept",menuDisabled: true,sortable :false,
+                {header: "部门",width: 100,dataIndex: "canpDept",menuDisabled: true,sortable :false,
                     renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
                         cellmeta.tdAttr = 'data-qtip="' + value + '"';
                         return value;
@@ -269,7 +269,7 @@
                                 allowBlank: false
                             }
                         },
-                        
+                        {header: "idformerge",width: 0, maxWidth: 0, dataIndex: "canpDept",menuDisabled: true,sortable :false},
                         {header: "年度得分",width: 100,dataIndex: "sumScore",menuDisabled: true,sortable :false,
                             renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
                                 cellmeta.tdAttr = 'data-qtip="' + value + '"';
@@ -356,7 +356,7 @@
                         }
                     ]
                 },
-                {header: "总分",width: 80,dataIndex: "finalScore",menuDisabled: true,sortable :false,
+                {header: "总分",width: 100,dataIndex: "finalScore",menuDisabled: true,sortable :false,
                     renderer : function(value, cellmeta, record, rowIndex, columnIndex, store) {
                         cellmeta.tdAttr = 'data-qtip="' + value + '"';
                         return value;
@@ -654,18 +654,19 @@
         recordGrid =  Ext.create("Ext.grid.Panel",{
             title:'部门最终得分',
             border:false,
-            columnLines: true,
-            layout:"fit",
-            region: "center",
-            width: "100%",
-            height: document.body.clientHeight,
+            //columnLines: true,
+            //layout:"fit",
+            //region: "center",
+            //width: "100%",
+            //height: document.body.clientHeight,
             id: "recordGrid",
             columns:cm,
             plugins: [cellEditing],
-            forceFit : true,
+            forceFit : false,
             store: recordStore,
             autoScroll: true,
             stripeRows: true,
+            //viewConfig : {forceFit : false},
             tbar: ['参评年份',
             {
                 id: 'electYearQuery',
@@ -798,13 +799,25 @@
                     async : false,
                     dataType : 'json',
                     success : function(response) {
-                    	recordStore.reload();
+                    	recordStore.load({
+                            params:{
+                                start:0,
+                                limit:SystemConstant.commonSize,
+                                'electYear':Ext.getCmp('electYearQuery').getValue()
+                            }
+                        });
                     }
                 });
     		}
     	
             if (sc && 'jd' == flag) {// && per
-            	recordStore.load();
+            	recordStore.load({
+                    params:{
+                        start:0,
+                        limit:SystemConstant.commonSize,
+                        'electYear':Ext.getCmp('electYearQuery').getValue()
+                    }
+                });
             	/* jdSumScore = parseFloat(sc) * parseFloat(per);
             	$.ajax({
                     type : "POST",
@@ -827,7 +840,7 @@
         }
         
         Ext.create("Ext.container.Viewport", {
-            layout: "border",
+            layout: "fit",
             renderTo: Ext.getBody(),
             items: [recordGrid]
         });
