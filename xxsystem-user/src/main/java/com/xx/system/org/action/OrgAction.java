@@ -25,7 +25,6 @@ import com.xx.system.common.vo.ListVo;
 import com.xx.system.common.vo.ResponseVo;
 import com.xx.system.common.vo.TreeNode;
 import com.xx.system.common.vo.ZTreeNodeVo;
-import com.xx.system.deptgrade.action.IndexManageAction;
 import com.xx.system.dict.entity.Dictionary;
 import com.xx.system.dict.service.IDictService;
 import com.xx.system.org.entity.Organization;
@@ -837,7 +836,7 @@ public class OrgAction extends BaseAction {
 			msg = "{success:'true',msg:'锁定组织成功'}";
 			msg1 = "{success:'true',msg:'解锁组织成功'}";
 		} catch (Exception e) {
-			this.excepAndLogHandle(IndexManageAction.class, "锁定和解锁组织", e, false);
+			this.excepAndLogHandle(OrgAction.class, "锁定和解锁组织", e, false);
 		}
 		
 		if (en == 1) {
@@ -961,17 +960,6 @@ public class OrgAction extends BaseAction {
     public List<TreeNode> getTreeNodeList() {
         return treeNodeList;
     }
-    
-    /**
-     * @Title setUserService
-     * @author hedong
-     * @Description: userService
-     * @date 2013-12-6
-     * @param userService
-     */
-    /*public void setUserService(IUserService userService) {
-        this.userService = userService;
-    }*/
     
     public List<ZTreeNodeVo> getZTreeNodes() {
         return zTreeNodes;

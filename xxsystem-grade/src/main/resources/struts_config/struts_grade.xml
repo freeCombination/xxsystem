@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="personalGrade" extends="st" namespace="/personalGrade">
+		<!-- 个人评分 -->
+		<action name="toPersonalGradeIndex" >
+			<result>/WEB-INF/pages/personalGrade/personalGradeManage.jsp</result>
+		</action>
+		<!-- 个人评分结果 -->
+		<action name="toPersonalGradeResultIndex" >
+			<result>/WEB-INF/pages/personalGrade/personalGradeResultManage.jsp</result>
+		</action>
+		
+		<!-- 个人评分汇总统计 -->
+		<action name="toPersonalGradeAllIndex" >
+			<result>/WEB-INF/pages/personalGrade/personalGradeAllManage.jsp</result>
+		</action>
+		
+		<!-- 个人评分明细 -->
+		<action name="toPersonalGradeDetailsIndex" >
+			<result>/WEB-INF/pages/personalGrade/personalGradeResultDetailsManage.jsp</result>
+		</action>
+		
+		<!-- 个人评分权重管理 -->
+        <action name="toPersonalWeightManage" >
+            <result>/WEB-INF/pages/personalGrade/personalWeightManage.jsp</result>
+        </action>
+		
+		<action name="*" class="com.xx.grade.personal.action.PersonalGradeAction" method="{1}"></action>
+	</package>
+	
+	<package name="personalWeight" extends="st" namespace="/personalWeight">
+        <action name="*" class="com.xx.grade.personal.action.PersonalWeightAction" method="{1}"></action>
+    </package>
+</struts>

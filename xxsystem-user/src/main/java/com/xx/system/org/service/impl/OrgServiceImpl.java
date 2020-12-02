@@ -30,7 +30,6 @@ import com.xx.system.common.util.StringUtil;
 import com.xx.system.common.vo.ListVo;
 import com.xx.system.common.vo.PagerVo;
 import com.xx.system.common.vo.TreeNode;
-import com.xx.system.deptgrade.entity.IndexClassify;
 import com.xx.system.dict.entity.Dictionary;
 import com.xx.system.dict.service.IDictService;
 import com.xx.system.org.entity.OrgUser;
