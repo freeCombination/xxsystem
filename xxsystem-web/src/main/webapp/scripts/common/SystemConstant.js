@@ -1,5 +1,5 @@
 var SystemConstant = {
-	companyName:"大庆金桥信息技术工程有限公司成都分公司",
+	companyName:"**有限责任公司",
 	projectName:"公司架构系统", 
     displayMsg: "第 {0} - {1} 条，共 {2} 条",
     emptyMsg: "没有数据",

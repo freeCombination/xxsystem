@@ -1029,8 +1029,10 @@
 		        
 		    ];
 
+		    // SystemConstant.commonSize
+
 		    userRoleStore1 = Ext.create('Ext.data.Store', {
-		        pageSize: SystemConstant.commonSize,
+		        pageSize: 300,
 		        model: 'userModel',
 		        proxy: {
 		            type: 'ajax',
@@ -1067,7 +1069,7 @@
 		                id:'inputUserName'
 		            }),
 		            {
-		                text :   "查询", 
+		                text :   "查询",
 		                iconCls: "search-button", 
 		                handler:function(){
 		                    var proxy = userRoleStore1.getProxy();
@@ -1078,14 +1080,16 @@
 		            ]
 		        }),
 		        bbar:new Ext.PagingToolbar({
-		            pageSize: SystemConstant.commonSize,
+		            pageSize: 300,
 		            store: userRoleStore1,
 		            displayInfo: true,
 		            displayMsg: SystemConstant.displayMsg,
 		            emptyMsg: SystemConstant.emptyMsg
 		        })
 		    });
-		                    
+
+		    // SystemConstant.commonSize
+
 		    //用户分配角色窗口
 		    var userWin1 = Ext.create(Ext.window.Window,{
 		        title:"选择用户",
