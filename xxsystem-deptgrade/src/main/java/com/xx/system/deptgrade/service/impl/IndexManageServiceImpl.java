@@ -1335,7 +1335,8 @@ public class IndexManageServiceImpl implements IIndexManageService {
 					}
 					
 					// 查询角色下包含的用户（RoleMemberScope），进而通过ClassifyUser判断用户是否已提交部门评分
-					String rmsHql = " from RoleMemberScope r where r.role.roleId = " + gp.getRole().getRoleId();
+					String rmsHql = " from RoleMemberScope r where r.role.roleId = " + gp.getRole().getRoleId()
+							+ " and r.user.enable = 1";
 					List<RoleMemberScope> rmsLst = (List<RoleMemberScope>)baseDao.queryEntitys(rmsHql);
 					if (!CollectionUtils.isEmpty(rmsLst)) {
 						for (RoleMemberScope rms : rmsLst) {
@@ -1434,7 +1435,8 @@ public class IndexManageServiceImpl implements IIndexManageService {
 							if (!CollectionUtils.isEmpty(gpLst1)) {
 								for (GradePercentage gp : gpLst1) {
 									// 查询角色关联的用户
-									String rmHql = " from RoleMemberScope rm where rm.role.roleId = " + gp.getRole().getRoleId();
+									String rmHql = " from RoleMemberScope rm where rm.role.roleId = " + gp.getRole().getRoleId()
+											+ " and rm.user.enable = 1";
 									List<RoleMemberScope> rmLst = (List<RoleMemberScope>)baseDao.queryEntitys(rmHql);
 									if (!CollectionUtils.isEmpty(rmLst)) {
 										String userIds = "";
@@ -1655,7 +1657,8 @@ public class IndexManageServiceImpl implements IIndexManageService {
 				UserVo vo = null;
 				for (GradePercentage gp : gpLst) {
 					// 查询角色下包含的用户（RoleMemberScope），进而通过ClassifyUser判断用户是否已提交部门评分
-					String rmsHql = " from RoleMemberScope r where r.role.roleId = " + gp.getRole().getRoleId();
+					String rmsHql = " from RoleMemberScope r where r.role.roleId = " + gp.getRole().getRoleId()
+							+ " and r.user.enable = 1";
 					List<RoleMemberScope> rmsLst = (List<RoleMemberScope>)baseDao.queryEntitys(rmsHql);
 					if (!CollectionUtils.isEmpty(rmsLst)) {
 						for (RoleMemberScope rms : rmsLst) {
