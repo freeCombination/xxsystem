@@ -1360,7 +1360,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
 								
 								int hasSubmit = baseDao.queryTotalCount(cuHql, new HashMap<String, Object>());
 								
-								if (hasSubmit > 0) {
+								if (hasSubmit > 0 || currUsr.getUserId().intValue() == rms.getUser().getUserId().intValue()) {
 									countFlag = true;
 								}
 								
@@ -1390,19 +1390,12 @@ public class IndexManageServiceImpl implements IIndexManageService {
 								// 排除不能参与指标评分的用户对应的指标
 								if (StringUtil.isNotBlank(gp.getClassify().getNoParticipationUsr())) {
 									String uids = gp.getClassify().getNoParticipationUsr();
-									uids = uids.substring(1, uids.length() - 1);
-									String[] ids = uids.split(",");
-									
-									if (ids.length == 1 && rms.getUser().getUserId() == NumberUtils.toInt(ids[0])) {
+									if (uids.contains("," + rms.getUser().getUserId() + ",")) {
 										notJoin = true;
 									}
 								}
 								
 								if (!countFlag && !selfOrg && !fgOrg && !notJoin) {
-									Iterator<OrgAndClassify> ocIt = gp.getClassify().getOrgCfs().iterator();
-									if (selfOrgIds.contains(ocIt.next().getOrg().getOrgId()) && !include) {
-										selfOrg = true;
-									}
 									allSubmit = false;
 									break;
 								}
@@ -1632,7 +1625,7 @@ public class IndexManageServiceImpl implements IIndexManageService {
      * @Title orderGradeUser
      * @author dong.he
      * @date 2014年12月25日
-     * @param inxLst
+     * @param guLst
      */
     private void orderGradeUser(List<UserVo> guLst){
         Collections.sort(guLst, new Comparator<UserVo>() {
