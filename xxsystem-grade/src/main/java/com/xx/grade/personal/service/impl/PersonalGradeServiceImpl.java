@@ -910,7 +910,6 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
     /**
      * 获取当前组织下所有人员及所有上级组织领导
      * 
-     * @param currentOrg
      * @param curUser
      * @return
      */
@@ -1571,17 +1570,9 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
             //填表日期
             HSSFCell fcell4 = frow4.getCell(4);
             fcell1.setCellValue("（ "+grade.getGradeYear()+" 年度）");
+            //部门
+            fcell2.setCellValue(grade.getOrgName());
             if (grade.getUser() != null) {
-                //部门
-                if (grade.getUser().getOrgUsers() != null) {
-                    Set<OrgUser> orgUsers = grade.getUser().getOrgUsers();
-                    for (OrgUser orgUser : orgUsers) {
-                        if (orgUser.getOrganization() != null) {
-                            fcell2.setCellValue(orgUser.getOrganization().getOrgName());
-                            break;
-                        }
-                    }
-                }
                 //姓名
                 fcell3.setCellValue(grade.getUser().getRealname());
             }
@@ -1629,11 +1620,9 @@ public class PersonalGradeServiceImpl implements IPersonalGradeService {
                 cell21.setCellValue(grade.getUser().getPoliticsStatus());
                 cell23.setCellValue(grade.getUser().getEducationBackground());
                 cell25.setCellValue(grade.getUser().getJobStartDate());
-                if (grade.getUser().getResponsibilities() != null) {
-                    cell31.setCellValue(grade.getUser().getResponsibilities().getName());
-                }
+                cell31.setCellValue(grade.getResponsibilityName());
                 // 现任岗位时间
-                cell33.setCellValue(grade.getUser().getRespChangeDate());
+                cell33.setCellValue(grade.getRespChangeDate());
             }
             
             // 获取单元格格式
