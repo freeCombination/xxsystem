@@ -11,7 +11,7 @@
     <properties>
         <project.name>xxsystem</project.name>
         <project.version>1.0</project.version>
-        <spring.version>3.0.6.RELEASE</spring.version>
+        <spring.version>5.3.18</spring.version>
         <struts.version>2.3.20</struts.version>
         <hibernate.version>3.3.1.GA</hibernate.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
